@@ -92,6 +92,7 @@ import { ImportationExportationComponent } from './importation-exportation/impor
 import { AccueilComponent } from './accueil/accueil.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { AutheComponent } from './authe/authe.component';
+import { TypeModeComponent } from './definition/type-mode/type-mode.component';
 
 @NgModule({
   imports: [
@@ -164,6 +165,7 @@ import { AutheComponent } from './authe/authe.component';
     AccueilComponent,
     ForgotPasswordComponent,
     AutheComponent,
+    TypeModeComponent,
   ],
   providers: [{
     provide: LocationStrategy,
