@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {ModalDirective} from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-regisseur',
@@ -11,5 +12,10 @@ export class RegisseurComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  //Valeurs locative
+  @ViewChild('addregModal') public addregModal: ModalDirective;
+  @ViewChild('editregModal') public editregModal: ModalDirective;
+  @ViewChild('deleteregModal') public deleteregModal: ModalDirective;
 
 }

@@ -1,1 +1,122 @@
-<p>livraison works!</p>
+<div class="col-md-12 mb-4">
+<tabset>
+<tab>
+    <ng-template tabHeading><i class="icon-home"></i> Livraison</ng-template>
+   
+    <div class="row">
+        <div class="row">
+            
+
+                <div class="input-group col-md-3">
+                    <label for="etatvalo" style="margin-right: 15px;"> <strong>  Caisse : </strong></label>
+                    <select class="form-control" id="etatvalo">
+                      <option>Caisse 1</option>
+                      <option>Caisse 2</option>
+                    </select>
+                  </div>
+                <div class="input-group col-md-4" style="width: 300px;">
+                    <label for="codevalo" style="margin-right: 15px;" > <strong> Début : </strong> </label>
+                    <input type="date" class="form-control" placeholder="date début">
+                    
+                   
+                </div>
+
+                <div class="input-group col-md-4" style="width: 300px;">
+                    <label for="codevalo" style="margin-right: 15px;" > <strong> Fin : </strong> </label>
+                    <input type="date" class="form-control" placeholder="date fin">
+                    
+                   
+                </div>
+            
+
+
+                <div class="col-md-1" > 
+                    <div class="input-group" style="margin-right: 100px;">
+                    
+                        <button class="btn btn-success" data-toggle="modal" (click)="addvaliderModal.show()" type="button">OK</button>
+                        
+                    </div>
+                 </div>
+        </div>
+        <br> <br> <br>
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-header">
+              <i class="fa fa-align-justify"></i> Listes des valeurs locatives non livrés
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Référence</th>
+                        <th>Article</th>
+                        <th>Désignation</th>
+                        <th>Qte</th>
+                        <th>Montant</th>
+                        <th>Contribuable</th>
+                        <!--th>Actions</th-->
+                      </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>25/01/2021</td>
+                    <td>Op202101210005</td>
+                    <td>Timbre</td>
+                    <td>Timbre de dépot</td>
+                    <td>2</td>
+                    <td>800</td>
+                    <td>Simon joël</td>
+                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                  </tr>
+                  <tr>
+                    <td>25/01/2021</td>
+                    <td>Op202101210005</td>
+                    <td>Timbre</td>
+                    <td>Timbre de dépot</td>
+                    <td>2</td>
+                    <td>800</td>
+                    <td>Simon joël</td>
+                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                  </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                      <th>Date</th>
+                      <th>Référence</th>
+                      <th>Article</th>
+                      <th>Désignation</th>
+                      <th>Qte</th>
+                      <th>Montant</th>
+                      <th>Contribuable</th>
+                      <!--th>Actions</th-->
+                    </tr>
+                  </tfoot>
+              </table>
+              <nav>
+                <ul class="pagination">
+                  <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                  <li class="page-item active">
+                    <a class="page-link" href="#">1</a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">4</a></li>
+                  <li class="page-item"><a class="page-link" href="#">Next</a></li>
+
+                  <div class="input-group" style="margin-left: 700px;">
+                    
+                    <button class="btn btn-success" data-toggle="modal" (click)="addvaliderModal.show()" type="button">Livrer</button>
+                    
+                </div>
+                </ul>
+               
+              </nav>
+            </div>
+          </div>
+        </div>
+        <!--/.col-->
+      </div>
+  </tab>
+</tabset>
+</div>

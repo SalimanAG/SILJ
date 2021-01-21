@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {ModalDirective} from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-commande',
@@ -11,5 +12,10 @@ export class CommandeComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  //Commune
+  @ViewChild('addComModal') public addComModal: ModalDirective;
+  @ViewChild('editComModal') public editComModal: ModalDirective;
+  @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
 
 }

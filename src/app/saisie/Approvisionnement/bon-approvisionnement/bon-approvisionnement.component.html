@@ -1,1 +1,181 @@
-<p>bon-approvisionnement works!</p>
+<div class="col-md-12 mb-4">
+    <tabset>
+        <tab>
+            <ng-template tabHeading><i class="icon-user"></i> Bon approvisionnement</ng-template>
+        
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-8"> 
+                        <div class="input-group" style="margin-left: 15px; width: 400px;">
+                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" > 
+                        <div class="input-group" style="margin-right: 100px;">
+                        
+                            <button class="btn btn-success" data-toggle="modal" (click)="addBonModal.show()" type="button">Ajouter nouveau <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            
+                        </div>
+                    </div>
+                </div>
+                <br> <br> <br> 
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fa fa-align-justify"></i> Listes des bon d'approvisionnement
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Numéro</th>
+                                        <th>Date</th>
+                                        <th>Exercice</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>DA210</td>
+                                        <td>19/01/2021</td>
+                                        <td>2021</td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editBonModal.show()"><span class="fa fa-edit"></span></button>
+                                            <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteBonModal.show()"><span class="fa fa-trash"></span></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Numéro</th>
+                                        <th>Date</th>
+                                        <th>Exercice</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <nav>
+                                <ul class="pagination">
+                                <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                                <li class="page-item active">
+                                    <a class="page-link" href="#">1</a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                </ul>
+                            </nav>
+                        <!--Modal add-->
+                            <div bsModal #addBonModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-success" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Ajouter un bon approvisionnement</h4>
+                                            <button type="button" class="close" (click)="addBonModal.hide()" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                        
+                                            <div class="card-body p-4">
+                                                <form>
+                                                    <div class="form-group mb-3">
+                                                        <label for="codevalo">Numéro</label>
+                                                        <input type="text" class="form-control" autocomplete="codevalo" required>
+                                                    </div>
+                                                    <div class="form-group mb-3">
+                                                        <label for="codevalo">Date</label>
+                                                        <input type="date" class="form-control" autocomplete="codevalo" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="etatvalo">Exercice</label>
+                                                        <select class="form-control" id="etatvalo">
+                                                        <option>2021</option>
+                                                        </select>
+                                                    </div>
+                                                
+                                                </form>
+                                            </div>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" (click)="addBonModal.hide()">Annuler</button>
+                                            <button type="button" class="btn btn-success">Sauvegarder</button>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
+
+                        <!--Modal edit-->
+                        <div bsModal #editBonModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-warning" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title">Modifer bon approvisionnement</h4>
+                                <button type="button" class="close" (click)="editBonModal.hide()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card-body p-4">
+                                        <form>
+                                            <div class="form-group mb-3">
+                                                <label for="codevalo">Numéro</label>
+                                                <input type="text" class="form-control" autocomplete="codevalo" required>
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <label for="codevalo">Date</label>
+                                                <input type="date" class="form-control" autocomplete="codevalo" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="etatvalo">Exercice</label>
+                                                <select class="form-control" id="etatvalo">
+                                                <option>2021</option>
+                                                </select>
+                                            </div>
+                                        
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" (click)="editBonModal.hide()">Annuler</button>
+                                <button type="button" class="btn btn-warning">Modifier</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
+
+                        <!--Modal delete-->
+
+                        <div bsModal #deleteBonModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-danger" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title text-center">Supprimer un bon approvisionnement</h4>
+                                <button type="button" class="close" (click)="deleteComModal.hide()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                <p style="font-size: 20px;"> <strong> Voulez-vous réellement rétirer ce bon approvisionnement ?</strong></p>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" (click)="deleteBonModal.hide()">Annuler</button>
+                                <button type="button" class="btn btn-danger">Supprimer</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
+
+                        
+                    </div>
+                    </div>
+                    <!--/.col-->
+                </div>
+            </div>
+        </tab>
+    </tabset>
+</div>
