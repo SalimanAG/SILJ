@@ -1,1 +1,244 @@
-<p>caisse works!</p>
+<div class="card">
+  <div class="card-header">
+    <i class="fa fa-align-justify"></i> Liste des Caisses
+  </div>
+  <div class="card-body">
+    <!--Les enfants s'amusent-->
+    <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+    </div>
+    <table class="table table-bordered table-striped table-sm">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Libellé</th>
+          <th>Arrondissement</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CS1</td>
+          <td>Caisse 1 Mairie</td>
+          <td>Arrondissement</td>
+          <td>
+            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal.show()"><span class="fa fa-edit"></span></button>
+            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal.show()"><span class="fa fa-trash"></span></button>
+            <button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal.show()"><span class="fa fa-eye"></span></button>
+            <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+            <!--Le bouton des options-->
+            <div class="btn-group" dropdown>
+              <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+              <ul *dropdownMenu class="dropdown-menu" role="menu">
+                <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                </li>
+                <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                  here</a></li>
+                <li class="divider dropdown-divider"></li>
+                <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>Code</th>
+          <th>Libellé</th>
+          <th>Arrondissement</th>
+          <th>Actions</th>
+        </tr>
+      </tfoot>
+    </table>
+    <nav>
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+        <li class="page-item active">
+          <a class="page-link" href="#">1</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">4</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav>
+    <!-- Les modales-->
+          <!--Modale 1-->
+          <div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-primary" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Enrégistrer une Caisse</h4>
+                  <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <!-- Formulaire pour enrégistrer un article-->
+                  <div class="card">
+                    <div class="card-header">
+                      <strong>Nouvelle Caisse</strong>
+
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="form-group col-sm-12">
+                          <label for="city">Code</label>
+                          <input type="text" class="form-control" id="city" placeholder="Code de la Caisse">
+                        </div>
+                      </div><!--/.row-->
+                      <div class="row">
+                        <div class="form-group col-sm-12">
+                          <label for="postal-code">Libellé</label>
+                          <input type="text" class="form-control" id="postal-code" placeholder="Libellé de la Caisse">
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="form-group col-sm-12">
+                          <label for="select1">Arrondissement</label>
+                            <select id="select1" name="select1" class="form-control">
+                              <option value="0">Arrondissement d'appartenance</option>
+                              <option value="1">Option #1</option>
+                              <option value="2">Option #2</option>
+                              <option value="3">Option #3</option>
+                            </select>
+                        </div>
+                      </div><!--/.row-->
+
+                    </div>
+                  </div>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                  <button type="button" class="btn btn-primary">Enrégistrer</button>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal 1 -->
+
+          <!--Modale 2-->
+          <div bsModal #warningModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-warning" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Modifier Une Caisse</h4>
+                  <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <!-- Formulaire pour modifier un article-->
+                  <div class="card">
+                    <div class="card-header">
+                      <strong>Modifier Une Caisse</strong>
+
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="form-group col-sm-12">
+                          <label for="city">Code</label>
+                          <input type="text" class="form-control" id="city" placeholder="Code de la Caisse">
+                        </div>
+                      </div><!--/.row-->
+                      <div class="row">
+                        <div class="form-group col-sm-12">
+                          <label for="postal-code">Libellé</label>
+                          <input type="text" class="form-control" id="postal-code" placeholder="Libellé de la Caisse">
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="form-group col-sm-12">
+                          <label for="select1">Arrondissement</label>
+                            <select id="select1" name="select1" class="form-control">
+                              <option value="0">Arrondissement d'appartenance</option>
+                              <option value="1">Option #1</option>
+                              <option value="2">Option #2</option>
+                              <option value="3">Option #3</option>
+                            </select>
+                        </div>
+                      </div><!--/.row-->
+
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                  <button type="button" class="btn btn-warning">Modifier</button>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal 2 -->
+
+          <!--Modale 3-->
+          <div bsModal #dangerModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-danger" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Suprimmer Une Caisse</h4>
+                  <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Vous êtes sur le point de supprimer la Caisse <mark style="color: red;">CS1</mark></p>
+                  <p>Le confirmez-vous ?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
+                  <button type="button" class="btn btn-danger">Supprimer</button>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal 3 -->
+
+          <!--Modale 4-->
+          <div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-info modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Détail Sur Caisse</h4>
+                  <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <table class="table table-striped">
+
+                    <tbody>
+                      <tr>
+                        <th>Code</th>
+                        <td>CS1</td>
+                      </tr>
+                      <tr>
+                        <th>Libellé</th>
+                        <td>Caisse 1 Mairie</td>
+                      </tr>
+                      <tr>
+                        <th>Code Arrondissement / Site</th>
+                        <td>ARRON00</td>
+                      </tr>
+                      <tr>
+                        <th>Libellé de l'Arrondissement / Site</th>
+                        <td>Mairie de Cotonou</td>
+                      </tr>
+                      <tr>
+                        <th>Commune</th>
+                        <td>Cotonou</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Fermer</button>
+
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal 4 -->
+  </div>
+</div>

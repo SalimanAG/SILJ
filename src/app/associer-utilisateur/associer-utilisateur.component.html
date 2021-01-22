@@ -1,1 +1,704 @@
-<p>associer-utilisateur works!</p>
+<tabset>
+  <!--Onglet 1-->
+  <tab>
+    <ng-template tabHeading><i class="icon-calculator"></i> Arrondissement</ng-template>
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste d'Association des Utilisateurs aux Arrondissements
+      </div>
+      <div class="card-body">
+        <!--Les enfants s'amusent-->
+        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+        </div>
+        <table class="table table-bordered table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Nom & Prénom Utilisateur</th>
+              <th>Arrondissement</th>
+              <th>Date d'Association</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>KAMI Abdora</td>
+              <td>ARROND01 - 2 ième Arrondissement</td>
+              <td>05/02/2020</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal.show()"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal.show()"><span class="fa fa-trash"></span></button>
+                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal.show()"><span class="fa fa-eye"></span></button>-->
+                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--Le bouton des options-->
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                      here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Nom & Prénom Utilisateur</th>
+              <th>Arrondissement</th>
+              <th>Date d'Association</th>
+              <th>Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+        <nav>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </nav>
+        <!-- Les modales-->
+              <!--Modale 1-->
+              <div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-primary" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Enrégistrer une Association</h4>
+                      <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Formulaire pour enrégistrer une association à un arrondissment-->
+                      <div class="card">
+                        <div class="card-header">
+                          <strong>Nouvelle Association</strong>
+                        </div>
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Utilisateur</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Utilisateur </option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Arrondissement</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Arrondissement</option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="date-Associ-Arrondi">Date d'Association</label>
+                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+
+                            </div>
+                          </div><!--/.row-->
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                      <button type="button" class="btn btn-primary">Enrégistrer</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 1 -->
+
+              <!--Modale 2-->
+              <div bsModal #warningModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-warning" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Modifier Un Article</h4>
+                      <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Formulaire pour modifier une association à un arrondissment-->
+                      <div class="card">
+                        <div class="card-header">
+                          <strong>Modifier Un Article</strong>
+
+                        </div>
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Utilisateur</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Utilisateur </option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Arrondissement</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Arrondissement</option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="date-Associ-Arrondi">Date d'Association</label>
+                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+
+                            </div>
+                          </div><!--/.row-->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                      <button type="button" class="btn btn-warning">Modifier</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 2 -->
+
+              <!--Modale 3-->
+              <div bsModal #dangerModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-danger" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Suprimmer Une Association</h4>
+                      <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Vous êtes sur le point de supprimer l'assciation de l'Utilisateur <mark style="color: red;">USR1</mark> à l'Arrondissement <mark style="color: blue;">ARRONDI01</mark></p>
+                      <p>Le confirmez-vous ?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
+                      <button type="button" class="btn btn-danger">Supprimer</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 3 -->
+      </div>
+    </div>
+  </tab>
+  <!--Onglet 2-->
+  <tab>
+    <ng-template tabHeading><i class="icon-basket-loaded"></i> Caisse</ng-template>
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste d'Association des Utilisateurs aux Caisses
+      </div>
+      <div class="card-body">
+        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+        </div>
+        <table class="table table-bordered table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Nom & Prénoms Utilisateur</th>
+              <th>Caisse</th>
+              <th>Arrondissement</th>
+              <th>Date d'Association</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>KAMI Abdora</td>
+              <td>CS1 - Caisse Principale</td>
+              <td>Mairie</td>
+              <td>01/02/2020</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal2.show()"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal2.show()"><span class="fa fa-trash"></span></button>
+                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal2.show()"><span class="fa fa-eye"></span></button>-->
+                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--Le bouton des options-->
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                      here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Nom & Prénoms Utilisateur</th>
+              <th>Caisse</th>
+              <th>Arrondissement</th>
+              <th>Date d'Association</th>
+              <th>Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+        <nav>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </nav>
+
+        <!-- Les modales-->
+              <!--Modale 1-->
+              <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-primary" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Enrégistrer une Association</h4>
+                      <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                      <div class="card">
+                        <div class="card-header">
+                          <strong>Nouvelle Association à une Caisse</strong>
+
+                        </div>
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Utilisateur</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Utilisateur </option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-6">
+                              <label for="select1">Arrondissement</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Arrondissement</option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                              <label for="select1">Caisse</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner la Caisse</option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-6">
+                              <label for="date-Associ-Arrondi">Date d'Association</label>
+                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+                            </div>
+                          </div><!--/.row-->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
+                      <button type="button" class="btn btn-primary">Enrégistrer</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 1 -->
+
+              <!--Modale 2-->
+              <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-warning modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Modifier une Association à une Caisse</h4>
+                      <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Formulaire pour Modifier une Association à une Caisse-->
+                      <div class="card">
+                        <div class="card-header">
+                          <strong>Modifier une Association à Une Caisse</strong>
+
+                        </div>
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Utilisateur</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Utilisateur </option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-6">
+                              <label for="select1">Arrondissement</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Arrondissement</option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                              <label for="select1">Caisse</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner la Caisse</option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-6">
+                              <label for="date-Associ-Arrondi">Date d'Association</label>
+                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+                            </div>
+                          </div><!--/.row-->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
+                      <button type="button" class="btn btn-warning">Modifier</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 2 -->
+
+              <!--Modale 3-->
+              <div bsModal #dangerModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-danger" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Suprimmer Une Association</h4>
+                      <button type="button" class="close" (click)="dangerModal2.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Vous êtes sur le point de supprimer l'Association de l'utilisateur à la Caisse <mark style="color: red;">CS01</mark></p>
+                      <p>Le confirmez-vous ?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="dangerModal2.hide()">Annuler</button>
+                      <button type="button" class="btn btn-danger">Supprimer</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 3 -->
+
+              <!--Modale 4-->
+              <!--<div bsModal #infoModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-info modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Détail Sur Article</h4>
+                      <button type="button" class="close" (click)="infoModal2.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>One fine body&hellip;</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="infoModal2.hide()">Fermer</button>
+
+                    </div>-->
+                  <!--</div> /.modal-content -->
+                <!--</div> /.modal-dialog -->
+              <!--</div> /.modal 4 -->
+
+      </div>
+    </div>
+  </tab>
+  <!--Onglet 3-->
+  <tab>
+    <ng-template tabHeading><i class="icon-pie-chart"></i> Groupe d'Utilisateur</ng-template>
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste des Associations d'Utilisateur aux Groupes d'Utilisateur
+      </div>
+      <div class="card-body">
+        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+        </div>
+        <table class="table table-bordered table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Nom & Prénoms Utilisateur</th>
+              <th>Groupe Utilisateur</th>
+              <th>Date d'Association</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>KAMI Abdora</td>
+              <td>GPUSR01 - Caissières</td>
+              <td>01/02/2020</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal3.show()"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal3.show()"><span class="fa fa-trash"></span></button>
+                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal3.show()"><span class="fa fa-eye"></span></button>-->
+                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--Le bouton des options-->
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                      here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Nom & Prénoms Utilisateur</th>
+              <th>Groupe Utilisateur</th>
+              <th>Date d'Association</th>
+              <th>Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+        <nav>
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </nav>
+
+        <!-- Les modales-->
+              <!--Modale 1-->
+              <div bsModal #primaryModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-primary" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Enrégistrer une Association</h4>
+                      <button type="button" class="close" (click)="primaryModal3.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Formulaire pour Enrégistrer une Nouvelle Association à un Groupe-->
+                      <div class="card">
+                        <div class="card-header">
+                          <strong>Nouvelle Association d'Utilisateur à un Groupe d'Utilisateur</strong>
+
+                        </div>
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Utilisateur</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Utilisateur </option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Groupe d'Utilisateur</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner le Groupe d'Utilisateur</option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="date-Associ-Arrondi">Date d'Association</label>
+                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+
+                            </div>
+                          </div><!--/.row-->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
+                      <button type="button" class="btn btn-primary">Enrégistrer</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 1 -->
+
+              <!--Modale 2-->
+              <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-warning" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Modifier Une Association</h4>
+                      <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Formulaire pour Enrégistrer une Unité de Comptage-->
+                      <div class="card">
+                        <div class="card-header">
+                          <strong>Modifier une Association à un Groupe d'Utilisateur</strong>
+
+                        </div>
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Utilisateur</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner l'Utilisateur </option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="select1">Groupe d'Utilisateur</label>
+                                <select id="select1" name="select1" class="form-control">
+                                  <option value="0">Selectionner le Groupe d'Utilisateur</option>
+                                  <option value="1">Option #1</option>
+                                  <option value="2">Option #2</option>
+                                  <option value="3">Option #3</option>
+                                </select>
+                            </div>
+                          </div><!--/.row-->
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="date-Associ-Arrondi">Date d'Association</label>
+                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+
+                            </div>
+                          </div><!--/.row-->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
+                      <button type="button" class="btn btn-warning">Modifier</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 2 -->
+
+              <!--Modale 3-->
+              <div bsModal #dangerModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-danger" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Suprimmer Une Association à un Groupe d'Utilisateur</h4>
+                      <button type="button" class="close" (click)="dangerModal3.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Vous êtes sur le point de supprimer l'Association de L'utilisateur au Groupe <mark style="color: red;">GPUSR01</mark></p>
+                      <p>Le confirmez-vous ?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="dangerModal3.hide()">Annuler</button>
+                      <button type="button" class="btn btn-danger">Supprimer</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 3 -->
+
+              <!--Modale 4
+              <div bsModal #infoModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-info modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Détail Sur Article</h4>
+                      <button type="button" class="close" (click)="infoModal3.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>One fine body&hellip;</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="infoModal3.hide()">Fermer</button>
+
+                    </div>
+                  </div>/.modal-content -->
+                <!--</div>< /.modal-dialog -->
+              <!--</div> /.modal 4 -->
+
+      </div>
+    </div>
+  </tab>
+</tabset>

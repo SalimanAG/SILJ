@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ViewChild, OnInit} from '@angular/core';
+import {ModalDirective} from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-exercice',
@@ -11,5 +12,11 @@ export class ExerciceComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  @ViewChild('primaryModal') public primaryModal: ModalDirective;
+  @ViewChild('successModal') public successModal: ModalDirective;
+  @ViewChild('warningModal') public warningModal: ModalDirective;
+  @ViewChild('dangerModal') public dangerModal: ModalDirective;
+  @ViewChild('infoModal') public infoModal: ModalDirective;
 
 }
