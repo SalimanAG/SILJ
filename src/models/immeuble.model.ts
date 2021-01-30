@@ -3,7 +3,7 @@ import { Quartier } from './quartier.model';
 import { SiteMarcher } from './siteMarcher.model';
 import { TypeImmeuble } from './typeImmeuble.model';
 
-export class ValeurLocative {
+export class Immeuble {
 
     constructor(public codeIm:String, public libIm:String, public localisationIm:String, public etatIm:boolean,
         public superficie:number, public valUnit:number, public stuctResp:String, public autre:String,
