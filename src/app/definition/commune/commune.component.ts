@@ -7,10 +7,32 @@ import {ModalDirective} from 'ngx-bootstrap/modal';
   styleUrls: ['./commune.component.css']
 })
 export class CommuneComponent implements OnInit {
-
+  pays = {
+    code: '',
+    libelle: ''
+  };
+  
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  savePays(): void {
+    const data = {
+      code: this.pays.code,
+      libelle: this.pays.libelle
+    };
+
+    this.communeService.create(data)
+      .subscribe(
+        response => {
+          console.log(response);
+          //this.submitted = true;
+          //this.router.navigate(['/tutorials']);
+        },
+        error => {
+          console.log(error);
+        });
   }
 
   //Commune
