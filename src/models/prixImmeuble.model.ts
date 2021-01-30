@@ -1,4 +1,4 @@
-import {ValeurLocative} from './valeurLocative.model'
+import {ValeurLocative} from './Immeuble.model'
 export class PrixImmeuble {
 
     constructor(public idPrixIm:Number, public dateDebPrixIm:Date, public dateFinPrixIm:Date,
