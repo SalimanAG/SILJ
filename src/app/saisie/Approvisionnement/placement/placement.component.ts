@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild } from '@angular/core';
+import {ModalDirective} from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-placement',
@@ -12,4 +13,8 @@ export class PlacementComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  //Valeurs locative
+  @ViewChild('addPlaModal') public addPlaModal: ModalDirective;
+  @ViewChild('editPlaModal') public editPlaModal: ModalDirective;
+  @ViewChild('deletePlaModal') public deletePlaModal: ModalDirective;
 }

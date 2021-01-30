@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {ModalDirective} from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-reception',
@@ -11,5 +12,10 @@ export class ReceptionComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  //Valeurs locative
+  @ViewChild('addRecepModal') public addRecepModal: ModalDirective;
+  @ViewChild('editRecepModal') public editRecepModal: ModalDirective;
+  @ViewChild('deleteRecepModal') public deleteRecepModal: ModalDirective;
 
 }

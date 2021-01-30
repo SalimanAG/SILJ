@@ -1,1 +1,1123 @@
-<p>commune works!</p>
+<div class="col-md-12 mb-4">
+    <tabset>
+       
+
+        <tab>
+            <ng-template tabHeading><i class="icon-user"></i> Pays</ng-template>
+        
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-8"> 
+                        <div class="input-group" style="margin-left: 15px; width: 400px;">
+                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" > 
+                        <div class="input-group" style="margin-right: 100px;">
+                        
+                            <button class="btn btn-success" data-toggle="modal" (click)="addPaysModal.show()" type="button">Ajouter un pays <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            
+                        </div>
+                    </div>
+                </div>
+                <br> <br> <br>
+                <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa fa-align-justify"></i> Listes des pays
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>N°1</td>
+                                    <td>Bénin</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editPaysModal.show()"><span class="fa fa-edit"></span></button>
+                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deletePaysModal.show()"><span class="fa fa-trash"></span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <nav>
+                            <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    <!--Modal add-->
+                        <div bsModal #addPaysModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-success" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title">Ajouter un pays</h4>
+                                <button type="button" class="close" (click)="addPaysModal.hide()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                
+                                    <div class="card-body p-4">
+                                        <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="addPaysModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-success">Sauvegarder</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal edit-->
+                    <div bsModal #editPaysModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-warning" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Modifer un pays</h4>
+                            <button type="button" class="close" (click)="editPaysModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card-body p-4">
+                                    <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="editPaysModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-warning">Modifier</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal delete-->
+
+                    <div bsModal #deletePaysModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-danger" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title text-center">Supprimer un pays</h4>
+                            <button type="button" class="close" (click)="deletePaysModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce pays ?</strong></p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="deletePaysModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-danger">Supprimer</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    </div>
+                </div>
+                </div>
+                <!--/.col-->
+            </div>
+        </tab>
+
+        <tab>
+            <ng-template tabHeading><i class="icon-user"></i> Département</ng-template>
+        
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-8"> 
+                        <div class="input-group" style="margin-left: 15px; width: 400px;">
+                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" > 
+                        <div class="input-group" style="margin-right: 100px;">
+                        
+                            <button class="btn btn-success" data-toggle="modal" (click)="addDepartementModal.show()" type="button">Ajouter un département <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            
+                        </div>
+                    </div>
+                </div>
+                <br> <br> <br>
+                <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa fa-align-justify"></i> Listes des départements
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Pays</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>DEP1</td>
+                                    <td>Mono</td>
+                                    <td>Bénin</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editDepartementModal.show()"><span class="fa fa-edit"></span></button>
+                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteDepartementModal.show()"><span class="fa fa-trash"></span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Pays</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <nav>
+                            <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    <!--Modal add-->
+                        <div bsModal #addDepartementModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-success" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title">Ajouter un département</h4>
+                                <button type="button" class="close" (click)="addDepartementModal.hide()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                
+                                    <div class="card-body p-4">
+                                        <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom du département</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="etatvalo">Pays</label>
+                                            <select class="form-control" id="etatvalo">
+                                            <option>Bénin</option>
+                                            </select>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="addDepartementModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-success">Sauvegarder</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal edit-->
+                    <div bsModal #editDepartementModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-warning" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Modifer un département</h4>
+                            <button type="button" class="close" (click)="editDepartementModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card-body p-4">
+                                    <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="etatvalo">Pays</label>
+                                            <select class="form-control" id="etatvalo">
+                                            <option>Bénin</option>
+                                            </select>
+                                        </div>
+                                        
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="editDepartementModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-warning">Modifier</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal delete-->
+
+                    <div bsModal #deleteDepartementModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-danger" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title text-center">Supprimer un département</h4>
+                            <button type="button" class="close" (click)="deleteDepartementModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce département ?</strong></p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="deleteDepartementModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-danger">Supprimer</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    </div>
+                </div>
+                </div>
+                <!--/.col-->
+            </div>
+        </tab>
+
+        <tab>
+            <ng-template tabHeading><i class="icon-user"></i> Commune</ng-template>
+        
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-8"> 
+                        <div class="input-group" style="margin-left: 15px; width: 400px;">
+                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" > 
+                        <div class="input-group" style="margin-right: 100px;">
+                        
+                            <button class="btn btn-success" data-toggle="modal" (click)="addCommuneModal.show()" type="button">Ajouter une commune <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            
+                        </div>
+                    </div>
+                </div>
+                <br> <br> <br>
+                <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa fa-align-justify"></i> Listes des communes
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Département</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Com1</td>
+                                    <td>Dogbo</td>
+                                    <td>97 55 31 80</td>
+                                    <td>Sinécomcorde</td>
+                                    <td>Mono</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editCommuneModal.show()"><span class="fa fa-edit"></span></button>
+                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteCommuneModal.show()"><span class="fa fa-trash"></span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Département</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <nav>
+                            <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    <!--Modal add-->
+                        <div bsModal #addCommuneModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-success" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title">Ajouter une commune</h4>
+                                <button type="button" class="close" (click)="addCommuneModal.hide()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                
+                                    <div class="card-body p-4">
+                                        <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Téléphone</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Adresse</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="etatvalo">Département</label>
+                                            <select class="form-control" id="etatvalo">
+                                            <option>Mono</option>
+                                            </select>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="addCommuneModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-success">Sauvegarder</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal edit-->
+                    <div bsModal #editCommuneModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-warning" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Modifer une commune</h4>
+                            <button type="button" class="close" (click)="editCommuneModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card-body p-4">
+                                    <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Téléphone</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Adresse</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="etatvalo">Département</label>
+                                            <select class="form-control" id="etatvalo">
+                                            <option>Mono</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="editCommuneModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-warning">Modifier</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal delete-->
+
+                    <div bsModal #deleteCommuneModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-danger" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title text-center">Supprimer une commune</h4>
+                            <button type="button" class="close" (click)="deleteCommuneModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer cette commune ?</strong></p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="deleteCommuneModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-danger">Supprimer</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    </div>
+                </div>
+                </div>
+                <!--/.col-->
+            </div>
+        </tab>
+        
+        <tab>
+            <ng-template tabHeading><i class="icon-user"></i> Arrondissement</ng-template>
+        
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-8"> 
+                        <div class="input-group" style="margin-left: 15px; width: 400px;">
+                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" > 
+                        <div class="input-group" style="margin-right: 100px;">
+                        
+                            <button class="btn btn-success" data-toggle="modal" (click)="addArrondModal.show()" type="button">Ajouter un arrondissement <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            
+                        </div>
+                    </div>
+                </div>
+                <br> <br> <br>
+                <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa fa-align-justify"></i> Listes des arrondissement
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Commune</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Arr1</td>
+                                    <td>Tovi</td>
+                                    <td>97 55 31 80</td>
+                                    <td>Sinécomcorde</td>
+                                    <td>Mono</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editArrondModal.show()"><span class="fa fa-edit"></span></button>
+                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteArrondModal.show()"><span class="fa fa-trash"></span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Commune</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <nav>
+                            <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    <!--Modal add-->
+                        <div bsModal #addArrondModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-success" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title">Ajouter un arrondissement</h4>
+                                <button type="button" class="close" (click)="addArrondModal.hide()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                
+                                    <div class="card-body p-4">
+                                        <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Téléphone</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Adresse</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="etatvalo">Commune</label>
+                                            <select class="form-control" id="etatvalo">
+                                            <option>Mono</option>
+                                            </select>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="addArrondModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-success">Sauvegarder</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal edit-->
+                    <div bsModal #editArrondModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-warning" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Modifer un arrondissement</h4>
+                            <button type="button" class="close" (click)="editArrondModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card-body p-4">
+                                    <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Téléphone</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Adresse</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="etatvalo">Commune</label>
+                                            <select class="form-control" id="comuArr">
+                                            <option>Mono</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="editArrondModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-warning">Modifier</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal delete-->
+
+                    <div bsModal #deleteArrondModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-danger" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title text-center">Supprimer un arrondissement</h4>
+                            <button type="button" class="close" (click)="deleteArrondModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce arrondissement ?</strong></p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="deleteArrondModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-danger">Supprimer</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    </div>
+                </div>
+                </div>
+                <!--/.col-->
+            </div>
+        </tab>
+
+        <tab>
+            <ng-template tabHeading><i class="icon-user"></i> Quartier</ng-template>
+        
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-8"> 
+                        <div class="input-group" style="margin-left: 15px; width: 400px;">
+                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" > 
+                        <div class="input-group" style="margin-right: 100px;">
+                        
+                            <button class="btn btn-success" data-toggle="modal" (click)="addQuartierModal.show()" type="button">Ajouter un quartier <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            
+                        </div>
+                    </div>
+                </div>
+                <br> <br> <br>
+                <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa fa-align-justify"></i> Listes des quartiers
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Arrondissement</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Arr1</td>
+                                    <td>Tovi 210</td>
+                                    <td>97 55 31 80</td>
+                                    <td>210</td>
+                                    <td>ZOGBO</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editQuartierModal.show()"><span class="fa fa-edit"></span></button>
+                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteQuartierModal.show()"><span class="fa fa-trash"></span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Téléphone</th>
+                                    <th>Adresse</th>
+                                    <th>Arrondissement</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <nav>
+                            <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    <!--Modal add-->
+                        <div bsModal #addQuartierModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-success" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title">Ajouter un quartier</h4>
+                                <button type="button" class="close" (click)="addQuartierModal.hide()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                
+                                    <div class="card-body p-4">
+                                        <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Téléphone</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Adresse</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="etatvalo">Arrondissement</label>
+                                            <select class="form-control" id="etatvalo">
+                                            <option>Zinvié</option>
+                                            </select>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="addQuartierModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-success">Sauvegarder</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal edit-->
+                    <div bsModal #editQuartierModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-warning" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Modifer un quartier</h4>
+                            <button type="button" class="close" (click)="editQuartierModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card-body p-4">
+                                    <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Nom</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Téléphone</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Adresse</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="etatvalo">Arrondissement</label>
+                                            <select class="form-control" id="comuArr">
+                                            <option>Mono</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="editQuartierModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-warning">Modifier</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal delete-->
+
+                    <div bsModal #deleteQuartierModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-danger" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title text-center">Supprimer un quartier</h4>
+                            <button type="button" class="close" (click)="deleteQuartierModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce quartier ?</strong></p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="deleteQuartierModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-danger">Supprimer</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    </div>
+                </div>
+                </div>
+                <!--/.col-->
+            </div>
+        </tab>
+
+        <tab>
+            <ng-template tabHeading><i class="icon-user"></i> Service</ng-template>
+        
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-8"> 
+                        <div class="input-group" style="margin-left: 15px; width: 400px;">
+                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" > 
+                        <div class="input-group" style="margin-right: 100px;">
+                        
+                            <button class="btn btn-success" data-toggle="modal" (click)="addServiceModal.show()" type="button">Ajouter un service <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            
+                        </div>
+                    </div>
+                </div>
+                <br> <br> <br>
+                <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa fa-align-justify"></i> Listes des services
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Libellé</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sev1</td>
+                                    <td>comptabilité</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editServiceModal.show()"><span class="fa fa-edit"></span></button>
+                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteServiceModal.show()"><span class="fa fa-trash"></span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Libellé</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <nav>
+                            <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    <!--Modal add-->
+                        <div bsModal #addServiceModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-success" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title">Ajouter un service</h4>
+                                <button type="button" class="close" (click)="addServiceModal.hide()" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                
+                                    <div class="card-body p-4">
+                                        <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Libellé</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="addServiceModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-success">Sauvegarder</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal edit-->
+                    <div bsModal #editServiceModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-warning" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title">Modifer un service</h4>
+                            <button type="button" class="close" (click)="editServiceModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card-body p-4">
+                                    <form>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Code</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="codevalo">Libellé</label>
+                                            <input type="text" class="form-control" autocomplete="codevalo" required>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="editServiceModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-warning">Modifier</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    <!--Modal delete-->
+
+                    <div bsModal #deleteServiceModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-danger" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title text-center">Supprimer un service</h4>
+                            <button type="button" class="close" (click)="deleteServiceModal.hide()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce service?</strong></p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="deleteServiceModal.hide()">Annuler</button>
+                            <button type="button" class="btn btn-danger">Supprimer</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+                    </div>
+                </div>
+                </div>
+                <!--/.col-->
+            </div>
+        </tab>
+
+        <tab>
+            <ng-template tabHeading><i class="icon-user"></i> Entête et Pied de page</ng-template>
+        
+            <div class="row">
+                <div class="row">
+                    <div class="col-lg-8"> 
+                        <div class="input-group" style="margin-left: 15px; width: 400px;">
+                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                        
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" > 
+                        <div class="input-group" style="margin-right: 100px;">
+                        
+                            <button class="btn btn-success" data-toggle="modal" (click)="addenteteModal.show()" type="button">Ajouter <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            
+                        </div>
+                    </div>
+                </div>
+                <br> <br> <br>
+               
+                <!--/.col-->
+            </div>
+        </tab>
+       
+    </tabset>
+    <!--Tab pays-->
+   
+</div>
+

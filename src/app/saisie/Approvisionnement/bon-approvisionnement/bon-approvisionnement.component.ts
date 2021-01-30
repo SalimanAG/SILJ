@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {ModalDirective} from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-bon-approvisionnement',
@@ -12,4 +13,8 @@ export class BonApprovisionnementComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  //Valeurs locative
+  @ViewChild('addBonModal') public addBonModal: ModalDirective;
+  @ViewChild('editBonModal') public editBonModal: ModalDirective;
+  @ViewChild('deleteBonModal') public deleteBonModal: ModalDirective;
 }

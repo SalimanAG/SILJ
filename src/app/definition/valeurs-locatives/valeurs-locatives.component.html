@@ -1,1 +1,584 @@
-<p>valeurs-locatives works!</p>
+<div class="col-md-12 mb-4">
+    <!-- Nav tabs -->
+    <tabset>
+      <tab>
+        <ng-template tabHeading><i class="icon-home"></i> Valeurs Locatives</ng-template>
+       
+        <div class="row">
+            <div class="row">
+                <div class="col-lg-8"> 
+                    <div class="input-group" style="margin-left: 15px; width: 400px;">
+                        <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                       
+                    </div>
+                </div>
+
+                <div class="col-lg-4" > 
+                    <div class="input-group" style="margin-right: 100px;">
+                       
+                        <button class="btn btn-success" data-toggle="modal" (click)="addvaleursModal.show()" type="button">Ajouter nouveau</button>
+                        
+                    </div>
+                </div>
+            </div>
+            <br> <br> <br>
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-header">
+                  <i class="fa fa-align-justify"></i> Listes des valeurs locatives
+                </div>
+                <div class="card-body">
+                  <table class="table table-bordered table-striped table-sm">
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Libellé</th>
+                        <th>Etat</th>
+                        <th>Site</th>
+                        <th>Prix</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Einar Randall</td>
+                        <td>2012/02/01</td>
+                        <td>Admin</td>
+                        <td>Admin</td>
+                        <td>Admin</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editModal.show()"><span class="fa fa-edit"></span></button>
+                            <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteModal.show()"><span class="fa fa-trash"></span></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                          <th>Code</th>
+                          <th>Libellé</th>
+                          <th>Etat</th>
+                          <th>Site</th>
+                          <th>Prix</th>
+                          <th>Actions</th>
+                        </tr>
+                      </tfoot>
+                  </table>
+                  <nav>
+                    <ul class="pagination">
+                      <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                      <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                      </li>
+                      <li class="page-item"><a class="page-link" href="#">2</a></li>
+                      <li class="page-item"><a class="page-link" href="#">3</a></li>
+                      <li class="page-item"><a class="page-link" href="#">4</a></li>
+                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                  </nav>
+                  <!--Modal add-->
+                  <div bsModal #addvaleursModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-success" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Ajouter une valeur locative</h4>
+                          <button type="button" class="close" (click)="addvaleursModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          
+                            <div class="card-body p-4">
+                                <form>
+                                  <div class="form-group mb-3">
+                                    <label for="codevalo">Code</label>
+                                    <input type="text" class="form-control" autocomplete="codevalo" required>
+                                  </div>
+                                  <div class="form-group mb-3">
+                                    <label for="libellevalo">Libellé</label>
+                                    <input type="text" class="form-control"  required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="etatvalo">Etat</label>
+                                    <select class="form-control" id="etatvalo">
+                                      <option>Actif</option>
+                                      <option>Inactif</option>
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="sitevalo">Site</label>
+                                    <select class="form-control" id="sitevalo">
+                                      <option>Zogbo</option>
+                                      <option>Ménontin</option>
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="prixvalo">Prix</label>
+                                    <select class="form-control" id="prixvalo">
+                                      <option>15 000</option>
+                                      <option>25 000</option>
+                                    </select>
+                                  </div>
+                                </form>
+                              </div>
+
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="addvaleursModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+
+                  <!--Modal edit-->
+                  <div bsModal #editModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Modifer une valeur locative</h4>
+                          <button type="button" class="close" (click)="editModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body p-4">
+                                <form>
+                                  <div class="form-group mb-3">
+                                    <label for="codevalo">Code</label>
+                                    <input type="text" class="form-control" autocomplete="codevalo" required>
+                                  </div>
+                                  <div class="form-group mb-3">
+                                    <label for="libellevalo">Libellé</label>
+                                    <input type="text" class="form-control"  required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="etatvalo">Etat</label>
+                                    <select class="form-control" id="etatvalo">
+                                      <option>Actif</option>
+                                      <option>Inactif</option>
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="sitevalo">Site</label>
+                                    <select class="form-control" id="sitevalo">
+                                      <option>Zogbo</option>
+                                      <option>Ménontin</option>
+                                    </select>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="prixvalo">Prix</label>
+                                    <select class="form-control" id="prixvalo">
+                                      <option>15 000</option>
+                                      <option>25 000</option>
+                                    </select>
+                                  </div>
+                                </form>
+                              </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="editModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-warning">Modifier</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+
+                  <!--Modal delete-->
+
+                  <div bsModal #deleteModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title text-center">Supprimer une valeur locative</h4>
+                          <button type="button" class="close" (click)="deleteModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p style="font-size: 20px;"> <strong> Voulez-vous supprimer cette valeur locative ?</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="deleteModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+
+                </div>
+              </div>
+            </div>
+            <!--/.col-->
+          </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="icon-basket-loaded"></i> Types des Valeurs Locatives</ng-template>
+        <div class="row">
+
+            <div class="row">
+                <div class="col-lg-8"> 
+                    <div class="input-group" style="margin-left: 15px; width: 400px;">
+                        <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                       
+                    </div>
+                </div>
+
+                <div class="col-lg-4" > 
+                    <div class="input-group" style="margin-right: 100px;">
+                       
+                        <button class="btn btn-success" data-toggle="modal" (click)="addTypeModal.show()" type="button">Ajouter nouveau</button>
+                        
+                    </div>
+                </div>
+            </div>
+            <br> <br> <br>
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-header">
+                  <i class="fa fa-align-justify"></i> Listes des types des valeurs locatives
+                </div>
+                <div class="card-body">
+                  <table class="table table-bordered table-striped table-sm">
+                    <thead>
+                      <tr>
+                        <th>code</th>
+                        <th>Libellé</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Aulus Agmundr</td>
+                        <td>2012/01/21</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="editTypeModal.show()"><span class="fa fa-edit"></span></button>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="deleteTypeModal.show()"><span class="fa fa-trash"></span></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                          <th>code</th>
+                          <th>Libellé</th>
+                          <th>Actions</th>
+                        </tr>
+                      </tfoot>
+                  </table>
+                  <nav>
+                    <ul class="pagination">
+                      <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                      <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                      </li>
+                      <li class="page-item"><a class="page-link" href="#">2</a></li>
+                      <li class="page-item"><a class="page-link" href="#">3</a></li>
+                      <li class="page-item"><a class="page-link" href="#">4</a></li>
+                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                  </nav>
+                  <!--Modal type  boutique-->
+                  <!--Modal add-->
+                  <div bsModal #addTypeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-success" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Ajouter une valeur locative</h4>
+                          <button type="button" class="close" (click)="addTypeModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          
+                            <div class="card-body p-4">
+                                <form>
+                                  <div class="form-group mb-3">
+                                    <label for="codetype">Code</label>
+                                    <input type="text" class="form-control" autocomplete="codetype" required>
+                                  </div>
+                                  <div class="form-group mb-3">
+                                    <label for="libelletype">Libellé</label>
+                                    <input type="text" class="form-control"  required>
+                                  </div>
+                                </form>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="addTypeModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+
+                  <!--Modal edit-->
+                  <div bsModal #editTypeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Modifer une valeur locative</h4>
+                          <button type="button" class="close" (click)="editTypeModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body p-4">
+                                <form>
+                                  <div class="form-group mb-3">
+                                    <label for="codetype">Code</label>
+                                    <input type="text" class="form-control" autocomplete="codetype" required>
+                                  </div>
+                                  <div class="form-group mb-3">
+                                    <label for="libelletype">Libellé</label>
+                                    <input type="text" class="form-control"  required>
+                                  </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="editTypeModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-warning">Modifier</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+
+                  <!--Modal delete-->
+
+                  <div bsModal #deleteTypeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title text-center">Supprimer type de valeur locative</h4>
+                          <button type="button" class="close" (click)="deleteTypeModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p style="font-size: 20px;"> <strong> Voulez-vous supprimer ce type ?</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="deleteTypeModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+
+                </div>
+              </div>
+            </div>
+            <!--/.col-->
+          </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading><i class="icon-pie-chart"></i> Prix des Valeurs Locatives</ng-template>
+        <div class="row">
+
+            <div class="row">
+                <div class="col-lg-8"> 
+                    <div class="input-group" style="margin-left: 15px; width: 400px;">
+                        <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
+                       
+                    </div>
+                </div>
+
+                <div class="col-lg-4" > 
+                    <div class="input-group" style="margin-right: 100px;">
+                       
+                        <button class="btn btn-success" data-toggle="modal" (click)="addPrixModal.show()" type="button">Ajouter nouveau</button>
+                        
+                    </div>
+                </div>
+            </div>
+            <br> <br> <br>
+
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-header">
+                  <i class="fa fa-align-justify"></i> Listes des prix des valeurs locatives
+                </div>
+                <div class="card-body">
+                  <table class="table table-bordered table-striped table-sm">
+                    <thead>
+                      <tr>
+                        <th>Code valeurs locatives</th>
+                        <th>Prix</th>
+                        <th>Date début</th>
+                        <th>Date fin</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Zbyněk Phoibos</td>
+                        <td>2012/02/01</td>
+                        <td>Staff</td>
+                        <td>Staff</td>
+                        <td>Staff</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="editPrixModal.show()"><span class="fa fa-edit"></span></button>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="deletePrixModal.show()"><span class="fa fa-trash"></span></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                          <th>Code valeurs locatives</th>
+                          <th>Prix</th>
+                          <th>Date début</th>
+                          <th>Date fin</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                  </table>
+                  <nav>
+                    <ul class="pagination">
+                      <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                      <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                      </li>
+                      <li class="page-item"><a class="page-link" href="#">2</a></li>
+                      <li class="page-item"><a class="page-link" href="#">3</a></li>
+                      <li class="page-item"><a class="page-link" href="#">4</a></li>
+                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                  </nav>
+
+                  <!--Modal prix boutique-->
+                  <!--Modal type  boutique-->
+                  <!--Modal add-->
+                  <div bsModal #addPrixModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-success" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Ajouter prix valeur locative</h4>
+                          <button type="button" class="close" (click)="addPrixModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          
+                            <div class="card-body p-4">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="etatvalo">Code</label>
+                                        <select class="form-control" id="codevalo">
+                                          <option>BT1</option>
+                                        </select>
+                                      </div>
+                                    <div class="form-group mb-3">
+                                      <label for="prixvalo">Prix</label>
+                                      <input type="text" class="form-control"  required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="prixdatedebut">Date début</label>
+                                        <input type="date" class="form-control"  required>
+                                      </div>
+                                    <div class="form-group mb-3">
+                                        <label for="prixdatefin">Date fin</label>
+                                        <input type="date" class="form-control">
+                                      </div>
+                                    <div class="form-group">
+                                      <label for="etatvalo">Statut</label>
+                                      <select class="form-control" id="etatvalo">
+                                        <option>Actif</option>
+                                        <option>Inactif</option>
+                                      </select>
+                                    </div>
+                                  </form>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="addPrixModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-success">Sauvegarder</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+
+                  <!--Modal edit-->
+                  <div bsModal #editPrixModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Modifer prix valeur locative</h4>
+                          <button type="button" class="close" (click)="editPrixModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body p-4">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="etatvalo">Code</label>
+                                        <select class="form-control" id="codevalo">
+                                          <option>BT1</option>
+                                        </select>
+                                      </div>
+                                    <div class="form-group mb-3">
+                                      <label for="prixvalo">Prix</label>
+                                      <input type="text" class="form-control"  required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="prixdatedebut">Date début</label>
+                                        <input type="date" class="form-control"  required>
+                                      </div>
+                                    <div class="form-group mb-3">
+                                        <label for="prixdatefin">Date fin</label>
+                                        <input type="date" class="form-control">
+                                      </div>
+                                    <div class="form-group">
+                                      <label for="etatvalo">Statut</label>
+                                      <select class="form-control" id="etatvalo">
+                                        <option>Actif</option>
+                                        <option>Inactif</option>
+                                      </select>
+                                    </div>
+                                  </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="editPrixModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-warning">Modifier</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+
+                  <!--Modal delete-->
+
+                  <div bsModal #deletePrixModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title text-center">Supprimer ce prix de valeur locative</h4>
+                          <button type="button" class="close" (click)="deletePrixModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p style="font-size: 20px;"> <strong> Voulez-vous supprimer ce prix ?</strong></p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="deletePrixModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal -->
+                </div>
+              </div>
+            </div>
+            <!--/.col-->
+          </div>
+      </tab>
+    </tabset>
+  </div><!--/.col-->
+
+ 
+
+  
