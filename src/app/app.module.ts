@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule} from '@angular/forms';
-import { ModalModule} from 'ngx-bootstrap/modal'
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -23,8 +22,13 @@ import { P500Component } from './views/error/500.component';
 import { LoginComponent } from './views/login/login.component';
 import { RegisterComponent } from './views/register/register.component';
 
+//modale
+import { ModalModule } from 'ngx-bootstrap/modal';
 
+//dataTable
+import { DataTablesModule } from 'angular-datatables';
 
+import {HttpClientModule} from '@angular/common/http';
 
 const APP_CONTAINERS = [
   DefaultLayoutComponent
@@ -108,7 +112,10 @@ import { AutheComponent } from './authe/authe.component';
     TabsModule.forRoot(),
     ChartsModule,
     FormsModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    DataTablesModule,
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   declarations: [
     AppComponent,
