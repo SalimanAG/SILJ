@@ -6,6 +6,7 @@ import { Commune } from '../../models/commune.model';
 import { Arrondissement } from '../../models/arrondissement.model';
 import { Quartier } from '../../models/quartier.model';
 import { Service } from '../../models/service.model';
+import { SiteMarcher } from '../../models/siteMarcher.model';
 
 
 @Injectable({
@@ -117,5 +118,22 @@ export class CommuneService {
 
   deleteService(code:String){
     return this.httpClient.delete<boolean>(this.host+'/commune/service/byCodSev/'+code);
+  }
+
+  // Site marcher
+  getAllSiteMarcher(){
+    return this.httpClient.get<SiteMarcher[]>(this.host+'/commune/site/list');
+  }
+
+  addSiteMarcher(corps:SiteMarcher){
+    return this.httpClient.post<SiteMarcher>(this.host+'/commune/site/list', corps);
+  }
+
+  editSiteMarcher(code:String, corps:SiteMarcher){
+    return this.httpClient.put<SiteMarcher>(this.host+'/commune/site/byCodSit/'+code, corps);
+  }
+
+  deleteSiteMarcher(code:String){
+    return this.httpClient.delete<boolean>(this.host+'/commune/site/byCodSit/'+code);
   }
 }
