@@ -6,9 +6,10 @@
     <!--Les enfants s'amusent-->
     <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
       <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
-      <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+      <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
     </div>
-    <table class="table table-bordered table-striped table-sm">
+    <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+    [dtTrigger]="dtTrigger1">
       <thead>
         <tr>
           <th>Code</th>
@@ -21,17 +22,18 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>KAMI</td>
-          <td>Abdora</td>
-          <td>Caissier</td>
-          <td>SAF</td>
-          <td>OUI</td>
+        <tr *ngFor="let user of utilisateurs; let i = index">
+          <td>{{ user.idUtilisateur }}</td>
+          <td>{{ user.nomUtilisateur }}</td>
+          <td>{{ user.prenomUtilisateur }}</td>
+          <td>{{ user.fonctionUtilisateur }}</td>
+          <td>{{ user.service }}</td>
+          <td *ngIf="user.activeUtilisateur.valueOf()===true">OUI</td>
+          <td *ngIf="user.activeUtilisateur.valueOf()===false">NON</td>
           <td>
-            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal.show()"><span class="fa fa-edit"></span></button>
-            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal.show()"><span class="fa fa-trash"></span></button>
-            <button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal.show()"><span class="fa fa-eye"></span></button>
+            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditUser(i)"><span class="fa fa-edit"></span></button>
+            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteUser(i)"><span class="fa fa-trash"></span></button>
+            <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosUser(i)"><span class="fa fa-eye"></span></button>
             <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
             <!--Le bouton des options-->
             <div class="btn-group" dropdown>
@@ -63,168 +65,175 @@
         </tr>
       </tfoot>
     </table>
-    <nav>
-      <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-        <li class="page-item active">
-          <a class="page-link" href="#">1</a>
-        </li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item"><a class="page-link" href="#">4</a></li>
-        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-      </ul>
-    </nav>
+
     <!-- Les modales-->
           <!--Modale 1-->
           <div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-primary" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h4 class="modal-title">Enrégistrer un Utilisateur</h4>
-                  <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <!-- Formulaire pour enrégistrer un article-->
-                  <div class="card">
-                    <div class="card-header">
-                      <strong>Nouveau Utilisateur</strong>
+              <form [formGroup]="addUserFormsGroup" (ngSubmit)="onSubmitAddUserFormsGroup()">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Enrégistrer un Utilisateur</h4>
+                    <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Formulaire pour enrégistrer un article-->
+                    <div class="card">
+                      <div class="card-header">
+                        <strong>Nouveau Utilisateur</strong>
 
-                    </div>
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <label for="city">Nom</label>
-                          <input type="text" class="form-control" id="city" placeholder="Nom de l'Utilisateur">
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <label for="postal-code">Prénoms</label>
-                          <input type="text" class="form-control" id="postal-code" placeholder="Prénoms de l'Utilisateur">
-                        </div>
-                      </div><!--/.row-->
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <label for="city">Login</label>
-                          <input type="text" class="form-control" id="city" placeholder="Login de l'Utilisateur">
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <label for="postal-code">Mot de Passe</label>
-                          <input type="password" class="form-control" id="postal-code" placeholder="Mot de Passe de l'Utilisateur">
-                        </div>
-                      </div><!--/.row-->
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <label for="postal-code">Fonction</label>
-                          <input type="password" class="form-control" id="postal-code" placeholder="Fonction de l'Utilisateur">
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <label for="select1">Service</label>
-                            <select id="select1" name="select1" class="form-control">
-                              <option value="0">Service d'appartenance</option>
-                              <option value="1">Option #1</option>
-                              <option value="2">Option #2</option>
-                              <option value="3">Option #3</option>
-                            </select>
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="form-group col-sm-6">
+                            <label for="addNomUtilisateur">Nom</label>
+                            <input type="text" class="form-control" id="addNomUtilisateur"
+                             formControlName="addNomUtilisateur" placeholder="Nom de l'Utilisateur">
+                          </div>
+                          <div class="form-group col-sm-6">
+                            <label for="addPrenomUtilisateur">Prénoms</label>
+                            <input type="text" class="form-control" id="addPrenomUtilisateure"
+                             formControlName="addPrenomUtilisateur" placeholder="Prénoms de l'Utilisateur">
+                          </div>
+                        </div><!--/.row-->
+                        <div class="row">
+                          <div class="form-group col-sm-6">
+                            <label for="addLogin">Login</label>
+                            <input type="text" class="form-control" id="addLogin"
+                             formControlName="addLogin" placeholder="Login de l'Utilisateur">
+                          </div>
+                          <div class="form-group col-sm-6">
+                            <label for="addMotDePass">Mot de Passe</label>
+                            <input type="password" class="form-control" id="addMotDePass"
+                             formControlName="addMotDePass" disabled="true" placeholder="Mot de Passe de l'Utilisateur">
+                          </div>
+                        </div><!--/.row-->
+                        <div class="row">
+                          <div class="form-group col-sm-6">
+                            <label for="addFonctionUtilisateur">Fonction</label>
+                            <input type="text" class="form-control" id="addFonctionUtilisateur"
+                            formControlName="addFonctionUtilisateur" placeholder="Fonction de l'Utilisateur">
+                          </div>
+                          <div class="form-group col-sm-6">
+                            <label for="select1">Service</label>
+                              <select id="select1" name="select1" class="form-control">
+                                <option value="0">Service d'appartenance</option>
+                                <option value="1">Option #1</option>
+                                <option value="2">Option #2</option>
+                                <option value="3">Option #3</option>
+                              </select>
 
-                        </div>
-                      </div><!--/.row-->
-                      <div class="form-group row">
-                        <div class="col-md-12 col-form-label">
-                          <div class="form-check form-check-inline mr-3">
-                            <label class="form-check-label" for="inline-checkbox1">Actif</label>
-                            <input class="form-check-input" type="checkbox" id="inline-checkbox1" value="option1">
+                          </div>
+                        </div><!--/.row-->
+                        <div class="form-group row">
+                          <div class="col-md-12 col-form-label">
+                            <div class="form-check form-check-inline mr-3">
+                              <label class="form-check-label" for="addActiveUtilisateur">  Compte Actif</label>
+                              <input class="form-check-input" type="checkbox" id="addActiveUtilisateur"
+                              formControlName="addActiveUtilisateur" >
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
-                  <button type="button" class="btn btn-primary">Enrégistrer</button>
-                </div>
-              </div><!-- /.modal-content -->
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addUserFormsGroup.invalid">Enrégistrer</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </form>
+
             </div><!-- /.modal-dialog -->
           </div><!-- /.modal 1 -->
 
           <!--Modale 2-->
           <div bsModal #warningModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-warning modal-lg" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h4 class="modal-title">Modifier Un Utilisateur</h4>
-                  <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <!-- Formulaire pour modifier un utilisateur-->
-                  <div class="card">
-                    <div class="card-header">
-                      <strong>Modifier Un Utilisateur</strong>
-                    </div>
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <label for="city">Nom</label>
-                          <input type="text" class="form-control" id="city" placeholder="Nom de l'Utilisateur">
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <label for="postal-code">Prénoms</label>
-                          <input type="text" class="form-control" id="postal-code" placeholder="Prénoms de l'Utilisateur">
-                        </div>
-                      </div><!--/.row-->
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <label for="city">Login</label>
-                          <input type="text" class="form-control" id="city" placeholder="Login de l'Utilisateur">
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <label for="postal-code">Mot de Passe</label>
-                          <input type="password" class="form-control" id="postal-code" placeholder="Mot de Passe de l'Utilisateur">
-                        </div>
-                      </div><!--/.row-->
-                      <div class="row">
-                        <div class="form-group col-sm-6">
-                          <label for="postal-code">Fonction</label>
-                          <input type="password" class="form-control" id="postal-code" placeholder="Fonction de l'Utilisateur">
-                        </div>
-                        <div class="form-group col-sm-6">
-                          <label for="select1">Service</label>
-                            <select id="select1" name="select1" class="form-control">
-                              <option value="0">Service d'appartenance</option>
-                              <option value="1">Option #1</option>
-                              <option value="2">Option #2</option>
-                              <option value="3">Option #3</option>
-                            </select>
-
-                        </div>
-                      </div><!--/.row-->
-                      <div class="form-group row">
-                        <div class="col-md-6 col-form-label">
-                          <div class="form-check form-check-inline mr-3">
-                            <input class="form-check-input" type="checkbox" id="inline-checkbox1" value="option1">
-                            <label class="form-check-label" for="inline-checkbox1"> Actif</label>
+              <form [formGroup]="editUserFormsGroup" (ngSubmit)="onSubmitEditUserFormsGroup()">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Modifier Un Utilisateur</h4>
+                    <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Formulaire pour modifier un utilisateur-->
+                    <div class="card">
+                      <div class="card-header">
+                        <strong>Modifier Un Utilisateur</strong>
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="form-group col-sm-6">
+                            <label for="editNomUtilisateur">Nom</label>
+                            <input type="text" class="form-control" id="editNomUtilisateur"
+                            formControlName="editNomUtilisateur" [ngModel]="editUser.nomUtilisateur" placeholder="Nom de l'Utilisateur">
                           </div>
-                        </div>
-                        <div class="col-md-6 col-form-label">
-                          <div class="form-check form-check-inline mr-3">
-                            <input class="form-check-input" type="checkbox" id="inline-checkbox1" value="option1">
-                            <label class="form-check-label" for="inline-checkbox1"> Saisir le Mot de Passe à la Première Connexion </label>
+                          <div class="form-group col-sm-6">
+                            <label for="editPrenomUtilisateur">Prénoms</label>
+                            <input type="text" class="form-control" id="editPrenomUtilisateur"
+                             formControlName="editPrenomUtilisateur" [ngModel]="editUser.prenomUtilisateur" placeholder="Prénoms de l'Utilisateur">
+                          </div>
+                        </div><!--/.row-->
+                        <div class="row">
+                          <div class="form-group col-sm-6">
+                            <label for="editLogin">Login</label>
+                            <input type="text" class="form-control" id="editLogin"
+                            formControlName="editLogin" [ngModel]="editUser.login" placeholder="Login de l'Utilisateur">
+                          </div>
+                          <div class="form-group col-sm-6">
+                            <label for="editMotDePass">Mot de Passe</label>
+                            <input type="password" class="form-control" id="editMotDePass"
+                            formControlName="editMotDePass" placeholder="Mot de Passe de l'Utilisateur">
+                          </div>
+                        </div><!--/.row-->
+                        <div class="row">
+                          <div class="form-group col-sm-6">
+                            <label for="editFonctionUtilisateur">Fonction</label>
+                            <input type="password" class="form-control" id="editFonctionUtilisateur"
+                             formControlName="editFonctionUtilisateur" [ngModel]="editUser.fonctionUtilisateur" placeholder="Fonction de l'Utilisateur">
+                          </div>
+                          <div class="form-group col-sm-6">
+                            <label for="select1">Service</label>
+                              <select id="select1" name="select1" class="form-control">
+                                <option value="0">Service d'appartenance</option>
+                                <option value="1">Option #1</option>
+                                <option value="2">Option #2</option>
+                                <option value="3">Option #3</option>
+                              </select>
+
+                          </div>
+                        </div><!--/.row-->
+                        <div class="form-group row">
+                          <div class="col-md-6 col-form-label">
+                            <div class="form-check form-check-inline mr-3">
+                              <input class="form-check-input" type="checkbox" id="editActiveUtilisateur"
+                               [ngModel]="editUser.activeUtilisateur" formControlName="editActiveUtilisateur" >
+                              <label class="form-check-label" for="editActiveUtilisateur">  Compte Actif</label>
+                            </div>
+                          </div>
+                          <div class="col-md-6 col-form-label">
+                            <div class="form-check form-check-inline mr-6">
+                              <input class="form-check-input" type="checkbox" id="inline-checkbox1" >
+                              <label class="form-check-label" for="inline-checkbox1"> Saisir le Mot de Passe à la Première Connexion </label>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
-                  <button type="button" class="btn btn-warning">Modifier</button>
-                </div>
-              </div><!-- /.modal-content -->
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                    <button type="submit" class="btn btn-warning" [disabled]="editUserFormsGroup.invalid">Modifier</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </form>
+
             </div><!-- /.modal-dialog -->
           </div><!-- /.modal 2 -->
 
@@ -239,12 +248,12 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <p>Vous êtes sur le point de supprimer l'Utilisateur <mark style="color: red;">1</mark></p>
+                  <p>Vous êtes sur le point de supprimer l'Utilisateur <mark style="color: red;">{{ suprUser.idUtilisateur }}</mark></p>
                   <p>Le confirmez-vous ?</p>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
-                  <button type="button" class="btn btn-danger">Supprimer</button>
+                  <button type="button" class="btn btn-danger" (click)="onConfirmDeleteUser()">Supprimer</button>
                 </div>
               </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -265,39 +274,40 @@
                     <tbody>
                       <tr>
                         <th>Code</th>
-                        <td>1</td>
+                        <td>{{ infosUser.idUtilisateur }}</td>
                       </tr>
                       <tr>
                         <th>Nom</th>
-                        <td>KAMI</td>
+                        <td>{{ infosUser.nomUtilisateur }}</td>
                       </tr>
                       <tr>
                         <th>Prénoms</th>
-                        <td>Abdora</td>
+                        <td>{{ infosUser.prenomUtilisateur }}</td>
                       </tr>
                       <tr>
                         <th>Login</th>
-                        <td>KAMY Abdora</td>
+                        <td>{{ infosUser.login }}</td>
                       </tr>
                       <tr>
                         <th>Fonction</th>
-                        <td>Caissière</td>
+                        <td>{{ infosUser.fonctionUtilisateur }}</td>
                       </tr>
                       <tr>
                         <th>Service</th>
-                        <td>SAF</td>
+                        <td>Pas encore pris en compte dans le code</td>
                       </tr>
                       <tr>
                         <th>Actif</th>
-                        <td>OUI</td>
+                        <td *ngIf="infosUser.activeUtilisateur.valueOf()===true">OUI</td>
+                        <td *ngIf="infosUser.activeUtilisateur.valueOf()===false">NON</td>
                       </tr>
                       <tr>
                         <th>Dernière Connexion</th>
-                        <td>le 31/12/2020 à 17h30</td>
+                        <td>le 31/12/2020 à 17h30 Pas encore</td>
                       </tr>
                       <tr>
                         <th>En ligne</th>
-                        <td>NON</td>
+                        <td>NON -- Pas encore</td>
                       </tr>
                     </tbody>
                   </table>

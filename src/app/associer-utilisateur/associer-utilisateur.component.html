@@ -223,9 +223,9 @@
       <div class="card-body">
         <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
-          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm">
+        <table class="table table-bordered table-striped table-sm" datatable >
           <thead>
             <tr>
               <th>Nom & Prénoms Utilisateur</th>
@@ -242,21 +242,20 @@
               <td>Mairie</td>
               <td>01/02/2020</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal2.show()"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal2.show()"><span class="fa fa-trash"></span></button>
-                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal2.show()"><span class="fa fa-eye"></span></button>-->
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffecter(0)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffecter(0)"><span class="fa fa-trash"></span></button>
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
                 <div class="btn-group" dropdown>
                   <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                   <ul *dropdownMenu class="dropdown-menu" role="menu">
-                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                    <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" >Another action</a>
                     </li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                    <li role="menuitem"><a class="dropdown-item" >Something else
                       here</a></li>
                     <li class="divider dropdown-divider"></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                    <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                     </li>
                   </ul>
                 </div>
@@ -273,150 +272,155 @@
             </tr>
           </tfoot>
         </table>
-        <nav>
-          <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-            <li class="page-item active">
-              <a class="page-link" href="#">1</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-          </ul>
-        </nav>
 
         <!-- Les modales-->
               <!--Modale 1-->
               <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-primary" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Enrégistrer une Association</h4>
-                      <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour Enrégistrer une Famille d'article-->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Nouvelle Association à une Caisse</strong>
+                  <form [formGroup]="addAffecterFormsGroup" (ngSubmit)="onSubmitAddAffecterFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Enrégistrer une Association</h4>
+                        <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Nouvelle Association à une Caisse</strong>
 
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Utilisateur</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Utilisateur </option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addUtilisateur">Utilisateur</label>
+                                  <select id="addUtilisateur" name="addUtilisateur" class="form-control"
+                                  formControlName="addUtilisateur">
+                                    <option *ngFor="let user of utilisateurs; let i = index" value="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
 
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-6">
-                              <label for="select1">Arrondissement</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Arrondissement</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-sm-6">
-                              <label for="select1">Caisse</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner la Caisse</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-6">
-                              <label for="date-Associ-Arrondi">Date d'Association</label>
-                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
-                            </div>
-                          </div><!--/.row-->
+                                  </select>
+
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-6">
+                                <label for="addArrondissement">Arrondissement</label>
+                                  <select id="addArrondissement" name="addArrondissement" class="form-control"
+                                  formControlName="addArrondissement">
+                                    <option value="0">Selectionner l'Arrondissement</option>
+                                    <option value="1">Option #1</option>
+                                    <option value="2">Option #2</option>
+                                    <option value="3">Option #3</option>
+                                  </select>
+                              </div>
+                              <div class="form-group col-sm-6">
+                                <label for="addCaisse">Caisse</label>
+                                  <select id="addCaisse" name="addCaisse" class="form-control"
+                                  formControlName="addCaisse">
+                                    <option *ngFor="let caisse of caissesByAArrondissement; let i = index" value="i">{{ caisse.codeCaisse }} - {{ caisse.libeCaisse }}</option>
+
+                                  </select>
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-6">
+                                <label for="addDateDebAffecter">Date d'Association</label>
+                                <input type="date" class="form-control" name="addDateDebAffecter" id="addDateDebAffecter"
+                                formControlName="addDateDebAffecter">
+                              </div>
+                              <div class="form-group col-sm-6">
+                                <label for="addDateFinAffecter">Date de Fin d'Association</label>
+                                <input type="date" class="form-control" name="addDateFinAffecter" id="addDateFinAffecter"
+                                formControlName="addDateFinAffecter">
+                              </div>
+                            </div><!--/.row-->
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
-                      <button type="button" class="btn btn-primary">Enrégistrer</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 1 -->
 
               <!--Modale 2-->
               <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-warning modal-lg" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Modifier une Association à une Caisse</h4>
-                      <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour Modifier une Association à une Caisse-->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Modifier une Association à Une Caisse</strong>
+                  <form [formGroup]="editAffecterFormsGroup" (ngSubmit)="onSubmitEditAffecterFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Modifier une Association à une Caisse</h4>
+                        <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour Modifier une Association à une Caisse-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Modifier une Association à Une Caisse</strong>
 
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Utilisateur</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Utilisateur </option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-6">
-                              <label for="select1">Arrondissement</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Arrondissement</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-sm-6">
-                              <label for="select1">Caisse</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner la Caisse</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-6">
-                              <label for="date-Associ-Arrondi">Date d'Association</label>
-                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
-                            </div>
-                          </div><!--/.row-->
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editUtilisateur">Utilisateur</label>
+                                  <select id="editUtilisateur" name="editUtilisateur" class="form-control"
+                                  formControlName="editUtilisateur">
+                                    <option *ngFor="let user of utilisateurs; let i = index" value="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
+
+                                  </select>
+
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-6">
+                                <label for="editArrondissement">Arrondissement</label>
+                                  <select id="editArrondissement" name="editArrondissement" class="form-control"
+                                  formControlName="editArrondissement">
+                                    <option value="0">Selectionner l'Arrondissement</option>
+                                    <option value="1">Option #1</option>
+                                    <option value="2">Option #2</option>
+                                    <option value="3">Option #3</option>
+                                  </select>
+                              </div>
+                              <div class="form-group col-sm-6">
+                                <label for="editCaisse">Caisse</label>
+                                  <select id="editCaisse" name="editCaisse" class="form-control"
+                                  formControlName="editCaisse">
+                                    <option *ngFor="let caisse of caissesByAArrondissement; let i = index" value="i">{{ caisse.codeCaisse }} - {{ caisse.libeCaisse }}</option>
+
+                                  </select>
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-6">
+                                <label for="editDateDebAffecter">Date d'Association</label>
+                                <input type="date" class="form-control" name="editDateDebAffecter" id="editDateDebAffecter"
+                                formControlName="editDateDebAffecter">
+                              </div>
+                              <div class="form-group col-sm-6">
+                                <label for="editDateFinAffecter">Date de Fin d'Association</label>
+                                <input type="date" class="form-control" name="editDateFinAffecter" id="editDateFinAffecter"
+                                formControlName="editDateFinAffecter">
+                              </div>
+                            </div><!--/.row-->
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
-                      <button type="button" class="btn btn-warning">Modifier</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-warning">Modifier</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 2 -->
 
@@ -436,32 +440,11 @@
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" (click)="dangerModal2.hide()">Annuler</button>
-                      <button type="button" class="btn btn-danger">Supprimer</button>
+                      <button type="button" class="btn btn-danger" (click)="onConfirmDeleteAffecter()">Supprimer</button>
                     </div>
                   </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 3 -->
-
-              <!--Modale 4-->
-              <!--<div bsModal #infoModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-info modal-lg" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Détail Sur Article</h4>
-                      <button type="button" class="close" (click)="infoModal2.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <p>One fine body&hellip;</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="infoModal2.hide()">Fermer</button>
-
-                    </div>-->
-                  <!--</div> /.modal-content -->
-                <!--</div> /.modal-dialog -->
-              <!--</div> /.modal 4 -->
 
       </div>
     </div>
@@ -476,14 +459,14 @@
       <div class="card-body">
         <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
-          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm">
+        <table class="table table-bordered table-striped table-sm" datatable >
           <thead>
             <tr>
               <th>Nom & Prénoms Utilisateur</th>
               <th>Groupe Utilisateur</th>
-              <th>Date d'Association</th>
+              <!--<th>Date d'Association</th>-->
               <th>Actions</th>
             </tr>
           </thead>
@@ -491,23 +474,22 @@
             <tr>
               <td>KAMI Abdora</td>
               <td>GPUSR01 - Caissières</td>
-              <td>01/02/2020</td>
+              <!--<td>01/02/2020</td>-->
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal3.show()"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal3.show()"><span class="fa fa-trash"></span></button>
-                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal3.show()"><span class="fa fa-eye"></span></button>-->
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffecterUserToGroup(0)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffecterUserToGroup()"><span class="fa fa-trash"></span></button>
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
                 <div class="btn-group" dropdown>
                   <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                   <ul *dropdownMenu class="dropdown-menu" role="menu">
-                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                    <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" >Another action</a>
                     </li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                    <li role="menuitem"><a class="dropdown-item" >Something else
                       here</a></li>
                     <li class="divider dropdown-divider"></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                    <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                     </li>
                   </ul>
                 </div>
@@ -518,140 +500,131 @@
             <tr>
               <th>Nom & Prénoms Utilisateur</th>
               <th>Groupe Utilisateur</th>
-              <th>Date d'Association</th>
+              <!--<th>Date d'Association</th>-->
               <th>Actions</th>
             </tr>
           </tfoot>
         </table>
-        <nav>
-          <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-            <li class="page-item active">
-              <a class="page-link" href="#">1</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-          </ul>
-        </nav>
+
 
         <!-- Les modales-->
               <!--Modale 1-->
               <div bsModal #primaryModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-primary" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Enrégistrer une Association</h4>
-                      <button type="button" class="close" (click)="primaryModal3.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour Enrégistrer une Nouvelle Association à un Groupe-->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Nouvelle Association d'Utilisateur à un Groupe d'Utilisateur</strong>
+                  <form [formGroup]="addAffectUserToGroupFormsGroup" (ngSubmit)="onSubmitAddAffecterUserToGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Enrégistrer une Association</h4>
+                        <button type="button" class="close" (click)="primaryModal3.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour Enrégistrer une Nouvelle Association à un Groupe-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Nouvelle Association d'Utilisateur à un Groupe d'Utilisateur</strong>
 
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Utilisateur</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Utilisateur </option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addUtilisateur2">Utilisateur</label>
+                                <select id="addUtilisateur2" name="addUtilisateur2" class="form-control"
+                                formControlName="addUtilisateur2">
+                                  <option *ngFor="let user of utilisateurs; let i = index" value="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
+
                                 </select>
 
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Groupe d'Utilisateur</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner le Groupe d'Utilisateur</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="date-Associ-Arrondi">Date d'Association</label>
-                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addGroupUser">Groupe d'Utilisateur</label>
+                                  <select id="addGroupUser" name="addGroupUser" class="form-control"
+                                  formControlName="addGroupUser">
+                                    <option *ngFor="let group of groupUsers; let i = index" value="i">{{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
 
-                            </div>
-                          </div><!--/.row-->
+                                  </select>
+                              </div>
+                            </div><!--/.row-->
+                            <!--<div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="date-Associ-Arrondi">Date d'Association</label>
+                                <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+
+                              </div>
+                            </div>/.row-->
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
-                      <button type="button" class="btn btn-primary">Enrégistrer</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 1 -->
 
               <!--Modale 2-->
               <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-warning" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Modifier Une Association</h4>
-                      <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour Enrégistrer une Unité de Comptage-->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Modifier une Association à un Groupe d'Utilisateur</strong>
+                  <form [formGroup]="editAffectUserToGroupFormsGroup" (ngSubmit)="onSubmitEditAffecterUserToGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Modifier Une Association</h4>
+                        <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour Enrégistrer une Unité de Comptage-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Modifier une Association à un Groupe d'Utilisateur</strong>
 
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Utilisateur</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Utilisateur </option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editUtilisateur2">Utilisateur</label>
+                                <select id="editUtilisateur2" name="editUtilisateur2" class="form-control"
+                                formControlName="editUtilisateur2">
+                                  <option *ngFor="let user of utilisateurs; let i = index" value="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
+
                                 </select>
 
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Groupe d'Utilisateur</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner le Groupe d'Utilisateur</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="date-Associ-Arrondi">Date d'Association</label>
-                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editGroupUser">Groupe d'Utilisateur</label>
+                                  <select id="editGroupUser" name="editGroupUser" class="form-control"
+                                  formControlName="editGroupUser">
+                                    <option *ngFor="let group of groupUsers; let i = index" value="i">{{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
 
-                            </div>
-                          </div><!--/.row-->
+                                  </select>
+                              </div>
+                            </div><!--/.row-->
+                            <!--<div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="date-Associ-Arrondi">Date d'Association</label>
+                                <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+
+                              </div>
+                            </div>/.row-->
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
-                      <button type="button" class="btn btn-warning">Modifier</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-warning">Modifier</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 2 -->
 
@@ -671,32 +644,12 @@
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" (click)="dangerModal3.hide()">Annuler</button>
-                      <button type="button" class="btn btn-danger">Supprimer</button>
+                      <button type="button" class="btn btn-danger" (click)="onConfirmDeleteAffecterUserToGroup()">Supprimer</button>
                     </div>
                   </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 3 -->
 
-              <!--Modale 4
-              <div bsModal #infoModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-info modal-lg" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Détail Sur Article</h4>
-                      <button type="button" class="close" (click)="infoModal3.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <p>One fine body&hellip;</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="infoModal3.hide()">Fermer</button>
-
-                    </div>
-                  </div>/.modal-content -->
-                <!--</div>< /.modal-dialog -->
-              <!--</div> /.modal 4 -->
 
       </div>
     </div>

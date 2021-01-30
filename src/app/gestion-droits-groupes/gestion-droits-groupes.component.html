@@ -10,9 +10,9 @@
       <div class="card-body">
         <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
-          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm">
+        <table class="table table-bordered table-striped table-sm" datatable >
           <thead>
             <tr>
               <th>Code</th>
@@ -25,21 +25,21 @@
               <td>GPUSR1</td>
               <td>Caissières</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal3.show()"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal3.show()"><span class="fa fa-trash"></span></button>
-                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal3.show()"><span class="fa fa-eye"></span></button>-->
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditGroupUser(0)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteGroupUser(0)"><span class="fa fa-trash"></span></button>
+
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
                 <div class="btn-group" dropdown>
                   <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                   <ul *dropdownMenu class="dropdown-menu" role="menu">
-                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                    <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" >Another action</a>
                     </li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                    <li role="menuitem"><a class="dropdown-item" >Something else
                       here</a></li>
                     <li class="divider dropdown-divider"></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                    <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                     </li>
                   </ul>
                 </div>
@@ -54,105 +54,104 @@
             </tr>
           </tfoot>
         </table>
-        <nav>
-          <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-            <li class="page-item active">
-              <a class="page-link" href="#">1</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-          </ul>
-        </nav>
+
 
         <!-- Les modales-->
               <!--Modale 1-->
               <div bsModal #primaryModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-primary" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Enrégistrer un Groupe d'Utilisateur</h4>
-                      <button type="button" class="close" (click)="primaryModal3.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour Enrégistrer un Groupe d'Utilisateur -->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Nouveau Groupe d'Utilisateur</strong>
+                  <form [formGroup]="addGroupUserFormsGroup" (ngSubmit)="onSubmitAddGroupUserFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Enrégistrer un Groupe d'Utilisateur</h4>
+                        <button type="button" class="close" (click)="primaryModal3.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour Enrégistrer un Groupe d'Utilisateur -->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Nouveau Groupe d'Utilisateur</strong>
 
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="city">Code</label>
-                              <input type="text" class="form-control" id="city" placeholder="Code du Groupe">
-                            </div>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addIdGroupUser">Code</label>
+                                <input type="text" class="form-control" id="addIdGroupUser"
+                                formControlName="addIdGroupUser" placeholder="Code du Groupe">
+                              </div>
 
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="city">Libellé</label>
-                              <input type="texte" class="form-control" id="city" placeholder="Libellé du Groupe">
-                            </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addLibGroupUser">Libellé</label>
+                                <input type="texte" class="form-control" id="addLibGroupUser"
+                                formControlName="addLibGroupUser" placeholder="Libellé du Groupe">
+                              </div>
 
-                          </div><!--/.row-->
+                            </div><!--/.row-->
 
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
-                      <button type="button" class="btn btn-primary">Enrégistrer</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 1 -->
 
               <!--Modale 2-->
               <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-warning modal-lg" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Modifier Un Groupe d'Utilisateur</h4>
-                      <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour Enrégistrer une Unité de Comptage-->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Modifier un Groupe d'Utilisateur</strong>
+                <div class="modal-dialog modal-warning" role="document">
+                  <form [formGroup]="editGroupUserFormsGroup" (ngSubmit)="onSubmitEditGroupUserFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Modifier Un Groupe d'Utilisateur</h4>
+                        <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour Enrégistrer une Unité de Comptage-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Modifier un Groupe d'Utilisateur</strong>
 
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="city">Code</label>
-                              <input type="text" class="form-control" id="city" placeholder="Code du Groupe">
-                            </div>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editIdGroupUser">Code</label>
+                                <input type="text" class="form-control" id="editIdGroupUser"
+                                formControlName="editIdGroupUser" placeholder="Code du Groupe">
+                              </div>
 
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="city">Libellé</label>
-                              <input type="texte" class="form-control" id="city" placeholder="Libellé du Groupe">
-                            </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editLibGroupUser">Libellé</label>
+                                <input type="texte" class="form-control" id="editLibGroupUser"
+                                formControlName="editLibGroupUser" placeholder="Libellé du Groupe">
+                              </div>
 
-                          </div><!--/.row-->
+                            </div><!--/.row-->
 
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
-                      <button type="button" class="btn btn-warning">Modifier</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-warning">Modifier</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 2 -->
 
@@ -172,32 +171,12 @@
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" (click)="dangerModal3.hide()">Annuler</button>
-                      <button type="button" class="btn btn-danger">Supprimer</button>
+                      <button type="button" class="btn btn-danger" (click)="onConfirmDeleteGroupUser()">Supprimer</button>
                     </div>
                   </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 3 -->
 
-              <!--Modale 4
-              <div bsModal #infoModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-info modal-lg" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Détail Sur Article</h4>
-                      <button type="button" class="close" (click)="infoModal3.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <p>One fine body&hellip;</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="infoModal3.hide()">Fermer</button>
-
-                    </div>
-                  </div>/.modal-content -->
-                <!--</div>< /.modal-dialog -->
-              <!--</div> /.modal 4 -->
 
       </div>
     </div>
@@ -213,9 +192,9 @@
         <!--Les enfants s'amusent-->
         <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
-          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm">
+        <table class="table table-bordered table-striped table-sm" datatable>
           <thead>
             <tr>
               <th>Code Groupe</th>
@@ -232,21 +211,21 @@
               <td>Facturation</td>
               <td>Pouvoir Utiliser le Module de facturation du Système afin d'établir des Factures</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal.show()"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal.show()"><span class="fa fa-trash"></span></button>
-                <button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal.show()"><span class="fa fa-eye"></span></button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffectDroitGroupUser(0)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffectDroitGroupUser(0)"><span class="fa fa-trash"></span></button>
+
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
                 <div class="btn-group" dropdown>
                   <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                   <ul *dropdownMenu class="dropdown-menu" role="menu">
-                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                    <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" >Another action</a>
                     </li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                    <li role="menuitem"><a class="dropdown-item" >Something else
                       here</a></li>
                     <li class="divider dropdown-divider"></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                    <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                     </li>
                   </ul>
                 </div>
@@ -264,133 +243,128 @@
             </tr>
           </tfoot>
         </table>
-        <nav>
-          <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-            <li class="page-item active">
-              <a class="page-link" href="#">1</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-          </ul>
-        </nav>
+
         <!-- Les modales-->
               <!--Modale 1-->
               <div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-primary" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Attribuer un Droit à un Groupe</h4>
-                      <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour enrégistrer un droit à un groupe-->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Nouveau Attribut de Droit à un Groupe</strong>
-
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Groupe</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner le Groupe</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-
-                            </div>
-
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select2">Droit</label>
-                                <select id="select1" name="select2" class="form-control">
-                                  <option value="0">Selectionner le droit</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                          </div>
-                          <div class="row" style="overflow: auto;">
-                            <p>Description <br>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste officiis cumque distinctio eligendi amet, maxime vero dolore voluptates officia impedit, eveniet placeat sunt tempore labore et porro, libero voluptatem! Id?
-                            </p>
-                          </div>
-                        </div>
+                  <form [formGroup]="addAffectDroitGroupUserFormsGroup" (ngSubmit)="onSubmitAddAffectDroitGroupUserFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Attribuer un Droit à un Groupe</h4>
+                        <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
                       </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour enrégistrer un droit à un groupe-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Nouveau Attribut de Droit à un Groupe</strong>
 
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
-                      <button type="button" class="btn btn-primary">Enrégistrer</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addGroupUser">Groupe</label>
+                                  <select id="addGroupUser" name="addGroupUser" class="form-control"
+                                  formControlName="addGroupUser">
+                                    <option *ngFor="let group of groupeUsers; let i = index" value="0">
+                                      {{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
+
+                                  </select>
+
+                              </div>
+
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addDroitUser">Droit</label>
+                                  <select id="addDroitUser" name="addDroitUser" class="form-control"
+                                  formControlName="addDroitUser">
+                                    <option *ngFor="let droit of droitUsers; let i = index" value="i">
+                                      {{ droit.idDroitUser }} - {{ droit.libDroitUser }}</option>
+
+                                  </select>
+                              </div>
+                            </div>
+                            <div class="row" style="overflow: auto;">
+                              <p>Description <br>
+                              Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste officiis cumque distinctio eligendi amet, maxime vero dolore voluptates officia impedit, eveniet placeat sunt tempore labore et porro, libero voluptatem! Id?
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 1 -->
 
               <!--Modale 2-->
               <div bsModal #warningModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-warning" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Modifier Un Attribut de Droit</h4>
-                      <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour modifier un article-->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Modifier Un Attribut de Droit à un Groupe</strong>
+                  <form [formGroup]="editAffectDroitGroupUserFormsGroup" (ngSubmit)="onSubmitEditAffectDroitGroupUserFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Modifier Un Attribut de Droit</h4>
+                        <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour modifier un article-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Modifier Un Attribut de Droit à un Groupe</strong>
 
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Groupe</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner le Groupe</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-
-                            </div>
-
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select2">Droit</label>
-                                <select id="select1" name="select2" class="form-control">
-                                  <option value="0">Selectionner le droit</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
                           </div>
-                          <div class="row" style="overflow: auto;">
-                            <p>Description <br>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste officiis cumque distinctio eligendi amet, maxime vero dolore voluptates officia impedit, eveniet placeat sunt tempore labore et porro, libero voluptatem! Id?
-                            </p>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editGroupUser">Groupe</label>
+                                  <select id="editGroupUser" name="editGroupUser" class="form-control"
+                                  formControlName="editGroupUser">
+                                    <option *ngFor="let group of groupeUsers; let i = index" value="0">
+                                      {{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
+
+                                  </select>
+
+                              </div>
+
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editDroitUser">Droit</label>
+                                  <select id="editDroitUser" name="editDroitUser" class="form-control"
+                                  formControlName="editDroitUser">
+                                    <option *ngFor="let droit of droitUsers; let i = index" value="i">
+                                      {{ droit.idDroitUser }} - {{ droit.libDroitUser }}</option>
+
+                                  </select>
+                              </div>
+                            </div>
+                            <div class="row" style="overflow: auto;">
+                              <p>Description <br>
+                              Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste officiis cumque distinctio eligendi amet, maxime vero dolore voluptates officia impedit, eveniet placeat sunt tempore labore et porro, libero voluptatem! Id?
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
-                      <button type="button" class="btn btn-warning">Modifier</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-warning">Modifier</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 2 -->
 
@@ -410,61 +384,13 @@
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
-                      <button type="button" class="btn btn-danger">Supprimer</button>
+                      <button type="button" class="btn btn-danger" (click)="onConfirmDeleteAffectDroitGroupUser()">Supprimer</button>
                     </div>
                   </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 3 -->
 
-              <!--Modale 4-->
-              <!--<div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-info modal-lg" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Détail Sur Article</h4>
-                      <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <table class="table table-striped">
 
-                        <tbody>
-                          <tr>
-                            <th>Code</th>
-                            <td>ART1</td>
-                          </tr>
-                          <tr>
-                            <th>Libellé</th>
-                            <td>Timbre de Légalisation</td>
-                          </tr>
-                          <tr>
-                            <th>Prix en (Francs CFA)</th>
-                            <td>300</td>
-                          </tr>
-                          <tr>
-                            <th>Couleur</th>
-                            <td>Jaune</td>
-                          </tr>
-                          <tr>
-                            <th>Famille</th>
-                            <td>Etat-Civil</td>
-                          </tr>
-                          <tr>
-                            <th>Unité</th>
-                            <td>Carnet</td>
-                          </tr>
-
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Fermer</button>
-
-                    </div>
-                  </div> /.modal-content -->
-                <!--</div> /.modal-dialog -->
-              <!--</div> /.modal 4 -->
       </div>
     </div>
   </tab>
