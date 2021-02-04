@@ -1,1123 +1,1655 @@
-<div class="col-md-12 mb-4">
-    <tabset>
-       
+<tabset>
+    <tab>
+        <ng-template tabHeading><i class="icon-basket-loaded"></i> Pays</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Pays
+          </div>
+          <div class="card-body">
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+            </div>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+                [dtTrigger]="dtTrigger1">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Nom Complet</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let pays of pays; let i= index">
+                  <td>{{ pays.codePays }}</td>
+                  <td>{{ pays.nomPays }}</td>
+                  <td>{{ pays.nomCompletPays }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditPays(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeletePays(i)"><span class="fa fa-trash"></span></button>
+                   
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Nom Complet</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-primary" role="document">
+                      <form [formGroup]="addPaysFormsGroup" (ngSubmit)="onSubmitAddPaysForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un pays</h4>
+                            <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouveau pays</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addCodePays">Code du pays</label>
+                                    <input type="text" class="form-control" id="addCodePays" placeholder="Code du pays"
+                                    formControlName="addCodePays">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addLibPays">Nom du pays</label>
+                                    <input type="texte" class="form-control" id="addLibPays" placeholder="nom du pays"
+                                    formControlName="addLibPays">
+                                  </div>
+    
+                                </div><!--/.row-->
 
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Pays</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addPaysModal.show()" type="button">Ajouter un pays <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
-                        </div>
-                    </div>
-                </div>
-                <br> <br> <br>
-                <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Listes des pays
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>N°1</td>
-                                    <td>Bénin</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editPaysModal.show()"><span class="fa fa-edit"></span></button>
-                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deletePaysModal.show()"><span class="fa fa-trash"></span></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <nav>
-                            <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                            </ul>
-                        </nav>
-                    <!--Modal add-->
-                        <div bsModal #addPaysModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-success" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Ajouter un pays</h4>
-                                <button type="button" class="close" (click)="addPaysModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                
-                                    <div class="card-body p-4">
-                                        <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        </form>
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                      <label for="addLibCompPays">Nom Complet du pays</label>
+                                      <input type="texte" class="form-control" id="addLibCompPays" placeholder="nom complet du pays"
+                                      formControlName="addLibCompPays">
                                     </div>
-
+      
+                                  </div><!--/.row-->
+    
+                              </div>
                             </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="addPaysModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addPaysFormsGroup.invalid">Sauvégarder</button>
+                          </div>
                         </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal edit-->
-                    <div bsModal #editPaysModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-warning" role="document">
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning" role="document">
+                      <form [formGroup]="editPaysFormsGroup" (ngSubmit)="onSubmitEditPaysForm()">
                         <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title">Modifer un pays</h4>
-                            <button type="button" class="close" (click)="editPaysModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier un pays</h4>
+                            <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
                             </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card-body p-4">
-                                    <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="editPaysModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-warning">Modifier</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Modifier une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier un pays</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCodePays">Code du pays</label>
+                                    <input type="text" class="form-control" id="editCodePays" readonly="true"
+                                    formControlName="editCodePays" placeholder="Code du pays"
+                                    [ngModel]="editPayss.codePays">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editLibPays">Nom du pays</label>
+                                    <input type="texte" class="form-control" id="editLibPays"
+                                    formControlName="editLibPays" placeholder="Libellé du pays"
+                                    [ngModel]="editPayss.nomPays">
+                                  </div>
+    
+                                </div><!--/.row-->
 
-                    <!--Modal delete-->
-
-                    <div bsModal #deletePaysModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-danger" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title text-center">Supprimer un pays</h4>
-                            <button type="button" class="close" (click)="deletePaysModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce pays ?</strong></p>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="deletePaysModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-danger">Supprimer</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    </div>
-                </div>
-                </div>
-                <!--/.col-->
-            </div>
-        </tab>
-
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Département</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addDepartementModal.show()" type="button">Ajouter un département <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
-                        </div>
-                    </div>
-                </div>
-                <br> <br> <br>
-                <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Listes des départements
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Pays</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>DEP1</td>
-                                    <td>Mono</td>
-                                    <td>Bénin</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editDepartementModal.show()"><span class="fa fa-edit"></span></button>
-                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteDepartementModal.show()"><span class="fa fa-trash"></span></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Pays</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <nav>
-                            <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                            </ul>
-                        </nav>
-                    <!--Modal add-->
-                        <div bsModal #addDepartementModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-success" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Ajouter un département</h4>
-                                <button type="button" class="close" (click)="addDepartementModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                
-                                    <div class="card-body p-4">
-                                        <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom du département</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Pays</label>
-                                            <select class="form-control" id="etatvalo">
-                                            <option>Bénin</option>
-                                            </select>
-                                        </div>
-                                        </form>
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                      <label for="editLibCompPays">Nom complet du pays</label>
+                                      <input type="texte" class="form-control" id="editLibCompPays"
+                                      formControlName="editLibCompPays" placeholder="Libellé complet du pays"
+                                      [ngModel]="editPayss.nomCompletPays">
                                     </div>
-
+      
+                                  </div><!--/.row-->
+    
+                              </div>
                             </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="addDepartementModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editPaysFormsGroup.invalid">Modifier</button>
+                          </div>
                         </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal edit-->
-                    <div bsModal #editDepartementModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-warning" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title">Modifer un département</h4>
-                            <button type="button" class="close" (click)="editDepartementModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card-body p-4">
-                                    <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Pays</label>
-                                            <select class="form-control" id="etatvalo">
-                                            <option>Bénin</option>
-                                            </select>
-                                        </div>
-                                        
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="editDepartementModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-warning">Modifier</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal delete-->
-
-                    <div bsModal #deleteDepartementModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-danger" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title text-center">Supprimer un département</h4>
-                            <button type="button" class="close" (click)="deleteDepartementModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce département ?</strong></p>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="deleteDepartementModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-danger">Supprimer</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    </div>
-                </div>
-                </div>
-                <!--/.col-->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer un pays</h4>
+                          <button type="button" class="close" (click)="dangerModal2.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Voulez-vous supprimez le pays <mark style="color: red;">{{suprPayss.codePays}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal2.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeletePays()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+    
+          </div>
+        </div>
+      </tab>
+    <!--Onglet Departement-->
+    <tab>
+        <ng-template tabHeading><i class="icon-calculator"></i> Département</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Départements
+          </div>
+          <div class="card-body">
+            <!--Les enfants s'amusent-->
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
-        </tab>
-
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Commune</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2"
+            [dtTrigger]="dtTrigger2" >
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Pays</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let departement of departement; let i = index">
+                  <td>{{ departement.codeDepartement }}</td>
+                  <td>{{ departement.nomDepartement }}</td>
+                  <td>{{ departement.pays.nomPays }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditDep(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteDep(i)"><span class="fa fa-trash"></span></button>
+                    <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosDep(i)"><span class="fa fa-eye"></span></button>
+                    <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                    <!--Le bouton des options-->
+                    <div class="btn-group" dropdown>
+                      <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                      <ul *dropdownMenu class="dropdown-menu" role="menu">
+                        <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                        </li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                          here</a></li>
+                        <li class="divider dropdown-divider"></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+    
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Pays</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-primary" role="document">
+                      <form [formGroup]="addDepFormsGroup" (ngSubmit)="onSubmitAddDepFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un Département</h4>
+                            <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour enrégistrer un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouveau Département</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addCodeDepartement">Code</label>
+                                    <input type="text" class="form-control" id="addCodeDepartement" placeholder="Code du département"
+                                      formControlName="addCodeDepartement">
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="addNomDepartement">Nom</label>
+                                        <input type="text" class="form-control" id="addNomDepartement" placeholder="Entrer le nom du département"
+                                          formControlName="addNomDepartement">
+                                      </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addPays">Pays</label>
+                                      <select id="addPays" name="addPays" class="form-control"
+                                      formControlName = "addPays">
+                                        <option *ngFor="let pays of pays; let i = index"
+                                        [value]="i">{{ pays.codePays }} - {{ pays.nomPays }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addDepFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning modal-lg" role="document">
+                      <form [formGroup]="editDepFormsGroup" (ngSubmit)="onSubmitEditDepFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier Un Département</h4>
+                            <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour modifier un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier Un Département</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-3">
+                                    <label for="editCodeDepartement">Code</label>
+                                    <input type="text" class="form-control" id="editCodeDepartement" placeholder="Code du département"
+                                      formControlName="editCodeDepartement" readonly="true" [ngModel]="editDep.codeDepartement">
+                                  </div>
+                                  <div class="form-group col-sm-9">
+                                    <label for="editNomDepartement">Nom</label>
+                                    <input type="text" class="form-control" id="editNomDepartement" placeholder="Entrer le nom du département"
+                                      formControlName="editNomDepartement" [ngModel]="editDep.nomDepartement">
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editPays">Département</label>
+                                      <select id="editPays" name="editPays" class="form-control" formControlName="editPays">
+                                        <option *ngFor="let pays of pays; let i = index"
+                                        [value]="i">{{ pays.codePays }} - {{ pays.nomPays }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer Un Département</h4>
+                          <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
                         </div>
-                    </div>
-
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addCommuneModal.show()" type="button">Ajouter une commune <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
+                        <div class="modal-body">
+                          <p>Vous êtes sur le point de supprimer le département <mark style="color: red;">{{ suprDep.codeDepartement }}</mark></p>
+                          <p>Le confirmez-vous ?</p>
                         </div>
-                    </div>
-                </div>
-                <br> <br> <br>
-                <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Listes des communes
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Téléphone</th>
-                                    <th>Adresse</th>
-                                    <th>Département</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteDep()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+                  <!--Modale 4-->
+                  <div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-info modal-lg" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Détail Sur Département</h4>
+                          <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <table class="table table-striped">
+    
                             <tbody>
-                                <tr>
-                                    <td>Com1</td>
-                                    <td>Dogbo</td>
-                                    <td>97 55 31 80</td>
-                                    <td>Sinécomcorde</td>
-                                    <td>Mono</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editCommuneModal.show()"><span class="fa fa-edit"></span></button>
-                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteCommuneModal.show()"><span class="fa fa-trash"></span></button>
-                                    </td>
-                                </tr>
+                              <tr>
+                                <th>Code</th>
+                                <td>{{ infoDep.codeDepartement }}</td>
+                              </tr>
+                              <tr>
+                                <th>Nom</th>
+                                <td>{{ infoDep.nomDepartement }}</td>
+                              </tr>
+                              <tr>
+                                <th>Pays</th>
+                                <td>{{ infoDep.pays.nomPays }}</td>
+                              </tr>
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Téléphone</th>
-                                    <th>Adresse</th>
-                                    <th>Département</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <nav>
-                            <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                            </ul>
-                        </nav>
-                    <!--Modal add-->
-                        <div bsModal #addCommuneModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-success" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Ajouter une commune</h4>
-                                <button type="button" class="close" (click)="addCommuneModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                
-                                    <div class="card-body p-4">
-                                        <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Téléphone</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Adresse</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Département</label>
-                                            <select class="form-control" id="etatvalo">
-                                            <option>Mono</option>
-                                            </select>
-                                        </div>
-                                        </form>
-                                    </div>
-
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="addCommuneModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal edit-->
-                    <div bsModal #editCommuneModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-warning" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title">Modifer une commune</h4>
-                            <button type="button" class="close" (click)="editCommuneModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card-body p-4">
-                                    <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Téléphone</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Adresse</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Département</label>
-                                            <select class="form-control" id="etatvalo">
-                                            <option>Mono</option>
-                                            </select>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="editCommuneModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-warning">Modifier</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal delete-->
-
-                    <div bsModal #deleteCommuneModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-danger" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title text-center">Supprimer une commune</h4>
-                            <button type="button" class="close" (click)="deleteCommuneModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer cette commune ?</strong></p>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="deleteCommuneModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-danger">Supprimer</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    </div>
-                </div>
-                </div>
-                <!--/.col-->
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Fermer</button>
+    
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 4 -->
+          </div>
+        </div>
+      </tab>
+      <!--Onglet Commune-->
+      <tab>
+        <ng-template tabHeading><i class="icon-calculator"></i> Commune</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Communes
+          </div>
+          <div class="card-body">
+            <!--Les enfants s'amusent-->
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
-        </tab>
-        
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Arrondissement</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions3"
+            [dtTrigger]="dtTrigger3" >
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Téléphone</th>
+                  <th>Adresse</th>
+                  <th>Département</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let commune of commune; let i = index">
+                  <td>{{ commune.codeCommune }}</td>
+                  <td>{{ commune.nomCommune }}</td>
+                  <td>{{ commune.numTelMairie }}</td>
+                  <td>{{ commune.adresseMairie }}</td>
+                  <td>{{ commune.codeDepartement.nomDepartement }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditCom(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteCom(i)"><span class="fa fa-trash"></span></button>
+                    <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosCom(i)"><span class="fa fa-eye"></span></button>
+                    <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                    <!--Le bouton des options-->
+                    <div class="btn-group" dropdown>
+                      <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                      <ul *dropdownMenu class="dropdown-menu" role="menu">
+                        <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                        </li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                          here</a></li>
+                        <li class="divider dropdown-divider"></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+    
+              </tbody>
+              <tfoot>
+                <tr>
+                    <th>Code</th>
+                    <th>Nom</th>
+                    <th>Téléphone</th>
+                    <th>Adresse</th>
+                    <th>Département</th>
+                    <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-primary" role="document">
+                      <form [formGroup]="addComFormsGroup" (ngSubmit)="onSubmitAddComFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer une Commune</h4>
+                            <button type="button" class="close" (click)="primaryModal3.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour enrégistrer un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouvelle Commune</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="addCodeCommune">Code</label>
+                                    <input type="text" class="form-control" id="addCodeCommune" placeholder="Code du commune"
+                                      formControlName="addCodeCommune">
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="addNomCommune">Nom</label>
+                                    <input type="text" class="form-control" id="addNomCommune" placeholder="Entrer le nom de la commune"
+                                      formControlName="addNomCommune">
+                                  </div>                              
+                                </div><!--/.row-->
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="addTelCommune">Téphone</label>
+                                        <input type="text" class="form-control" id="addTelCommune" placeholder="Entrer téléphone"
+                                        formControlName="addTelCommune">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="addAdrCommune">Adresse</label>
+                                        <input type="text" class="form-control" id="addAdrCommune" placeholder="Entrer adresse"
+                                        formControlName="addAdrCommune">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addDep">Département</label>
+                                      <select id="addDep" name="addDep" class="form-control"
+                                      formControlName = "addDep">
+                                        <option *ngFor="let departement of departement; let i = index"
+                                        [value]="i">{{ departement.codeDepartement }} - {{ departement.nomDepartement }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addComFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning modal-lg" role="document">
+                      <form [formGroup]="editComFormsGroup" (ngSubmit)="onSubmitEditComFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier Une Commune</h4>
+                            <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour modifier un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier Une Commune</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="editCodeCommune">Code</label>
+                                    <input type="text" class="form-control" id="editCodeCommune" placeholder="Code du département"
+                                      formControlName="editCodeCommune" readonly="true" [ngModel]="editCom.codeCommune">
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="editNomCommune">Nom</label>
+                                    <input type="text" class="form-control" id="editNomCommune" placeholder="Entrer le nom du commune"
+                                      formControlName="editNomCommune" [ngModel]="editCom.nomCommune">
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="editTelCommune">Téphone</label>
+                                        <input type="text" class="form-control" id="editTelCommune" placeholder="Entrer téléphone"
+                                        formControlName="editTelCommune" [ngModel]="editCom.numTelMairie">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="editAdrCommune">Adresse</label>
+                                        <input type="text" class="form-control" id="editAdrCommune" placeholder="Entrer adresse"
+                                        formControlName="editAdrCommune"  [ngModel]="editCom.adresseMairie">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editDep">Département</label>
+                                      <select id="editDep" name="editDep" class="form-control" formControlName="editDep">
+                                        <option *ngFor="let departement of departement; let i = index"
+                                        [value]="i">{{ departement.codeDepartement }} - {{ departement.nomDepartement }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editComFormsGroup.invalid">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer Une Commune</h4>
+                          <button type="button" class="close" (click)="dangerModal3.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
                         </div>
-                    </div>
-
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addArrondModal.show()" type="button">Ajouter un arrondissement <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
+                        <div class="modal-body">
+                          <p>Vous êtes sur le point de supprimer la Commune <mark style="color: red;">{{ suprCom.codeCommune}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
                         </div>
-                    </div>
-                </div>
-                <br> <br> <br>
-                <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Listes des arrondissement
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Téléphone</th>
-                                    <th>Adresse</th>
-                                    <th>Commune</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal3.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteCom()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+                  <!--Modale 4-->
+                  <div bsModal #infoModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-info modal-lg" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Détail Sur Commune</h4>
+                          <button type="button" class="close" (click)="infoModal3.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <table class="table table-striped">
+    
                             <tbody>
-                                <tr>
-                                    <td>Arr1</td>
-                                    <td>Tovi</td>
-                                    <td>97 55 31 80</td>
-                                    <td>Sinécomcorde</td>
-                                    <td>Mono</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editArrondModal.show()"><span class="fa fa-edit"></span></button>
-                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteArrondModal.show()"><span class="fa fa-trash"></span></button>
-                                    </td>
-                                </tr>
+                              <tr>
+                                <th>Code</th>
+                                <td>{{ infoCom.codeCommune }}</td>
+                              </tr>
+                              <tr>
+                                <th>Nom</th>
+                                <td>{{ infoCom.nomCommune }}</td>
+                              </tr>
+                              <tr>
+                                <th>Téléphone</th>
+                                <td>{{ infoCom.numTelMairie }}</td>
+                              </tr>
+                              <tr>
+                                <th>Adresse</th>
+                                <td>{{ infoCom.adresseMairie }}</td>
+                              </tr>
+                              <tr>
+                                <th>Département</th>
+                                <td>{{ infoCom.codeDepartement.nomDepartement }}</td>
+                              </tr>
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Téléphone</th>
-                                    <th>Adresse</th>
-                                    <th>Commune</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <nav>
-                            <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                            </ul>
-                        </nav>
-                    <!--Modal add-->
-                        <div bsModal #addArrondModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-success" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Ajouter un arrondissement</h4>
-                                <button type="button" class="close" (click)="addArrondModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                
-                                    <div class="card-body p-4">
-                                        <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Téléphone</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Adresse</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Commune</label>
-                                            <select class="form-control" id="etatvalo">
-                                            <option>Mono</option>
-                                            </select>
-                                        </div>
-                                        </form>
-                                    </div>
-
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="addArrondModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal edit-->
-                    <div bsModal #editArrondModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-warning" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title">Modifer un arrondissement</h4>
-                            <button type="button" class="close" (click)="editArrondModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card-body p-4">
-                                    <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Téléphone</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Adresse</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Commune</label>
-                                            <select class="form-control" id="comuArr">
-                                            <option>Mono</option>
-                                            </select>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="editArrondModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-warning">Modifier</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal delete-->
-
-                    <div bsModal #deleteArrondModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-danger" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title text-center">Supprimer un arrondissement</h4>
-                            <button type="button" class="close" (click)="deleteArrondModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce arrondissement ?</strong></p>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="deleteArrondModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-danger">Supprimer</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    </div>
-                </div>
-                </div>
-                <!--/.col-->
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="infoModal3.hide()">Fermer</button>
+    
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 4 -->
+          </div>
+        </div>
+      </tab>
+      <!--Onglet Arrondissement-->
+      <tab>
+        <ng-template tabHeading><i class="icon-calculator"></i> Arrondissement</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Arrondissements
+          </div>
+          <div class="card-body">
+            <!--Les enfants s'amusent-->
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal4.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
-        </tab>
-
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Quartier</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions4"
+            [dtTrigger]="dtTrigger4" >
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Téléphone</th>
+                  <th>Adresse</th>
+                  <th>Commune</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let arrondissement of arrondissement; let i = index">
+                  <td>{{ arrondissement.codeArrondi }}</td>
+                  <td>{{ arrondissement.nomArrondi }}</td>
+                  <td>{{ arrondissement.numTelArrondi }}</td>
+                  <td>{{ arrondissement.adresseArrondi }}</td>
+                  <td>{{ arrondissement.commune.nomCommune }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditArr(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteArr(i)"><span class="fa fa-trash"></span></button>
+                    <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosArr(i)"><span class="fa fa-eye"></span></button>
+                    <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                    <!--Le bouton des options-->
+                    <div class="btn-group" dropdown>
+                      <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                      <ul *dropdownMenu class="dropdown-menu" role="menu">
+                        <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                        </li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                          here</a></li>
+                        <li class="divider dropdown-divider"></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+    
+              </tbody>
+              <tfoot>
+                <tr>
+                    <th>Code</th>
+                    <th>Nom</th>
+                    <th>Téléphone</th>
+                    <th>Adresse</th>
+                    <th>Commune</th>
+                    <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-primary" role="document">
+                      <form [formGroup]="addArrFormsGroup" (ngSubmit)="onSubmitAddArrFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un Arrondissement</h4>
+                            <button type="button" class="close" (click)="primaryModal4.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour enrégistrer un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouveau arrondissement</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="addCodeArr">Code</label>
+                                    <input type="text" class="form-control" id="addCodeArr" placeholder="Code arrondissement"
+                                      formControlName="addCodeArr">
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="addNomArr">Nom</label>
+                                    <input type="text" class="form-control" id="addNomArr" placeholder="Entrer le nom de l' arrondissement"
+                                      formControlName="addNomArr">
+                                  </div>                              
+                                </div><!--/.row-->
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="addTelArr">Téphone</label>
+                                        <input type="text" class="form-control" id="addTelArr" placeholder="Entrer téléphone"
+                                        formControlName="addTelArr">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="addAdrArr">Adresse</label>
+                                        <input type="text" class="form-control" id="addAdrArr" placeholder="Entrer adresse"
+                                        formControlName="addAdrArr">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addCom">Commune</label>
+                                      <select id="addCom" name="addCom" class="form-control"
+                                      formControlName = "addCom">
+                                        <option *ngFor="let commune of commune; let i = index"
+                                        [value]="i">{{ commune.codeCommune }} - {{ commune.nomCommune }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal4.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addArrFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning modal-lg" role="document">
+                      <form [formGroup]="editArrFormsGroup" (ngSubmit)="onSubmitEditArrFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier Une Commune</h4>
+                            <button type="button" class="close" (click)="warningModal4.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour modifier un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier Une Commune</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="editCodeArr">Code</label>
+                                    <input type="text" class="form-control" id="editCodeArr" placeholder="Code de l'arrondissement"
+                                      formControlName="editCodeArr" readonly="true" [ngModel]="editArr.codeArrondi">
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="editNomArr">Nom</label>
+                                    <input type="text" class="form-control" id="editNomArr" placeholder="Entrer le nom "
+                                      formControlName="editNomArr" [ngModel]="editArr.nomArrondi">
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="editTelArr">Téphone</label>
+                                        <input type="text" class="form-control" id="editTelArr" placeholder="Entrer téléphone"
+                                        formControlName="editTelArr" [ngModel]="editArr.numTelArrondi">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="editAdrArr">Adresse</label>
+                                        <input type="text" class="form-control" id="editAdrArr" placeholder="Entrer adresse"
+                                        formControlName="editAdrArr"  [ngModel]="editArr.adresseArrondi">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCom">Commune</label>
+                                      <select id="editCom" name="editCom" class="form-control" formControlName="editCom">
+                                        <option *ngFor="let commune of commune; let i = index"
+                                        [value]="i">{{ commune.codeCommune }} - {{ commune.nomCommune }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal4.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" >Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer Un Arrondissement</h4>
+                          <button type="button" class="close" (click)="dangerModal4.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
                         </div>
-                    </div>
-
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addQuartierModal.show()" type="button">Ajouter un quartier <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
+                        <div class="modal-body">
+                          <p>Vous êtes sur le point de supprimer l'arrondissement <mark style="color: red;">{{ suprArr.codeArrondi}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
                         </div>
-                    </div>
-                </div>
-                <br> <br> <br>
-                <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Listes des quartiers
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Téléphone</th>
-                                    <th>Adresse</th>
-                                    <th>Arrondissement</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal4.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteArr()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+                  <!--Modale 4-->
+                  <div bsModal #infoModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-info modal-lg" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Détail Sur Arrondissement</h4>
+                          <button type="button" class="close" (click)="infoModal4.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <table class="table table-striped">
+    
                             <tbody>
-                                <tr>
-                                    <td>Arr1</td>
-                                    <td>Tovi 210</td>
-                                    <td>97 55 31 80</td>
-                                    <td>210</td>
-                                    <td>ZOGBO</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editQuartierModal.show()"><span class="fa fa-edit"></span></button>
-                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteQuartierModal.show()"><span class="fa fa-trash"></span></button>
-                                    </td>
-                                </tr>
+                              <tr>
+                                <th>Code</th>
+                                <td>{{ infoArr.codeArrondi }}</td>
+                              </tr>
+                              <tr>
+                                <th>Nom</th>
+                                <td>{{ infoArr.nomArrondi }}</td>
+                              </tr>
+                              <tr>
+                                <th>Téléphone</th>
+                                <td>{{ infoArr.numTelArrondi }}</td>
+                              </tr>
+                              <tr>
+                                <th>Adresse</th>
+                                <td>{{ infoArr.adresseArrondi }}</td>
+                              </tr>
+                              <tr>
+                                <th>Commune</th>
+                                <td>{{ infoArr.commune.nomCommune }}</td>
+                              </tr>
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Nom</th>
-                                    <th>Téléphone</th>
-                                    <th>Adresse</th>
-                                    <th>Arrondissement</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <nav>
-                            <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                            </ul>
-                        </nav>
-                    <!--Modal add-->
-                        <div bsModal #addQuartierModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-success" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Ajouter un quartier</h4>
-                                <button type="button" class="close" (click)="addQuartierModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                
-                                    <div class="card-body p-4">
-                                        <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Téléphone</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Adresse</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Arrondissement</label>
-                                            <select class="form-control" id="etatvalo">
-                                            <option>Zinvié</option>
-                                            </select>
-                                        </div>
-                                        </form>
-                                    </div>
-
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="addQuartierModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal edit-->
-                    <div bsModal #editQuartierModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-warning" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title">Modifer un quartier</h4>
-                            <button type="button" class="close" (click)="editQuartierModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card-body p-4">
-                                    <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Nom</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Téléphone</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Adresse</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Arrondissement</label>
-                                            <select class="form-control" id="comuArr">
-                                            <option>Mono</option>
-                                            </select>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="editQuartierModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-warning">Modifier</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal delete-->
-
-                    <div bsModal #deleteQuartierModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-danger" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title text-center">Supprimer un quartier</h4>
-                            <button type="button" class="close" (click)="deleteQuartierModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce quartier ?</strong></p>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="deleteQuartierModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-danger">Supprimer</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    </div>
-                </div>
-                </div>
-                <!--/.col-->
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="infoModal4.hide()">Fermer</button>
+    
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 4 -->
+          </div>
+        </div>
+      </tab>
+      <!--Onglet Quartier-->
+      <tab>
+        <ng-template tabHeading><i class="icon-calculator"></i> Quartier</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Quartiers
+          </div>
+          <div class="card-body">
+            <!--Les enfants s'amusent-->
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal5.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
-        </tab>
-
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Service</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions5"
+            [dtTrigger]="dtTrigger5" >
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Téléphone</th>
+                  <th>Adresse</th>
+                  <th>Arrondissement</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let quartier of quartier; let i = index">
+                  <td>{{ quartier.codeQuartier }}</td>
+                  <td>{{ quartier.nomQuartier }}</td>
+                  <td>{{ quartier.numTelQuartier }}</td>
+                  <td>{{ quartier.adresseQuartier }}</td>
+                  <td>{{ quartier.arrondissement.nomArrondi }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditQua(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteQua(i)"><span class="fa fa-trash"></span></button>
+                    <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosQua(i)"><span class="fa fa-eye"></span></button>
+                    <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                    <!--Le bouton des options-->
+                    <div class="btn-group" dropdown>
+                      <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                      <ul *dropdownMenu class="dropdown-menu" role="menu">
+                        <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                        </li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                          here</a></li>
+                        <li class="divider dropdown-divider"></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+    
+              </tbody>
+              <tfoot>
+                <tr>
+                    <th>Code</th>
+                    <th>Nom</th>
+                    <th>Téléphone</th>
+                    <th>Adresse</th>
+                    <th>Arrondissement</th>
+                    <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal5="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-primary" role="document">
+                      <form [formGroup]="addQuaFormsGroup" (ngSubmit)="onSubmitAddQuaFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un Arrondissement</h4>
+                            <button type="button" class="close" (click)="primaryModal5.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour enrégistrer un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouveau arrondissement</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="addCodeQua">Code</label>
+                                    <input type="text" class="form-control" id="addCodeQua" placeholder="Code quartier"
+                                      formControlName="addCodeQua">
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="addNomQua">Nom</label>
+                                    <input type="text" class="form-control" id="addNomQua" placeholder="Entrer du quartier"
+                                      formControlName="addNomQua">
+                                  </div>                              
+                                </div><!--/.row-->
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="addTelQua">Téphone</label>
+                                        <input type="text" class="form-control" id="addTelQua" placeholder="Entrer téléphone"
+                                        formControlName="addTelQua">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="addAdrQua">Adresse</label>
+                                        <input type="text" class="form-control" id="addAdrQua" placeholder="Entrer adresse"
+                                        formControlName="addAdrQua">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addArr">Arrondissement</label>
+                                      <select id="addArr" name="addArr" class="form-control"
+                                      formControlName = "addArr">
+                                        <option *ngFor="let arrondissement of arrondissement; let i = index"
+                                        [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal5.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addQuaFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal5 ="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning modal-lg" role="document">
+                      <form [formGroup]="editQuaFormsGroup" (ngSubmit)="onSubmitEditQuaFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier Un quartier</h4>
+                            <button type="button" class="close" (click)="warningModal5.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour modifier un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier Un Quartier</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="editCodeQua">Code</label>
+                                    <input type="text" class="form-control" id="editCodeQua" placeholder="Code du quartier"
+                                      formControlName="editCodeQua" readonly="true" [ngModel]="editQua.codeQuartier">
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="editNomQua">Nom</label>
+                                    <input type="text" class="form-control" id="editNomQua" placeholder="Entrer le nom "
+                                      formControlName="editNomQua" [ngModel]="editQua.nomQuartier">
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label for="editTelQua">Téphone</label>
+                                        <input type="text" class="form-control" id="editTelQua" placeholder="Entrer téléphone"
+                                        formControlName="editTelQua" [ngModel]="editQua.numTelQuartier">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="editAdrQua">Adresse</label>
+                                        <input type="text" class="form-control" id="editAdrQua" placeholder="Entrer adresse"
+                                        formControlName="editAdrQua"  [ngModel]="editQua.adresseQuartier">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editArr">Arrondissement</label>
+                                      <select id="editArr" name="editArr" class="form-control" formControlName="editArr">
+                                        <option *ngFor="let arrondissement of arrondissement; let i = index"
+                                        [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal5.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" >Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal5 ="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer Un Quartier</h4>
+                          <button type="button" class="close" (click)="dangerModal5.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
                         </div>
-                    </div>
-
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addServiceModal.show()" type="button">Ajouter un service <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
+                        <div class="modal-body">
+                          <p>Vous êtes sur le point de supprimer le quartier <mark style="color: red;">{{ suprQua.codeQuartier}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
                         </div>
-                    </div>
-                </div>
-                <br> <br> <br>
-                <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Listes des services
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Libellé</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal5.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteQua()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+                  <!--Modale 4-->
+                  <div bsModal #infoModal5 ="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-info modal-lg" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Détail Sur Quartier</h4>
+                          <button type="button" class="close" (click)="infoModal5.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <table class="table table-striped">
+    
                             <tbody>
-                                <tr>
-                                    <td>Sev1</td>
-                                    <td>comptabilité</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editServiceModal.show()"><span class="fa fa-edit"></span></button>
-                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteServiceModal.show()"><span class="fa fa-trash"></span></button>
-                                    </td>
-                                </tr>
+                              <tr>
+                                <th>Code</th>
+                                <td>{{ infoQua.codeQuartier }}</td>
+                              </tr>
+                              <tr>
+                                <th>Nom</th>
+                                <td>{{ infoQua.nomQuartier }}</td>
+                              </tr>
+                              <tr>
+                                <th>Téléphone</th>
+                                <td>{{ infoQua.numTelQuartier }}</td>
+                              </tr>
+                              <tr>
+                                <th>Adresse</th>
+                                <td>{{ infoQua.adresseQuartier }}</td>
+                              </tr>
+                              <tr>
+                                <th>Arrondissement</th>
+                                <td>{{ infoQua.arrondissement.nomArrondi }}</td>
+                              </tr>
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Libellé</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <nav>
-                            <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                            </ul>
-                        </nav>
-                    <!--Modal add-->
-                        <div bsModal #addServiceModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-success" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Ajouter un service</h4>
-                                <button type="button" class="close" (click)="addServiceModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                
-                                    <div class="card-body p-4">
-                                        <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Libellé</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        </form>
-                                    </div>
-
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="addServiceModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal edit-->
-                    <div bsModal #editServiceModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-warning" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title">Modifer un service</h4>
-                            <button type="button" class="close" (click)="editServiceModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card-body p-4">
-                                    <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Libellé</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="editServiceModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-warning">Modifier</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal delete-->
-
-                    <div bsModal #deleteServiceModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-danger" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title text-center">Supprimer un service</h4>
-                            <button type="button" class="close" (click)="deleteServiceModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce service?</strong></p>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="deleteServiceModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-danger">Supprimer</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    </div>
-                </div>
-                </div>
-                <!--/.col-->
-            </div>
-        </tab>
-
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Entête et Pied de page</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
+                          </table>
                         </div>
-                    </div>
-
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addenteteModal.show()" type="button">Ajouter <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="infoModal5.hide()">Fermer</button>
+    
                         </div>
-                    </div>
-                </div>
-                <br> <br> <br>
-               
-                <!--/.col-->
-            </div>
-        </tab>
-       
-    </tabset>
-    <!--Tab pays-->
-   
-</div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 4 -->
+          </div>
+        </div>
+      </tab>
 
+      <!--Onglet Service-->
+
+      <tab>
+        <ng-template tabHeading><i class="icon-basket-loaded"></i> Service</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Services
+          </div>
+          <div class="card-body">
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal6.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+            </div>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions6"
+                [dtTrigger]="dtTrigger6">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let service of service; let i= index">
+                  <td>{{ service.codeService }}</td>
+                  <td>{{ service.libService }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditService(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteService(i)"><span class="fa fa-trash"></span></button>
+                   
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal6="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-primary" role="document">
+                      <form [formGroup]="addServiceFormsGroup" (ngSubmit)="onSubmitAddServiceForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un Service</h4>
+                            <button type="button" class="close" (click)="primaryModal6.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouveau service</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addCodeService">Code du service</label>
+                                    <input type="text" class="form-control" id="addCodePays" placeholder="Code du service"
+                                    formControlName="addCodeService">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addLibService">Libellé du service</label>
+                                    <input type="texte" class="form-control" id="addLibService" placeholder="libellé du servie"
+                                    formControlName="addLibService">
+                                  </div>
+    
+                                </div><!--/.row-->
+
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal6.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addServiceFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal6="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning" role="document">
+                      <form [formGroup]="editServiceFormsGroup" (ngSubmit)="onSubmitEditServiceForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier un service</h4>
+                            <button type="button" class="close" (click)="warningModal6.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Modifier une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier un service</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCodeService">Code du pays</label>
+                                    <input type="text" class="form-control" id="editCodeService" readonly="true"
+                                    formControlName="editCodeService" placeholder="Code du service"
+                                    [ngModel]="editService.codeService">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editLibService">Libellé duu service</label>
+                                    <input type="texte" class="form-control" id="editLibService"
+                                    formControlName="editLibService" placeholder="Libellé du service"
+                                    [ngModel]="editService.libService">
+                                  </div>
+    
+                                </div><!--/.row-->
+
+    
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal6.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editServiceFormsGroup.invalid">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal6="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer un service</h4>
+                          <button type="button" class="close" (click)="dangerModal6.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Voulez-vous supprimez le pays <mark style="color: red;">{{suprService.codeService}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal6.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteService()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+    
+          </div>
+        </div>
+      </tab>
+      <!--Onglet Site -->
+      <tab>
+        <ng-template tabHeading><i class="icon-calculator"></i> Site</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Sites
+          </div>
+          <div class="card-body">
+            <!--Les enfants s'amusent-->
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal7.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+            </div>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions7"
+            [dtTrigger]="dtTrigger7" >
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Description</th>
+                  <th>Arrondissement</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let site of site; let i = index">
+                  <td>{{ site.codeSite }}</td>
+                  <td>{{ site.libSite }}</td>
+                  <td>{{ site.descriSite }}</td>
+                  <td>{{ site.arrondissement.nomArrondi }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditSite(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteSite(i)"><span class="fa fa-trash"></span></button>
+                    <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosSite(i)"><span class="fa fa-eye"></span></button>
+                    <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                    <!--Le bouton des options-->
+                    <div class="btn-group" dropdown>
+                      <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                      <ul *dropdownMenu class="dropdown-menu" role="menu">
+                        <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                        </li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                          here</a></li>
+                        <li class="divider dropdown-divider"></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+    
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Description</th>
+                  <th>Arrondissement</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal7="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-primary" role="document">
+                      <form [formGroup]="addSiteFormsGroup" (ngSubmit)="onSubmitAddSiteFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un site</h4>
+                            <button type="button" class="close" (click)="primaryModal7.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour enrégistrer un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouveau Site</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addCodeSite">Code</label>
+                                    <input type="text" class="form-control" id="addCodeSite" placeholder="Code du site"
+                                      formControlName="addCodeSite">
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="addLibSite">Libellé</label>
+                                        <input type="text" class="form-control" id="addLibSite" placeholder="Entrer le libellé du site"
+                                          formControlName="addLibSite">
+                                      </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="addDescriSite">Description</label>
+                                        <input type="text" class="form-control" id="addDescriSite" placeholder="Descriptiondu site"
+                                          formControlName="addDescriSite">
+                                      </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addArr">Arrondissement</label>
+                                      <select id="addArr" name="addArr" class="form-control"
+                                      formControlName = "addArr">
+                                        <option *ngFor="let arrondissement of arrondissement; let i = index"
+                                        [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal7.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addSiteFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal7="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning modal-lg" role="document">
+                      <form [formGroup]="editSiteFormsGroup" (ngSubmit)="onSubmitEditSiteFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier Un Site</h4>
+                            <button type="button" class="close" (click)="warningModal7.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour modifier un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier Un Site</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCodeSite">Code</label>
+                                    <input type="text" class="form-control" id="editCodeSite" placeholder="Code du site"
+                                      formControlName="editCodeSite" [ngModel]="editSite.codeSite">
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="editLibSite">Libellé</label>
+                                        <input type="text" class="form-control" id="editLibSite" placeholder="Entrer le libellé du site"
+                                          formControlName="editLibSite" [ngModel]="editSite.libSite">
+                                      </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="editDescriSite">Description</label>
+                                        <input type="text" class="form-control" id="editDescriSite" placeholder="Descriptiondu site"
+                                          formControlName="editDescriSite" [ngModel]="editSite.descriSite">
+                                      </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editArr">Arrondissement</label>
+                                      <select id="editArr" name="editArr" class="form-control"
+                                      formControlName = "editArr">
+                                        <option *ngFor="let arrondissement of arrondissement; let i = index"
+                                        [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                              </div>
+                            </div>
+    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal7.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal7="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer Un Site</h4>
+                          <button type="button" class="close" (click)="dangerModal7.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Vous êtes sur le point de supprimer le site <mark style="color: red;">{{ suprSite.codeSite }}</mark></p>
+                          <p>Le confirmez-vous ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal7.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteSite()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+                  <!--Modale 4-->
+                  <div bsModal #infoModal7="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-info modal-lg" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Détail Sur Site</h4>
+                          <button type="button" class="close" (click)="infoModal7.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <table class="table table-striped">
+    
+                            <tbody>
+                              <tr>
+                                <th>Code</th>
+                                <td>{{ infoSite.codeSite }}</td>
+                              </tr>
+                              <tr>
+                                <th>Libellé</th>
+                                <td>{{ infoSite.libSite }}</td>
+                              </tr>
+                              <tr>
+                                <th>Description</th>
+                                <td>{{ infoSite.descriSite }}</td>
+                              </tr>
+                              <tr>
+                                <th>Arrondissement</th>
+                                <td>{{ infoSite.arrondissement.nomArrondi }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="infoModal7.hide()">Fermer</button>
+    
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 4 -->
+          </div>
+        </div>
+      </tab>
+</tabset>
