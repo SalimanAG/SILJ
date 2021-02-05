@@ -1,584 +1,808 @@
-<div class="col-md-12 mb-4">
-    <!-- Nav tabs -->
-    <tabset>
-      <tab>
-        <ng-template tabHeading><i class="icon-home"></i> Valeurs Locatives</ng-template>
-       
-        <div class="row">
-            <div class="row">
-                <div class="col-lg-8"> 
-                    <div class="input-group" style="margin-left: 15px; width: 400px;">
-                        <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                       
-                    </div>
-                </div>
-
-                <div class="col-lg-4" > 
-                    <div class="input-group" style="margin-right: 100px;">
-                       
-                        <button class="btn btn-success" data-toggle="modal" (click)="addvaleursModal.show()" type="button">Ajouter nouveau</button>
-                        
-                    </div>
-                </div>
+<tabset>
+    <tab>
+        <ng-template tabHeading><i class="icon-calculator"></i> Valeur Locatives </ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Valeurs Locatives
+          </div>
+          <div class="card-body">
+            <!--Les enfants s'amusent-->
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal1.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
-            <br> <br> <br>
-            <div class="col-lg-12">
-              <div class="card">
-                <div class="card-header">
-                  <i class="fa fa-align-justify"></i> Listes des valeurs locatives
-                </div>
-                <div class="card-body">
-                  <table class="table table-bordered table-striped table-sm">
-                    <thead>
-                      <tr>
-                        <th>Code</th>
-                        <th>Libellé</th>
-                        <th>Etat</th>
-                        <th>Site</th>
-                        <th>Prix</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Einar Randall</td>
-                        <td>2012/02/01</td>
-                        <td>Admin</td>
-                        <td>Admin</td>
-                        <td>Admin</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editModal.show()"><span class="fa fa-edit"></span></button>
-                            <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteModal.show()"><span class="fa fa-trash"></span></button>
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                          <th>Code</th>
-                          <th>Libellé</th>
-                          <th>Etat</th>
-                          <th>Site</th>
-                          <th>Prix</th>
-                          <th>Actions</th>
-                        </tr>
-                      </tfoot>
-                  </table>
-                  <nav>
-                    <ul class="pagination">
-                      <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                      <li class="page-item active">
-                        <a class="page-link" href="#">1</a>
-                      </li>
-                      <li class="page-item"><a class="page-link" href="#">2</a></li>
-                      <li class="page-item"><a class="page-link" href="#">3</a></li>
-                      <li class="page-item"><a class="page-link" href="#">4</a></li>
-                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                  </nav>
-                  <!--Modal add-->
-                  <div bsModal #addvaleursModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-success" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h4 class="modal-title">Ajouter une valeur locative</h4>
-                          <button type="button" class="close" (click)="addvaleursModal.hide()" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          
-                            <div class="card-body p-4">
-                                <form>
-                                  <div class="form-group mb-3">
-                                    <label for="codevalo">Code</label>
-                                    <input type="text" class="form-control" autocomplete="codevalo" required>
-                                  </div>
-                                  <div class="form-group mb-3">
-                                    <label for="libellevalo">Libellé</label>
-                                    <input type="text" class="form-control"  required>
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="etatvalo">Etat</label>
-                                    <select class="form-control" id="etatvalo">
-                                      <option>Actif</option>
-                                      <option>Inactif</option>
-                                    </select>
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="sitevalo">Site</label>
-                                    <select class="form-control" id="sitevalo">
-                                      <option>Zogbo</option>
-                                      <option>Ménontin</option>
-                                    </select>
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="prixvalo">Prix</label>
-                                    <select class="form-control" id="prixvalo">
-                                      <option>15 000</option>
-                                      <option>25 000</option>
-                                    </select>
-                                  </div>
-                                </form>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+            [dtTrigger]="dtTrigger1" >
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Superficie</th>
+                  <th>Valeur unitaire</th>
+                  <th>Structure Responsable</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let immeuble of immeuble; let i = index">
+                  <td>{{ immeuble.codeIm }}</td>
+                  <td>{{ immeuble.libIm }}</td>
+                  <td>{{ immeuble.superficie }}</td> 
+                  <td>{{ immeuble.valUnit }}</td>
+                  <td>{{ immeuble.stuctResp }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditValLoc(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteValLoc(i)"><span class="fa fa-trash"></span></button>
+                    <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosValLoc(i)"><span class="fa fa-eye"></span></button>
+                    <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                    <!--Le bouton des options-->
+                    <div class="btn-group" dropdown>
+                      <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                      <ul *dropdownMenu class="dropdown-menu" role="menu">
+                        <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                        </li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                          here</a></li>
+                        <li class="divider dropdown-divider"></li>
+                        <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+    
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Superficie</th>
+                  <th>Valeur unitaire</th>
+                  <th>Structure Responsable</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-primary" role="document">
+                      <form [formGroup]="addValLocFormsGroup" (ngSubmit)="onSubmitAddValLocFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer une valeur locative</h4>
+                            <button type="button" class="close" (click)="primaryModal1.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour enrégistrer un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouvelle valeur locative</strong>
+    
                               </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="addCodeIm">Code</label>
+                                    <input type="text" class="form-control" id="addCodeIm" placeholder="Code "
+                                      formControlName="addCodeIm">
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="addLibIm">Libellé</label>
+                                    <input type="text" class="form-control" id="addLibIm" placeholder="Code "
+                                      formControlName="addLibIm">
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                      <div class="form-group col-sm-12">
+                                            <label for="addLocalisationIm">Localisation</label>
+                                            <input type="text" class="form-control" id="addLocalisationIm" placeholder="Entrer le libellé du site"
+                                              formControlName="addLocalisationIm">
+                                        </div>
+                                  
+                                        <!--div class="form-group col-sm-6">
+                                          <label for="addEtataIm">Etat</label>
+                                            <select id="addEtataIm" name="addEtataIm" class="form-control"
+                                            formControlName = "addEtataIm">
+                                              <option value="true">true </option>
+                                            </select>
+                                          </div-->
+                                      
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-4">
+                                    <label for="addSuperficieIm">Superficie</label>
+                                    <input type="text" class="form-control" id="addSuperficieIm" placeholder="Superficie "
+                                      formControlName="addSuperficieIm">
+                                  </div>
+                                  <div class="form-group col-sm-4">
+                                    <label for="addValUnitIm">Valeur Unitaire</label>
+                                    <input type="text" class="form-control" id="addValUnitIm" placeholder="Valeur unitaire "
+                                      formControlName="addValUnitIm">
+                                  </div>
+                                  <div class="form-group col-sm-4">
+                                    <label for="addStuctRespIm">Structure Responsable</label>
+                                    <input type="text" class="form-control" id="addStuctRespIm" placeholder="Structure Responsable"
+                                      formControlName="addStuctRespIm">
+                                  </div>
+                                </div><!--/.row-->
 
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="addvaleursModal.hide()">Annuler</button>
-                          <button type="button" class="btn btn-success">Sauvegarder</button>
-                        </div>
-                      </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
+                                <div class="row">
+                                  <div class="form-group col-sm-4">
+                                    <label for="addAutreIm">Autres informations</label>
+                                    <input type="text" class="form-control" id="addAutreIm" placeholder="Code "
+                                      formControlName="addAutreIm">
+                                  </div>
+                                  <div class="form-group col-sm-4">
+                                    <label for="addArr">Arrondissement</label>
+                                      <select id="addArr" name="addArr" class="form-control"
+                                      formControlName = "addArr">
+                                        <option *ngFor="let arrondissement of arrondissement; let i = index"
+                                        [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
+                                      </select>
+                                  </div>
+                                  <div class="form-group col-sm-4">
+                                    <label for="addQua">Quartier</label>
+                                      <select id="addQua" name="addQua" class="form-control"
+                                      formControlName = "addQua">
+                                        <option *ngFor="let quartier of quartier; let i = index"
+                                        [value]="i">{{ quartier.codeQuartier }} - {{ quartier.nomQuartier }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="addSite">Site</label>
+                                      <select id="addSite" name="addSite" class="form-control"
+                                      formControlName = "addSite">
+                                        <option *ngFor="let site of site; let i = index"
+                                        [value]="i">{{ site.codeSite }} - {{ site.libSite }}</option>
+                                      </select>
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="addTypeValLoc">Type valeur locative</label>
+                                      <select id="addTypeValLoc" name="addTypeValLoc" class="form-control"
+                                      formControlName = "addTypeValLoc">
+                                        <option *ngFor="let typeImmeuble of typeImmeuble; let i = index"
+                                        [value]="i">{{ typeImmeuble.codeTypIm }} - {{ typeImmeuble.libTypIm }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
 
-                  <!--Modal edit-->
-                  <div bsModal #editModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-warning" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h4 class="modal-title">Modifer une valeur locative</h4>
-                          <button type="button" class="close" (click)="editModal.hide()" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="card-body p-4">
-                                <form>
-                                  <div class="form-group mb-3">
-                                    <label for="codevalo">Code</label>
-                                    <input type="text" class="form-control" autocomplete="codevalo" required>
-                                  </div>
-                                  <div class="form-group mb-3">
-                                    <label for="libellevalo">Libellé</label>
-                                    <input type="text" class="form-control"  required>
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="etatvalo">Etat</label>
-                                    <select class="form-control" id="etatvalo">
-                                      <option>Actif</option>
-                                      <option>Inactif</option>
-                                    </select>
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="sitevalo">Site</label>
-                                    <select class="form-control" id="sitevalo">
-                                      <option>Zogbo</option>
-                                      <option>Ménontin</option>
-                                    </select>
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="prixvalo">Prix</label>
-                                    <select class="form-control" id="prixvalo">
-                                      <option>15 000</option>
-                                      <option>25 000</option>
-                                    </select>
-                                  </div>
-                                </form>
                               </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="editModal.hide()">Annuler</button>
-                          <button type="button" class="btn btn-warning">Modifier</button>
-                        </div>
-                      </div><!-- /.modal-content -->
+                            </div>
+    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal1.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addValLocFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning modal-lg" role="document">
+                      <form [formGroup]="editValLocFormsGroup" (ngSubmit)="onSubmitEditValLocFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier Un Site</h4>
+                            <button type="button" class="close" (click)="warningModal1.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour modifier un article-->
+                            <div class="card">
+                                <div class="card-header">
+                                  <strong>Modifier Un Site</strong>
+      
+                                </div>
+                              <div class="modal-body">
+                                <!-- Formulaire pour enrégistrer un article-->
+                                <div class="card">
+                                    <div class="card-header">
+                                      <strong>Nouvelle valeur locative</strong>
+          
+                                    </div>
+                                  <div class="card-body">
+                                        <div class="row">
+                                          <div class="form-group col-sm-6">
+                                            <label for="editCodeIm">Code</label>
+                                            <input type="text" class="form-control" id="editCodeIm" placeholder="Code "
+                                              formControlName="editCodeIm" [ngModel]="editValLoc.codeIm" readonly="true">
+                                          </div>
+                                          <div class="form-group col-sm-6">
+                                            <label for="editLibIm">Libellé</label>
+                                            <input type="text" class="form-control" id="editLibIm" placeholder="Libellé "
+                                              formControlName="editLibIm" [ngModel]="editValLoc.libIm"> 
+                                          </div>
+                                        </div><!--/.row-->
+                                          <div class="row">
+                                              <div class="form-group col-sm-6">
+                                                  <label for="editLocalisationIm">Localisation</label>
+                                                  <input type="text" class="form-control" id="editLocalisationIm" placeholder="Localisation"
+                                                    formControlName="editLocalisationIm" [ngModel]="editValLoc.localisationIm">
+                                              </div>
+                                        
+                                              <div class="form-group col-sm-6">
+                                                <label for="editEtatIm">Etat</label>
+                                                  <select id="editEtatIm" name="addArr" class="form-control"
+                                                  formControlName = "editEtatIm">
+                                                    <option *ngFor="let arrondissement of arrondissement; let i = index"
+                                                    [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
+                                                  </select>
+                                              </div>
+                                            
+                                          </div>
+                                    <div class="row">
+                                        <div class="form-group col-sm-6">
+                                          <label for="editSuperficieIm">Superficie</label>
+                                          <input type="text" class="form-control" id="editSuperficieIm" placeholder="Code "
+                                            formControlName="editSuperficieIm" [ngModel]="editValLoc.superficie">
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                          <label for="editValUnitIm">Valeur Unitaire</label>
+                                          <input type="text" class="form-control" id="editValUnitIm" placeholder=" valeur unitaire "
+                                            formControlName="editValUnitIm" [ngModel]="editValLoc.valUnit">
+                                        </div>
+                                    </div><!--/.row-->
+    
+                                    <div class="row">
+                                      <div class="form-group col-sm-6">
+                                        <label for="editStuctRespIm">Structure Responsable</label>
+                                        <input type="text" class="form-control" id="editStuctRespIm" placeholder="Code "
+                                          formControlName="editStuctRespIm" [ngModel]="editValLoc.stuctResp">
+                                      </div>
+                                      <div class="form-group col-sm-6">
+                                        <label for="editAutreIm">Autres informations</label>
+                                        <input type="text" class="form-control" id="editAutreIm" placeholder="Code "
+                                          formControlName="editAutreIm"  [ngModel]="editValLoc.autre">
+                                      </div>
+                                    </div><!--/.row-->
+    
+                                    <div class="row">
+                                      <div class="form-group col-sm-6">
+                                        <label for="editArr">Arrondissement</label>
+                                          <select id="editArr" name="editArr" class="form-control"
+                                          formControlName = "editArr">
+                                            <option *ngFor="let arrondissement of arrondissement; let i = index"
+                                            [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
+                                          </select>
+                                      </div>
+                                      <div class="form-group col-sm-6">
+                                        <label for="editQua">Quartier</label>
+                                          <select id="editQua" name="editQua" class="form-control"
+                                          formControlName = "editQua">
+                                            <option *ngFor="let quartier of quartier; let i = index"
+                                            [value]="i">{{ quartier.codeQuartier }} - {{ quartier.nomQuartier }}</option>
+                                          </select>
+                                      </div>
+                                    </div><!--/.row-->
+                                    <div class="row">
+                                      <div class="form-group col-sm-6">
+                                        <label for="editSite">Site</label>
+                                          <select id="editSite" name="editSite" class="form-control"
+                                          formControlName = "editSite">
+                                            <option *ngFor="let site of site; let i = index"
+                                            [value]="i">{{ site.codeSite }} - {{ site.libSite }}</option>
+                                          </select>
+                                      </div>
+                                      <div class="form-group col-sm-6">
+                                        <label for="editTypeValLoc">Type valeur locative</label>
+                                          <select id="editTypeValLoc" name="editTypeValLoc" class="form-control"
+                                          formControlName = "editTypeValLoc">
+                                            <option *ngFor="let typeImmeuble of typeImmeuble; let i = index"
+                                            [value]="i">{{ typeImmeuble.codeTypIm }} - {{ typeImmeuble.libTypIm }}</option>
+                                          </select>
+                                      </div> 
+                                    </div><!--/.row-->
+    
+                                  </div>
 
-                  <!--Modal delete-->
-
-                  <div bsModal #deleteModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                </div>
+    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal1.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning">Modifier</button>
+                          </div>
+                        </div> <!-- /.modal-content -->
+                        </div> <!-- /.modal-content -->
+                        </div> <!-- /.modal-content -->
+                      </form>
+    
+                    </div> <!-- /.modal-dialog -->
+                  </div> <!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-danger" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h4 class="modal-title text-center">Supprimer une valeur locative</h4>
-                          <button type="button" class="close" (click)="deleteModal.hide()" aria-label="Close">
+                          <h4 class="modal-title">Suprimmer Un Site</h4>
+                          <button type="button" class="close" (click)="dangerModal1.hide()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
                         <div class="modal-body">
-                          <p style="font-size: 20px;"> <strong> Voulez-vous supprimer cette valeur locative ?</strong></p>
+                          <p>Vous êtes sur le point de supprimer le site <mark style="color: red;">{{ suprValLoc.codeIm }}</mark></p>
+                          <p>Le confirmez-vous ?</p>
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="deleteModal.hide()">Annuler</button>
-                          <button type="button" class="btn btn-danger">Supprimer</button>
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal1.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteValLoc()">Supprimer</button>
                         </div>
                       </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
-
-                </div>
-              </div>
-            </div>
-            <!--/.col-->
+                  </div><!-- /.modal 3 -->
+    
+                  <!--Modale 4-->
+                  <div bsModal #infoModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-info modal-lg" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Détail Sur Valeur Locative</h4>
+                          <button type="button" class="close" (click)="infoModal1.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <table class="table table-striped">
+    
+                            <tbody>
+                              <tr>
+                                <th>Code</th>
+                                <td>{{ infoValLoc.codeIm }}</td>
+                              </tr>
+                              <tr>
+                                <th>Libellé</th>
+                                <td>{{ infoValLoc.libIm }}</td>
+                              </tr>
+                              <tr>
+                                <th>Localisation</th>
+                                <td>{{ infoValLoc.localisationIm }}</td>
+                              </tr>
+                              <tr>
+                                <th>Etat</th>
+                                <td *ngIf="infoValLoc.etatIm==true">En location</td>
+                                <td *ngIf="infoValLoc.etatIm==false">Pas en location</td>
+                              </tr>
+                              <tr>
+                                <th>Superficie</th>
+                                <td>{{ infoValLoc.superficie }} m2</td>
+                              </tr>
+                              <tr>
+                                <th>Valeur Unitaire</th>
+                                <td>{{ infoValLoc.valUnit }} F CFA</td>
+                              </tr>
+                              <tr>
+                                <th>Structure Responsable</th>
+                                <td>{{ infoValLoc.stuctResp }}</td>
+                              </tr>
+                              <tr>
+                                <th>Autres Information</th>
+                                <td>{{ infoValLoc.autre }}</td>
+                              </tr>
+                              <tr>
+                                <th>Arrondissement</th>
+                                <td>{{ infoValLoc.arrondissement.nomArrondi }}</td>
+                              </tr>
+                              <tr>
+                                <th>Quartier</th>
+                                <td>{{ infoValLoc.quartier.nomQuartier }}</td>
+                              </tr>
+                              <tr>
+                                <th>Type valeur locative</th>
+                                <td>{{ infoValLoc.typeImmeuble.libTypIm }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="infoModal1.hide()">Fermer</button>
+    
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 4 -->
           </div>
+        </div>
       </tab>
+      <!--Onglet type valeur locative-->
       <tab>
-        <ng-template tabHeading><i class="icon-basket-loaded"></i> Types des Valeurs Locatives</ng-template>
-        <div class="row">
-
-            <div class="row">
-                <div class="col-lg-8"> 
-                    <div class="input-group" style="margin-left: 15px; width: 400px;">
-                        <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                       
-                    </div>
-                </div>
-
-                <div class="col-lg-4" > 
-                    <div class="input-group" style="margin-right: 100px;">
-                       
-                        <button class="btn btn-success" data-toggle="modal" (click)="addTypeModal.show()" type="button">Ajouter nouveau</button>
-                        
-                    </div>
-                </div>
+        <ng-template tabHeading><i class="icon-basket-loaded"></i> Type de valeur locative</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Type de valeur locative
+          </div>
+          <div class="card-body">
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
-            <br> <br> <br>
-            <div class="col-lg-12">
-              <div class="card">
-                <div class="card-header">
-                  <i class="fa fa-align-justify"></i> Listes des types des valeurs locatives
-                </div>
-                <div class="card-body">
-                  <table class="table table-bordered table-striped table-sm">
-                    <thead>
-                      <tr>
-                        <th>code</th>
-                        <th>Libellé</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Aulus Agmundr</td>
-                        <td>2012/01/21</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="editTypeModal.show()"><span class="fa fa-edit"></span></button>
-                            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="deleteTypeModal.show()"><span class="fa fa-trash"></span></button>
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                          <th>code</th>
-                          <th>Libellé</th>
-                          <th>Actions</th>
-                        </tr>
-                      </tfoot>
-                  </table>
-                  <nav>
-                    <ul class="pagination">
-                      <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                      <li class="page-item active">
-                        <a class="page-link" href="#">1</a>
-                      </li>
-                      <li class="page-item"><a class="page-link" href="#">2</a></li>
-                      <li class="page-item"><a class="page-link" href="#">3</a></li>
-                      <li class="page-item"><a class="page-link" href="#">4</a></li>
-                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                  </nav>
-                  <!--Modal type  boutique-->
-                  <!--Modal add-->
-                  <div bsModal #addTypeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-success" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h4 class="modal-title">Ajouter une valeur locative</h4>
-                          <button type="button" class="close" (click)="addTypeModal.hide()" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          
-                            <div class="card-body p-4">
-                                <form>
-                                  <div class="form-group mb-3">
-                                    <label for="codetype">Code</label>
-                                    <input type="text" class="form-control" autocomplete="codetype" required>
-                                  </div>
-                                  <div class="form-group mb-3">
-                                    <label for="libelletype">Libellé</label>
-                                    <input type="text" class="form-control"  required>
-                                  </div>
-                                </form>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2"
+                [dtTrigger]="dtTrigger2">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let typeImmeuble of typeImmeuble; let i= index">
+                  <td>{{ typeImmeuble.codeTypIm }}</td>
+                  <td>{{ typeImmeuble.libTypIm }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditTypeIm(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteTypeIm(i)"><span class="fa fa-trash"></span></button>
+                   
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-primary" role="document">
+                      <form [formGroup]="addTypeImFormsGroup" (ngSubmit)="onSubmitAddTypeImForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un Type de valeur locative</h4>
+                            <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                            <div class="card">
+                                <div class="card-header">
+                                  <strong>Nouveau type de valeur locative</strong>
+      
+                                </div>
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="form-group col-sm-12">
+                                      <label for="addCodeTypIm">Code</label>
+                                      <input type="text" class="form-control" id="addCodeTypIm" placeholder="Code "
+                                      formControlName="addCodeTypIm">
+                                    </div>
+      
+                                  </div><!--/.row-->
+                                  <div class="row">
+                                    <div class="form-group col-sm-12">
+                                      <label for="addLibTypIm">Libellé</label>
+                                      <input type="texte" class="form-control" id="addLibTypIm" placeholder="Libellé"
+                                      formControlName="addLibTypIm">
+                                    </div>
+      
+                                  </div><!--/.row-->
+
+      
+                                </div>
                             </div>
-
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="addTypeModal.hide()">Annuler</button>
-                          <button type="button" class="btn btn-success">Sauvegarder</button>
-                        </div>
-                      </div><!-- /.modal-content -->
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addTypeImFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
-
-                  <!--Modal edit-->
-                  <div bsModal #editTypeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-warning" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h4 class="modal-title">Modifer une valeur locative</h4>
-                          <button type="button" class="close" (click)="editTypeModal.hide()" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="card-body p-4">
-                                <form>
-                                  <div class="form-group mb-3">
-                                    <label for="codetype">Code</label>
-                                    <input type="text" class="form-control" autocomplete="codetype" required>
+                      <form [formGroup]="editTypeImFormsGroup" (ngSubmit)="onSubmitEditTypeImForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier un type de valeur locative</h4>
+                            <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Modifier une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier un type de valeur locative</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCodeTypIm">Code</label>
+                                    <input type="text" class="form-control" id="editCodeTypIm" readonly="true"
+                                    formControlName="editCodeTypIm" placeholder="Code"
+                                    [ngModel]="editTypeIm.codeTypIm">
                                   </div>
-                                  <div class="form-group mb-3">
-                                    <label for="libelletype">Libellé</label>
-                                    <input type="text" class="form-control"  required>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editLibTypIm">Libellé</label>
+                                    <input type="texte" class="form-control" id="editLibTypIm"
+                                    formControlName="editLibTypIm" placeholder="Libellé "
+                                    [ngModel]="editTypeIm.libTypIm">
                                   </div>
-                                </form>
+    
+                                </div><!--/.row-->
+    
+                              </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="editTypeModal.hide()">Annuler</button>
-                          <button type="button" class="btn btn-warning">Modifier</button>
-                        </div>
-                      </div><!-- /.modal-content -->
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editTypeImFormsGroup.invalid">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
-
-                  <!--Modal delete-->
-
-                  <div bsModal #deleteTypeModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-danger" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h4 class="modal-title text-center">Supprimer type de valeur locative</h4>
-                          <button type="button" class="close" (click)="deleteTypeModal.hide()" aria-label="Close">
+                          <h4 class="modal-title">Suprimmer un type de valeur locative</h4>
+                          <button type="button" class="close" (click)="dangerModal2.hide()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
                         <div class="modal-body">
-                          <p style="font-size: 20px;"> <strong> Voulez-vous supprimer ce type ?</strong></p>
+                          <p>Voulez-vous supprimez le type de valeur locative <mark style="color: red;">{{suprTypeIm.codeTypIm}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="deleteTypeModal.hide()">Annuler</button>
-                          <button type="button" class="btn btn-danger">Supprimer</button>
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal2.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteTypeIm()">Supprimer</button>
                         </div>
                       </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
-
-                </div>
-              </div>
-            </div>
-            <!--/.col-->
+                  </div><!-- /.modal 3 -->
+    
+    
           </div>
+        </div>
       </tab>
+      <!--Onglet Prix immeuble-->
+
       <tab>
-        <ng-template tabHeading><i class="icon-pie-chart"></i> Prix des Valeurs Locatives</ng-template>
-        <div class="row">
-
-            <div class="row">
-                <div class="col-lg-8"> 
-                    <div class="input-group" style="margin-left: 15px; width: 400px;">
-                        <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                       
-                    </div>
-                </div>
-
-                <div class="col-lg-4" > 
-                    <div class="input-group" style="margin-right: 100px;">
-                       
-                        <button class="btn btn-success" data-toggle="modal" (click)="addPrixModal.show()" type="button">Ajouter nouveau</button>
-                        
-                    </div>
-                </div>
+        <ng-template tabHeading><i class="icon-basket-loaded"></i> Prix des valeurs locatives</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des prix des valeur locative 
+          </div>
+          <div class="card-body">
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
-            <br> <br> <br>
-
-            <div class="col-lg-12">
-              <div class="card">
-                <div class="card-header">
-                  <i class="fa fa-align-justify"></i> Listes des prix des valeurs locatives
-                </div>
-                <div class="card-body">
-                  <table class="table table-bordered table-striped table-sm">
-                    <thead>
-                      <tr>
-                        <th>Code valeurs locatives</th>
-                        <th>Prix</th>
-                        <th>Date début</th>
-                        <th>Date fin</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Zbyněk Phoibos</td>
-                        <td>2012/02/01</td>
-                        <td>Staff</td>
-                        <td>Staff</td>
-                        <td>Staff</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="editPrixModal.show()"><span class="fa fa-edit"></span></button>
-                            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="deletePrixModal.show()"><span class="fa fa-trash"></span></button>
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                          <th>Code valeurs locatives</th>
-                          <th>Prix</th>
-                          <th>Date début</th>
-                          <th>Date fin</th>
-                          <th>Status</th>
-                          <th>Actions</th>
-                        </tr>
-                    </tfoot>
-                  </table>
-                  <nav>
-                    <ul class="pagination">
-                      <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                      <li class="page-item active">
-                        <a class="page-link" href="#">1</a>
-                      </li>
-                      <li class="page-item"><a class="page-link" href="#">2</a></li>
-                      <li class="page-item"><a class="page-link" href="#">3</a></li>
-                      <li class="page-item"><a class="page-link" href="#">4</a></li>
-                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                  </nav>
-
-                  <!--Modal prix boutique-->
-                  <!--Modal type  boutique-->
-                  <!--Modal add-->
-                  <div bsModal #addPrixModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-success" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h4 class="modal-title">Ajouter prix valeur locative</h4>
-                          <button type="button" class="close" (click)="addPrixModal.hide()" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          
-                            <div class="card-body p-4">
-                                <form>
-                                    <div class="form-group">
-                                        <label for="etatvalo">Code</label>
-                                        <select class="form-control" id="codevalo">
-                                          <option>BT1</option>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions3"
+                [dtTrigger]="dtTrigger3">
+              <thead>
+                <tr>
+                  <th>Numéro</th>
+                  <th>Valeur locative</th>
+                  <th>Prix</th>
+                  <th>Date Début</th>
+                  <th>Date Fin</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let prixImmeuble of prixImmeuble; let i= index">
+                  <td>{{ prixImmeuble.idPrixIm }}</td>
+                  <td>{{ prixImmeuble.immeuble.codeIm }}</td>
+                  <td>{{ prixImmeuble.prixIm }}</td>
+                  <td>{{ prixImmeuble.dateDebPrixIm }}</td>
+                  <td>{{ prixImmeuble.dateFinPrixIm }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditPrixIm(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeletePrixIm(i)"><span class="fa fa-trash"></span></button>
+                   
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Numéro</th>
+                  <th>Valeur locative</th>
+                  <th>Prix</th>
+                  <th>Date Début</th>
+                  <th>Date Fin</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-primary" role="document">
+                      <form [formGroup]="addPrixImFormsGroup" (ngSubmit)="onSubmitAddPrixImForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un Prix de valeur locative</h4>
+                            <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                            <div class="card">
+                                <div class="card-header">
+                                  <strong>Nouveau prix de valeur locative</strong>
+      
+                                </div>
+                                <div class="card-body">
+                                  <div class="row">
+                                    <div class="form-group col-sm-12">
+                                      <label for="addVal">Valeur locative</label>
+                                        <select id="addVal" name="addVal" class="form-control"
+                                        formControlName = "addVal">
+                                          <option *ngFor="let immeuble of immeuble; let i = index"
+                                          [value]="i">{{ immeuble.codeIm }} - {{ immeuble.libIm }}</option>
                                         </select>
-                                      </div>
-                                    <div class="form-group mb-3">
-                                      <label for="prixvalo">Prix</label>
-                                      <input type="text" class="form-control"  required>
                                     </div>
-                                    <div class="form-group mb-3">
-                                        <label for="prixdatedebut">Date début</label>
-                                        <input type="date" class="form-control"  required>
-                                      </div>
-                                    <div class="form-group mb-3">
-                                        <label for="prixdatefin">Date fin</label>
-                                        <input type="date" class="form-control">
-                                      </div>
-                                    <div class="form-group">
-                                      <label for="etatvalo">Statut</label>
-                                      <select class="form-control" id="etatvalo">
-                                        <option>Actif</option>
-                                        <option>Inactif</option>
-                                      </select>
+                                  </div>
+                                  <div class="row">
+                                    <div class="form-group col-sm-12">
+                                      <label for="addPrixIm">Prix valeur locative</label>
+                                      <input type="text" class="form-control" id="addPrixIm" placeholder="Prix"
+                                      formControlName="addPrixIm">
                                     </div>
-                                  </form>
+      
+                                  </div><!--/.row-->
+                                  <div class="row">
+                                    <div class="form-group col-sm-12">
+                                      <label for="addDateDebutPrixIm">Date Début</label>
+                                      <input type="date" class="form-control" id="addDateDebutPrixIm" placeholder="Date Début"
+                                      formControlName="addDateDebutPrixIm">
+                                    </div>
+      
+                                  </div><!--/.row-->
+                                  <div class="row">
+                                    <div class="form-group col-sm-12">
+                                      <label for="addDateFinPrixIm">Date Fin</label>
+                                      <input type="date" class="form-control" id="addDateFinPrixIm" placeholder="Date Fin"
+                                      formControlName="addDateFinPrixIm">
+                                    </div>
+      
+                                  </div><!--/.row-->
+
+      
+                                </div>
                             </div>
-
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="addPrixModal.hide()">Annuler</button>
-                          <button type="button" class="btn btn-success">Sauvegarder</button>
-                        </div>
-                      </div><!-- /.modal-content -->
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addPrixImFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
-
-                  <!--Modal edit-->
-                  <div bsModal #editPrixModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-warning" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h4 class="modal-title">Modifer prix valeur locative</h4>
-                          <button type="button" class="close" (click)="editPrixModal.hide()" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="card-body p-4">
-                                <form>
-                                    <div class="form-group">
-                                        <label for="etatvalo">Code</label>
-                                        <select class="form-control" id="codevalo">
-                                          <option>BT1</option>
-                                        </select>
-                                      </div>
-                                    <div class="form-group mb-3">
-                                      <label for="prixvalo">Prix</label>
-                                      <input type="text" class="form-control"  required>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="prixdatedebut">Date début</label>
-                                        <input type="date" class="form-control"  required>
-                                      </div>
-                                    <div class="form-group mb-3">
-                                        <label for="prixdatefin">Date fin</label>
-                                        <input type="date" class="form-control">
-                                      </div>
-                                    <div class="form-group">
-                                      <label for="etatvalo">Statut</label>
-                                      <select class="form-control" id="etatvalo">
-                                        <option>Actif</option>
-                                        <option>Inactif</option>
+                      <form [formGroup]="editPrixImFormsGroup" (ngSubmit)="onSubmitEditPrixImForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier un prix de valeur locative</h4>
+                            <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Modifier une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier un prix de valeur locative</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editIdPrixIm">Code</label>
+                                    <input type="text" class="form-control" id="editIdPrixIm" placeholder="Code de l'article"
+                                      formControlName="editIdPrixIm" readonly="true" [ngModel]="editPrixImmeuble.idPrixIm">
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editVal">Valeur locative</label>
+                                      <select id="editVal" name="editVal" class="form-control"
+                                      formControlName = "editVal">
+                                        <option *ngFor="let immeuble of immeuble; let i = index"
+                                        [value]="i">{{ immeuble.codeIm }} - {{ immeuble.libIm }}</option>
                                       </select>
+                                  </div>
+                                </div>
+                                <div class="row">
+                             
+                                    <div class="form-group col-sm-12">
+                                      <label for="editPrixIm">Prix valeur locative</label>
+                                      <input type="text" class="form-control" id="editPrixIm" placeholder="Prix"
+                                      formControlName="editPrixIm" [ngModel]="editPrixImmeuble.prixIm">
                                     </div>
-                                  </form>
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editDateDebutPrixIm">Date Début</label>
+                                    <input type="date" class="form-control" id="editDateDebutPrixIm" placeholder="Date Début"
+                                    formControlName="editDateDebutPrixIm" [ngModel]="editPrixImmeuble.dateDebPrixIm">
+                                  </div>
+    
+                                </div><!--/.row-->
+
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editDateFinPrixIm">Date Fin</label>
+                                    <input type="date" class="form-control" id="editDateFinPrixIm" placeholder="Date Fin"
+                                    formControlName="editDateFinPrixIm" [ngModel]="editPrixImmeuble.dateFinPrixIm">
+                                  </div>
+    
+                                </div><!--/.row-->
+    
+                              </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="editPrixModal.hide()">Annuler</button>
-                          <button type="button" class="btn btn-warning">Modifier</button>
-                        </div>
-                      </div><!-- /.modal-content -->
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editPrixImFormsGroup.invalid">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
-
-                  <!--Modal delete-->
-
-                  <div bsModal #deletePrixModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-danger" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h4 class="modal-title text-center">Supprimer ce prix de valeur locative</h4>
-                          <button type="button" class="close" (click)="deletePrixModal.hide()" aria-label="Close">
+                          <h4 class="modal-title">Suprimmer un prix de valeur locative</h4>
+                          <button type="button" class="close" (click)="dangerModal3.hide()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
                         <div class="modal-body">
-                          <p style="font-size: 20px;"> <strong> Voulez-vous supprimer ce prix ?</strong></p>
+                          <p>Voulez-vous supprimez le prix de valeur locative <mark style="color: red;">{{ suprPrixImmeuble.idPrixIm }}</mark></p>
+                          <p>Le confirmez-vous ?</p>
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" (click)="deletePrixModal.hide()">Annuler</button>
-                          <button type="button" class="btn btn-danger">Supprimer</button>
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal3.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeletePrixIm()">Supprimer</button>
                         </div>
                       </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal -->
-                </div>
-              </div>
-            </div>
-            <!--/.col-->
+                  </div><!-- /.modal 3 -->
+    
+    
           </div>
+        </div>
       </tab>
-    </tabset>
-  </div><!--/.col-->
-
- 
-
-  
+</tabset>

@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Immeuble } from '../../models/immeuble.model';
 import { TypeImmeuble } from '../../models/typeImmeuble.model';
 import { PrixImmeuble } from '../../models/prixImmeuble.model';
+import { Arrondissement } from '../../models/arrondissement.model';
+import { Quartier } from '../../models/quartier.model';
+import { SiteMarcher } from '../../models/siteMarcher.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -67,7 +70,7 @@ export class ValeurLocativeService {
 
   }
 
-  getPrixImmeubleById(code:String){
+  getPrixImmeubleById(code:number){
     return this.httpClient.get<PrixImmeuble[]>(this.host+'/location/priximmeuble/byCodImm/'+code);
 
   }
@@ -76,12 +79,26 @@ export class ValeurLocativeService {
     return this.httpClient.post<PrixImmeuble>(this.host+'/location/priximmeuble/list', corps);
   }
 
-  editPrixImmeuble(code:String, corps:PrixImmeuble){
+  editPrixImmeuble(code:number, corps:PrixImmeuble){
     return this.httpClient.put<PrixImmeuble>(this.host+'/location/priximmeuble/byCodImm/'+code, corps);
   }
 
-  deletePrixImmeuble(code:String){
+  deletePrixImmeuble(code:number){
     return this.httpClient.delete<Boolean>(this.host+'/location/priximmeuble/byCodImm/'+code);
+  }
+
+
+  // arrondissement
+  getAllArrondissement(){
+    return this.httpClient.get<Arrondissement[]>(this.host+'/commune/arrondissement/list');
+  }
+  // quartier
+  getAllQuartier(){
+    return this.httpClient.get<Quartier[]>(this.host+'/commune/quartier/list');
+  }
+  // Site marcher
+  getAllSiteMarcher(){
+    return this.httpClient.get<SiteMarcher[]>(this.host+'/commune/site/list');
   }
 
 }

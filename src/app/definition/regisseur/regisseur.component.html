@@ -1,177 +1,270 @@
-<div class="col-md-12 mb-4">
-    <tabset>
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Régisseur</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
+<tabset>
+<tab>
+    <ng-template tabHeading><i class="icon-calculator"></i> Régisser</ng-template>
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste des Régisseur
+      </div>
+      <div class="card-body">
+        <!--Les enfants s'amusent-->
+        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+        </div>
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+        [dtTrigger]="dtTrigger1" >
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Téléphone</th>
+              <th>Utilisateur</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let regisseur of regisseur; let i = index">
+              <td>{{ regisseur.idRegisseur }}</td>
+              <td>{{ regisseur.magasinier.nomMagasinier }}</td>
+              <td>{{ regisseur.magasinier.prenomMagasinier }}</td>
+              <td>{{ regisseur.magasinier.telMagasinier }}</td>
+              <td>{{ regisseur.utilisateur.login }}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditReg(i)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteReg(i)"><span class="fa fa-trash"></span></button>
+                <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosReg(i)"><span class="fa fa-eye"></span></button>
+                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--Le bouton des options-->
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                      here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+          <tfoot>
+            <tr>
+                <th>Code</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Téléphone</th>
+                <th>Utilisateur</th>
+                <th>Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- Les modales-->
+              <!--Modale 1-->
+              <div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-primary" role="document">
+                  <form [formGroup]="addRegFormsGroup" (ngSubmit)="onSubmitAddRegFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Enrégistrer un Régisseur</h4>
+                        <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour enrégistrer un article-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Nouveau Régisser</strong>
+
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addCodeReg">Code</label>
+                                <input type="text" class="form-control" id="addCodeReg" placeholder="Code du régisseur"
+                                  formControlName="addCodeReg">
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label for="addNomMag">Nom</label>
+                                    <input type="text" class="form-control" id="addNomMag" placeholder="Entrer le nom "
+                                      formControlName="addNomMag">
+                                  </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label for="addPrenomMag">Prénom</label>
+                                    <input type="text" class="form-control" id="addPrenomMag" placeholder="Entrer le prénom"
+                                      formControlName="addPrenomMag">
+                                  </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label for="addTelMag">Téléphone</label>
+                                    <input type="text" class="form-control" id="addTelMag" placeholder="Entrer le téléphone"
+                                      formControlName="addTelMag">
+                                  </div>
+                            </div>
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addUser">Utilisateur</label>
+                                  <select id="addUser" name="addUser" class="form-control"
+                                  formControlName = "addUser">
+                                    <option *ngFor="let user of user; let i = index"
+                                    [value]="i">{{ user.idUtilisateur }} - {{ user.login }}</option>
+                                  </select>
+                              </div>
+                            </div><!--/.row-->
+                          </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addregModal.show()" type="button">Ajouter nouveau <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="addRegFormsGroup.invalid">Sauvégarder</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 1 -->
+
+              <!--Modale 2-->
+              <div bsModal #warningModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-warning modal-lg" role="document">
+                  <form [formGroup]="editRegFormsGroup" (ngSubmit)="onSubmitEditRegFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Modifier Un Régisseur</h4>
+                        <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour modifier un article-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Modifier Un Régisseur</strong>
+
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editCodeReg">Code</label>
+                                <input type="text" class="form-control" id="editCodeReg" placeholder="Code du régisseur"
+                                  formControlName="editCodeReg" readonly="true" [ngModel]="editReg.idRegisseur">
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editNomMag">Nom</label>
+                                <input type="text" class="form-control" id="editNomMag" placeholder="Entrer le nom"
+                                  formControlName="editNomMag" [ngModel]="editReg.magasinier.nomMagasinier">
+                              </div>
+                            </div><!--/.row-->
+
+                            <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label for="editPrenomMag">Prénom</label>
+                                    <input type="text" class="form-control" id="editPrenomMag" placeholder="Entrer le prénom"
+                                      formControlName="editPrenomMag" [ngModel]="editReg.magasinier.prenomMagasinier">
+                                  </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label for="editTelMag">Téléphone</label>
+                                    <input type="text" class="form-control" id="editTelMag" placeholder="Entrer le téléphone"
+                                      formControlName="editTelMag" [ngModel]="editReg.magasinier.telMagasinier">
+                                  </div>
+                            </div>
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editUser">Utilisateur</label>
+                                  <select id="editUser" name="editUser" class="form-control" formControlName="editUser">
+                                    <option *ngFor="let user of user; let i = index"
+                                    [value]="i">{{ user.idUtilisateur }} - {{ user.login }}</option>
+                                  </select>
+                              </div>
+                            </div><!--/.row-->
+                          </div>
                         </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-warning">Modifier</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 2 -->
+
+              <!--Modale 3-->
+              <div bsModal #dangerModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-danger" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Suprimmer Un Régisseur</h4>
+                      <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
                     </div>
-                </div>
-                <br> <br> <br>
-                <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Listes des régisseurs
+                    <div class="modal-body">
+                      <p>Vous êtes sur le point de supprimer le regisseur <mark style="color: red;">{{ suprReg.idRegisseur }}</mark></p>
+                      <p>Le confirmez-vous ?</p>
                     </div>
-                    <div class="card-body">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Magasinier</th>
-                                    <th>Utilisateur</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Reg1</td>
-                                    <td>Maga</td>
-                                    <td>Simon Joël</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editregModal.show()"><span class="fa fa-edit"></span></button>
-                                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteregModal.show()"><span class="fa fa-trash"></span></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                <th>Code</th>
-                                <th>Magasinier</th>
-                                <th>Utilisateur</th>
-                                <th>Actions</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <nav>
-                            <ul class="pagination">
-                            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                            <li class="page-item active">
-                                <a class="page-link" href="#">1</a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                            </ul>
-                        </nav>
-                    <!--Modal add-->
-                        <div bsModal #addregModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-success" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Ajouter un régisseur</h4>
-                                <button type="button" class="close" (click)="addregModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                
-                                    <div class="card-body p-4">
-                                        <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Utilisateur</label>
-                                            <select class="form-control" id="etatvalo">
-                                            <option>Simon Joël</option>
-                                            </select>
-                                        </div>
-                                        
-                                        </form>
-                                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
+                      <button type="button" class="btn btn-danger" (click)="onConfirmDeleteReg()">Supprimer</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 3 -->
 
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="addregModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
+              <!--Modale 4-->
+              <div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-info modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Détail Sur Régisseur</h4>
+                      <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <table class="table table-striped">
 
-                    <!--Modal edit-->
-                    <div bsModal #editregModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-warning" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title">Modifer régisseur</h4>
-                            <button type="button" class="close" (click)="editregModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="card-body p-4">
-                                    <form>
-                                        <div class="form-group mb-3">
-                                            <label for="codevalo">Code</label>
-                                            <input type="text" class="form-control" autocomplete="codevalo" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Magasinier</label>
-                                            <select class="form-control" id="etatvalo">
-                                            <option>Mag</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="etatvalo">Utilisateur</label>
-                                            <select class="form-control" id="etatvalo">
-                                            <option>Simon Joël</option>
-                                            </select>
-                                        </div>
-                                        </form>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="editregModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-warning">Modifier</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-
-                    <!--Modal delete-->
-
-                    <div bsModal #deleteregModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-danger" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h4 class="modal-title text-center">Rétirer un régisseur</h4>
-                            <button type="button" class="close" (click)="deleteregModal.hide()" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div class="modal-body">
-                            <p style="font-size: 20px;"> <strong> Voulez-vous réellement rétirer ce régisseur ?</strong></p>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="deleteregModal.hide()">Annuler</button>
-                            <button type="button" class="btn btn-danger">Supprimer</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
+                        <!--tbody>
+                          <tr>
+                            <th>Code</th>
+                            <td>{{ infoDep.codeDepartement }}</td>
+                          </tr>
+                          <tr>
+                            <th>Nom</th>
+                            <td>{{ infoDep.nomDepartement }}</td>
+                          </tr>
+                          <tr>
+                            <th>Pays</th>
+                            <td>{{ infoDep.pays.nomPays }}</td>
+                          </tr>
+                        </tbody-->
+                      </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Fermer</button>
 
                     </div>
-                </div>
-                </div>
-                <!--/.col-->
-            </div>
-        </tab>
-    </tabset>
-</div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 4 -->
+      </div>
+    </div>
+  </tab>
+</tabset>

@@ -13,6 +13,7 @@ import { Commune } from '../../../models/commune.model';
 import { Arrondissement } from '../../../models/arrondissement.model';
 import { Quartier } from '../../../models/quartier.model';
 import { Service } from '../../../models/service.model';
+import { SiteMarcher } from '../../../models/siteMarcher.model';
 
 @Component({
   selector: 'app-commune',
@@ -27,6 +28,7 @@ export class CommuneComponent implements OnInit {
   dtOptions4: DataTables.Settings = {};
   dtOptions5: DataTables.Settings = {};
   dtOptions6: DataTables.Settings = {};
+  dtOptions7: DataTables.Settings = {};
 
   //formulaires de l'onglet Pays
   pays: Pays[];
@@ -80,6 +82,15 @@ export class CommuneComponent implements OnInit {
   addServiceFormsGroup: FormGroup;
   dtTrigger6: Subject<any> = new Subject<any>();
 
+  //formulaires de l'onglet Site
+  site: SiteMarcher[];
+  suprSite:SiteMarcher = new SiteMarcher('','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))));
+  editSite:SiteMarcher = new SiteMarcher('','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))));
+  infoSite:SiteMarcher = new SiteMarcher('','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))));
+  editSiteFormsGroup: FormGroup;
+  addSiteFormsGroup: FormGroup;
+  dtTrigger7: Subject<any> = new Subject<any>();
+
   @ViewChild('primaryModal') public primaryModal: ModalDirective;
    @ViewChild('successModal') public successModal: ModalDirective;
    @ViewChild('warningModal') public warningModal: ModalDirective;
@@ -115,6 +126,12 @@ export class CommuneComponent implements OnInit {
    @ViewChild('warningModal6') public warningModal6: ModalDirective;
    @ViewChild('dangerModal6') public dangerModal6: ModalDirective;
    @ViewChild('infoModal6') public infoModal6: ModalDirective;
+
+   @ViewChild('primaryModal7') public primaryModal7: ModalDirective;
+   @ViewChild('successModal7') public successModal7: ModalDirective;
+   @ViewChild('warningModal7') public warningModal7: ModalDirective;
+   @ViewChild('dangerModal7') public dangerModal7: ModalDirective;
+   @ViewChild('infoModal7') public infoModal7: ModalDirective;
 
   constructor(private communeService:CommuneService, private formBulder:FormBuilder,
     private router:Router) {
@@ -246,6 +263,27 @@ export class CommuneComponent implements OnInit {
           }
         }
       };
+
+      this.dtOptions7 = {
+        pagingType: 'full_numbers',
+        pageLength: 5,
+        lengthMenu: [5, 10, 25, 50, 100],
+        language: {
+          lengthMenu: "Affichage de _MENU_ lignes par page",
+          zeroRecords: "Aucune ligne trouvée - Desolé",
+          info: "Affichage de la page _PAGE_ sur _PAGES_",
+          infoEmpty: "Pas de ligne trouvée",
+          infoFiltered: "(Filtré à partie de _MAX_ lignes)",
+          search: "Rechercher",
+          loadingRecords: "Chargement en cours...",
+          paginate:{
+            first:"Début",
+            last: "Fin",
+            next: "Suivant",
+            previous: "Précédent"
+          }
+        }
+      };
     }
 
     initForms(){
@@ -348,10 +386,42 @@ export class CommuneComponent implements OnInit {
         editLibService:['', Validators.required]
       });
 
+      //site
+      this.addSiteFormsGroup = this.formBulder.group(
+        {
+          addCodeSite: ['', Validators.required],
+          addLibSite: ['', Validators.required],
+          addDescriSite: ['', Validators.required],
+          addArr: 0,
+        }
+      );
+
+      this.editSiteFormsGroup = this.formBulder.group(
+        {
+          editCodeSite: ['', Validators.required],
+          editLibSite: ['', Validators.required],
+          editDescriSite: ['', Validators.required],
+          editArr: 0,
+        }
+      );
+
     }
 
   ngOnInit(): void {
 
+
+     // listes des sites à l'initialisation
+     this.communeService.getAllSiteMarcher()
+     .subscribe(
+       (data) => {
+         this.site = data;
+         this.dtTrigger7.next();
+         //console.log('****+++++ Dans le ngOnInit',this.commune);
+       },
+       (erreur) => {
+         console.log('Erreur', erreur);
+       }
+     );
 
     // listes des service à l'initialisation
     this.communeService.getAllService()
@@ -919,6 +989,88 @@ export class CommuneComponent implements OnInit {
         console.log('Réussie : ', data);
         this.dangerModal6.hide();
         this.getAllService();
+      },
+      (erreur) => {
+        console.log('Erreur : ', erreur);
+      }
+    );
+  }
+
+  //Gestion de site 
+
+  getAllSiteMarcher(){
+    this.communeService.getAllSiteMarcher()
+    .subscribe(
+      (data) => {
+        this.site = data;
+      },
+      (erreur) => {
+        console.log('Erreur de récupération ', erreur);
+      }
+    );
+  }
+
+  initEditSite(ind: number)
+  {
+    this.editSite = this.site[ind];
+    this.warningModal7.show();
+  }
+
+  initDeleteSite(ind: number)
+  {
+    this.suprSite = this.site[ind];
+    this.dangerModal7.show();
+  }
+
+  initInfosSite(ind:number){
+    this.infoSite = this.site[ind];
+    this.infoModal7.show();
+  }
+
+  onSubmitAddSiteFormsGroup(){
+
+    const newSite = new SiteMarcher(this.addSiteFormsGroup.value['addCodeSite'],
+    this.addSiteFormsGroup.value['addLibSite'],this.addSiteFormsGroup.value['addDescriSite'],
+    this.arrondissement[this.addSiteFormsGroup.value['addArr']]);
+    this.communeService.addSiteMarcher(newSite).subscribe(
+      (data) => {
+        console.log('Réussie : ', data);
+        this.primaryModal7.hide();
+        //this.router.navigate(['/article']);
+        this.getAllSiteMarcher();
+      },
+      (erreur) => {
+        console.log("Echec : ", erreur);
+      }
+    )
+  }
+
+  onSubmitEditSiteFormsGroup()
+  {
+    const editSiteFormValue = this.editSiteFormsGroup.value;
+    const newSite = new SiteMarcher(editSiteFormValue['editCodeSite'], editSiteFormValue['editLibSite'],
+    editSiteFormValue['editDescriSite'], this.arrondissement[editSiteFormValue.value['editArr']]);
+    console.log(newSite);
+    this.communeService.editSiteMarcher(this.editSite.codeSite, newSite)
+    .subscribe(
+      (data) => {
+        console.log('Objet Modifier : ', data);
+        this.warningModal7.hide();
+        this.getAllSiteMarcher();
+      },
+      (erreur) => {
+        console.log('Erreur : ', erreur);
+      }
+    );
+  }
+
+  onConfirmDeleteSite(){
+    this.communeService.deleteSiteMarcher(this.suprSite.codeSite)
+    .subscribe(
+      (data) => {
+        console.log('Réussie : ', data);
+        this.dangerModal7.hide();
+        this.getAllSiteMarcher();
       },
       (erreur) => {
         console.log('Erreur : ', erreur);
