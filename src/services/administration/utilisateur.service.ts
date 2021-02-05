@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Service } from '../../models/service.model';
 import { Utilisateur } from '../../models/utilisateur.model';
 
 @Injectable({
@@ -8,6 +9,8 @@ import { Utilisateur } from '../../models/utilisateur.model';
 export class UtilisateurService {
 
   private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+
+  public connectedUser:Utilisateur = new Utilisateur('', '', '', '','', false, new Service('', ''));
 
   constructor(private httpCli:HttpClient) { }
 

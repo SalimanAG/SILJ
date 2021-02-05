@@ -1,1 +1,205 @@
-<p>tresorier-communal works!</p>
+<div class="animated fadeIn">
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste des trésoriers communaux
+      </div>
+      <div class="card-body">
+        <button type="button" class="btn btn-success mr-1" data-toggle="modal" (click)="addTresCom.show()">
+          Ajouter trésorier communal
+        </button>
+        <br><br>
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabTresCom">
+          <thead>
+            <tr>
+              <th>Nom</th>
+                <th>Prénoms</th>
+                <th>Téléphone</th>
+                <th>Action</th>
+              </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>DJOSSOU</td>
+              <td>Guidiguidimannonhoumoudoadiglokounhou</td>
+              <td>95351535</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="modTresCom.show()"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="delTresCom.show()"><span class="fa fa-trash"></span></button>
+                <button class="btn btn-info btn-sm" data-toggle="modal" (click)="detTresCom.show()"><span class="fa fa-eye"></span></button>
+                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--Le bouton des options-->
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" >Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item" >Something else
+                      here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item" >Separated link</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <!--/.col-->
+</div>
+
+<div bsModal #addTresCom="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-primary modal-md" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="addTresComGroup" (ngSubmit)="ajouteTresCom()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Ajouter trésorier(ère) communal(e)</h4>
+          <button type="button" class="close" (click)="addTresCom.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row"><!-----Nom-->
+            <label class="col-md-3 col-form-label" for="addNomTres">Nom</label>
+            <div class="col-md-3">
+              <input type="text" id="addNomTres" class="form-control" placeholder="Nom de famille" formControlName="addNomTres">
+            </div>
+            <label class="col-md-3 col-form-label" for="addLogTres">Login</label>
+            <div class="col-md-3">
+              <input type="text" id="addLogTres" class="form-control" placeholder="Login" formControlName="addLogTres">
+            </div>
+          </div>
+          <div class="form-group row"><!---Prenoms-->
+            <label class="col-md-3 col-form-label" for="addPreTres">Prénoms</label>
+            <div class="col-md-9">
+              <input type="text" id="addPreTres" class="form-control" placeholder="Prénoms" formControlName="addPreTres">
+            </div>
+          </div>
+          <div class="form-group row"><!--Téléphone-->
+            <label class="col-md-3 col-form-label" for="addTelTres">Nom</label>
+            <div class="col-md-9">
+              <input type="text" id="addTelTres" class="form-control" placeholder="Numéro de Téléphone" formControlName="addTelTres">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="addTresCom.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </form>
+    <!--fin formulaire-->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div bsModal #modTresCom="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-primary" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="modTresComGroup" (ngSubmit)="modifieTresCom()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Modifier trésorier(ère) communal(e)</h4>
+          <button type="button" class="close" (click)="modTresCom.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row"><!-----Nom-->
+            <label class="col-md-3 col-form-label" for="modNomTres">Nom</label>
+            <div class="col-md-3">
+              <input type="text" id="modNomTres" class="form-control" placeholder="Nom de famille" formControlName="modNomTres">
+            </div>
+            <label class="col-md-3 col-form-label" for="modLogTres">Login</label>
+            <div class="col-md-3">
+              <input type="text" id="modLogTres" class="form-control" placeholder="Login" formControlName="modLogTres">
+            </div>
+          </div>
+          <div class="form-group row"><!---Prenoms-->
+            <label class="col-md-3 col-form-label" for="modPreTres">Prénoms</label>
+            <div class="col-md-9">
+              <input type="text" id="modPreTres" class="form-control" placeholder="Prénoms" formControlName="modPreTres">
+            </div>
+          </div>
+          <div class="form-group row"><!--Téléphone-->
+            <label class="col-md-3 col-form-label" for="modTelTres">Téléphone</label>
+            <div class="col-md-9">
+              <input type="text" id="modTelTres" class="form-control" placeholder="Numéro de Téléphone" formControlName="modTelTres">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modTresCom.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </form>
+    <!----Fin formulaire-->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #detTresCom="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info" role="document">
+    <!---DebutForm-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Trésorier communal courant</h4>
+        <button type="button" class="close" (click)="detTresCom.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="detTresCom.hide()">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+    <!----fin form--->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #delTresCom="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-danger" role="document">
+    <div class="modal-header">
+      <h4 class="modal-title">Suprimmer Un trésorier communal</h4>
+      <button type="button" class="close" (click)="delTresCom.hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Vous êtes sur le point de supprimer <mark style="color: red;">MMM<!--{{ suprFamil.codeFamille }}--></mark></p>
+      <p>Le confirmez-vous ?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="delTresCom.hide()">Annuler</button>
+      <button type="button" class="btn btn-danger" (click)="deleteTresCom()">Supprimer</button>
+    </div>
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info" role="document">
+    <!----Debut form-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Trésorier communal courant</h4>
+        <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Close</button>
+        <button type="button" class="btn btn-info">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+    <!----Fin form -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

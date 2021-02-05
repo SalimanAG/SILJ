@@ -1,10 +1,13 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataTableDirective } from 'angular-datatables';
+import { data } from 'jquery';
 import {ModalDirective} from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
+import { Service } from '../../models/service.model';
 import { Utilisateur } from '../../models/utilisateur.model';
 import { UtilisateurService } from '../../services/administration/utilisateur.service';
+import { CommuneService } from '../../services/definition/commune.service';
 
 @Component({
   selector: 'app-utilisateurs',
@@ -26,11 +29,14 @@ export class UtilisateursComponent implements OnInit {
   addUserFormsGroup: FormGroup;
   editUserFormsGroup: FormGroup;
   utilisateurs:Utilisateur[];
-  editUser:Utilisateur = new Utilisateur('', '', '', '', '', false, '');
-  suprUser:Utilisateur = new Utilisateur('', '', '', '', '', false, '');
-  infosUser:Utilisateur = new Utilisateur('', '', '', '', '', false, '');
+  editUser:Utilisateur = new Utilisateur('', '', '', '', '', false, new Service('',''));
+  suprUser:Utilisateur = new Utilisateur('', '', '', '', '', false, new Service('',''));
+  infosUser:Utilisateur = new Utilisateur('', '', '', '', '', false, new Service('',''));
 
-  constructor(private serviceUser:UtilisateurService, private formBulder:FormBuilder) {
+  //liste des services
+  services:Service[];
+
+  constructor(private serviceUser:UtilisateurService, private formBulder:FormBuilder, private serviceCommune:CommuneService) {
     this.dtOptions1 = {
       pagingType: 'full_numbers',
       pageLength: 5,
@@ -59,7 +65,7 @@ export class UtilisateursComponent implements OnInit {
       addPrenomUtilisateur:['', Validators.required],
       addFonctionUtilisateur:'',
       addActiveUtilisateur:false,
-      addService:''
+      addService:0
     });
 
     this.editUserFormsGroup = this.formBulder.group({
@@ -69,7 +75,7 @@ export class UtilisateursComponent implements OnInit {
       editPrenomUtilisateur:['', Validators.required],
       editFonctionUtilisateur:'',
       editActiveUtilisateur:false,
-      editService:''
+      editService:0
     });
   }
 
@@ -84,6 +90,19 @@ export class UtilisateursComponent implements OnInit {
       }
     );
 
+    this.getAllService();
+
+  }
+
+  getAllService(){
+    this.serviceCommune.getAllService().subscribe(
+      (data) => {
+        this.services = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des services : ', erreur);
+      }
+    );
   }
 
   getAllUser(){
@@ -121,40 +140,53 @@ export class UtilisateursComponent implements OnInit {
     const newUser = new Utilisateur(this.addUserFormsGroup.value['addLogin'], this.addUserFormsGroup.value['addMotDePass'],
     this.addUserFormsGroup.value['addNomUtilisateur'], this.addUserFormsGroup.value['addPrenomUtilisateur'],
     this.addUserFormsGroup.value['addFonctionUtilisateur'], this.addUserFormsGroup.value['addActiveUtilisateur'],
-    this.addUserFormsGroup.value['addService']);
+    this.services[this.addUserFormsGroup.value['addService']]);
 
-    console.log('Objet à Ajouter : ', newUser);
+    this.serviceUser.addAUser(newUser).subscribe(
+      (data) => {
+        this.primaryModal.hide();
+        this.getAllUser();
+      },
+      (erreur) => {
+        console.log('Erreur lors de lAjout de lUtilisateur : ', erreur);
+      }
+    );
 
-    this.utilisateurs.push(newUser);
-    this.primaryModal.hide();
-    
+
   }
 
   onSubmitEditUserFormsGroup(){
     const newUser = new Utilisateur(this.editUserFormsGroup.value['editLogin'], this.editUserFormsGroup.value['editMotDePass'],
     this.editUserFormsGroup.value['editNomUtilisateur'], this.editUserFormsGroup.value['editPrenomUtilisateur'],
     this.editUserFormsGroup.value['editFonctionUtilisateur'], this.editUserFormsGroup.value['editActiveUtilisateur'],
-    this.editUserFormsGroup.value['editService']);
+    this.services[this.editUserFormsGroup.value['editService']]);
 
-    console.log('Objet à Modifier : ', this.editUser);
-    console.log('Objet à Obtenu : ', newUser);
+    newUser.idUtilisateur = this.editUser.idUtilisateur;
 
-    this.warningModal.hide();
+    this.serviceUser.editAUser(this.editUser.idUtilisateur.toString(), newUser).subscribe(
+      (data) => {
+        this.warningModal.hide();
+        this.getAllUser();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la modification de lUser : ', erreur);
+      }
+    );
 
   }
 
   onConfirmDeleteUser(){
-    /*
+
     this.serviceUser.deleteAUser(this.suprUser.idUtilisateur.toString()).subscribe(
       (data) => {
         this.dangerModal.hide();
+        this.getAllUser();
       },
       (erreur) => {
         console.log('Erreur lors de la suppression : ', erreur);
       }
-    );*/
-    console.log('Objet à Supprimer : ', this.suprUser);
-    this.dangerModal.hide();
+    );
+
 
   }
 

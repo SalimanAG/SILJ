@@ -4,8 +4,13 @@ import {ModalDirective} from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { Affecter } from '../../models/affecter.model';
 import { AffectUserGroup } from '../../models/affectUserGroup.model';
+import { Arrondissement } from '../../models/arrondissement.model';
 import { Caisse } from '../../models/caisse.model';
+import { Commune } from '../../models/commune.model';
+import { Departement } from '../../models/departement.model';
 import { GroupUser } from '../../models/groupUser.model';
+import { Pays } from '../../models/pays.model';
+import { Service } from '../../models/service.model';
 import { Utilisateur } from '../../models/utilisateur.model';
 import { AssocierUtilisateurService } from '../../services/administration/associer-utilisateur.service';
 import { CaisseService } from '../../services/administration/caisse.service';
@@ -50,24 +55,26 @@ export class AssocierUtilisateurComponent implements OnInit {
 
   //Onglet Associer user à Caisse
   affecters:Affecter[];
-  editAffecter : Affecter;
-  suprAffecter: Affecter;
+  editAffecter : Affecter = new Affecter(new Date(), new Date(), new Caisse('', '', new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
+  new Utilisateur('', '', '', '', '', false, new Service('', '')));
+  suprAffecter: Affecter = new Affecter(new Date(), new Date(), new Caisse('', '', new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
+  new Utilisateur('', '', '', '', '', false, new Service('', '')));
   addAffecterFormsGroup: FormGroup;
   editAffecterFormsGroup: FormGroup;
 
   //Onglet Associer user à Groupe d'Utilisateur
   affectUserToGroups: AffectUserGroup[];
-  editAffectUserToGroup:AffectUserGroup;
-  suprAffectUserToGroup:AffectUserGroup;
+  editAffectUserToGroup:AffectUserGroup = new AffectUserGroup(new Utilisateur('', '', '', '', '', false, new Service('', '')), new GroupUser('', ''));
+  suprAffectUserToGroup:AffectUserGroup = new AffectUserGroup(new Utilisateur('', '', '', '', '', false, new Service('', '')), new GroupUser('', ''));
   addAffectUserToGroupFormsGroup:FormGroup;
   editAffectUserToGroupFormsGroup:FormGroup;
 
   //Quelques listes
-  utilisateurs:Utilisateur[];
-  arrondissements:String;
-  groupUsers:GroupUser[];
-  caisses:Caisse[];
-  caissesByAArrondissement:Caisse[];
+  utilisateurs:Utilisateur[] = [];
+  arrondissements:Arrondissement[] = [];
+  groupUsers:GroupUser[] = [];
+  caisses:Caisse[] = [];
+  caissesByAArrondissement:Caisse[] = [];
 
 
   initDtOptions(){
@@ -170,48 +177,246 @@ export class AssocierUtilisateurComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.getAllUser();
+    this.getAllCaisse();
+    this.getAllUserGroup();
+    this.serviceCommune.getAllArrondissement().subscribe(
+      (data) => {
+        this.arrondissements = data;
+        if(this.arrondissements.length !=0)
+        this.getAllCaisseByCodeArrondi(this.arrondissements[0].codeArrondi);
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des arrondissements : ', erreur);
+      }
+    );
+
+
+    this.serviceAssocierUser.getAllAffecter().subscribe(
+      (data) => {
+        this.affecters = data;
+        this.dtTrigger2.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des affectations de User à Caisse : ', erreur);
+      }
+    );
+
+    this.serviceAssocierUser.getAllAffectUserGroup().subscribe(
+      (data) => {
+        this.affectUserToGroups = data;
+        this.dtTrigger3.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des affectation des utilisateurs au groupes', erreur );
+      }
+    );
+
+  }
+
+  getAllAffecter(){
+    this.serviceAssocierUser.getAllAffecter().subscribe(
+      (data) => {
+        this.affecters = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des affectations de User à Caisse : ', erreur);
+      }
+    );
+  }
+
+  getAllUser(){
+    this.serviceUser.getAllUsers().subscribe(
+      (data) => {
+        this.utilisateurs = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des utilisateurs : ', erreur);
+      }
+    );
+  }
+
+  getAllArrondissement(){
+    this.serviceCommune.getAllArrondissement().subscribe(
+      (data) => {
+        this.arrondissements = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des arrondissements : ', erreur);
+      }
+    );
+  }
+
+  getAllCaisse(){
+    this.serviceCaisse.getAllCaisse().subscribe(
+      (data) => {
+        this.caisses = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des caisses', erreur);
+      }
+    );
+
+  }
+
+  getAllCaisseByCodeArrondi(code:String){
+    this.caissesByAArrondissement = [];
+    this.caisses.forEach(element => {
+      if(element.arrondissement.codeArrondi===code){
+        this.caissesByAArrondissement.push(element);
+      }
+    });
+
+  }
+
+  getAllCaisseByFormsArrondi1(){
+    this.getAllCaisseByCodeArrondi(this.arrondissements[this.addAffecterFormsGroup.value['addArrondissement']].codeArrondi);
+  }
+
+  getAllCaisseByFormsArrondi2(){
+    this.getAllCaisseByCodeArrondi(this.arrondissements[this.editAffecterFormsGroup.value['editArrondissement']].codeArrondi);
   }
 
   initEditAffecter(inde:number){
+    this.editAffecter = this.affecters[inde];
     this.warningModal2.show();
   }
 
   initDeleteAffecter(inde:number){
+    this.suprAffecter = this.affecters[inde];
     this.dangerModal2.show();
   }
 
   onSubmitAddAffecterFormsGroup(){
-    this.primaryModal2.hide();
+
+    const newAffec = new Affecter(this.addAffecterFormsGroup.value['addDateDebAffecter'],
+    this.addAffecterFormsGroup.value['addDateFinAffecter'],
+    this.caissesByAArrondissement[this.addAffecterFormsGroup.value['addCaisse']],
+    this.utilisateurs[this.addAffecterFormsGroup.value['addUtilisateur']]);
+
+    this.serviceAssocierUser.addAAffecter(newAffec).subscribe(
+      (data) => {
+        this.primaryModal2.hide();
+        this.getAllAffecter();
+      },
+      (erreur) => {
+        console.log('Erreur lors de lAjout de la nouvelle Affecter', erreur);
+      }
+    );
+
   }
 
   onSubmitEditAffecterFormsGroup(){
-    this.warningModal2.hide();
+    const newAffec = new Affecter(this.editAffecterFormsGroup.value['editDateDebAffecter'],
+    this.editAffecterFormsGroup.value['editDateFinAffecter'],
+    this.caissesByAArrondissement[this.editAffecterFormsGroup.value['editCaisse']],
+    this.utilisateurs[this.editAffecterFormsGroup.value['editUtilisateur']]);
+
+    this.serviceAssocierUser.editAAffecter(this.editAffecter.idAffecter.toString(), newAffec).subscribe(
+      (data) => {
+        this.warningModal2.hide();
+        this.getAllAffecter();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la modification de lAffecter', erreur);
+      }
+    );
+
+
   }
 
   onConfirmDeleteAffecter(){
-    this.dangerModal2.hide();
+    this.serviceAssocierUser.deleteAAffecter(this.suprAffecter.idAffecter.toString()).subscribe(
+      (data) => {
+        this.dangerModal2.hide();
+        this.getAllAffecter();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la suppression de lAffecter');
+      }
+    );
+
   }
 
   //Por l'onglet affectation d'un User à un group
 
+  getAllAffecterUserToGroup(){
+    this.serviceAssocierUser.getAllAffectUserGroup().subscribe(
+      (data) => {
+        this.affectUserToGroups = data;
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des affectation des utilisateurs au groupes', erreur );
+      }
+    );
+  }
+
+  getAllUserGroup(){
+    this.serviceDroitGroup.getAllGroupUser().subscribe(
+      (data) => {
+        this.groupUsers = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des groupes dUtilisateur ', erreur);
+      }
+    );
+  }
+
   initEditAffecterUserToGroup(inde:number){
+    this.editAffectUserToGroup = this.affectUserToGroups[inde];
     this.warningModal3.show();
   }
 
   initDeleteAffecterUserToGroup(inde:number){
+    this.suprAffectUserToGroup = this.affectUserToGroups[inde];
     this.dangerModal3.show();
   }
 
   onSubmitAddAffecterUserToGroup(){
-    this.primaryModal3.hide();
+
+    const newAffectUserToGrou = new AffectUserGroup(
+      this.utilisateurs[this.addAffectUserToGroupFormsGroup.value['addUtilisateur2']],
+      this.groupUsers[this.addAffectUserToGroupFormsGroup.value['addGroupUser']]);
+    this.serviceAssocierUser.addAAffectUserGroup(newAffectUserToGrou).subscribe(
+      (data) => {
+        this.primaryModal3.hide();
+        this.getAllAffecterUserToGroup();
+      },
+      (erreur) => {
+        console.log('Erreur lors de lAffectation de lUtilisateur au groupe', erreur);
+      }
+    );
+
   }
 
   onSubmitEditAffecterUserToGroup(){
-    this.warningModal3.hide();
+    const newAffectUserToGrou = new AffectUserGroup(
+      this.utilisateurs[this.editAffectUserToGroupFormsGroup.value['editUtilisateur2']],
+      this.groupUsers[this.editAffectUserToGroupFormsGroup.value['editGroupUser']]);
+    this.serviceAssocierUser.editAAffectUserGroup(this.editAffectUserToGroup.idAffectUserGroup.toString(), newAffectUserToGrou).subscribe(
+      (data) => {
+        this.warningModal3.hide();
+        this.getAllAffecterUserToGroup();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la modificatation de lAffectation au group dUtilisateur', erreur);
+      }
+    );
+
   }
 
   onConfirmDeleteAffecterUserToGroup(){
-    this.dangerModal3.hide();
+    this.serviceAssocierUser.deleteAAffectUserGroup(this.suprAffectUserToGroup.idAffectUserGroup.toString()).subscribe(
+      (data) => {
+        this.dangerModal3.hide();
+        this.getAllAffecterUserToGroup();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la suppression de lAffectation', erreur);
+      }
+    );
+
   }
 
 }

@@ -1,1 +1,324 @@
-<p>institution-reversement works!</p>
+<tabset>
+  <!--Onglet 1-->
+  <tab>
+    <ng-template tabHeading><i class="icon-calculator"></i> Institution de reversement</ng-template>
+    <div class="animated fadeIn">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Liste des institutions de revesement
+        </div>
+        <div class="card-body">
+          <button type="button" class="btn btn-success mr-1" data-toggle="modal" (click)="addInst.show()">
+            Ajouter Institution de reversement
+          </button>
+          <br><br>
+          <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabInst"
+           [dtTrigger]="dtrigInst">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let institut of institutions; let i=index">
+                <td>{{institut.codeInstRevers}}</td>
+                <td>{{institut.libInstRevers}}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initmodInst('I1')"><span class="fa fa-edit"></span></button>
+                  <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initdelInst('I1')"><span class="fa fa-trash"></span></button>
+                  <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                  <!--Le bouton des options-->
+                  <div class="btn-group" dropdown>
+                    <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                    <ul *dropdownMenu class="dropdown-menu" role="menu">
+                      <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                      <li role="menuitem"><a class="dropdown-item" >Another action</a>
+                      </li>
+                      <li role="menuitem"><a class="dropdown-item" >Something else
+                        here</a></li>
+                      <li class="divider dropdown-divider"></li>
+                      <li role="menuitem"><a class="dropdown-item" >Separated link</a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <!--/.col-->
+    </div>
+  </tab>
+  <tab>
+    <ng-template tabHeading><i class="icon-calculator"></i> Pourcentage de reversement</ng-template>
+    <div class="animated fadeIn">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Liste des pourcentages de revesement
+        </div>
+        <div class="card-body">
+          <button type="button" class="btn btn-success mr-1" data-toggle="modal" (click)="addPerce.show()">
+            Ajouter pourcentage de reversement
+          </button>
+          <br><br>
+          <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabPeRev">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <td>Code Inst.</td>
+                <th>Institution</th>
+                <th>Code Art.</th>
+                <th>Article</th>
+                <th>Pourcentage</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>I1</td>
+                <td>Institution 1</td>
+                <td>A1</td>
+                <td>Article 1</td>
+                <td>95</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initmodPerce(1)"><span class="fa fa-edit"></span></button>
+                  <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initdelPerce(1)"><span class="fa fa-trash"></span></button>
+                  <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                  <!--Le bouton des options-->
+                  <div class="btn-group" dropdown>
+                    <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                    <ul *dropdownMenu class="dropdown-menu" role="menu">
+                      <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                      <li role="menuitem"><a class="dropdown-item" >Another action</a>
+                      </li>
+                      <li role="menuitem"><a class="dropdown-item" >Something else
+                        here</a></li>
+                      <li class="divider dropdown-divider"></li>
+                      <li role="menuitem"><a class="dropdown-item" >Separated link</a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <!--/.col-->
+    </div>
+  </tab>
+</tabset>
+
+<div bsModal #addInst="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-primary modal-md" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="addInstGrou" (ngSubmit)="ajouteInst()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Ajout d'institution de reversement</h4>
+          <button type="button" class="close" (click)="addInst.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row"><!-----Nom-->
+            <label class="col-md-3 col-form-label" for="addInstCod">Code</label>
+            <div class="col-md-3">
+              <input type="text" id="addInstCod" class="form-control" placeholder="Code" formControlName="addInstCod">
+            </div>
+            <label class="col-md-3 col-form-label" for="addInstLib">Libellé</label>
+            <div class="col-md-3">
+              <input type="text" id="addInstLib" class="form-control" placeholder="Libellé" formControlName="addInstLib">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="addInst.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </form>
+    <!--fin formulaire-->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!---Ajoute -->
+<div bsModal #modInst="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-primary" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="modInstGrou" (ngSubmit)="modifieInst()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Modification d'une institution de reversement</h4>
+          <button type="button" class="close" (click)="modInst.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row"><!-----Nom-->
+            <label class="col-form-label" for="modInstCod">Code institution</label>
+            <input type="text" id="modInstCod" class="form-control" placeholder="Nom de famille" formControlName="modInstCod">
+          </div>
+          <div><label class="col-form-label" for="modInstLib">Libellé institution</label>
+            <input type="text" id="modInstLib" class="form-control" placeholder="Login" formControlName="modInstLib">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modInst.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Continuer</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </form>
+    <!----Fin formulaire-->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #delInst="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-danger" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Supprimer institution de revesement</h4>
+            <button type="button" class="close" (click)="delInst.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group row"><!-----Nom-->
+              <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{acodInst}}</mark></p>
+      <p>Le confirmez-vous ?</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="delInst.hide()">Abandonner</button>
+            <button type="submit" class="btn btn-primary" (click)="deleteInst()">Continuer</button>
+        </div>
+      </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- Les modaux de pourcentage de reversement-->
+<div bsModal #addPerce="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-primary modal-lg" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="addPercGrou" (ngSubmit)="ajoutePerce()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Ajout de pourcentage de reversement</h4>
+          <button type="button" class="close" (click)="addPerce.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group col-lg-6">
+              <label class="col-form-label" for="addPInsCod">Code de l'institution</label>
+              <input type="text" id="addPInsCod" class="form-control" placeholder="Nom de famille" formControlName="addPInsCod">
+            </div>
+            <div class="form-group col-lg-6">
+              <label class="col-form-label" for="addPInsLib">Libellé</label>
+              <input type="text" id="addPInsLib" class="form-control" placeholder="Login" formControlName="addPInsLib">
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-lg-6">
+              <label class="col-form-label" for="addPArtCod">Code de l'institution</label>
+              <input type="text" id="addPArtCod" class="form-control" placeholder="Nom de famille" formControlName="addPArtCod">
+            </div>
+            <div class="form-group col-lg-6">
+              <label class="col-form-label" for="addPArtLib">Libellé</label>
+              <input type="text" id="addPArtLib" class="form-control" placeholder="Login" formControlName="addPArtLib">
+            </div>
+          </div>
+          <div class="row">
+            <label class="form-label" for="addVal">Libellé</label>
+            <input type="text" id="addVal" class="form-control" placeholder="Login" formControlName="addVal">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="addPerce.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </form>
+    <!--fin formulaire-->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #modPerce="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-primary" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="modPercGrou" (ngSubmit)="modifieInst()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Modification d'un pourcentage de reversement</h4>
+          <button type="button" class="close" (click)="modPerce.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group col-lg-6">
+              <label class="col-form-label" for="modPInsCod">Code de l'institution</label>
+              <input type="text" id="modPInsCod" class="form-control" placeholder="Code Institution" formControlName="modPInsCod">
+            </div>
+            <div class="form-group col-lg-6">
+              <label class="col-md-3 col-form-label" for="modPInsLib">Libellé de l'institution</label>
+              <input type="text" id="modPInsLib" class="form-control" placeholder="Libellé institution" formControlName="modPInsLib">
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-lg-6">
+              <label class="col-form-label" for="modPArtCod">Code de l'article</label>
+              <input type="text" id="modPArtCod" class="form-control" placeholder="Code de l'article" formControlName="modPArtCod">
+            </div>
+            <div class="form-group col-lg-6">
+              <label class="col-form-label" for="modPArtLib">Libellé</label>
+              <input type="text" id="modPArtLib" class="form-control" placeholder="Libellé de l'article" formControlName="modPArtLib">
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-md-3 col-form-label" for="modVal">Pourcentage de reversement</label>
+            <input type="text" id="modVal" class="form-control" placeholder="Login" formControlName="modVal">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modPerce.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Continuer</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </form>
+    <!----Fin formulaire-->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div bsModal #delPerce="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-danger" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Supprimer pourcentage</h4>
+            <button type="button" class="close" (click)="delPerce.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group row"><!-----Nom-->
+              <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{acodInst}}</mark></p>
+      <p>Le confirmez-vous ?</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="delPerce.hide()">Abandonner</button>
+            <button type="submit" class="btn btn-primary" (click)="deletePerce()">Continuer</button>
+        </div>
+      </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

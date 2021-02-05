@@ -29,11 +29,11 @@ export class DroitGroupeService {
   }
 
   editAGroupUser(code:String, corps:GroupUser){
-    return this.httpCli.put<GroupUser>(this.host+'/commune/gro/byId/'+code, corps);
+    return this.httpCli.put<GroupUser>(this.host+'/commune/gro/byid/'+code, corps);
   }
 
   deleteAGroupUser(code:String){
-    return this.httpCli.delete<boolean>(this.host+'/commune/gro/byId/'+code);
+    return this.httpCli.delete<boolean>(this.host+'/commune/gro/byid/'+code);
   }
 
   //Partie Réservée pour l'affectation de droit à un group d'utilsateur (AffectDroitGroupUser)
@@ -50,11 +50,11 @@ export class DroitGroupeService {
   }
 
   editAAffectDroitGroupUser(code:String, corps:AffectDroitGroupUser){
-    return this.httpCli.put<AffectDroitGroupUser>(this.host+'/commune/adgu/byId/'+code, corps);
+    return this.httpCli.put<AffectDroitGroupUser>(this.host+'/commune/adgu/byid/'+code, corps);
   }
 
   deleteAAffectDroitGroupUser(code:String){
-    return this.httpCli.delete<boolean>(this.host+'/commune/adgu/byId/'+code);
+    return this.httpCli.delete<boolean>(this.host+'/commune/user/byidr/'+code);
   }
 
 

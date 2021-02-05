@@ -8,7 +8,8 @@
       <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
       <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
     </div>
-    <table class="table table-bordered table-striped table-sm" datatable >
+    <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+    [dtTrigger]="dtTrigger1">
       <thead>
         <tr>
           <th>Code</th>
@@ -21,17 +22,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>CL-2020000000001</td>
-          <td>01/02/2020</td>
-          <td>01/03/2020</td>
-          <td>Maison de la moto</td>
-          <td>BT0014-Boutique à Coté du marché Vedoko</td>
-          <td>2 000 000</td>
+        <tr *ngFor="let contrat of contrats; let i = index" >
+          <td>{{ contrat.numContrat }}</td>
+          <td>{{ contrat.dateSignatureContrat }}</td>
+          <td>{{ contrat.dateEffetContrat }}</td>
+          <td>{{ contrat.locataire.identiteLocataire }}</td>
+          <td>{{ contrat.immeuble.codeIm }} - {{ contrat.immeuble.libIm }}</td>
+          <td>{{ contrat.avanceContrat }}</td>
           <td>
-            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditContrat(0)"><span class="fa fa-edit"></span></button>
-            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteContrat(0)"><span class="fa fa-trash"></span></button>
-            <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfoContrat(0)"><span class="fa fa-eye"></span></button>
+            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditContrat(i)"><span class="fa fa-edit"></span></button>
+            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteContrat(i)"><span class="fa fa-trash"></span></button>
+            <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfoContrat(i)"><span class="fa fa-eye"></span></button>
             <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
             <!--Le bouton des options-->
             <div class="btn-group" dropdown>
@@ -106,7 +107,7 @@
                             <label for="addLocataire">Identité du Locataire</label>
                             <select id="addLocataire" name="addLocataire" class="form-control"
                             formControlName="addLocataire">
-                              <option *ngFor="let locataire of locataires; let i = index" value="i"
+                              <option *ngFor="let locataire of locataires; let i = index" [value]="i"
                               >{{ locataire.idLocataire }} - {{ locataire.identiteLocataire }}</option>
 
                             </select>
@@ -115,19 +116,17 @@
                         <div class="row">
                           <div class="form-group col-sm-4">
                             <label for="typeValeurLocative1">Type de la Valeur Locative</label>
-                            <select id="typeValeurLocative1" name="typeValeurLocative1" class="form-control">
-                              <option value="0">Option #1</option>
-                              <option value="2">Option #2</option>
-                              <option value="3">Option #3</option>
+                            <select id="typeValeurLocative1" name="typeValeurLocative1" class="form-control" (click)="onTypeImmeubleClicked1()">
+                              <option *ngFor="let typeIm of typeValeursLocatives; let i = index" [value]="i"
+                              >{{ typeIm.codeTypIm }} - {{ typeIm.libTypIm }}</option>
                             </select>
                           </div>
                           <div class="form-group col-sm-8">
                             <label for="addImmeuble">Valeur Locative</label>
                             <select id="addImmeuble" name="addImmeuble" class="form-control"
                             formControlName="addImmeuble">
-                              <option value="0">Option #1</option>
-                              <option value="2">Option #2</option>
-                              <option value="3">Option #3</option>
+                              <option *ngFor="let imm of valeurLocativesByType; let i = index" [value]="i"
+                              >{{ imm.codeIm }} - {{ imm.libIm }}</option>
                             </select>
                           </div>
                         </div><!--/.row-->
@@ -149,7 +148,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addContratFormsGroup.invalid" >Enrégistrer</button>
                   </div>
                 </div><!-- /.modal-content -->
               </form>
@@ -178,18 +177,21 @@
                         <div class="row">
                           <div class="form-group col-sm-4">
                             <label for="editNumContrat">Code</label>
-                            <input type="text" class="form-control" id="editNumContrat"
-                            formControlName="editNumContrat" placeholder="Code du Contrat">
+                            <input type="text" class="form-control" id="editNumContrat" readonly="true"
+                            formControlName="editNumContrat" placeholder="Code du Contrat"
+                            [ngModel]="editContrat.numContrat">
                           </div>
                           <div class="form-group col-sm-4">
                             <label for="editDateSignatureContrat">Date de Signature</label>
                             <input type="date" class="form-control" id="editDateSignatureContrat"
-                            formControlName="editDateSignatureContrat" placeholder="Date de Signature du Contrat">
+                            formControlName="editDateSignatureContrat" placeholder="Date de Signature du Contrat"
+                            [ngModel]="editContrat.dateSignatureContrat">
                           </div>
                           <div class="form-group col-sm-4">
                             <label for="editDateEffetContrat">Date d'Effet</label>
                             <input type="date" class="form-control" id="editDateEffetContrat"
-                            formControlName="editDateEffetContrat" placeholder="Date d'Effet du Contrat">
+                            formControlName="editDateEffetContrat" placeholder="Date d'Effet du Contrat"
+                            [ngModel]="editContrat.dateSignatureContrat">
                           </div>
                         </div><!--/.row-->
                         <div class="row">
@@ -197,7 +199,7 @@
                             <label for="editLocataire">Identité du Locataire</label>
                             <select id="editLocataire" name="editLocataire" class="form-control"
                             formControlName="editLocataire">
-                              <option *ngFor="let locataire of locataires; let i = index" value="i"
+                              <option *ngFor="let locataire of locataires; let i = index" [value]="i"
                               >{{ locataire.idLocataire }} - {{ locataire.identiteLocataire }}</option>
 
                             </select>
@@ -206,19 +208,17 @@
                         <div class="row">
                           <div class="form-group col-sm-4">
                             <label for="typeValeurLocative2">Type de la Valeur Locative</label>
-                            <select id="typeValeurLocative2" name="typeValeurLocative2" class="form-control">
-                              <option value="0">Option #1</option>
-                              <option value="2">Option #2</option>
-                              <option value="3">Option #3</option>
+                            <select id="typeValeurLocative2" name="typeValeurLocative2" class="form-control" (click)="onTypeImmeubleClicked2()">
+                              <option *ngFor="let typeIm of typeValeursLocatives; let i = index" [value]="i"
+                              >{{ typeIm.codeTypIm }} - {{ typeIm.libTypIm }}</option>
                             </select>
                           </div>
                           <div class="form-group col-sm-8">
                             <label for="editImmeuble">Valeur Locative</label>
                             <select id="editImmeuble" name="editImmeuble" class="form-control"
                             formControlName="editImmeuble">
-                              <option value="0">Option #1</option>
-                              <option value="2">Option #2</option>
-                              <option value="3">Option #3</option>
+                              <option *ngFor="let imm of valeurLocativesByType; let i = index" [value]="i"
+                              >{{ imm.codeIm }} - {{ imm.libIm }}</option>
                             </select>
                           </div>
                         </div><!--/.row-->
@@ -226,12 +226,14 @@
                           <div class="form-group col-sm-6">
                             <label for="editAvanceContrat">Avance (en Francs CFA)</label>
                             <input type="number" class="form-control" id="editAvanceContrat"
-                            formControlName="editAvanceContrat" placeholder="Avance du Contrat">
+                            formControlName="editAvanceContrat" placeholder="Avance du Contrat"
+                            [ngModel]="editContrat.avanceContrat">
                           </div>
                           <div class="form-group col-sm-6">
                             <label for="editCautionContrat">Caution (en Francs CFA)</label>
                             <input type="number" class="form-control" id="editCautionContrat"
-                            formControlName="editCautionContrat" placeholder="Caution du Contrat">
+                            formControlName="editCautionContrat" placeholder="Caution du Contrat"
+                            [ngModel]="editContrat.cautionContrat">
                           </div>
                         </div>
                       </div>
@@ -239,7 +241,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-warning">Modifier</button>
+                    <button type="submit" class="btn btn-warning" [disabled]="editContratFormsGroup.invalid">Modifier</button>
                   </div>
                 </div><!-- /.modal-content -->
               </form>
@@ -258,7 +260,7 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <p>Vous êtes sur le point de supprimer le Contrat de Location <mark style="color: red;">ART1</mark></p>
+                  <p>Vous êtes sur le point de supprimer le Contrat de Location <mark style="color: red;">{{ suprContrat.numContrat }}</mark></p>
                   <p>Le confirmez-vous ?</p>
                 </div>
                 <div class="modal-footer">
@@ -285,59 +287,59 @@
                     <tbody>
                       <tr>
                         <th>Code</th>
-                        <td>CL-202000000001</td>
+                        <td>{{ infosContrat.numContrat }}</td>
                       </tr>
                       <tr>
                         <th>Date de Signature</th>
-                        <td></td>
+                        <td>{{ infosContrat.dateSignatureContrat }}</td>
                       </tr>
                       <tr>
                         <th>Date d'Effet</th>
-                        <td></td>
+                        <td>{{ infosContrat.dateEffetContrat }}</td>
                       </tr>
                       <tr>
                         <th>Avance (en Francs CFA)</th>
-                        <td>300</td>
+                        <td>{{ infosContrat.avanceContrat }}</td>
                       </tr>
                       <tr>
                         <th>Caution (en Francs CFA)</th>
-                        <td></td>
+                        <td>{{ infosContrat.cautionContrat }}</td>
                       </tr>
                       <tr>
                         <th>Code de la Valaur Locative</th>
-                        <td>Etat-Civil</td>
+                        <td>{{ infosContrat.immeuble.codeIm }}</td>
                       </tr>
                       <tr>
                         <th>Désignation de la Valeur Locative</th>
-                        <td>Carnet</td>
+                        <td>{{ infosContrat.immeuble.libIm }}</td>
                       </tr>
                       <tr>
                         <th>Arrondissement</th>
-                        <td>Carnet</td>
+                        <td>{{ infosContrat.immeuble.arrondissement.nomArrondi }}</td>
                       </tr>
                       <tr>
                         <th>Quartier de la Valeur</th>
-                        <td>Carnet</td>
+                        <td>{{ infosContrat.immeuble.quartier.nomQuartier }}</td>
                       </tr>
                       <tr>
                         <th>Site de la Valaur Locative</th>
-                        <td>Carnet</td>
+                        <td>{{ infosContrat.immeuble.siteMarcher.libSite }}</td>
                       </tr>
                       <tr>
                         <th>Code du Locataire</th>
-                        <td></td>
+                        <td>{{ infosContrat.locataire.idLocataire }}</td>
                       </tr>
                       <tr>
                         <th>Identité du Locataire</th>
-                        <td></td>
+                        <td>{{ infosContrat.locataire.identiteLocataire }}</td>
                       </tr>
                       <tr>
                         <th>Téléphone du Locataire</th>
-                        <td></td>
+                        <td>{{ infosContrat.locataire.telLocataire }}</td>
                       </tr>
                       <tr>
                         <th>Adresse du Locataire</th>
-                        <td></td>
+                        <td>{{ infosContrat.locataire.adresseLocataire }}</td>
                       </tr>
 
                     </tbody>

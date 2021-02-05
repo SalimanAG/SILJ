@@ -1,5 +1,6 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { data } from 'jquery';
 import {ModalDirective} from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { AffectDroitGroupUser } from '../../models/affectDroitGroupUser.model';
@@ -33,16 +34,16 @@ export class GestionDroitsGroupesComponent implements OnInit {
 
   //Onglet associé aux groupes d'user
   groupeUsers:GroupUser[];
-  editGroupUser:GroupUser;
-  suprGroupUser:GroupUser;
+  editGroupUser:GroupUser = new GroupUser('', '');
+  suprGroupUser:GroupUser = new GroupUser('', '');
   addGroupUserFormsGroup:FormGroup;
   editGroupUserFormsGroup:FormGroup;
 
   //Onglet associé à l'affectation de droit d'utilisateur à un groupe d'utilisateur
   droitUsers:DroitUser[];//Liste des droits d'utilisateur
   affectDroitGroupUsers:AffectDroitGroupUser[];
-  editAffectDroitGroupUser:AffectDroitGroupUser;
-  suprAffectDroitGroupUser:AffectDroitGroupUser;
+  editAffectDroitGroupUser:AffectDroitGroupUser = new AffectDroitGroupUser(new DroitUser('', ''), new GroupUser('', ''));
+  suprAffectDroitGroupUser:AffectDroitGroupUser = new AffectDroitGroupUser(new DroitUser('', ''), new GroupUser('', ''));
   addAffectDroitGroupUserFormsGroup:FormGroup;
   editAffectDroitGroupUserFormsGroup:FormGroup;
 
@@ -118,48 +119,175 @@ export class GestionDroitsGroupesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.serviceDroitUser.getAllGroupUser().subscribe(
+      (data) => {
+        this.groupeUsers = data;
+        this.dtTrigger1.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des groupes dUtilisateur', erreur);
+      }
+    );
+
+    this.serviceDroitUser.getAllAffectDroitGroup().subscribe(
+      (data) => {
+        this.affectDroitGroupUsers = data;
+        this.dtTrigger2.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors du chargement de la liste des Affectations de droit au groupe dUtilisateur', erreur);
+      }
+    );
+
+    this.getAllDroit();
+  }
+
+  getAllGroupUser(){
+    this.serviceDroitUser.getAllGroupUser().subscribe(
+      (data) => {
+        this.groupeUsers = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des groupes dUtilisateur', erreur);
+      }
+    );
   }
 
   initEditGroupUser(inde:number){
+    this.editGroupUser = this.groupeUsers[inde];
     this.warningModal3.show();
   }
 
   initDeleteGroupUser(inde:number){
+    this.suprGroupUser = this.groupeUsers[inde];
     this.dangerModal3.show();
   }
 
   onSubmitAddGroupUserFormsGroup(){
-    this.primaryModal3.hide();
+
+    const newGroup = new GroupUser(this.addGroupUserFormsGroup.value['addIdGroupUser'], this.addGroupUserFormsGroup.value['addLibGroupUser']);
+    this.serviceDroitUser.addAGroupUser(newGroup).subscribe(
+      (data) => {
+        this.primaryModal3.hide();
+        this.getAllGroupUser();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la création du groupe dUtilisateur', erreur);
+      }
+    );
+
   }
 
   onSubmitEditGroupUserFormsGroup(){
-    this.warningModal3.hide();
+    const newGroup = new GroupUser(this.editGroupUserFormsGroup.value['editIdGroupUser'], this.editGroupUserFormsGroup.value['editLibGroupUser']);
+    this.serviceDroitUser.editAGroupUser(this.editGroupUser.idGroupUser, newGroup).subscribe(
+      (data) => {
+        this.warningModal3.hide();
+        this.getAllGroupUser();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la modification du group dUtilisateur', erreur);
+      }
+    );
+
   }
 
   onConfirmDeleteGroupUser(){
-    this.dangerModal3.hide();
+    this.serviceDroitUser.deleteAGroupUser(this.suprGroupUser.idGroupUser).subscribe(
+      (data) => {
+        this.dangerModal3.hide();
+        this.getAllGroupUser();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la suppression du groupe dUtilisateur', erreur);
+      }
+    );
+
   }
 
 
   //Pour Onglet Affectation de droit d'utilisateur à un group d'user
+  getAllAffectDroitToGroup(){
+    this.serviceDroitUser.getAllAffectDroitGroup().subscribe(
+      (data) => {
+        this.affectDroitGroupUsers = data;
+
+      },
+      (erreur) => {
+        console.log('Erreur lors du chargement de la liste des Affectations de droit au groupe dUtilisateur', erreur);
+      }
+    );
+  }
+
+  getAllDroit(){
+    this.serviceDroitUser.getAllDroitUser().subscribe(
+      (data) => {
+        this.droitUsers = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des droits dUtilisateur', erreur);
+      }
+    );
+  }
+
   initEditAffectDroitGroupUser(inde:number){
+    this.editAffectDroitGroupUser = this.affectDroitGroupUsers[inde];
     this.warningModal.show();
   }
 
   initDeleteAffectDroitGroupUser(inde:number){
+    this.suprAffectDroitGroupUser = this.affectDroitGroupUsers[inde];
     this.dangerModal.show();
   }
 
   onSubmitAddAffectDroitGroupUserFormsGroup(){
-    this.primaryModal.hide();
+
+    const newAffectDroitToGroup = new AffectDroitGroupUser(
+      this.droitUsers[this.addAffectDroitGroupUserFormsGroup.value['addDroitUser']],
+      this.groupeUsers[this.addAffectDroitGroupUserFormsGroup.value['addGroupUser']]
+    )
+
+    this.serviceDroitUser.addAAffectDroitGroupUser(newAffectDroitToGroup).subscribe(
+      (data) => {
+        this.primaryModal.hide();
+        this.getAllAffectDroitToGroup();
+      },
+      (erreur) => {
+        console.log('Erreur lors de lAjout de lAffectation de droit au groupe User', erreur);
+      }
+    );
+
+
   }
 
   onSubmitEditAffectDroitGroupUserFormsGroup(){
-    this.warningModal.hide();
+    const newAffectDroitToGroup = new AffectDroitGroupUser(
+      this.droitUsers[this.editAffectDroitGroupUserFormsGroup.value['editDroitUser']],
+      this.groupeUsers[this.editAffectDroitGroupUserFormsGroup.value['editGroupUser']]
+    )
+    this.serviceDroitUser.editAAffectDroitGroupUser(this.editAffectDroitGroupUser.idAffectDroitGroup.toString(), newAffectDroitToGroup).subscribe(
+      (data) => {
+        this.warningModal.hide();
+        this.getAllAffectDroitToGroup();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la modification de lAffection', erreur);
+      }
+    );
+
   }
 
   onConfirmDeleteAffectDroitGroupUser(){
-    this.dangerModal.hide();
+    this.serviceDroitUser.deleteAAffectDroitGroupUser(this.suprAffectDroitGroupUser.idAffectDroitGroup.toString()).subscribe(
+      (data) => {
+        this.dangerModal.hide();
+        this.getAllAffectDroitToGroup();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la suppression de LAffectation', erreur);
+      }
+    );
+
   }
 
 

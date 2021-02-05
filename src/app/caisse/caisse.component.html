@@ -22,7 +22,7 @@
         <tr *ngFor="let caisse of caisses; let i = index">
           <td>{{ caisse.codeCaisse }}</td>
           <td>{{ caisse.libeCaisse }}</td>
-          <td>{{ caisse.arrondissement }}</td>
+          <td>{{ caisse.arrondissement.nomArrondi }}</td>
           <td>
             <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditCaisse(i)"><span class="fa fa-edit"></span></button>
             <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteCaisse(i)"><span class="fa fa-trash"></span></button>
@@ -93,11 +93,11 @@
                         <div class="row">
                           <div class="form-group col-sm-12">
                             <label for="addArrondissement">Arrondissement</label>
-                              <select id="addArrondissement" name="addArrondissement" class="form-control">
-                                <option value="0">Arrondissement d'appartenance</option>
-                                <option value="1">Option #1</option>
-                                <option value="2">Option #2</option>
-                                <option value="3">Option #3</option>
+                              <select id="addArrondissement" name="addArrondissement" class="form-control"
+                              formControlName="addArrondissement">
+                                <option *ngFor="let arrondi of arrondissements; let i = index" [value]="i">
+                                  {{ arrondi.codeArrondi }} - {{ arrondi.nomArrondi }}
+                                </option>
                               </select>
                           </div>
                         </div><!--/.row-->
@@ -152,11 +152,11 @@
                         <div class="row">
                           <div class="form-group col-sm-12">
                             <label for="editArrondissement">Arrondissement</label>
-                              <select id="editArrondissement" name="editArrondissement" class="form-control">
-                                <option value="0">Arrondissement d'appartenance</option>
-                                <option value="1">Option #1</option>
-                                <option value="2">Option #2</option>
-                                <option value="3">Option #3</option>
+                              <select id="editArrondissement" name="editArrondissement" class="form-control"
+                              formControlName="editArrondissement">
+                                <option *ngFor="let arrondi of arrondissements; let i = index" [value]="i">
+                                  {{ arrondi.codeArrondi }} - {{ arrondi.nomArrondi }}
+                                </option>
                               </select>
                           </div>
                         </div><!--/.row-->
@@ -220,15 +220,15 @@
                       </tr>
                       <tr>
                         <th>Code Arrondissement</th>
-                        <td>ARRON00</td>
+                        <td>{{ infoCaiss.arrondissement.codeArrondi }}</td>
                       </tr>
                       <tr>
                         <th>Libellé de l'Arrondissement / Site</th>
-                        <td>Mairie de Cotonou</td>
+                        <td>{{ infoCaiss.arrondissement.nomArrondi }}</td>
                       </tr>
                       <tr>
                         <th>Commune</th>
-                        <td>Cotonou</td>
+                        <td>{{ infoCaiss.arrondissement.commune.nomCommune }}</td>
                       </tr>
                     </tbody>
                   </table>

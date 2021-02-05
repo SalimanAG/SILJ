@@ -12,7 +12,8 @@
             <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
             <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
           </div>
-          <table class="table table-bordered table-striped table-sm" datatable >
+          <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+          [dtTrigger]="dtTrigger1">
             <thead>
               <tr>
                 <th>Code</th>
@@ -24,16 +25,17 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>COI1</td>
-                <td>AGONHE Salim</td>
-                <td>66 89 94 62</td>
-                <td>Correspondant Interne</td>
-                <td>OUI</td>
+              <tr *ngFor="let corres of correspondants; let i = index">
+                <td>{{ corres.idCorrespondant }}</td>
+                <td>{{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}</td>
+                <td>{{ corres.magasinier.telMagasinier }}</td>
+                <td>{{ corres.typecorres.libTypeCorres }}</td>
+                <td *ngIf="corres.imputableCorres===true">OUI</td>
+                <td *ngIf="corres.imputableCorres===false">NON</td>
                 <td>
-                  <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditCorres(0)"><span class="fa fa-edit"></span></button>
-                  <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteCorres(0)"><span class="fa fa-trash"></span></button>
-                  <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosCorres(0)"><span class="fa fa-eye"></span></button>
+                  <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditCorres(i)"><span class="fa fa-edit"></span></button>
+                  <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteCorres(i)"><span class="fa fa-trash"></span></button>
+                  <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosCorres(i)"><span class="fa fa-eye"></span></button>
                   <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                   <!--Le bouton des options-->
                   <div class="btn-group" dropdown>
@@ -112,8 +114,8 @@
                                   <label for="addTypCorres">Type</label>
                                     <select id="addTypCorres" name="addTypCorres" class="form-control"
                                     formControlName="addTypCorres" >
-                                      <option value="1">Livreur(se)</option>
-                                      <option value="0">Correspondant Externe</option>
+                                      <option *ngFor="let typCo of typCorrespondants; let i = index" [value]="i">{{ typCo.libTypeCorres }}</option>
+
                                     </select>
 
                                 </div>
@@ -124,10 +126,10 @@
                                   <label for="addUtilisateur">Utilisateur</label>
                                     <select id="addUtilisateur" name="addUtilisateur" class="form-control"
                                     formControlName="addUtilisateur">
-                                      <option value="0">Utilisateur</option>
-                                      <option value="1">Option #1</option>
-                                      <option value="2">Option #2</option>
-                                      <option value="3">Option #3</option>
+                                      <option *ngFor = "let user of utilisateurs; let i = index" [value]="i">
+                                        {{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}
+                                      </option>
+
                                     </select>
                                 </div>
                               </div><!--/.row-->
@@ -178,31 +180,35 @@
                                 <div class="form-group col-sm-2">
                                   <label for="editIdCorrespondant">Code</label>
                                   <input type="text" class="form-control" id="editIdCorrespondant"
-                                  formControlName="editIdCorrespondant" placeholder="Code de l'article">
+                                  formControlName="editIdCorrespondant" placeholder="Code de l'article"
+                                  [ngModel]="infosCorres.idCorrespondant">
                                 </div>
                                 <div class="form-group col-sm-4">
                                   <label for="editNomMagasinier">Nom</label>
                                   <input type="text" class="form-control" id="editNomMagasinier"
-                                  formControlName="editNomMagasinier" placeholder="Nom du Correspondant">
+                                  formControlName="editNomMagasinier" placeholder="Nom du Correspondant"
+                                  [ngModel]="infosCorres.magasinier.nomMagasinier">
                                 </div>
                                 <div class="form-group col-sm-6">
                                   <label for="editPrenomMagasinier">Prénoms</label>
                                   <input type="text" class="form-control" id="editPrenomMagasinier"
-                                  formControlName="editPrenomMagasinier" placeholder="Prénoms du Correspondant">
+                                  formControlName="editPrenomMagasinier" placeholder="Prénoms du Correspondant"
+                                  [ngModel]="infosCorres.magasinier.prenomMagasinier">
                                 </div>
                               </div><!--/.row-->
                               <div class="row">
                                 <div class="form-group col-sm-6">
                                   <label for="editTelMagasinier">Téléphone</label>
                                   <input type="number" class="form-control" id="editTelMagasinier"
-                                  formControlName="editTelMagasinier" placeholder="Téléphone du Correspondant">
+                                  formControlName="editTelMagasinier" placeholder="Téléphone du Correspondant"
+                                  [ngModel]="infosCorres.magasinier.telMagasinier">
                                 </div>
                                 <div class="form-group col-sm-6">
                                   <label for="editTypCorres">Type</label>
                                     <select id="editTypCorres" name="editTypCorres" class="form-control"
                                     formControlName="editTypCorres">
-                                      <option value="0">Livreur(se)</option>
-                                      <option value="1">Correspondant Externe</option>
+                                    <option *ngFor="let typCo of typCorrespondants; let i = index" [value]="i">{{ typCo.libTypeCorres }}</option>
+
                                     </select>
 
                                 </div>
@@ -213,10 +219,9 @@
                                   <label for="editUtilisateur">Utilisateur</label>
                                     <select id="editUtilisateur" name="editUtilisateur"
                                     formControlName="editUtilisateur" class="form-control">
-                                      <option value="0">Utilisateur</option>
-                                      <option value="1">Option #1</option>
-                                      <option value="2">Option #2</option>
-                                      <option value="3">Option #3</option>
+                                    <option *ngFor = "let user of utilisateurs; let i = index" [value]="i">
+                                      {{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}
+                                    </option>
                                     </select>
                                 </div>
                               </div><!--/.row-->
@@ -224,7 +229,7 @@
                                 <div class="col-md-12 col-form-label">
                                   <div class="form-check form-check-inline mr-3">
                                     <input class="form-check-input" type="checkbox" id="editImputableCorres"
-                                    formControlName="editImputableCorres">
+                                    formControlName="editImputableCorres" [ngModel]="infosCorres.imputableCorres">
                                     <label class="form-check-label" for="editImputableCorres">Imputable</label>
                                   </div>
                                 </div>
@@ -254,7 +259,7 @@
                         </button>
                       </div>
                       <div class="modal-body">
-                        <p>Vous êtes sur le point de supprimer le Correspondant <mark style="color: red;">COI1</mark></p>
+                        <p>Vous êtes sur le point de supprimer le Correspondant <mark style="color: red;">{{ suprCorres.idCorrespondant }}</mark></p>
                         <p>Le confirmez-vous ?</p>
                       </div>
                       <div class="modal-footer">
@@ -281,27 +286,28 @@
                           <tbody>
                             <tr>
                               <th>Code</th>
-                              <td>COI1</td>
+                              <td>{{ infosCorres.idCorrespondant }}</td>
                             </tr>
                             <tr>
                               <th>Nom & Prénoms</th>
-                              <td>AGONHE Salim</td>
+                              <td>{{ infosCorres.magasinier.nomMagasinier }} {{ infosCorres.magasinier.prenomMagasinier }}</td>
                             </tr>
                             <tr>
                               <th>Téléphone</th>
-                              <td>66 89 94 62</td>
+                              <td>{{ infosCorres.magasinier.telMagasinier }}</td>
                             </tr>
                             <tr>
                               <th>Type</th>
-                              <td>Correspondant Interne</td>
+                              <td>{{ infosCorres.typecorres.libTypeCorres }}</td>
                             </tr>
                             <tr>
                               <th>Imputable</th>
-                              <td>OUI</td>
+                              <td *ngIf="infosCorres.imputableCorres===true" >OUI</td>
+                              <td *ngIf="infosCorres.imputableCorres===false" >NON</td>
                             </tr>
                             <tr>
-                              <th>Code Utilisateur</th>
-                              <td>Us1</td>
+                              <th>Utilisateur</th>
+                              <td>{{ infosCorres.utilisateur.idUtilisateur }} - {{ infosCorres.utilisateur.nomUtilisateur }}</td>
                             </tr>
 
                           </tbody>
@@ -330,7 +336,7 @@
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
           <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm" datatable >
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2">
           <thead>
             <tr>
               <th>Code</th>
@@ -342,16 +348,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>COI1 - AGONHE Salim</td>
-              <td>2 ième Arrondissement</td>
-              <td>03/02/2020</td>
-              <td>03/02/2022</td>
+            <tr *ngFor="let ertreAffect of etreAffectes; let i = index" >
+              <td>{{ ertreAffect.idAffecte }}</td>
+              <td>{{ ertreAffect.corres.idCorrespondant }} - {{ ertreAffect.corres.magasinier.prenomMagasinier }} Salim</td>
+              <td>{{ ertreAffect.site.codeSite }} - {{ ertreAffect.site.libSite }}</td>
+              <td>{{ ertreAffect.dateArrivee }}</td>
+              <td>{{ ertreAffect.dateDepart }}</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditEtreAffecte(0)"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteEtreAffecte(0)"><span class="fa fa-trash"></span></button>
-                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal2.show()"><span class="fa fa-eye"></span></button>-->
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditEtreAffecte(i)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteEtreAffecte(i)"><span class="fa fa-trash"></span></button>
+
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
                 <div class="btn-group" dropdown>
@@ -408,9 +414,8 @@
                                 <label for="addCorres">Correspondant</label>
                                   <select id="addCorres" name="addCorres" class="form-control"
                                   formControlName="addCorres">
-                                    <option value="0">Option #1</option>
-                                    <option value="1">Option #2</option>
-                                    <option value="2">Option #3</option>
+                                    <option *ngFor="let corre of correspondants; let i = index" [value]="i">
+                                      {{ corre.idCorrespondant }} - {{ corre.magasinier.nomMagasinier }} {{ corre.magasinier.prenomMagasinier }}</option>
                                   </select>
 
                               </div>
@@ -420,9 +425,9 @@
                                 <label for="addSite">Site</label>
                                   <select id="addSite" name="addSite" class="form-control"
                                   formControlName="addSite">
-                                    <option value="1">Option #1</option>
-                                    <option value="2">Option #2</option>
-                                    <option value="3">Option #3</option>
+                                    <option *ngFor="let sit of sites; let i = index" [value]="i">
+                                      {{ sit.codeSite }} - {{ sit.libSite }}
+                                    </option>
                                   </select>
                               </div>
                             </div><!--/.row-->
@@ -448,7 +453,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="addAffecteSiteFormsGroup.invalid">Enrégistrer</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </form>
@@ -480,9 +485,8 @@
                                 <label for="editCorres">Correspondant</label>
                                   <select id="editCorres" name="editCorres" class="form-control"
                                   formControlName="editCorres">
-                                    <option value="0">Option #1</option>
-                                    <option value="1">Option #2</option>
-                                    <option value="2">Option #3</option>
+                                  <option *ngFor="let corre of correspondants; let i = index" [value]="i">
+                                    {{ corre.idCorrespondant }} - {{ corre.magasinier.nomMagasinier }} {{ corre.magasinier.prenomMagasinier }}</option>
                                   </select>
 
                               </div>
@@ -492,9 +496,9 @@
                                 <label for="editSite">Site</label>
                                   <select id="editSite" name="editSite" class="form-control"
                                   formControlName="editSite">
-                                    <option value="0">Option #1</option>
-                                    <option value="1">Option #2</option>
-                                    <option value="2">Option #3</option>
+                                  <option *ngFor="let sit of sites; let i = index" [value]="i">
+                                    {{ sit.codeSite }} - {{ sit.libSite }}
+                                  </option>
                                   </select>
                               </div>
                             </div><!--/.row-->
@@ -502,7 +506,8 @@
                               <div class="form-group col-sm-12">
                                 <label for="editDateArrivee">Date de début</label>
                                 <input type="date" class="form-control" id="editDateArrivee"
-                                formControlName="editDateArrivee" placeholder="Date de Début de l'Affectation">
+                                formControlName="editDateArrivee" placeholder="Date de Début de l'Affectation"
+                                [ngModel]="editEtreAffecte.dateArrivee">
                               </div>
 
                             </div><!--/.row-->
@@ -510,7 +515,8 @@
                               <div class="form-group col-sm-12">
                                 <label for="editDateDepart">Date de Fin</label>
                                 <input type="date" class="form-control" id="editDateDepart"
-                                formControlName="editDateDepart" placeholder="Date de Fin de l'Affectation">
+                                formControlName="editDateDepart" placeholder="Date de Fin de l'Affectation"
+                                [ngModel]="editEtreAffecte.dateDepart">
                               </div>
 
                             </div><!--/.row-->
@@ -520,7 +526,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-warning">Modifier</button>
+                        <button type="submit" class="btn btn-warning" [disabled]="editAffecteSiteFormsGroup.invalid">Modifier</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </form>
@@ -539,8 +545,8 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <p>Vous êtes sur le point de supprimer l'Affectation du Correspondant <mark style="color: red;">COI1</mark>
-                      au Site <mark style="color: green;">SIT2</mark></p>
+                      <p>Vous êtes sur le point de supprimer l'Affectation du Correspondant <mark style="color: red;">{{ suprEtreAffecte.corres.idCorrespondant }}</mark>
+                      au Site <mark style="color: green;">{{ suprEtreAffecte.site.codeSite }}</mark></p>
                       <p>Le confirmez-vous ?</p>
                     </div>
                     <div class="modal-footer">

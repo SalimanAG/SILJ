@@ -12,7 +12,7 @@
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
           <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm" datatable >
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions] = "dtOptions1" [dtTrigger]="dtTrigger1">
           <thead>
             <tr>
               <th>Code</th>
@@ -21,14 +21,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>GPUSR1</td>
-              <td>Caissières</td>
+            <tr *ngFor="let group of groupeUsers; let i = index" >
+              <td>{{ group.idGroupUser }}</td>
+              <td>{{ group.libGroupUser }}</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditGroupUser(0)"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteGroupUser(0)"><span class="fa fa-trash"></span></button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditGroupUser(i)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteGroupUser(i)"><span class="fa fa-trash"></span></button>
 
-                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
                 <div class="btn-group" dropdown>
                   <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
@@ -98,7 +97,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="addGroupUserFormsGroup.invalid">Enrégistrer</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </form>
@@ -129,7 +128,8 @@
                               <div class="form-group col-sm-12">
                                 <label for="editIdGroupUser">Code</label>
                                 <input type="text" class="form-control" id="editIdGroupUser"
-                                formControlName="editIdGroupUser" placeholder="Code du Groupe">
+                                formControlName="editIdGroupUser" placeholder="Code du Groupe"
+                                [ngModel]="editGroupUser.idGroupUser" readonly>
                               </div>
 
                             </div><!--/.row-->
@@ -137,7 +137,8 @@
                               <div class="form-group col-sm-12">
                                 <label for="editLibGroupUser">Libellé</label>
                                 <input type="texte" class="form-control" id="editLibGroupUser"
-                                formControlName="editLibGroupUser" placeholder="Libellé du Groupe">
+                                formControlName="editLibGroupUser" placeholder="Libellé du Groupe"
+                                [ngModel]="editGroupUser.libGroupUser">
                               </div>
 
                             </div><!--/.row-->
@@ -147,7 +148,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-warning">Modifier</button>
+                        <button type="submit" class="btn btn-warning" [disabled]="editGroupUserFormsGroup.invalid">Modifier</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </form>
@@ -166,7 +167,7 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <p>Vous êtes sur le point de supprimer le Groupe d'Utilisateur <mark style="color: red;">GPUSR1</mark></p>
+                      <p>Vous êtes sur le point de supprimer le Groupe d'Utilisateur <mark style="color: red;">{{ suprGroupUser.idGroupUser }}</mark></p>
                       <p>Le confirmez-vous ?</p>
                     </div>
                     <div class="modal-footer">
@@ -194,7 +195,7 @@
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
           <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm" datatable>
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2">
           <thead>
             <tr>
               <th>Code Groupe</th>
@@ -205,16 +206,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>GPUSR1</td>
-              <td>Caissières</td>
-              <td>Facturation</td>
+            <tr *ngFor="let affect of affectDroitGroupUsers; let i = index">
+              <td>{{ affect.groupUser.idGroupUser }}</td>
+              <td>{{ affect.groupUser.libGroupUser }}</td>
+              <td>{{ affect.droitUser.libDroitUser }}</td>
               <td>Pouvoir Utiliser le Module de facturation du Système afin d'établir des Factures</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffectDroitGroupUser(0)"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffectDroitGroupUser(0)"><span class="fa fa-trash"></span></button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffectDroitGroupUser(i)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffectDroitGroupUser(i)"><span class="fa fa-trash"></span></button>
 
-                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
                 <div class="btn-group" dropdown>
                   <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
@@ -269,7 +269,7 @@
                                 <label for="addGroupUser">Groupe</label>
                                   <select id="addGroupUser" name="addGroupUser" class="form-control"
                                   formControlName="addGroupUser">
-                                    <option *ngFor="let group of groupeUsers; let i = index" value="0">
+                                    <option *ngFor="let group of groupeUsers; let i = index" [value]="i">
                                       {{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
 
                                   </select>
@@ -282,7 +282,7 @@
                                 <label for="addDroitUser">Droit</label>
                                   <select id="addDroitUser" name="addDroitUser" class="form-control"
                                   formControlName="addDroitUser">
-                                    <option *ngFor="let droit of droitUsers; let i = index" value="i">
+                                    <option *ngFor="let droit of droitUsers; let i = index" [value]="i">
                                       {{ droit.idDroitUser }} - {{ droit.libDroitUser }}</option>
 
                                   </select>
@@ -299,7 +299,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="addAffectDroitGroupUserFormsGroup.invalid">Enrégistrer</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </form>
@@ -331,7 +331,7 @@
                                 <label for="editGroupUser">Groupe</label>
                                   <select id="editGroupUser" name="editGroupUser" class="form-control"
                                   formControlName="editGroupUser">
-                                    <option *ngFor="let group of groupeUsers; let i = index" value="0">
+                                    <option *ngFor="let group of groupeUsers; let i = index" [value]="i">
                                       {{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
 
                                   </select>
@@ -344,7 +344,7 @@
                                 <label for="editDroitUser">Droit</label>
                                   <select id="editDroitUser" name="editDroitUser" class="form-control"
                                   formControlName="editDroitUser">
-                                    <option *ngFor="let droit of droitUsers; let i = index" value="i">
+                                    <option *ngFor="let droit of droitUsers; let i = index" [value]="i">
                                       {{ droit.idDroitUser }} - {{ droit.libDroitUser }}</option>
 
                                   </select>
@@ -360,7 +360,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-warning">Modifier</button>
+                        <button type="submit" class="btn btn-warning" [disabled]="editAffectDroitGroupUserFormsGroup.invalid">Modifier</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </form>
@@ -379,7 +379,7 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <p>Vous êtes sur le point de supprimer le Droit attribué au Groupe <mark style="color: red;">GPUSR1</mark></p>
+                      <p>Vous êtes sur le point de supprimer le Droit <mark style="color: red;">{{ suprAffectDroitGroupUser.droitUser.idDroitUser }}</mark> attribué au Groupe <mark style="color: red;">{{ suprAffectDroitGroupUser.groupUser.idGroupUser }}</mark></p>
                       <p>Le confirmez-vous ?</p>
                     </div>
                     <div class="modal-footer">

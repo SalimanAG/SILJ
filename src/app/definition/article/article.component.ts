@@ -278,7 +278,7 @@ export class ArticleComponent implements OnInit {
   }
 
   onSubmitEditArtiFormsGroup(){
-    const newArti = new Article(this.editArticleFormsGroup.value['editCodeArticle'], this.editArticleFormsGroup.value['addLibArticle'],
+    const newArti = new Article(this.editArticleFormsGroup.value['editCodeArticle'], this.editArticleFormsGroup.value['editLibArticle'],
     this.editArticleFormsGroup.value['editStockerArticle'], this.editArticleFormsGroup.value['editNumSerieArticle'],
     this.editArticleFormsGroup.value['editLivrableArticle'], this.editArticleFormsGroup.value['editConsommableArticle'],
     this.editArticleFormsGroup.value['editPrixVenteArticle'], this.editArticleFormsGroup.value['editCouleurArticle'],

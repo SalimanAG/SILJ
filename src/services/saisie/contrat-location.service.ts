@@ -12,11 +12,11 @@ export class ContratLocationService {
   constructor(private httpCli:HttpClient) { }
 
   getAllContrat(){
-    return this.httpCli.get(this.host+'/location/contrat/list');
+    return this.httpCli.get<Contrat[]>(this.host+'/location/contrat/list');
   }
 
   getAContratById(code:String){
-    return this.httpCli.get<Contrat[]>(this.host+'/location/contrat/byCodCon/'+code);
+    return this.httpCli.get<Contrat>(this.host+'/location/contrat/byCodCon/'+code);
   }
 
   addAContrat(corps:Contrat){

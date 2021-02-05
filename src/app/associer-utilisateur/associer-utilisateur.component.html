@@ -225,7 +225,7 @@
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
           <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm" datatable >
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2">
           <thead>
             <tr>
               <th>Nom & Prénoms Utilisateur</th>
@@ -235,15 +235,15 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody *ngFor="let affect of affecters; let i = index">
             <tr>
-              <td>KAMI Abdora</td>
-              <td>CS1 - Caisse Principale</td>
-              <td>Mairie</td>
-              <td>01/02/2020</td>
+              <td>{{ affect.utilisateur.idUtilisateur }} - {{ affect.utilisateur.nomUtilisateur }} {{ affect.utilisateur.prenomUtilisateur }}</td>
+              <td>{{ affect.caisse.codeCaisse }} - {{ affect.caisse.libeCaisse }}</td>
+              <td>{{ affect.caisse.arrondissement.nomArrondi }}</td>
+              <td>{{ affect.dateDebAffecter }}</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffecter(0)"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffecter(0)"><span class="fa fa-trash"></span></button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffecter(i)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffecter(i)"><span class="fa fa-trash"></span></button>
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
                 <div class="btn-group" dropdown>
@@ -286,7 +286,7 @@
                         </button>
                       </div>
                       <div class="modal-body">
-                        <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                        <!-- Formulaire pour Enrégistrer une affectation à une caisse-->
                         <div class="card">
                           <div class="card-header">
                             <strong>Nouvelle Association à une Caisse</strong>
@@ -298,7 +298,7 @@
                                 <label for="addUtilisateur">Utilisateur</label>
                                   <select id="addUtilisateur" name="addUtilisateur" class="form-control"
                                   formControlName="addUtilisateur">
-                                    <option *ngFor="let user of utilisateurs; let i = index" value="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
+                                    <option *ngFor="let user of utilisateurs; let i = index" [value]="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
 
                                   </select>
 
@@ -308,18 +308,17 @@
                               <div class="form-group col-sm-6">
                                 <label for="addArrondissement">Arrondissement</label>
                                   <select id="addArrondissement" name="addArrondissement" class="form-control"
-                                  formControlName="addArrondissement">
-                                    <option value="0">Selectionner l'Arrondissement</option>
-                                    <option value="1">Option #1</option>
-                                    <option value="2">Option #2</option>
-                                    <option value="3">Option #3</option>
+                                  formControlName="addArrondissement" (click)="getAllCaisseByFormsArrondi1()">
+                                    <option *ngFor="let arron of arrondissements; let i = index" [value]="i">
+                                      {{ arron.codeArrondi }} - {{ arron.nomArrondi }}</option>
+
                                   </select>
                               </div>
                               <div class="form-group col-sm-6">
                                 <label for="addCaisse">Caisse</label>
                                   <select id="addCaisse" name="addCaisse" class="form-control"
                                   formControlName="addCaisse">
-                                    <option *ngFor="let caisse of caissesByAArrondissement; let i = index" value="i">{{ caisse.codeCaisse }} - {{ caisse.libeCaisse }}</option>
+                                    <option *ngFor="let caisse of caissesByAArrondissement; let i = index" [value]="i">{{ caisse.codeCaisse }} - {{ caisse.libeCaisse }}</option>
 
                                   </select>
                               </div>
@@ -341,7 +340,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="addAffecterFormsGroup.invalid">Enrégistrer</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </form>
@@ -373,7 +372,7 @@
                                 <label for="editUtilisateur">Utilisateur</label>
                                   <select id="editUtilisateur" name="editUtilisateur" class="form-control"
                                   formControlName="editUtilisateur">
-                                    <option *ngFor="let user of utilisateurs; let i = index" value="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
+                                    <option *ngFor="let user of utilisateurs; let i = index" [value]="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
 
                                   </select>
 
@@ -383,18 +382,16 @@
                               <div class="form-group col-sm-6">
                                 <label for="editArrondissement">Arrondissement</label>
                                   <select id="editArrondissement" name="editArrondissement" class="form-control"
-                                  formControlName="editArrondissement">
-                                    <option value="0">Selectionner l'Arrondissement</option>
-                                    <option value="1">Option #1</option>
-                                    <option value="2">Option #2</option>
-                                    <option value="3">Option #3</option>
+                                  formControlName="editArrondissement" (click)="getAllCaisseByFormsArrondi2()">
+                                  <option *ngFor="let arron of arrondissements; let i = index" [value]="i" >
+                                    {{ arron.codeArrondi }} - {{ arron.nomArrondi }}</option>
                                   </select>
                               </div>
                               <div class="form-group col-sm-6">
                                 <label for="editCaisse">Caisse</label>
                                   <select id="editCaisse" name="editCaisse" class="form-control"
                                   formControlName="editCaisse">
-                                    <option *ngFor="let caisse of caissesByAArrondissement; let i = index" value="i">{{ caisse.codeCaisse }} - {{ caisse.libeCaisse }}</option>
+                                  <option *ngFor="let caisse of caissesByAArrondissement; let i = index" [value]="i">{{ caisse.codeCaisse }} - {{ caisse.libeCaisse }}</option>
 
                                   </select>
                               </div>
@@ -403,12 +400,12 @@
                               <div class="form-group col-sm-6">
                                 <label for="editDateDebAffecter">Date d'Association</label>
                                 <input type="date" class="form-control" name="editDateDebAffecter" id="editDateDebAffecter"
-                                formControlName="editDateDebAffecter">
+                                formControlName="editDateDebAffecter" [ngModel]="editAffecter.dateDebAffecter">
                               </div>
                               <div class="form-group col-sm-6">
                                 <label for="editDateFinAffecter">Date de Fin d'Association</label>
                                 <input type="date" class="form-control" name="editDateFinAffecter" id="editDateFinAffecter"
-                                formControlName="editDateFinAffecter">
+                                formControlName="editDateFinAffecter" [ngModel]="editAffecter.dateFinAffecter">
                               </div>
                             </div><!--/.row-->
                           </div>
@@ -416,7 +413,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-warning">Modifier</button>
+                        <button type="submit" class="btn btn-warning" [disabled]="editAffecterFormsGroup.invalid">Modifier</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </form>
@@ -435,7 +432,7 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <p>Vous êtes sur le point de supprimer l'Association de l'utilisateur à la Caisse <mark style="color: red;">CS01</mark></p>
+                      <p>Vous êtes sur le point de supprimer l'Association de l'utilisateur <mark style="color: green;">{{ suprAffecter.utilisateur.idUtilisateur }}</mark> à la Caisse <mark style="color: red;">{{ suprAffecter.caisse.codeCaisse }}</mark></p>
                       <p>Le confirmez-vous ?</p>
                     </div>
                     <div class="modal-footer">
@@ -461,7 +458,7 @@
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
           <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm" datatable >
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions3" [dtTrigger]="dtTrigger3">
           <thead>
             <tr>
               <th>Nom & Prénoms Utilisateur</th>
@@ -471,13 +468,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>KAMI Abdora</td>
-              <td>GPUSR01 - Caissières</td>
+            <tr *ngFor="let affectUserToGrou of affectUserToGroups; let i = index" >
+              <td>{{ affectUserToGrou.utilisateur.idUtilisateur }} - {{ affectUserToGrou.utilisateur.nomUtilisateur }} {{ affectUserToGrou.utilisateur.prenomUtilisateur }}</td>
+              <td>{{ affectUserToGrou.groupUser.idGroupUser }} - {{ affectUserToGrou.groupUser.libGroupUser }}</td>
               <!--<td>01/02/2020</td>-->
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffecterUserToGroup(0)"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffecterUserToGroup()"><span class="fa fa-trash"></span></button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffecterUserToGroup(i)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffecterUserToGroup(i)"><span class="fa fa-trash"></span></button>
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
                 <div class="btn-group" dropdown>
@@ -532,7 +529,7 @@
                                 <label for="addUtilisateur2">Utilisateur</label>
                                 <select id="addUtilisateur2" name="addUtilisateur2" class="form-control"
                                 formControlName="addUtilisateur2">
-                                  <option *ngFor="let user of utilisateurs; let i = index" value="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
+                                  <option *ngFor="let user of utilisateurs; let i = index" [value]="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
 
                                 </select>
 
@@ -543,7 +540,7 @@
                                 <label for="addGroupUser">Groupe d'Utilisateur</label>
                                   <select id="addGroupUser" name="addGroupUser" class="form-control"
                                   formControlName="addGroupUser">
-                                    <option *ngFor="let group of groupUsers; let i = index" value="i">{{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
+                                    <option *ngFor="let group of groupUsers; let i = index" [value]="i">{{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
 
                                   </select>
                               </div>
@@ -592,7 +589,7 @@
                                 <label for="editUtilisateur2">Utilisateur</label>
                                 <select id="editUtilisateur2" name="editUtilisateur2" class="form-control"
                                 formControlName="editUtilisateur2">
-                                  <option *ngFor="let user of utilisateurs; let i = index" value="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
+                                  <option *ngFor="let user of utilisateurs; let i = index" [value]="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
 
                                 </select>
 
@@ -603,7 +600,7 @@
                                 <label for="editGroupUser">Groupe d'Utilisateur</label>
                                   <select id="editGroupUser" name="editGroupUser" class="form-control"
                                   formControlName="editGroupUser">
-                                    <option *ngFor="let group of groupUsers; let i = index" value="i">{{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
+                                    <option *ngFor="let group of groupUsers; let i = index" [value]="i">{{ group.idGroupUser }} - {{ group.libGroupUser }}</option>
 
                                   </select>
                               </div>
@@ -639,7 +636,7 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <p>Vous êtes sur le point de supprimer l'Association de L'utilisateur au Groupe <mark style="color: red;">GPUSR01</mark></p>
+                      <p>Vous êtes sur le point de supprimer l'Association de L'utilisateur <mark style="color: green;">{{ suprAffectUserToGroup.utilisateur.idUtilisateur }}</mark> au Groupe <mark style="color: red;">{{ suprAffectUserToGroup.groupUser.idGroupUser }}</mark></p>
                       <p>Le confirmez-vous ?</p>
                     </div>
                     <div class="modal-footer">

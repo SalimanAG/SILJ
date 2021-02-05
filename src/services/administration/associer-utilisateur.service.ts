@@ -15,7 +15,7 @@ export class AssocierUtilisateurService {
   }
 
   //Partie réservée pour l'association d'un utilisateur à un arrondissement
-  
+
 
 
   //Partie réservée pour l'association d'un utilisateur à une Caisse (Affecter)
@@ -49,15 +49,15 @@ export class AssocierUtilisateurService {
   }
 
   addAAffectUserGroup(corps:AffectUserGroup){
-    return this.httpCli.post<AffectUserGroup>(this.host+'/commune/ug/list', corps);
+    return this.httpCli.post<AffectUserGroup>(this.host+'/commune/aug/list', corps);
   }
 
   editAAffectUserGroup(code:String, corps:AffectUserGroup){
-    return this.httpCli.put<AffectUserGroup>(this.host+'/commune/aug/byId/'+code, corps);
+    return this.httpCli.put<AffectUserGroup>(this.host+'/commune/aug/byid/'+code, corps);
   }
 
   deleteAAffectUserGroup(code:String){
-    return this.httpCli.delete<boolean>(this.host+'/commune/aug/byId/'+code);
+    return this.httpCli.delete<boolean>(this.host+'/commune/aug/byidAGU/'+code);
   }
 
 }

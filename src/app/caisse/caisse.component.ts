@@ -3,8 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataTableDirective } from 'angular-datatables';
 import {ModalDirective} from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
+import { Arrondissement } from '../../models/arrondissement.model';
 import { Caisse } from '../../models/caisse.model';
+import { Commune } from '../../models/commune.model';
+import { Departement } from '../../models/departement.model';
+import { Pays } from '../../models/pays.model';
 import { CaisseService } from '../../services/administration/caisse.service';
+import { CommuneService } from '../../services/definition/commune.service';
 
 @Component({
   selector: 'app-caisse',
@@ -26,11 +31,14 @@ export class CaisseComponent implements OnInit {
   addCaissFormsGroup: FormGroup;
   editCaissFormsGroup: FormGroup;
   caisses:Caisse[];
-  editCaiss:Caisse = new Caisse('', '', '');
-  suprCaiss:Caisse = new Caisse('', '', '');
-  infoCaiss:Caisse = new Caisse('', '', '');
+  editCaiss:Caisse = new Caisse('', '', new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))));
+  suprCaiss:Caisse = new Caisse('', '', new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))));
+  infoCaiss:Caisse = new Caisse('', '', new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))));
 
-  constructor(private serviceCaisse : CaisseService, private formBulder:FormBuilder) {
+  //Liste de tous les arrondissements
+  arrondissements:Arrondissement[];
+
+  constructor(private serviceCaisse : CaisseService, private formBulder:FormBuilder, private serviceCommu:CommuneService) {
     this.dtOptions1 = {
       pagingType: 'full_numbers',
       pageLength: 5,
@@ -68,6 +76,8 @@ export class CaisseComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.getAllArrondissement();
+
     this.serviceCaisse.getAllCaisse().subscribe(
       (data) => {
         this.caisses = data;
@@ -78,6 +88,17 @@ export class CaisseComponent implements OnInit {
       }
     );
 
+  }
+
+  getAllArrondissement(){
+    this.serviceCommu.getAllArrondissement().subscribe(
+      (data) => {
+        this.arrondissements = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des arrondissements', erreur);
+      }
+    );
   }
 
   getAllCaisse(){
@@ -106,13 +127,13 @@ export class CaisseComponent implements OnInit {
   }
 
   initInfosCaisse(inde:number){
-    this.editCaiss = this.caisses[inde];
+    this.infoCaiss = this.caisses[inde];
     this.infoModal.show();
   }
 
   onSubmitAddCaisseFormsGroup(){
     const newCaiss = new Caisse(this.addCaissFormsGroup.value['addCodeCaisse'], this.addCaissFormsGroup.value['addLibeCaisse'],
-    this.addCaissFormsGroup.value['addArrondissement']);
+    this.arrondissements[this.addCaissFormsGroup.value['addArrondissement']]);
     this.serviceCaisse.addACaisse(newCaiss).subscribe(
       (data) => {
         this.primaryModal.hide();
@@ -127,7 +148,7 @@ export class CaisseComponent implements OnInit {
 
   onSubmitEditCaisseFormsGroup(){
     const newCaiss = new Caisse(this.editCaissFormsGroup.value['editCodeCaisse'], this.editCaissFormsGroup.value['editLibeCaisse'],
-    this.editCaissFormsGroup.value['editArrondissement']);
+    this.arrondissements[this.editCaissFormsGroup.value['editArrondissement']]);
     this.serviceCaisse.editACaisse(this.editCaiss.codeCaisse, newCaiss).subscribe(
       (data) => {
         this.warningModal.hide();
