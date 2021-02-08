@@ -86,40 +86,38 @@
                           </div>
                           <div class="card-body">
                             <div class="row">
-                              <div class="form-group col-sm-12">
+                              <div class="form-group col-sm-6">
                                 <label for="addCodeReg">Code</label>
-                                <input type="text" class="form-control" id="addCodeReg" placeholder="Code du régisseur"
+                                <input type="text" class="form-control" id="addCodeReg" placeholder="Code"
                                   formControlName="addCodeReg">
+                              </div>
+
+                              <div class="form-group col-sm-6">
+                                <label for="addNomMag">Nom</label>
+                                <input type="text" class="form-control" id="addNomMag" placeholder="Nom "
+                                  formControlName="addNomMag">
                               </div>
                             </div><!--/.row-->
                             <div class="row">
-                                <div class="form-group col-sm-12">
-                                    <label for="addNomMag">Nom</label>
-                                    <input type="text" class="form-control" id="addNomMag" placeholder="Entrer le nom "
-                                      formControlName="addNomMag">
-                                  </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-12">
+                                <div class="form-group col-sm-6">
                                     <label for="addPrenomMag">Prénom</label>
-                                    <input type="text" class="form-control" id="addPrenomMag" placeholder="Entrer le prénom"
+                                    <input type="text" class="form-control" id="addPrenomMag" placeholder="Prénom"
                                       formControlName="addPrenomMag">
-                                  </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-12">
-                                    <label for="addTelMag">Téléphone</label>
-                                    <input type="text" class="form-control" id="addTelMag" placeholder="Entrer le téléphone"
-                                      formControlName="addTelMag">
-                                  </div>
+                                </div>
+
+                                <div class="form-group col-sm-6">
+                                  <label for="addTelMag">Téléphone</label>
+                                  <input type="text" class="form-control" id="addTelMag" placeholder="Téléphone"
+                                    formControlName="addTelMag">
+                                </div>
                             </div>
                             <div class="row">
                               <div class="form-group col-sm-12">
                                 <label for="addUser">Utilisateur</label>
                                   <select id="addUser" name="addUser" class="form-control"
                                   formControlName = "addUser">
-                                    <option *ngFor="let user of user; let i = index"
-                                    [value]="i">{{ user.idUtilisateur }} - {{ user.login }}</option>
+                                    <option *ngFor="let utilisateur of utilisateur; let i = index"
+                                    [value]="i">{{ utilisateur.idUtilisateur }} - {{ utilisateur.login }}</option>
                                   </select>
                               </div>
                             </div><!--/.row-->
@@ -156,29 +154,25 @@
                           </div>
                           <div class="card-body">
                             <div class="row">
-                              <div class="form-group col-sm-12">
+                              <div class="form-group col-sm-6">
                                 <label for="editCodeReg">Code</label>
                                 <input type="text" class="form-control" id="editCodeReg" placeholder="Code du régisseur"
                                   formControlName="editCodeReg" readonly="true" [ngModel]="editReg.idRegisseur">
                               </div>
-                            </div>
-                            <div class="row">
-                              <div class="form-group col-sm-12">
+                              <div class="form-group col-sm-6">
                                 <label for="editNomMag">Nom</label>
                                 <input type="text" class="form-control" id="editNomMag" placeholder="Entrer le nom"
                                   formControlName="editNomMag" [ngModel]="editReg.magasinier.nomMagasinier">
                               </div>
-                            </div><!--/.row-->
-
+                            </div>
                             <div class="row">
-                                <div class="form-group col-sm-12">
+                                <div class="form-group col-sm-6">
                                     <label for="editPrenomMag">Prénom</label>
                                     <input type="text" class="form-control" id="editPrenomMag" placeholder="Entrer le prénom"
                                       formControlName="editPrenomMag" [ngModel]="editReg.magasinier.prenomMagasinier">
                                   </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-12">
+
+                                  <div class="form-group col-sm-6">
                                     <label for="editTelMag">Téléphone</label>
                                     <input type="text" class="form-control" id="editTelMag" placeholder="Entrer le téléphone"
                                       formControlName="editTelMag" [ngModel]="editReg.magasinier.telMagasinier">
@@ -188,8 +182,8 @@
                               <div class="form-group col-sm-12">
                                 <label for="editUser">Utilisateur</label>
                                   <select id="editUser" name="editUser" class="form-control" formControlName="editUser">
-                                    <option *ngFor="let user of user; let i = index"
-                                    [value]="i">{{ user.idUtilisateur }} - {{ user.login }}</option>
+                                    <option *ngFor="let utilisateur of utilisateur; let i = index"
+                                    [value]="i">{{ utilisateur.idUtilisateur }} - {{ utilisateur.login }}</option>
                                   </select>
                               </div>
                             </div><!--/.row-->
