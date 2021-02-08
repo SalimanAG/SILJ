@@ -42,8 +42,8 @@ export class GestionDroitsGroupesComponent implements OnInit {
   //Onglet associé à l'affectation de droit d'utilisateur à un groupe d'utilisateur
   droitUsers:DroitUser[];//Liste des droits d'utilisateur
   affectDroitGroupUsers:AffectDroitGroupUser[];
-  editAffectDroitGroupUser:AffectDroitGroupUser = new AffectDroitGroupUser(new DroitUser('', ''), new GroupUser('', ''));
-  suprAffectDroitGroupUser:AffectDroitGroupUser = new AffectDroitGroupUser(new DroitUser('', ''), new GroupUser('', ''));
+  editAffectDroitGroupUser:AffectDroitGroupUser = new AffectDroitGroupUser(new DroitUser('', '', ''), new GroupUser('', ''));
+  suprAffectDroitGroupUser:AffectDroitGroupUser = new AffectDroitGroupUser(new DroitUser('', '', ''), new GroupUser('', ''));
   addAffectDroitGroupUserFormsGroup:FormGroup;
   editAffectDroitGroupUserFormsGroup:FormGroup;
 

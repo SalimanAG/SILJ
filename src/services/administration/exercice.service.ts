@@ -11,7 +11,14 @@ export class ExerciceService {
   private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
 
   constructor(private httpCli:HttpClient) {
-    
+    this.getAllExo().subscribe(
+      (data) => {
+        this.exoSelectionner = data[data.length-1];
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des exos', erreur);
+      }
+    );
   }
 
   getAllExo(){

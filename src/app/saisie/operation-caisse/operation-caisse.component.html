@@ -1,18 +1,20 @@
 <div>
-  <title>Opération de caisse</title><h4>operation de caisse</h4>
+  <title ><h4>Opération de caisse</h4></title>
 <div class="card">
   <div class="card-header">
-    <h5><i class="fa fa-align-justify">Liste des opérations de caisse</i></h5>
+    <h5 style="text-align: center;"><i class="fa fa-align-justify">Liste des opérations de caisse</i></h5>
 
   </div><!--Fin card header-->
   <div class="card-body">
     <div class="row">
-      <div class="col-lg-3"></div>
       <div class="col-lg-3">
-         <button class="btn btn-success" data-toggle="modal" (click)="addVente.show()" type="button">Ajouter une vente</button>
+        <h5><i class="fa fa-align-justify">Liste des opérations de caisse</i></h5>
       </div>
       <div class="col-lg-3">
-          <button class="btn btn-success" data-toggle="modal" (click)="addLoyer.show()" type="button">Ajouter un loyer</button>
+         <button class="btn btn-success" data-toggle="modal" (click)="InitialiseNouvelleVente()" type="button">Ajouter une vente</button>
+      </div>
+      <div class="col-lg-3">
+          <button class="btn btn-success" data-toggle="modal" (click)="initialiseNouveauLoyer()" type="button">Ajouter un loyer</button>
       </div>
     </div>
     <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtListOpeCa">
@@ -21,16 +23,20 @@
           <th>Numero</th>
           <th>Date</th>
           <th>Type</th>
-          <th>Mode de paiement</th>
+          <th>Paiement par</th>
+          <th>Type de recette</th>
+          <th>contribuable</th>
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody *ngFor="let oc of listOp; let i=index;">
         <tr>
-          <td>OP1</td>
-          <td>26/01/2021</td>
-          <td>Imput Corres</td>
-          <td>Espèces</td>
+          <td>{{oc.numOpCaisse}}</td>
+          <td>{{oc.dateOpCaisse}}</td>
+          <td>{{oc.caisse.libeCaisse}}</td>
+          <td>{{oc.modePaiement.libeModPay}}</td>
+          <td>{{oc.typeRecette.libeTypRec}}</td>
+          <td>{{oc.contribuable}}</td>
           <td>
               <button class="btn btn-info btn-sm" data-toggle="modal" (click)="detailOp.show()"><span class="fa fa-eye"></span></button>
               <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="annulOp.show()"><span class="fa fa-trash"></span></button>
@@ -45,15 +51,16 @@
           <th>Mode de paiement</th>
           <th>Actions</th>
         </tr>
-        </tfoot>
+      </tfoot>
     </table>
   </div><!--Fin card-body-->
 </div>
 </div>
-<!-------------------------------------Ajoute de vente------------------------------------------->
+
+<!----------------------------------Ajoute de vente------------------------------------------->
 <div bsModal #addVente="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-primary" role="document">
-    <form class="form-horizontal" (ngSubmit)="AjouteVente()">
+    <form [formGroup]="addVentGroup" class="form-horizontal" (ngSubmit)="AjouteVente()">
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">Nouvelle vente</h4>
@@ -69,59 +76,54 @@
               <div class="form-group row">
                 <div class="row">
                   <div class="col-lg-3">
-                    <label for="addVentCais">Caisse</label>
-                    <select id="addVentCais" name="addVentCais" class="form-control" >
-                        <option value="0">Caisse</option>
-                        <option value="1">caisse #1</option>
-                        <option value="2">Caisse #2</option>
+                    <label for="nVentCais">Caisse</label>
+                    <select id="nVentCais" formControlName="nVentCais" class="form-control" required >
+                        <option  *ngFor="let cais of caisses; let i = index" [value]="i">{{ cais.libeCaisse }}</option>
                     </select>
                   </div>
                   <div class="col-lg-3">
-                    <label class="form-label" for="addVentDate">Date</label>
-                    <input type="datetime" id="addVentDate" name="addVentDate" class="form-control" placeholder="Date et heure">
+                    <label class="form-label" for="nVentDat">Date</label>
+                    <input type="datetime" id="nVentDat" formControlName="nVentDat" class="form-control" placeholder="Date et heure" required>
                   </div>
                   <div class="col-lg-3">
-                    <label class="form-label" for="addVentNum">Numéro</label>
-                    <input type="text" id="addVentNum" name="addVentNum" class="form-control" placeholder="Numéro">
+                    <label class="form-label" for="nVentNum">Numéro</label>
+                    <input type="text" id="nVentNum" formControlName="nVentNum" class="form-control" placeholder="Numéro" required>
                   </div>
                   <div class="col-lg-3">
-                    <label for="addVentTyp">Type</label>
-                    <select id="addVentTyp" name="addVentTyp" class="form-control">
-                      <option value="0">Opération...</option>
-                      <option value="1">Vente directe</option>
-                      <option value="2">Imput. corresp.</option>
+                    <label for="nVentTyp">Type</label>
+                    <select id="nVentTyp" formControlName="nVentTyp" class="form-control" required>
+                      <option *ngFor="let typ of opTypes; let i=index" [value]="i">{{typ.codeTypRec}}-{{typ.libeTypRec}}</option>
                     </select>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-lg-4">
-                    <label for="addVentMod">Mode</label>
-                    <select id="addVentMod" name="addVentMod" class="form-control">
-                      <option value="0">Paiement par...</option>
-                      <option value="1">Espèce</option>
-                      <option value="2">Chèque</option>
+                    <label for="nVentMod">Mode</label>
+                    <select id="nVentMod" formControlName="nVentMod" class="form-control" required>
+                      <option *ngFor="let mod of modes; let i=index" [value]="i">{{mod.libeModPay}}</option>
                     </select>
                   </div>
                   <div class="col-lg-4">
-                    <label class="form-label" for="addVentCont">Contribuable</label>
-                    <input type="text" id="addVentCont" name="addVentCont" class="form-control" placeholder="Contribuable">
+                    <label class="form-label" for="nVentCont">Contribuable</label>
+                    <input type="text" id="nVentCont" formControlName="nVentCont" class="form-control" placeholder="Contribuable">
                   </div>
                   <div class="col-lg-4">
-                    <label class="form-label" for="addVentObs">Observation</label>
-                    <input type="text" id="addVentObs" name="addVentObs" class="form-control" placeholder="Observation">
+                    <label class="form-label" for="nVentObs">Observation</label>
+                    <input type="text" id="nVentObs" formControlName="nVentObs" class="form-control" placeholder="Observation">
+                  </div>
+                  <div class="col-lg-4">
+                    <label class="form-label" for="nTotalV">Observation</label>
+                    <input type="number" id="nTotalV" formControlName="nTotalV" class="form-control" placeholder="Observation">
                   </div>
                 </div>
               </div>
               <div class="form-group row">
-                <div class="row">
-                  <div class="col-lg-12">
-                    <button type="button" class="btn btn-block btn-primary active" aria-pressed="true" (click)="addArticle.show()">Ajouter Article</button>
-                  </div>
-                  </div>
-                <div class="row">
-                  <div class="col-lg-12">
-                  <table class="table table-bordered">
-                    <thead>
+                <div class="col-lg-12">
+                  <button type="button" class="btn btn-block btn-primary active" aria-pressed="true"  (click)="ouvreAddArt()">Ajouter Article</button>
+                </div>
+                <br>
+                <table class="table table-bordered" >
+                  <thead>
                       <tr>
                         <th>Code</th>
                         <th>Libellé</th>
@@ -130,32 +132,20 @@
                         <th>Montant</th>
                         <th>Action</th>
                       </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>A1</td>
-                        <td>Cert. résidence</td>
-                        <td>500</td>
-                        <td>5</td>
-                        <td>2500</td>
-                        <td>
-                          <button class="btn btn-block btn-sm" data-toggle="modal" ><span class="fa fa-trash"></span></button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>A2</td>
-                        <td>Cert. Poss. état</td>
-                        <td>1000</td>
-                        <td>5</td>
-                        <td>5000</td>
-                        <td>
-                          <button class="btn btn-block btn-sm" data-toggle="modal" ><span class="fa fa-trash"></span></button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  </div>
-                </div>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let tmpLigne of tempLigneOpCais; let i=index" (select)="recupererTotalVente()">
+                      <td>{{tmpLigne.article.codeArticle}}</td>
+                      <td>{{tmpLigne.article.libArticle}}</td>
+                      <td ><input (click)="recalculerTotalvente()" (change)="recupererTotalVente()" type="number" [(ngModel)]="tempLigneOpCais[[i]].prixLigneOpCaisse" [ngModelOptions]="{standalone: true} "></td>
+                      <td><input (click)="recupererTotalVente()" (change)="recalculerTotalvente()"  type="number" [(ngModel)]="tempLigneOpCais[[i]].qteLigneOpCaisse" [ngModelOptions]="{standalone: true}"></td>
+                      <td id="nVentLigne" formControlName="nVentLigne">{{tempLigneOpCais[i].prixLigneOpCaisse*tempLigneOpCais[i].qteLigneOpCaisse}}</td>
+                      <td>
+                        <button class="btn btn-block btn-sm" data-toggle="modal" style="color: red;" (click)="supTempLigneOpCais(i)"><span class="fa fa-trash"></span></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
             <div class="card-footer">
@@ -168,112 +158,111 @@
         </div>
       </div>
     </form>
-    <!--form [formGroup]="addVentGroup" (ngSubmit)="AjouteVente()" class="form-horizontal">
-      <div class="modal-content">
-        <div class="modal-header">
-        </div>
-        <div class="modal-body">
-          <div class="card">
-            <div class="card-header">
-              <strong></strong>
-            </div>
-            <div class="card-body">
-              <!--div class="form-group">
-                <div class=" row">
-                  <div class="form-group col-lg-3">
-                    <label class="col-md col-form-label" for="addVentCais">Caisse:</label>
-                    <select id="addVentCais" class="form-control" formControlName="addVentCais">
-                      <option value="0">Caisse...</option>
-                      <option value="1">Caisse #1</option>
-                      <option value="2">Caisse #2</option>
-                      <option value="3">Caisse #3</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-lg-3">
-                    <label class="col-md col-form-label" for="addVentDate">Date:</label>
-                    <input type="datetime" id="addVentDate" class="form-control" placeholder="Date et heure" formControlName="addVentDate">
-                  </div>
-                  <div class="form-group col-lg-3">
-                    <label class="col-md col-form-label" for="addVentNum">Numéro:</label>
-                    <input type="text" id="addVentNum" class="form-control" placeholder="Numéro" formControlName="addVentNum">
-                  </div>
-                  <div class="form-group col-lg-3">
-                    <label class="col-md col-form-label" for="addVentTyp">Type:</label>
-                    <select id="addVentTyp" class="form-control" formControlName="addVentTyp">
-                    <option value="0">Opération...</option>
-                    <option value="1">Vente directe</option>
-                    <option value="2">Imput. Corres</option>
-                  </select>
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-lg-3">
-                  <label class="col-md col-form-label" for="addVentMod">Mode:</label>
-                  <select id="addVentMod" class="form-control" formControlName="addVentMod">
-                    <option value="0">Paiement par...</option>
-                    <option value="1">Espèces</option>
-                    <option value="2">Chèque</option>
-                  </select>
-                </div>
-                <div class="form-group col-lg-4.5">
-                  <label class="col-md col-form-label" for="addVentCont">Contribuable:</label>
-                  <input type="text" id="addVentCont" class="form-control" placeholder="Contribuable" formControlName="addVentCont">
-                </div>
-                <div class="form-group col-lg-4.5">
-                  <label class="col-md col-form-label" for="addVentObs">Observation:</label>
-                  <input type="text" id="addVentObs" class="form-control" placeholder="Réservé pour les reférence de chèque par exemple" formControlName="addVentObs">
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="form-group col-lg-10">
-
-              </div>
-              <div class="form-group col-lg-2">
-                <div class="form-group row">
-                  <button type="button" class="btn btn-block btn-primary active" aria-pressed="true" (click)="addArticle.show()">Ajouter Article</button>
-                </div>
-                <div class="form-group row">
-                  <button type="button" class="btn btn-block btn-primary active" aria-pressed="true" >Enlever Article</button>
-                </div>
-              </div>
-            </div>
-            <!--/.row-->
-      <!--/div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="addVente.hide()">Close</button>
-        <button type="submit" class="btn btn-primary">Valider</button>
-      </div>
-    </div><!-- /.modal-content -->
-  <!--/div><!-- /.modal-dialog -->
-    <!--/div><!-- /.modal -->
-    <!--/form-->
   </div>
 </div>
 
-
-                                                             <!--AddLoyer-->
+<!--------------------------------------------AddLoyer----------------------------------------->
 <div bsModal #addLoyer="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-primary" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Nouveau loyer</h4>
-        <button type="button" class="close" (click)="addLoyer.hide()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>One fine body&hellip;</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="addLoyer.hide()">Close</button>
-        <button type="button" class="btn btn-primary">Valider</button>
-      </div>
-    </div><!-- /.modal-content -->
+    <form [formGroup]="addVentGroup" class="form-horizontal" (ngSubmit)="AjouteVente()">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Nouveau loyer</h4>
+          <button type="button" class="close" (click)="addLoyer.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="row">
+              <div class="row">
+                <div class="card">
+                  <div class="card-header">
+                    <i class="fa fa-align-justify"></i> Liste des locataires
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-sm" datatable [dtOptions]="tabLocataire" [dtTrigger]="dtLocataite">
+                      <thead>
+                        <tr>
+                          <th>N°</th>
+                          <th>Identité</th>
+                          <th>Téléphone</th>
+                          <th>Personne à contacter</th>
+                        </tr>
+                      </thead>
+                      <tbody *ngFor="let loc of locataires; let i=index">
+                        <tr>
+                          <td>loc.idLocataire</td>
+                          <td>loc.identiteLocataire</td>
+                          <td>loc.telLocataire</td>
+                          <td>loc.personneAContacter</td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <th>N°</th>
+                          <th>Identité</th>
+                          <th>Téléphone</th>
+                          <th>Personne à contacter</th>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <!--/.col-->
+              <div class="row">
+                <div class="card">
+                  <div class="card-header">
+                    <i class="fa fa-align-justify"></i> Tableau des échéances non payées
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Numero</th>
+                          <th>Mois</th>
+                          <th>Echéance</th>
+                          <th>Contrat</th>
+                          <th>Bon?</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Pompeius René</td>
+                          <td>2012/01/01</td>
+                          <td>Member</td>
+                          <td>
+                            <span class="badge badge-success">Active</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td>Numero</td>
+                          <td>Mois</td>
+                          <td>Echéance</td>
+                          <td>Contrat</td>
+                          <td>Bon?</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <!--/.col-->
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="addLoyer.hide()">Close</button>
+          <button type="button" class="btn btn-primary">Valider</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </form>
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
-                                                         <!--Détail-->
+                                        <!--Détail-->
 <div bsModal #detailOp="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-primary" role="document">
     <div class="modal-content">
@@ -313,9 +302,11 @@
 </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-                                                                    <!--Ajout d'article-->
+
+                                                                  <!--Ajout d'article-->
+
 <div bsModal #addArticle="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-success modal-md" role="document">
+  <div class="modal-dialog modal-success modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Sélectionner les articles</h4>
@@ -324,57 +315,32 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="col-lg-10">
-          <div class="card">
+
+          <div class="card" style="margin: 0;">
             <div class="card-body">
-              <table class="table table-striped">
+              <table class="table table-striped" id="tabListArt" datatable [dtOptions]="dtListArt" [dtTrigger]="dtrigAddArt">
                 <thead>
                   <tr>
                     <th>Code</th>
                     <th>Libellé</th>
                     <th>Prix unitaire</th>
+                    <th>Choix?</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody *ngFor="let art of Articles; let i=index;">
                   <tr>
-                    <td>A3</td>
-                    <td>Cert. Pos. militaire</td>
-                    <td>300</td>
-                    <input class="form-check-input" type="checkbox">
-                  </tr>
-                  <tr>
-                    <td>A4</td>
-                    <td>Convention de vente</td>
-                    <td>4000</td>
-                    <input class="form-check-input" type="checkbox">
-                  </tr>
-                  <tr>
-                    <td>A5</td>
-                    <td>Timbre de légalisation de 10000</td>
-                    <td>10000</td>
-                    <input class="form-check-input" type="checkbox">
-                  </tr>
-                  <tr>
-                    <td>A6</td>
-                    <td>Droit de place sur marché à 100F</td>
-                    <td>100</td>
-                    <input class="form-check-input" type="checkbox" value="option1" id="checkbox2">
+                    <td>{{art.codeArticle}}</td>
+                    <td>{{art.libArticle}}</td>
+                    <td>{{art.prixVenteArticle}}</td>
+                    <td>
+                      <p style="text-align: center;"><input class="form-check-input" type="checkbox" (click)="choisirArticle(i)"></p>
+                    </td>
                   </tr>
                 </tbody>
               </table>
-              <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                <li class="page-item active">
-                  <a class="page-link" href="#">1</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-              </ul>
             </div>
           </div>
-        </div>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="addArticle.hide()">Abandonner</button>
@@ -383,99 +349,3 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
-<!--Ajout de vente-->
-
-<!--div></div>
-<div bsModal #addVente="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-primary" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>Nouvelle vente</h4>
-        <button type="button" class="close" (click)="addVente.hide()" aria-label="close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="card-body ">
-          <form>
-            <div class="row">
-              <div class="col sm-4">
-                <div class="row"><label for="caisse">Caisse</label></div>
-                <div class="row">
-                <select name="caisse" id="az">
-                  <option value="">Caisse...</option>
-                  <option value="1">Caisse principale</option>
-                  <option value="2">Caisse secondaire</option>
-                </select>
-              </div>
-              </div>
-              <div class="col sm-4">
-                <div class="row"><label for="date">Date de l'opération</label></div>
-                <div class="row"></div><input type="date" class="date"  required placeholder="date"></div>
-              </div>
-              <div class="col sm-4">
-                <div class="row"><label for="numero">Numéro</label></div>
-                  <div class="row"><input type="text" class="numero"  required placeholder="numero"></div>
-              </div>
-
-            <div class="row">
-              <div class="col sm-3">
-                <label for="type">Type</label>
-                <select name="type" id="az">
-                  <option value="">Type...</option>
-                  <option value="1">Vente directe</option>
-                  <option value="2">Imputation correspondant</option>
-                </select>
-              </div>
-              <div class="col sm-6">
-                <label for="cont">Contribuable</label>
-                <input type="text" class="cont"  required placeholder="Contribuable">
-              </div>
-              <div class="col sm-3">
-                <label for="mode">Mode de paiement</label>
-                <select name="mode" id="md">
-                  <option value="">Mode de paiement...</option>
-                  <option value="1">Espèces</option>
-                  <option value="2">Chèque</option>>
-                  <option value="3">MTN money</option>>
-                  <option value="4">MOOV money</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col sm-6">
-                <label for="ref">Référence</label>
-                <input type="text" class="ref"  required placeholder="Référence de paiement">
-              </div>
-              <div class="col sm-6">
-                <label for="obs">Observation</label>
-                <input type="text" class="obs"  required placeholder="Observation">
-              </div>
-            </div>
-            <div class="row">
-              <button type="button" class="addArticle" (click)="addArt.show()">Ajouter des articles</button>
-              <table class="table table-bordered table-striped table-sm">
-                  <thead>
-                    <th>Code</th>
-                    <th>Libellé</th>
-                    <th>Prix unitaire</th>
-                    <th>Quantité</th>
-                    <th>Montant</th>
-                  </thead>
-                  <tbody>
-                      <tr></tr>
-                      <tr></tr>
-                  </tbody>
-              </table>
-            </div>
-          </form>
-      </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="addVente.hide()">Annuler</button>
-        <button type="button" class="btn btn-primary" (click)="addVente.hide()">Enrégistrer</button>
-      </div>
-    </div>
-  </div>
-</div-->

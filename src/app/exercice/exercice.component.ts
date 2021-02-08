@@ -72,7 +72,7 @@ export class ExerciceComponent implements OnInit {
       editExoSelectionner:false
     });
 
-
+    
 
   }
 

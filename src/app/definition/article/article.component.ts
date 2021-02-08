@@ -229,10 +229,10 @@ export class ArticleComponent implements OnInit {
     .subscribe(
       (data) => {
         this.articles = data;
-        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        /*this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.destroy();
           this.dtTrigger1.next();
-        });
+        });*/
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des articles', erreur);
@@ -317,10 +317,10 @@ export class ArticleComponent implements OnInit {
     .subscribe(
       (data) => {
         this.familles = data;
-        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        /*this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.destroy();
           this.dtTrigger2.next();
-        });
+        });*/
       },
       (erreur) => {
         console.log('Erreur', erreur);
@@ -390,10 +390,10 @@ export class ArticleComponent implements OnInit {
     .subscribe(
       (data) => {
         this.unites = data;
-        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        /*this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.destroy();
           this.dtTrigger3.next();
-        });
+        });*/
       },
       (erreur) => {
         console.log('Erreur : '+erreur);

@@ -1,177 +1,409 @@
-<div class="col-md-12 mb-4">
-    <tabset>
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Réception</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
-                        </div>
-                    </div>
+<div class="card">
+  <div class="card-header">
+      <i class="fa fa-align-justify"></i> Listes des Récèptions
+  </div>
+  <div class="card-body">
+    <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddReception()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+    </div>
 
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addRecepModal.show()" type="button">Ajouter nouveau <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
-                        </div>
-                    </div>
+      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1">
+          <thead>
+              <tr>
+                  <th>Numéro</th>
+                  <th>Date de récèption</th>
+                  <th>Observation</th>
+                  <th>Commande</th>
+                  <th>Fournisseur</th>
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let recept of receptions; let i = index">
+                  <td>{{ recept.numReception }}</td>
+                  <td>{{ recept.dateReception }}</td>
+                  <td>{{ recept.observation }}</td>
+                  <td>{{ getCommandeOfAReception(recept.numReception).numCommande }} du {{ getCommandeOfAReception(recept.numReception).dateCommande }}</td>
+                  <td>{{ getCommandeOfAReception(recept.numReception).frs.codeFrs }} - {{ getCommandeOfAReception(recept.numReception).frs.identiteFrs }}</td>
+                  <td>
+                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditReception(i)"><span class="fa fa-edit"></span></button>
+                      <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReception(i)"><span class="fa fa-trash"></span></button>
+                      <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
+                      <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                      <!--Le bouton des options-->
+                      <div class="btn-group" dropdown>
+                        <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                        <ul *dropdownMenu class="dropdown-menu" role="menu">
+                          <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                          <li role="menuitem"><a class="dropdown-item" >Another action</a>
+                          </li>
+                          <li role="menuitem"><a class="dropdown-item" >Something else
+                            here</a></li>
+                          <li class="divider dropdown-divider"></li>
+                          <li role="menuitem"><a class="dropdown-item" >Separated link</a>
+                          </li>
+                        </ul>
+                      </div>
+                  </td>
+              </tr>
+          </tbody>
+          <tfoot>
+              <tr>
+                <th>Numéro</th>
+                <th>Date de récèption</th>
+                <th>Observation</th>
+                <th>Commande</th>
+                <th>Fournisseur</th>
+                <th>Actions</th>
+              </tr>
+          </tfoot>
+      </table>
+
+  <!--Modal add-->
+      <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-primary modal-xl" role="document">
+            <form [formGroup]="addReceptionFormGroup" (ngSubmit)="onSubmitAddReceptionFormsGroup()">
+              <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ajouter une Réception</h4>
+                    <button type="button" class="close" (click)="addComModal.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <br> <br> <br> 
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fa fa-align-justify"></i> Listes des Réception
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered table-striped table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Observation</th>
-                                        <th>Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Num210</td>
-                                        <td>valider reception</td>
-                                        <td>21/10/2021</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editRecepModal.show()"><span class="fa fa-edit"></span></button>
-                                            <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteRecepModal.show()"><span class="fa fa-trash"></span></button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Observation</th>
-                                        <th>Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                            <nav>
-                                <ul class="pagination">
-                                <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                                <li class="page-item active">
-                                    <a class="page-link" href="#">1</a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                </ul>
-                            </nav>
-                        <!--Modal add-->
-                            <div bsModal #addRecepModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-success" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Ajouter une Réception</h4>
-                                            <button type="button" class="close" (click)="addRecepModal.hide()" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                        
-                                            <div class="card-body p-4">
-                                                <form>
-                                                    <div class="form-group mb-3">
-                                                        <label for="codevalo">Numéro</label>
-                                                        <input type="text" class="form-control" autocomplete="codevalo" required>
-                                                    </div>
-                                                    <div class="form-group mb-3">
-                                                        <label for="codevalo">Observation</label>
-                                                        <input type="text" class="form-control" autocomplete="codevalo" required>
-                                                    </div>
-                                                    <div class="form-group mb-3">
-                                                        <label for="codevalo">Date</label>
-                                                        <input type="date" class="form-control" autocomplete="codevalo" required>
-                                                    </div>
-                                                    
-                                                </form>
-                                            </div>
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" (click)="addRecepModal.hide()">Annuler</button>
-                                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                                        </div>
-                                    </div><!-- /.modal-content -->
-                                </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        <!--Modal edit-->
-                        <div bsModal #editRecepModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-warning" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Modifer Réception</h4>
-                                <button type="button" class="close" (click)="editRecepModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="card-body p-4">
-                                        <form>
-                                            <div class="form-group mb-3">
-                                                <label for="codevalo">Numéro</label>
-                                                <input type="text" class="form-control" autocomplete="codevalo" required>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <label for="codevalo">Observation</label>
-                                                <input type="text" class="form-control" autocomplete="codevalo" required>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <label for="codevalo">Date</label>
-                                                <input type="date" class="form-control" autocomplete="codevalo" required>
-                                            </div>
-                                            
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="editRecepModal.hide()">Annuler</button>
-                                <button type="button" class="btn btn-warning">Modifier</button>
-                                </div>
-                            </div><!-- /.modal-content -->
-                            </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        <!--Modal delete-->
-
-                        <div bsModal #deleteRecepModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-danger" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title text-center">Supprimer une réception</h4>
-                                <button type="button" class="close" (click)="deleteRecepModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                <p style="font-size: 20px;"> <strong> Voulez-vous réellement rétirer cette réception ?</strong></p>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="deleteRecepModal.hide()">Annuler</button>
-                                <button type="button" class="btn btn-danger">Supprimer</button>
-                                </div>
-                            </div><!-- /.modal-content -->
-                            </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        
+                <div class="card-body">
+                  <div class="row">
+                    <div class="form-group col-sm-4">
+                      <label for="addNumReception">Numéro</label>
+                      <input type="text" class="form-control" id="addNumReception"
+                        formControlName="addNumReception" placeholder="Numéro de la Réception">
                     </div>
+                    <div class="form-group col-sm-4">
+                      <label for="addDateReception">Date</label>
+                      <input type="date" class="form-control" id="addDateReception"
+                       formControlName="addDateReception">
                     </div>
-                    <!--/.col-->
+                    <div class="form-group col-sm-4">
+                      <label for="addObservation">Observation</label>
+                      <input type="text" class="form-control" id="addObservation"
+                       formControlName="addObservation" placeholder="Observation...">
+                    </div>
+
+                  </div><!--/.row-->
+
+                  <div class="row" style="border: solid black 1px; border-radius: 10px; margin-bottom: 1%;">
+                    <div class="form-group col-sm-3">
+                      <label for="addCommande">Commande</label>
+                        <select id="addCommande" name="addCommande" class="form-control"
+                        formControlName="addCommande" (click)="onConcernedCommandSelected()">
+                          <option *ngFor="let comm of commandes; let i = index" [value]="i">
+                            {{ comm.numCommande }}
+                          </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-4">
+                      <label for="addFournisseur">Fournisseur</label>
+                      <input type="text" class="form-control" id="addFournisseur" readonly
+                       placeholder="Fournisseur..." value="{{ concernedCommande.frs.codeFrs }} - {{ concernedCommande.frs.identiteFrs }}">
+                    </div>
+                    <div class="form-group col-sm-3">
+                      <label for="addDateCommande">Date</label>
+                      <input type="date" class="form-control" id="addDateCommande" readonly
+                       value="{{ concernedCommande.dateCommande }}">
+                    </div>
+                    <div class="form-group col-sm-2">
+                      <label for="addExercice">Exercice</label>
+                      <input type="text" class="form-control" id="addExercice" readonly
+                       placeholder="Code de l'Exercice"
+                       value="{{ concernedCommande.exercice.codeExercice }} - {{ concernedCommande.exercice.libExercice }}">
+                    </div>
+
+                  </div><!--/.row-->
+                  <div class="row">
+                    <button type="button" data-toggle="modal" (click)="onShowAddArticleModalAddingReception()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                  </div>
+                  <div class="row">
+                    <table class="table table-bordered table-striped table-lg">
+                      <thead>
+                        <tr>
+                          <th>Code Article</th>
+                          <th>Libellé de l'Article</th>
+                          <th>Prix Unit.</th>
+                          <th>Quantité</th>
+                          <th>Observation</th>
+                          <th>Numéro de Série</th>
+                          <th>Montant TTC(-Remise)</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let addLignRecept of tempAddLigneReception; let i = index">
+                          <td>{{ addLignRecept.ligneCommande.article.codeArticle }}</td>
+                          <td>{{ addLignRecept.ligneCommande.article.libArticle }}</td>
+                          <td><input [(ngModel)]="tempAddLigneReception[i].puligneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td><input [(ngModel)]="tempAddLigneReception[i].quantiteLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td><input [(ngModel)]="tempAddLigneReception[i].observationLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                          <td>
+                            <div><input [(ngModel)]="tempAddLigneReception[i].numSerieDebLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
+                            <p class="text-center" style="margin-bottom: 0%;">à</p>
+                            <div><input [(ngModel)]="tempAddLigneReception[i].numSerieFinLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
+                          </td>
+                          <td>{{ (tempAddLigneReception[i].quantiteLigneReception*tempAddLigneReception[i].puligneReception*(1+(tempAddLigneReception[i].ligneCommande.tva/100)))-tempAddLigneReception[i].ligneCommande.remise }}</td>
+                          <td>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfRecept1(i)"><span class="fa fa-trash"></span></button>
+                          </td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+                  </div>
+
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addReceptionFormGroup.invalid">Enrégistrer</button>
+                </div>
+              </div><!-- /.modal-content -->
+            </form>
+
+          </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal edit-->
+  <div bsModal #editComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-warning modal-xl" role="document">
+        <form [formGroup]="editReceptionFormGroup" (ngSubmit)="onSubmitEditReceptionFormsGroup()">
+          <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title">Modifer une Réception</h4>
+            <button type="button" class="close" (click)="editComModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
             </div>
-        </tab>
-    </tabset>
+            <div class="modal-body">
+              <div class="card-body">
+                <div class="row">
+                  <div class="form-group col-sm-4">
+                    <label for="editNumReception">Numéro</label>
+                    <input type="text" class="form-control" id="editNumReception"
+                      formControlName="editNumReception" placeholder="Numéro de la Réception"
+                      value="{{ editReception.numReception }}" readonly>
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editDateReception">Date</label>
+                    <input type="date" class="form-control" id="editDateReception"
+                     formControlName="editDateReception" value="{{ editReception.dateReception }}">
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editObservation">Observation</label>
+                    <input type="text" class="form-control" id="editObservation"
+                     formControlName="editObservation" placeholder="Observation..."
+                     value="{{ editReception.observation }}">
+                  </div>
+
+                </div><!--/.row-->
+
+                <div class="row" style="border: solid black 1px; border-radius: 10px; margin-bottom: 1%;">
+                  <div class="form-group col-sm-3">
+                    <label for="editCommande">Commande</label>
+                      <select id="editCommande" name="editCommande" class="form-control"
+                      formControlName="editCommande" (click)="onConcernedCommandSelected2()">
+                        <option *ngFor="let comm of commandes; let i = index" [value]="i">
+                          {{ comm.numCommande }}
+                        </option>
+                      </select>
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editFournisseur">Fournisseur</label>
+                    <input type="text" class="form-control" id="editFournisseur" readonly
+                     placeholder="Fournisseur..." value="{{ concernedCommande.frs.codeFrs }} - {{ concernedCommande.frs.identiteFrs }}">
+                  </div>
+                  <div class="form-group col-sm-3">
+                    <label for="editDateCommande">Date</label>
+                    <input type="date" class="form-control" id="editDateCommande" readonly
+                     value="{{ concernedCommande.dateCommande }}">
+                  </div>
+                  <div class="form-group col-sm-2">
+                    <label for="editExercice">Exercice</label>
+                    <input type="text" class="form-control" id="editExercice" readonly
+                     placeholder="Code de l'Exercice"
+                     value="{{ concernedCommande.exercice.codeExercice }} - {{ concernedCommande.exercice.libExercice }}">
+                  </div>
+
+                </div><!--/.row-->
+                <div class="row">
+                  <button type="button" data-toggle="modal" (click)="onShowAddArticleModalEditingReception()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                </div>
+                <div class="row">
+                  <table class="table table-bordered table-striped table-lg">
+                    <thead>
+                      <tr>
+                        <th>Code Article</th>
+                        <th>Libellé de l'Article</th>
+                        <th>Prix Unit.</th>
+                        <th>Quantité</th>
+                        <th>Observation</th>
+                        <th>Numéro de Série</th>
+                        <th>Montant TTC(-Remise)</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let editLignRecept of tempEditLigneReception; let i = index">
+                        <td>{{ editLignRecept.ligneCommande.article.codeArticle }}</td>
+                        <td>{{ editLignRecept.ligneCommande.article.libArticle }}</td>
+                        <td><input [(ngModel)]="tempEditLigneReception[i].puligneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td><input [(ngModel)]="tempEditLigneReception[i].quantiteLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td><input [(ngModel)]="tempEditLigneReception[i].observationLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                        <td>
+                          <div><input [(ngModel)]="tempEditLigneReception[i].numSerieDebLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
+                          <p class="text-center" style="margin-bottom: 0%;">à</p>
+                          <div><input [(ngModel)]="tempEditLigneReception[i].numSerieFinLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
+                        </td>
+                        <td>{{ (tempEditLigneReception[i].quantiteLigneReception*tempEditLigneReception[i].puligneReception*(1+(tempEditLigneReception[i].ligneCommande.tva/100)))-tempEditLigneReception[i].ligneCommande.remise }}</td>
+                        <td>
+                          <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfRecept1(i)"><span class="fa fa-trash"></span></button>
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
+            <button type="submit" class="btn btn-warning" [disabled]="editReceptionFormGroup.invalid">Modifier</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </form>
+
+      </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal delete-->
+
+  <div bsModal #deleteComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-danger" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h4 class="modal-title text-center">Supprimer une commande</h4>
+          <button type="button" class="close" (click)="deleteComModal.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <div class="modal-body">
+            <p>Vous êtes sur le point de supprimer la Réception <mark style="color: red;">{{ suprReception.numReception }}</mark></p>
+            <p>Le confirmez-vous ?</p>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="deleteComModal.hide()">Annuler</button>
+          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteReception()">Supprimer</button>
+          </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal de selection d'Article pour ajout de Reception-->
+  <div bsModal #addArticle1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Sélectionner les articles</h4>
+          <button type="button" class="close" (click)="addArticle1.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+            <div class="card" style="margin: 0;">
+              <div class="card-body">
+                <table class="table table-striped" id="tabListArt"
+                  > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Libellé</th>
+                      <th>Prix unitaire</th>
+                      <th>Choix?</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr *ngFor="let articl of articlesOfAConcernedCommandeAddingRecept; let i = index">
+                      <td>{{ articl.codeArticle }}</td>
+                      <td>{{ articl.libArticle }}</td>
+                      <td>{{ articl.prixVenteArticle }}</td>
+                      <td>
+                        <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                           (click)="addArticleForAddingOfRecept1(i)"></p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+   <!--Modal de selection d'Article pour edition de Reception-->
+   <div bsModal #addArticle2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Sélectionner les articles</h4>
+          <button type="button" class="close" (click)="addArticle2.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+            <div class="card" style="margin: 0;">
+              <div class="card-body">
+                <table class="table table-striped" id="tabListArt" datatable [dtOptions]="dtOptions3"
+                 > <!--[dtTrigger]="dtTrigger3"-->
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Libellé</th>
+                      <th>Prix unitaire</th>
+                      <th>Choix?</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr *ngFor="let articl of articlesOfAConcernedCommandeEditingRecept; let i = index">
+                      <td>{{ articl.codeArticle }}</td>
+                      <td>{{ articl.libArticle }}</td>
+                      <td>{{ articl.prixVenteArticle }}</td>
+                      <td>
+                        <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                          (click)="addArticleForEditingOfRecept1(i)"></p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+
+
+  </div>
 </div>
