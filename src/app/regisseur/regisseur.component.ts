@@ -47,10 +47,10 @@ export class RegisseurComponent implements OnInit {
   magasins:Magasin[];
   magasiniers:Magasinier[];
   gerers:Gerer[];
-  
+
 
   constructor(private serviceRegisseur:RegisseurService, private serviceCorres:CorrespondantService, private serviceUser:UtilisateurService,
-    private formBulder:FormBuilder) { 
+    private formBulder:FormBuilder) {
       this.initDtOptions();
       this.initFormsGroup();
     }
@@ -275,8 +275,8 @@ export class RegisseurComponent implements OnInit {
     let gerer = this.getGererByCodeMagasinier(this.suprReg.magasinier.numMAgasinier.toString());
 
     gerer.forEach(element => {
-      console.log('gestion ******',element.idGerer); 
-      
+      console.log('gestion ******',element.idGerer);
+
       this.serviceCorres.deleteAGerer(element.idGerer.toString()).subscribe(
         (data) => {
 
