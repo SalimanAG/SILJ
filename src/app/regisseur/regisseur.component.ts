@@ -1,20 +1,22 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import {ModalDirective} from 'ngx-bootstrap/modal';
 import { AppBreadcrumbService } from '@coreui/angular/lib/breadcrumb/app-breadcrumb.service';
-import { RegisseurService } from '../../../services/definition/regisseur.service';
-import { UtilisateurService } from '../../../services/administration/utilisateur.service';
-import { CorrespondantService } from '../../../services/definition/correspondant.service';
+
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { data } from 'jquery';
 import { Router } from '@angular/router';
-import { Utilisateur } from '../../../models/utilisateur.model';
-import { Magasinier } from '../../../models/magasinier.model';
-import { Regisseur } from '../../../models/regisseur.model';
-import { Service } from '../../../models/service.model';
-import { Gerer } from '../../../models/gerer.model';
-import { Magasin } from '../../../models/magasin.model';
+import { Regisseur } from '../../models/regisseur.model';
+import { Utilisateur } from '../../models/utilisateur.model';
+import { Magasinier } from '../../models/magasinier.model';
+import { Service } from '../../models/service.model';
+import { Magasin } from '../../models/magasin.model';
+import { Gerer } from '../../models/gerer.model';
+import { RegisseurService } from '../../services/definition/regisseur.service';
+import { CorrespondantService } from '../../services/definition/correspondant.service';
+import { UtilisateurService } from '../../services/administration/utilisateur.service';
+
 
 @Component({
   selector: 'app-regisseur',
