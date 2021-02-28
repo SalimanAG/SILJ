@@ -9,6 +9,11 @@ import { Utilisateur } from '../../models/utilisateur.model';
 import { Exercice } from '../../models/exercice.model';
 import { Article } from '../../models/article.model';
 import { Locataire } from '../../models/locataire.model';
+import { Contrat } from '../../models/contrat.model';
+import { Immeuble } from '../../models/immeuble.model';
+import { Echeance } from '../../models/echeance.model';
+import { PrixImmeuble } from '../../models/prixImmeuble.model';
+import { Correspondant } from '../../models/Correspondant.model';
 
 @Injectable({
   providedIn: 'root'
@@ -61,38 +66,69 @@ export class OperationCaisseService {
     return this.lien.get<Exercice[]>(this.host+'commune/exercice/list');
   }
 
-
   getAllArticles(){
     return this.lien.get<Article[]>(this.host+'stock/article/list');
   }
-
 
   getAllLocataires(){
     return this.lien.get<Locataire[]>(this.host+'location/locataire/list')
   }
 
   getAllOpLines(){
-    return this.lien.get<LigneOpCaisse[]>(this.host+'ligneOpCaisse/list');
+    return this.lien.get<LigneOpCaisse[]>(this.host+'facturation/ligneOpCaisse/list');
+  }
+
+  getAllContrats(){
+    return this.lien.get<Contrat[]>(this.host+'location/contrat/list');
+  }
+
+  getAllEcheances(){
+    return this.lien.get<Echeance[]>(this.host+'location/echeance/list');
+  }
+
+  addEcheance(e:Echeance){
+    console.log(this.host+'location/echeance/list');
+    return this.lien.post<Echeance>(this.host+'location/echeance/list',e);
+  }
+
+  editEcheance(id : number, e : Echeance){
+    return this.lien.put<Echeance>(this.host+'location/echeance/byCodEch/'+id,e);
+  }
+
+  getAllImmeubles(){
+    return this.lien.get<Immeuble[]>(this.host+'location/immeuble/list');
   }
 
   getOpLineById(id:number){
-    return this.lien.get<LigneOpCaisse>(this.host+'ligneOpCaisse/byCodLigOpCai/'+(id));
+    return this.lien.get<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byCodLigOpCai/'+(id));
   }
 
-  addOpLine(corps:LigneOpCaisse){
-    return this.lien.post<LigneOpCaisse>(this.host+"ligneOpCaisse/list",corps);
+  addOpLine(op:OpCaisse, corps:LigneOpCaisse){
+    return this.lien.post<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byNumOp/'+op.numOpCaisse,corps);
   }
 
   editOpLine(id:number,corps:LigneOpCaisse){
-    return this.lien.put<LigneOpCaisse>(this.host+'ligneOpCaisse/byCodLigOpCai/'+(id),corps);
+    return this.lien.put<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byCodLigOpCai/'+(id),corps);
   }
 
   deleteOpLine(id:number){
-    return this.lien.delete<LigneOpCaisse>(this.host+'ligneOpCaisse/byCodLigOpCai/'+(id));
+    return this.lien.delete<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byCodLigOpCai/'+(id));
   }
 
-  getOpLinesByOpCais(opcais:OpCaisse){
-    return
+  getOpLinesByOpCais(n: String, opcais:OpCaisse){
+    return this.lien.get<LigneOpCaisse[]>(this.host+'facturation/ligneOpCaisse/byNumOp/'+n,);
+  }
+
+  getContratByLocataire(id:number){
+    return this.lien.get<Contrat[]>(this.host+'location/contrat/byIdLoc/'+(id));
+  }
+
+  getAllPrixImmeuble(){
+    return this.lien.get<PrixImmeuble[]>(this.host+'location/priximmeuble/list');
+  }
+
+  getCorresImput(){
+    return this.lien.get<Correspondant[]>(this.host+'/stock/correspondant/imputable');
   }
 
 }

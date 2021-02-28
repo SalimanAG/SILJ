@@ -49,6 +49,7 @@ export class AutheComponent implements OnInit {
           if(element.login===this.connnectForm.value['login']
           && element.motDePass===this.connnectForm.value['mdp']){
             this.serviceUser.connectedUser = element;
+            console.log(this.serviceUser.connectedUser);
             this.route.navigateByUrl('/accueil');
             finded=true;
             exit;

@@ -115,8 +115,8 @@
                         </div><!--/.row-->
                         <div class="row">
                           <div class="form-group col-sm-4">
-                            <label for="typeValeurLocative1">Type de la Valeur Locative</label>
-                            <select id="typeValeurLocative1" name="typeValeurLocative1" class="form-control" (click)="onTypeImmeubleClicked1()">
+                            <label for="addIndeTypeIm">Type de la Valeur Locative</label>
+                            <select id="addIndeTypeIm" name="addIndeTypeIm" formControlName="addIndeTypeIm" class="form-control" (click)="onTypeImmeubleClicked1()">
                               <option *ngFor="let typeIm of typeValeursLocatives; let i = index" [value]="i"
                               >{{ typeIm.codeTypIm }} - {{ typeIm.libTypIm }}</option>
                             </select>

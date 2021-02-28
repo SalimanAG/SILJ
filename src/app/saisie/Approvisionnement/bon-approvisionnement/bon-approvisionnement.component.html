@@ -1,181 +1,414 @@
-<div class="col-md-12 mb-4">
-    <tabset>
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Bon approvisionnement</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
-                        </div>
-                    </div>
+<div class="card">
+  <div class="card-header">
+      <i class="fa fa-align-justify"></i> Listes des Bons d'Approvisionnement
+  </div>
+  <div class="card-body">
+    <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddAppro()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+    </div>
 
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addBonModal.show()" type="button">Ajouter nouveau <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
-                        </div>
-                    </div>
+      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1">
+          <thead>
+              <tr>
+                  <th>Numéro</th>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let appro of approvisionnements; let i = index">
+                  <td>{{ appro.numAppro }}</td>
+                  <td>{{ appro.dateAppro }}</td>
+                  <td>{{ appro.descriptionAppro }}</td>
+                  <td>
+                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
+                      <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
+                      <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
+                      <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                      <!--Le bouton des options-->
+                      <div class="btn-group" dropdown>
+                        <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                        <ul *dropdownMenu class="dropdown-menu" role="menu">
+                          <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                          <li role="menuitem"><a class="dropdown-item" >Another action</a>
+                          </li>
+                          <li role="menuitem"><a class="dropdown-item" >Something else
+                            here</a></li>
+                          <li class="divider dropdown-divider"></li>
+                          <li role="menuitem"><a class="dropdown-item" >Separated link</a>
+                          </li>
+                        </ul>
+                      </div>
+                  </td>
+              </tr>
+          </tbody>
+          <tfoot>
+              <tr>
+                  <th>Numéro</th>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+              </tr>
+          </tfoot>
+      </table>
+
+  <!--Modal add-->
+      <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-primary modal-xl" role="document">
+            <form [formGroup]="addApproFormsGroup" (ngSubmit)="onSubmitAddCommandeFormsGroup()">
+              <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ajouter une Demande d'Approvisionnement</h4>
+                    <button type="button" class="close" (click)="addComModal.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <br> <br> <br> 
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fa fa-align-justify"></i> Listes des bon d'approvisionnement
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered table-striped table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Date</th>
-                                        <th>Exercice</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>DA210</td>
-                                        <td>19/01/2021</td>
-                                        <td>2021</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editBonModal.show()"><span class="fa fa-edit"></span></button>
-                                            <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deleteBonModal.show()"><span class="fa fa-trash"></span></button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Date</th>
-                                        <th>Exercice</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                            <nav>
-                                <ul class="pagination">
-                                <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                                <li class="page-item active">
-                                    <a class="page-link" href="#">1</a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                </ul>
-                            </nav>
-                        <!--Modal add-->
-                            <div bsModal #addBonModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-success" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Ajouter un bon approvisionnement</h4>
-                                            <button type="button" class="close" (click)="addBonModal.hide()" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                        
-                                            <div class="card-body p-4">
-                                                <form>
-                                                    <div class="form-group mb-3">
-                                                        <label for="codevalo">Numéro</label>
-                                                        <input type="text" class="form-control" autocomplete="codevalo" required>
-                                                    </div>
-                                                    <div class="form-group mb-3">
-                                                        <label for="codevalo">Date</label>
-                                                        <input type="date" class="form-control" autocomplete="codevalo" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="etatvalo">Exercice</label>
-                                                        <select class="form-control" id="etatvalo">
-                                                        <option>2021</option>
-                                                        </select>
-                                                    </div>
-                                                
-                                                </form>
-                                            </div>
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" (click)="addBonModal.hide()">Annuler</button>
-                                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                                        </div>
-                                    </div><!-- /.modal-content -->
-                                </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        <!--Modal edit-->
-                        <div bsModal #editBonModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-warning" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Modifer bon approvisionnement</h4>
-                                <button type="button" class="close" (click)="editBonModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="card-body p-4">
-                                        <form>
-                                            <div class="form-group mb-3">
-                                                <label for="codevalo">Numéro</label>
-                                                <input type="text" class="form-control" autocomplete="codevalo" required>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <label for="codevalo">Date</label>
-                                                <input type="date" class="form-control" autocomplete="codevalo" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="etatvalo">Exercice</label>
-                                                <select class="form-control" id="etatvalo">
-                                                <option>2021</option>
-                                                </select>
-                                            </div>
-                                        
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="editBonModal.hide()">Annuler</button>
-                                <button type="button" class="btn btn-warning">Modifier</button>
-                                </div>
-                            </div><!-- /.modal-content -->
-                            </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        <!--Modal delete-->
-
-                        <div bsModal #deleteBonModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-danger" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title text-center">Supprimer un bon approvisionnement</h4>
-                                <button type="button" class="close" (click)="deleteComModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                <p style="font-size: 20px;"> <strong> Voulez-vous réellement rétirer ce bon approvisionnement ?</strong></p>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="deleteBonModal.hide()">Annuler</button>
-                                <button type="button" class="btn btn-danger">Supprimer</button>
-                                </div>
-                            </div><!-- /.modal-content -->
-                            </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        
+                <div class="card-body">
+                  <div class="row">
+                    <div class="form-group col-sm-3">
+                      <label for="addNumAppro">Numéro</label>
+                      <input type="text" class="form-control" id="addNumAppro"
+                        formControlName="addNumAppro" placeholder="Numéro du Bon d'Approvisionnement">
                     </div>
+                    <div class="form-group col-sm-3">
+                      <label for="addDateAppro">Date</label>
+                      <input type="date" class="form-control" id="addDateAppro"
+                       formControlName="addDateAppro">
                     </div>
-                    <!--/.col-->
+                    <div class="form-group col-sm-3">
+                      <label for="addDescriptionAppro">Description</label>
+                      <input type="text" class="form-control" id="addDescriptionAppro"
+                        formControlName="addDescriptionAppro" placeholder="Description...">
+                    </div>
+                    <div class="form-group col-sm-3">
+                      <label for="addExoSlected">Exercice</label>
+                      <input type="text" class="form-control" id="addExoSlected" readonly
+                      [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                       [ngModelOptions]="{standalone: true}">
+                    </div>
+
+                  </div><!--/.row-->
+                  <div class="row" style="border: solid black 1px; border-radius: 10px; margin-bottom: 1%;">
+                    <div class="form-group col-sm-4">
+                      <label for="addDemandeAppro">Demande d'Appro N°</label>
+                        <select id="addDemandeAppro" name="addDemandeAppro" class="form-control"
+                        formControlName="addDemandeAppro" (click)="onConcernedDemandeApproSelected()">
+                          <option *ngFor="let demAppro of demandeAppros; let i = index" [value]="i">
+                            {{ demAppro.numDA }}
+                          </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-4">
+                      <label for="addDateDemandeAppro">Date</label>
+                      <input type="date" class="form-control" id="addDateDemandeAppro" readonly
+                       [ngModel]="concernedDemandeAppro.dateDA" [ngModelOptions]="{standalone: true}">
+                    </div>
+                    <div class="form-group col-sm-4">
+                      <label for="addExercice">Exercice</label>
+                      <input type="text" class="form-control" id="addExercice" readonly
+                       placeholder="Exercice de la demande d'Appro" [ngModelOptions]="{standalone: true}"
+                       [ngModel]="concernedDemandeAppro.exercice.codeExercice.concat(' - '.concat(concernedDemandeAppro.exercice.libExercice))">
+                    </div>
+
+                  </div><!--/.row-->
+
+                  <div class="row">
+                    <button type="button" data-toggle="modal" (click)="onShowAddArticleModalAddingCommande()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                  </div>
+                  <div class="row">
+                    <table class="table table-bordered table-striped table-lg">
+                      <thead>
+                        <tr>
+                          <th>Code Article</th>
+                          <th>Libellé de l'Article</th>
+                          <th>Prix Unit.</th>
+                          <th>Quantité</th>
+                          <th>Montant</th>
+                          <th>Plage(s)</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let addLignAppro of tempAddLigneAppro; let i = index">
+                          <td>{{ addLignAppro.ligneDA.article.codeArticle }}</td>
+                          <td>{{ addLignAppro.ligneDA.article.libArticle }}</td>
+                          <td><input [(ngModel)]="tempAddLigneAppro[i].puligneAppro" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td><input [(ngModel)]="tempAddLigneAppro[i].quantiteLigneAppro" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td>{{ tempAddLigneAppro[i].quantiteLigneAppro*tempAddLigneAppro[i].puligneAppro }}</td>
+                          <td>
+                            <div class="row">
+                              <div class="col"><button type="button" class="btn btn-primary" style="width: 100%;" (click)="onAddAPlageNumArticleClicked1(i)">Ajouter <span class="fa fa-plus-circle"></span></button></div>
+                            </div>
+                            <div *ngFor="let plage of tempAddPlageNumArticle; let i2 = index">
+                              <div class="row" style="margin-top: 1%;" *ngIf="plage.ligneAppro.ligneDA.idLigneDA == tempAddLigneAppro[i].ligneDA.idLigneDA">
+                                <div class="col-sm-5"><input [(ngModel)]="tempAddPlageNumArticle[i2].numDebPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
+                                <div class="col-sm-1"><p class="align-center" >à</p></div>
+                                <div class="col-sm-4"><input [(ngModel)]="tempAddPlageNumArticle[i2].numFinPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
+                                <div class="col-sm-1" ><button type="button" (click)="popALigneOfPlageNumArticle1(i2)" class="btn btn-danger btn-sm" data-toggle="modal"><span class="fa fa-minus-circle"></span></button></div>
+                              </div>
+                            </div>
+
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfComm1(i)"><span class="fa fa-trash"></span></button>
+                          </td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+                  </div>
+
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                </div>
+              </div><!-- /.modal-content -->
+            </form>
+
+          </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal edit-->
+  <div bsModal #editComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-warning modal-xl" role="document">
+        <form [formGroup]="editApproFormsGroup" (ngSubmit)="onSubmitEditCommandeFormsGroup()">
+          <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title">Modifer Commande</h4>
+            <button type="button" class="close" (click)="editComModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
             </div>
-        </tab>
-    </tabset>
+            <div class="modal-body">
+              <div class="card-body">
+                <div class="row">
+                  <div class="form-group col-sm-3">
+                    <label for="editNumAppro">Numéro</label>
+                    <input type="text" class="form-control" id="editNumAppro"
+                      formControlName="editNumAppro" placeholder="Numéro du Bon d'Approvisionnement"
+                      [ngModel]="editAppro.numAppro">
+                  </div>
+                  <div class="form-group col-sm-3">
+                    <label for="editDateAppro">Date</label>
+                    <input type="date" class="form-control" id="editDateAppro"
+                     formControlName="editDateAppro" [ngModel]="editAppro.dateAppro">
+                  </div>
+                  <div class="form-group col-sm-3">
+                    <label for="editDescriptionAppro">Description</label>
+                    <input type="text" class="form-control" id="editDescriptionAppro"
+                      formControlName="editDescriptionAppro" placeholder="Description..."
+                      [ngModel]="editAppro.descriptionAppro">
+                  </div>
+                  <div class="form-group col-sm-3">
+                    <label for="editExoSlected">Exercice</label>
+                    <input type="text" class="form-control" id="editExoSlected" readonly
+                    [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                     [ngModelOptions]="{standalone: true}">
+                  </div>
+
+                </div><!--/.row-->
+                <div class="row" style="border: solid black 1px; border-radius: 10px; margin-bottom: 1%;">
+
+                  <div class="form-group col-sm-4">
+                    <label for="editDemandeAppro">Demande d'Appro N°</label>
+                    <input type="text" class="form-control" id="editDemandeAppro" readonly
+                    formControlName="editDemandeAppro" [ngModel]="concernedDemandeAppro.numDA">
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editDateDemandeAppro">Date</label>
+                    <input type="date" class="form-control" id="editDateDemandeAppro" readonly
+                     [ngModel]="concernedDemandeAppro.dateDA" [ngModelOptions]="{standalone: true}">
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editExercice">Exercice</label>
+                    <input type="text" class="form-control" id="editExercice" readonly
+                     placeholder="Exercice de la demande d'Appro" [ngModelOptions]="{standalone: true}"
+                     [ngModel]="concernedDemandeAppro.exercice.codeExercice.concat(' - '.concat(concernedDemandeAppro.exercice.libExercice))">
+                  </div>
+
+                </div><!--/.row-->
+
+                <div class="row">
+                  <button type="button" data-toggle="modal" (click)="onShowAddArticleModalEditingCommande()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                </div>
+                <div class="row">
+                  <table class="table table-bordered table-striped table-lg">
+                    <thead>
+                      <tr>
+                        <th>Code Article</th>
+                        <th>Libellé de l'Article</th>
+                        <th>Prix Unit.</th>
+                        <th>Quantité</th>
+                        <th>Montant</th>
+                        <th>Plage(s)</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let editLignAppro of tempEditLigneAppro; let i = index">
+                        <td>{{ editLignAppro.ligneDA.article.codeArticle }}</td>
+                        <td>{{ editLignAppro.ligneDA.article.libArticle }}</td>
+                        <td><input [(ngModel)]="tempEditLigneAppro[i].puligneAppro" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td><input [(ngModel)]="tempEditLigneAppro[i].quantiteLigneAppro" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td>{{ tempEditLigneAppro[i].quantiteLigneAppro*tempEditLigneAppro[i].puligneAppro }}</td>
+                        <td>
+                          <div class="row">
+                            <div class="col"><button type="button" class="btn btn-primary" style="width: 100%;" (click)="onAddAPlageNumArticleClicked2(i)">Ajouter <span class="fa fa-plus-circle"></span></button></div>
+                          </div>
+                          <div *ngFor="let plage of tempEditPlageNumArticle; let i2 = index">
+                            <div class="row" style="margin-top: 1%;" *ngIf="plage.ligneAppro.ligneDA.idLigneDA == tempEditLigneAppro[i].ligneDA.idLigneDA">
+                              <div class="col-sm-5"><input [(ngModel)]="tempEditPlageNumArticle[i2].numDebPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
+                              <div class="col-sm-1"><p class="align-center" >à</p></div>
+                              <div class="col-sm-4"><input [(ngModel)]="tempEditPlageNumArticle[i2].numFinPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
+                              <div class="col-sm-1" ><button type="button" (click)="popALigneOfPlageNumArticle2(i2)" class="btn btn-danger btn-sm" data-toggle="modal"><span class="fa fa-minus-circle"></span></button></div>
+                            </div>
+                          </div>
+
+                        </td>
+                        <td>
+                          <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfComm1(i)"><span class="fa fa-trash"></span></button>
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
+            <button type="submit" class="btn btn-warning">Modifier</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </form>
+
+      </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal delete-->
+
+  <div bsModal #deleteComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-danger" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h4 class="modal-title text-center">Supprimer une commande</h4>
+          <button type="button" class="close" (click)="deleteComModal.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <div class="modal-body">
+            <p>Vous êtes sur le point de supprimer le Bon d'Appprovisionnement <mark style="color: red;">{{ suprAppro.numAppro }}</mark></p>
+            <p>Le confirmez-vous ?</p>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="deleteComModal.hide()">Annuler</button>
+          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteCommande()">Supprimer</button>
+          </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal de selection d'Article pour ajout de Demande d'Appro-->
+  <div bsModal #addArticle1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Sélectionner les articles</h4>
+          <button type="button" class="close" (click)="addArticle1.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+            <div class="card" style="margin: 0;">
+              <div class="card-body">
+                <table class="table table-striped" id="tabListArt" >
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Libellé</th>
+                      <th>Prix unitaire</th>
+                      <th>Choix?</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr *ngFor="let ligneDemAppro of tempAddLigneDemandeAppro; let i = index">
+                      <td>{{ ligneDemAppro.article.codeArticle }}</td>
+                      <td>{{ ligneDemAppro.article.libArticle }}</td>
+                      <td>{{ ligneDemAppro.article.prixVenteArticle }}</td>
+                      <td>
+                        <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                           (click)="addArticleForAddingOfComm1(i)"></p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+   <!--Modal de selection d'Article pour edition de commande-->
+   <div bsModal #addArticle2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Sélectionner les articles</h4>
+          <button type="button" class="close" (click)="addArticle2.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+            <div class="card" style="margin: 0;">
+              <div class="card-body">
+                <table class="table table-striped" id="tabListArt">
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Libellé</th>
+                      <th>Prix unitaire</th>
+                      <th>Choix?</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr *ngFor="let ligneDemAppro of tempEditLigneDemandeAppro; let i = index">
+                      <td>{{ ligneDemAppro.article.codeArticle }}</td>
+                      <td>{{ ligneDemAppro.article.libArticle }}</td>
+                      <td>{{ ligneDemAppro.article.prixVenteArticle }}</td>
+                      <td>
+                        <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                          (click)="addArticleForEditingOfComm1(i)"></p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+
+
+  </div>
 </div>

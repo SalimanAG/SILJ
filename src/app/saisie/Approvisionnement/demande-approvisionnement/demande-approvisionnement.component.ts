@@ -4,16 +4,14 @@ import {ModalDirective} from 'ngx-bootstrap/modal';
 import { exit } from 'process';
 import { Subject } from 'rxjs';
 import { Article } from '../../../../models/article.model';
-import { Commande } from '../../../../models/commande.model';
+import { DemandeApprovisionnement } from '../../../../models/demandeApprovisionnement.model';
 import { Exercice } from '../../../../models/exercice.model';
 import { Famille } from '../../../../models/famille.model';
-import { Fournisseur } from '../../../../models/fournisseur.model';
-import { LigneCommande } from '../../../../models/ligneCommande.model';
+import { LigneDemandeAppro } from '../../../../models/ligneDemandeAppro.model';
 import { Uniter } from '../../../../models/uniter.model';
 import { ExerciceService } from '../../../../services/administration/exercice.service';
 import { ArticleService } from '../../../../services/definition/article.service';
-import { FournisseurService } from '../../../../services/definition/fournisseur.service';
-import { CommandeService } from '../../../../services/saisie/commande.service';
+import { DemandeApproService } from '../../../../services/saisie/demande-appro.service';
 
 @Component({
   selector: 'app-demande-approvisionnement',
@@ -38,30 +36,27 @@ export class DemandeApprovisionnementComponent  implements OnInit {
   dtTrigger3: Subject<any> = new Subject<any>();
 
 
-  commandes:Commande[] = [];
-  addCommandeFormGroup:FormGroup;
-  editCommandeFormGroup:FormGroup;
-  editCommande:Commande = new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false));
-  suprCommande:Commande = new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false));
+  demandeAppros:DemandeApprovisionnement[];
+  addDemandeApproFormGroup:FormGroup;
+  editDemandeApproFormGroup:FormGroup;
+  editDemandeAppro:DemandeApprovisionnement = new DemandeApprovisionnement('', '', new Exercice('', '', new Date(), new Date(), '', false));
+  suprDemandeAppro:DemandeApprovisionnement = new DemandeApprovisionnement('', '', new Exercice('', '', new Date(), new Date(), '', false));
 
-  ligneCommandes:LigneCommande[] = [];
-  editLigneCommande:LigneCommande = new LigneCommande(0, 0, 0, 0,
-    new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false)),
-    new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')));
-  suprLigneCommande:LigneCommande = new LigneCommande(0, 0, 0, 0,
-    new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false)),
-    new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')));
+  ligneDemandeAppros:LigneDemandeAppro[];
+  editLigneDemandeAppro:LigneDemandeAppro = new LigneDemandeAppro(0, new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')),
+  new DemandeApprovisionnement('', '', new Exercice('', '', new Date(), new Date(), '', false)));
+  suprLigneDemandeAppro:LigneDemandeAppro = new LigneDemandeAppro(0, new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')),
+  new DemandeApprovisionnement('', '', new Exercice('', '', new Date(), new Date(), '', false)));
 
-  tempAddLigneCommandes:LigneCommande[] = [];
-  tempEditLigneCommandes:LigneCommande[] = [];
-  tempDeleteLigneCommandes:LigneCommande[] = [];
+  tempAddLigneDemandeAppro:LigneDemandeAppro[] = [];
+  tempEditLigneDemandeAppro:LigneDemandeAppro[] = [];
+  tempDeleteLigneDemandeAppro:LigneDemandeAppro[] = [];
 
   exercices:Exercice[] = [];
   articles:Article[] = [];
-  fournisseurs:Fournisseur[] = [];
 
-  constructor(private serviceCommande:CommandeService, private serviceExercice:ExerciceService,
-    private serviceFrs:FournisseurService, private serviceArticle:ArticleService,
+
+  constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
     private formBulder:FormBuilder) {
 
       this.initDtOptions();
@@ -133,27 +128,25 @@ export class DemandeApprovisionnementComponent  implements OnInit {
      }
 
   initFormsGroup(){
-    this.addCommandeFormGroup = this.formBulder.group({
-      addNumCommande:['', Validators.required],
-      addDateCommande:[new Date(), Validators.required],
-      addDescription:'',
-      addDelaiLivraison:[0, Validators.required],
-      addFrs:[0, Validators.required]
+
+    this.addDemandeApproFormGroup = this.formBulder.group({
+      addNumDA:['', Validators.required],
+      addDateDA:[new Date(), Validators.required]
     });
 
-    this.editCommandeFormGroup = this.formBulder.group({
-      editNumCommande:['', Validators.required],
-      editDateCommande:[new Date(), Validators.required],
-      editDescription:'',
-      editDelaiLivraison:[0, Validators.required],
-      editFrs:[0, Validators.required]
+    this.editDemandeApproFormGroup = this.formBulder.group({
+      editNumDA:['', Validators.required],
+      editDateDA:[new Date(), Validators.required]
     });
+
+
   }
 
   ngOnInit(): void {
 
-    this.getAllFrs();
-    this.getAllLigneCommande();
+
+
+    this.getAllLigneDemandeAppro();
     this.getAllExercice();
 
     this.serviceArticle.getAllArticle().subscribe(
@@ -167,28 +160,42 @@ export class DemandeApprovisionnementComponent  implements OnInit {
       }
     );
 
-    this.serviceCommande.getAllCommande().subscribe(
+
+    this.serviceDemandeAppro.getAllDemandeAppro().subscribe(
       (data) => {
-        this.commandes = data;
+        this.demandeAppros = data;
         this.dtTrigger1.next();
       },
       (erreur) => {
-        console.log('Erreur lors de la récupération de liste des commandes', erreur);
+        console.log('Erreur lors de la récupération de la liste des demandes dAppro', erreur);
       }
     );
 
   }
 
-  getAllFrs(){
-    this.serviceFrs.getAllFrs().subscribe(
+  getAllDemandeAppro(){
+    this.serviceDemandeAppro.getAllDemandeAppro().subscribe(
       (data) => {
-        this.fournisseurs = data;
+        this.demandeAppros = data;
+
       },
       (erreur) => {
-        console.log('Erreur lors de la récupératio de la liste des Fournisseurs', erreur);
+        console.log('Erreur lors de la récupération de la liste des demandes dAppro', erreur);
       }
     );
   }
+
+  getAllLigneDemandeAppro(){
+    this.serviceDemandeAppro.getAllLigneDemandeAppro().subscribe(
+      (data) => {
+        this.ligneDemandeAppros = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des lignes de demande dAppro', erreur)
+      }
+    );
+  }
+
 
   getAllExercice(){
     this.serviceExercice.getAllExo().subscribe(
@@ -212,27 +219,9 @@ export class DemandeApprovisionnementComponent  implements OnInit {
     );
   }
 
-  getAllCommande(){
-    this.serviceCommande.getAllCommande().subscribe(
-      (data) => {
-        this.commandes = data;
-      },
-      (erreur) => {
-        console.log('Erreur lors de la récupération de liste des commandes', erreur);
-      }
-    );
-  }
 
-  getAllLigneCommande(){
-    this.serviceCommande.getAllLigneCommande().subscribe(
-      (data) => {
-        this.ligneCommandes = data;
-      },
-      (erreur) => {
-        console.log('Erreur lors de la récuparation de la liste des lignes de commande', erreur);
-      }
-    );
-  }
+
+
 
   onShowAddArticleModalAddingCommande(){
     this.addArticle1.show();
@@ -242,13 +231,11 @@ export class DemandeApprovisionnementComponent  implements OnInit {
   onShowAddArticleModalEditingCommande(){
     this.addArticle2.show();
     this.getAllArticle();
-
-
   }
 
   addArticleForAddingOfComm1(inde:number){
     let exist:boolean = false;
-    this.tempAddLigneCommandes.forEach(element => {
+    this.tempAddLigneDemandeAppro.forEach(element => {
       if(element.article.codeArticle==this.articles[inde].codeArticle){
         exist = true;
         exit;
@@ -256,9 +243,8 @@ export class DemandeApprovisionnementComponent  implements OnInit {
     });
 
     if(exist===false){
-      this.tempAddLigneCommandes.push(new LigneCommande(0, this.articles[inde].prixVenteArticle, 0, 0,
-        new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false)),
-        this.articles[inde]));
+      this.tempAddLigneDemandeAppro.push(new LigneDemandeAppro(0, this.articles[inde],
+        new DemandeApprovisionnement('', '', this.serviceExercice.exoSelectionner)));
     }
 
 
@@ -266,7 +252,8 @@ export class DemandeApprovisionnementComponent  implements OnInit {
 
   addArticleForEditingOfComm1(inde:number){
     let exist:boolean = false;
-    this.tempEditLigneCommandes.forEach(element => {
+    
+    this.tempEditLigneDemandeAppro.forEach(element => {
       if(element.article.codeArticle==this.articles[inde].codeArticle){
         exist = true;
         exit;
@@ -274,117 +261,110 @@ export class DemandeApprovisionnementComponent  implements OnInit {
     });
 
     if(exist===false){
-      this.tempEditLigneCommandes.push(new LigneCommande(0, this.articles[inde].prixVenteArticle, 0, 0,
-        new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false)),
-        this.articles[inde]));
+      this.tempEditLigneDemandeAppro.push(new LigneDemandeAppro(0, this.articles[inde],
+        new DemandeApprovisionnement('', '', this.serviceExercice.exoSelectionner)));
     }
 
   }
 
   popArticleAddingOfComm1(inde:number){
-    this.tempAddLigneCommandes.splice(inde, 1);
+    this.tempAddLigneDemandeAppro.splice(inde, 1);
   }
 
   popArticleEditingOfComm1(inde:number){
-    this.tempEditLigneCommandes.splice(inde, 1);
+    this.tempEditLigneDemandeAppro.splice(inde, 1);
   }
 
   initEditCommande(inde:number){
-    this.tempEditLigneCommandes=[];
-    this.editCommande = this.commandes[inde];
-    this.serviceCommande.getAllLigneCommande().subscribe(
+
+    this.tempEditLigneDemandeAppro = [];
+    this.editDemandeAppro = this.demandeAppros[inde];
+    this.serviceDemandeAppro.getAllLigneDemandeAppro().subscribe(
       (data) => {
-        this.ligneCommandes = data;
-        this.ligneCommandes.forEach(element => {
-          if(element.numCommande.numCommande==this.editCommande.numCommande){
-            this.tempEditLigneCommandes.push(element);
+        this.ligneDemandeAppros = data;
+        this.ligneDemandeAppros.forEach(element => {
+          if(element.appro.numDA == this.editDemandeAppro.numDA){
+            this.tempEditLigneDemandeAppro.push(element);
           }
         });
         this.editComModal.show();
       },
       (erreur) => {
-        console.log('Erreur lors de la récuparation de la liste des lignes de commande', erreur);
+        console.log('Erreur lors de la récupération des lignes de demande dAppro', erreur);
       }
     );
 
   }
 
   initDeleteCommande(inde:number){
-    this.suprCommande = this.commandes[inde];
+
+    this.suprDemandeAppro = this.demandeAppros[inde];
     this.deleteComModal.show();
   }
 
   onSubmitAddCommandeFormsGroup(){
 
-    const newComm= new Commande(this.addCommandeFormGroup.value['addNumCommande'],
-    this.addCommandeFormGroup.value['addDateCommande'],
-    this.addCommandeFormGroup.value['addDescription'],
-    this.addCommandeFormGroup.value['addDelaiLivraison'],
-    this.fournisseurs[this.addCommandeFormGroup.value['addFrs']],
-    this.serviceExercice.exoSelectionner);
-    console.log(this.tempAddLigneCommandes, newComm);
-    this.serviceCommande.addACommande(newComm).subscribe(
+    const newDemAppro = new DemandeApprovisionnement(this.addDemandeApproFormGroup.value['addNumDA'],
+      this.addDemandeApproFormGroup.value['addDateDA'],
+      this.serviceExercice.exoSelectionner);
+
+    this.serviceDemandeAppro.addADemandeAppro(newDemAppro).subscribe(
       (data) => {
-        this.tempAddLigneCommandes.forEach(element => {
-          element.numCommande = data;
-          this.serviceCommande.addALigneCommande(element).subscribe(
+        this.tempAddLigneDemandeAppro.forEach(element => {
+          element.appro = data;
+          this.serviceDemandeAppro.addALigneDemandeAppro(element).subscribe(
             (data2) => {
 
             },
             (erreur) => {
-              console.log('Erreur lors de la création de la ligne de commande',erreur );
+              console.log('Erreur lors de lAjout dUne Ligne de Demande DAppro', erreur);
             }
           );
         });
 
         this.addComModal.hide();
-        this.getAllCommande();
-        this.getAllLigneCommande();
+        this.getAllLigneDemandeAppro();
+        this.getAllDemandeAppro();
       },
       (erreur) => {
-        console.log('Erreur lors de la création de la commande', erreur);
+        console.log('Erreur lors de la création de la demande Appro', erreur);
       }
     );
-
-
 
 
   }
 
   onSubmitEditCommandeFormsGroup(){
-    const newComm= new Commande(this.editCommandeFormGroup.value['editNumCommande'],
-    this.editCommandeFormGroup.value['editDateCommande'],
-    this.editCommandeFormGroup.value['editDescription'],
-    this.editCommandeFormGroup.value['editDelaiLivraison'],
-    this.fournisseurs[this.editCommandeFormGroup.value['editFrs']],
-    this.serviceExercice.exoSelectionner);
 
-    let oldCommandeLines:LigneCommande[] = [];
+    const newDemAppro = new DemandeApprovisionnement(this.editDemandeApproFormGroup.value['editNumDA'],
+      this.editDemandeApproFormGroup.value['editDateDA'],
+      this.serviceExercice.exoSelectionner);
 
-    this.ligneCommandes.forEach(element => {
-      if(element.numCommande.numCommande==this.editCommande.numCommande){
-        oldCommandeLines.push(element);
-      }
-    });
+      let oldDemandApproLines:LigneDemandeAppro[] = [];
 
+      this.ligneDemandeAppros.forEach(element => {
+        if(element.appro.numDA==this.editDemandeAppro.numDA){
+          oldDemandApproLines.push(element);
+        }
+      });
 
-    this.serviceCommande.editACommande(this.editCommande.numCommande, newComm).subscribe(
+    this.serviceDemandeAppro.editADemandeAppro(this.editDemandeAppro.numDA, newDemAppro).subscribe(
       (data) => {
 
         //Pour ajout et ou modification des lignes
-        this.tempEditLigneCommandes.forEach(element => {
+        this.tempEditLigneDemandeAppro.forEach(element => {
           let added:boolean = true;
-          oldCommandeLines.forEach(element2 => {
+          oldDemandApproLines.forEach(element2 => {
             if(element.article.codeArticle==element2.article.codeArticle){
               added = false;
-              element.numCommande = data;
+              element.appro = data;
 
-              this.serviceCommande.editALigneCommande(element2.idLigneCommande.toString(), element).subscribe(
+              this.serviceDemandeAppro.editALigneDemandeAppro(element2.idLigneDA.toString(), element).subscribe(
                 (data2) => {
 
                 },
                 (erreur) => {
-                  console.log('Erreur lors de la modification de ligne de Commande', erreur);
+                  console.log('Erreur lors de la modification de ligne de Demande Appro', erreur);
                 }
               );
               exit;
@@ -392,8 +372,8 @@ export class DemandeApprovisionnementComponent  implements OnInit {
           });
 
           if(added===true){
-            element.numCommande = data;
-            this.serviceCommande.addALigneCommande(element).subscribe(
+            element.appro = data;
+            this.serviceDemandeAppro.addALigneDemandeAppro(element).subscribe(
               (data3) => {
 
               },
@@ -407,9 +387,9 @@ export class DemandeApprovisionnementComponent  implements OnInit {
 
 
         //Pour suppression des lignes suprimés
-        oldCommandeLines.forEach(element => {
+        oldDemandApproLines.forEach(element => {
           let deleted:boolean = true;
-          this.tempEditLigneCommandes.forEach(element2 => {
+          this.tempEditLigneDemandeAppro.forEach(element2 => {
 
             if(element.article.codeArticle==element2.article.codeArticle){
               deleted = false;
@@ -419,7 +399,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
           });
 
           if(deleted===true){
-            this.serviceCommande.deleteALigneCommande(element.idLigneCommande.toString()).subscribe(
+            this.serviceDemandeAppro.deleteALigneDemandeAppro(element.idLigneDA.toString()).subscribe(
               (data) => {
 
               },
@@ -432,58 +412,64 @@ export class DemandeApprovisionnementComponent  implements OnInit {
         });
 
         this.editComModal.hide();
-
-        this.getAllCommande();
-        this.getAllLigneCommande();
+        this.getAllDemandeAppro();
+        this.getAllLigneDemandeAppro();
 
       },
       (erreur) => {
-        console.log('Erreur lors de lEdition de la commande', erreur);
+        console.log('Erreur lors de la Modification de la Demande Appro', erreur);
       }
     );
-
-
 
   }
 
   onConfirmDeleteCommande(){
-    this.getAllLigneCommande();
-    let faled:boolean=false;
-    this.ligneCommandes.forEach(element => {
-      if(element.numCommande.numCommande==this.suprCommande.numCommande){
-        this.serviceCommande.deleteALigneCommande(element.idLigneCommande.toString()).subscribe(
-          (data) => {
-            this.serviceCommande.deleteACommande(this.suprCommande.numCommande).subscribe(
-              (data) => {
-                this.deleteComModal.hide();
-                this.getAllCommande();
-                this.getAllLigneCommande();
+
+    this.serviceDemandeAppro.getAllLigneDemandeAppro().subscribe(
+      (data) => {
+        this.ligneDemandeAppros = data;
+        let faled2:boolean=false;
+
+        this.ligneDemandeAppros.forEach(element => {
+          if(element.appro.numDA==this.suprDemandeAppro.numDA){
+            this.serviceDemandeAppro.deleteALigneDemandeAppro(element.idLigneDA.toString()).subscribe(
+              (data2) => {
+                this.serviceDemandeAppro.deleteADemandeAppro(this.suprDemandeAppro.numDA).subscribe(
+                  (data3) => {
+                    this.deleteComModal.hide();
+                    this.getAllDemandeAppro();
+                    this.getAllLigneDemandeAppro();
+                  },
+                  (erreur) => {
+                    console.log('Erreur lors de la suppression de la Demande Appro', erreur);
+                  }
+                );
               },
               (erreur) => {
-                console.log('Erreur lors de la suppression de la commande', erreur);
+                console.log('Erreur lors de la suppression dUne ligne de Demande Appro', erreur);
+
               }
             );
+          }
+        });
+
+        this.serviceDemandeAppro.deleteADemandeAppro(this.suprDemandeAppro.numDA).subscribe(
+          (data2) => {
+            this.deleteComModal.hide();
+            this.getAllDemandeAppro();
+            this.getAllLigneDemandeAppro();
           },
           (erreur) => {
-            console.log('Erreur lors de la suppression dUne ligne de Commande', erreur);
-            //faled=true;
+            console.log('Erreur lors de la suppression de la Demande Appro', erreur);
           }
         );
-      }
-    });
 
-    if(faled==false){
-      this.serviceCommande.deleteACommande(this.suprCommande.numCommande).subscribe(
-        (data) => {
-          this.deleteComModal.hide();
-          this.getAllCommande();
-          this.getAllLigneCommande();
-        },
-        (erreur) => {
-          console.log('Erreur lors de la suppression de la commande', erreur);
-        }
-      );
-    }
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des lignes de demande dAppro', erreur)
+      }
+    );
+
 
   }
 

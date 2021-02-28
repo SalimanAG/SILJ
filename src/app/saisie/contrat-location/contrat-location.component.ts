@@ -102,7 +102,7 @@ export class ContratLocationComponent implements OnInit {
       editCautionContrat:[0, Validators.required],
       editImmeuble:[0, Validators.required],
       editLocataire:[0, Validators.required],
-      editIndeTypeIm:[0, Validators.required]
+      editIndeTypeIm:[1, Validators.required]
     });
 
   }
@@ -125,7 +125,7 @@ export class ContratLocationComponent implements OnInit {
       (data) => {
         this.typeValeursLocatives = data;
         if(this.typeValeursLocatives.length != 0){
-          this.getImmeublesByCodeType(this.typeValeursLocatives[0].codeTypIm);
+          this.getImmeublesByCodeType(this.typeValeursLocatives[1].codeTypIm);
           this.addContratFormsGroup.value['addIndeTypeIm']=0;
           this.addContratFormsGroup.value['editIndeTypeIm']=0;
         }
@@ -268,8 +268,10 @@ export class ContratLocationComponent implements OnInit {
   }
 
   onTypeImmeubleClicked1(){
-    if(this.typeValeursLocatives.length != 0)
-    this.getImmeublesByCodeType(this.typeValeursLocatives[this.addContratFormsGroup.value['addIndeTypeIm']].codeTypIm );
+    if(this.typeValeursLocatives.length != 0){
+      this.getImmeublesByCodeType(this.typeValeursLocatives[this.addContratFormsGroup.value['addIndeTypeIm']].codeTypIm );
+    }
+
   }
 
   onTypeImmeubleClicked2(){

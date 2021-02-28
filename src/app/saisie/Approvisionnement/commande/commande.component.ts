@@ -15,6 +15,9 @@ import { ExerciceService } from '../../../../services/administration/exercice.se
 import { ArticleService } from '../../../../services/definition/article.service';
 import { FournisseurService } from '../../../../services/definition/fournisseur.service';
 import { CommandeService } from '../../../../services/saisie/commande.service';
+import {jsPDF} from 'jspdf';
+import autoTable from 'jspdf-autotable'
+
 
 @Component({
   selector: 'app-commande',
@@ -486,6 +489,72 @@ export class CommandeComponent implements OnInit {
       );
     }
 
+  }
+
+  initPrintPdfOfAnCommande(inde:number){
+    const commande = this.commandes[inde];
+    const doc = new jsPDF();
+    let lignes = [];
+    let totalHT, totalTTC, totalRemise, totalTVA;
+    totalHT = 0;
+    totalRemise = 0;
+    totalTVA = 0;
+    totalTTC = 0;
+    this.ligneCommandes.forEach(element => {
+      if(element.numCommande.numCommande == commande.numCommande){
+        let lig = [];
+        lig.push(element.article.codeArticle);
+        lig.push(element.article.libArticle);
+        lig.push(element.qteLigneCommande);
+        lig.push(element.puligneCommande);
+        lig.push(element.tva);
+        lig.push(element.remise);
+        lig.push(element.puligneCommande*element.qteLigneCommande*(1+(element.tva/100))-element.remise);
+        lignes.push(lig);
+
+        totalRemise += element.remise;
+        totalTVA += element.puligneCommande*element.qteLigneCommande*(element.tva/100);
+        totalHT += element.puligneCommande*element.qteLigneCommande;
+        totalTTC += element.puligneCommande*element.qteLigneCommande*(1+(element.tva/100))-element.remise;
+
+      }
+
+    });
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(25);
+    doc.text('COMMANDE ACHAT', 62, 30);
+    doc.setFontSize(14);
+    doc.text('Référence : '+commande.numCommande, 15, 45);
+    doc.text('Date : '+commande.dateCommande, 152, 45);
+    doc.text('Fournisseur : '+commande.frs.identiteFrs, 15, 55);
+    doc.text('Délais de Livraison : '+commande.delaiLivraison+'  Jour(s)', 15, 65);
+    doc.text('Description : '+commande.description, 15, 75);
+    autoTable(doc, {
+      head: [['Article', 'Désignation', 'Quantité', 'PU', 'TVA(en %)', 'Remise', 'Montant TTC']],
+      margin: { top: 100 },
+      body: lignes
+      ,
+    });
+
+    autoTable(doc, {
+      theme: 'grid',
+      margin: { top: 100, left:130 },
+      columnStyles: {
+        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+      },
+      body: [
+        ['Total HT', totalHT],
+        ['Total Montant TVA', totalTVA],
+        ['Total Remise', totalRemise],
+        ['Total TTC', totalTTC]
+      ]
+      ,
+    });
+    //doc.autoPrint();
+    doc.output('dataurlnewwindow');
   }
 
 }

@@ -1,227 +1,381 @@
-<div class="col-md-12 mb-4">
-    <tabset>
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Point de vente</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
+<div class="card">
+    <div class="card-header">
+        <i class="fa fa-align-justify"></i> Listes des Points de ventes
+    </div>
+    <div class="card-body">
+      <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+        <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddPointVente()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+        <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+      </div>
+  
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1">
+            <thead>
+                <tr>
+                    <th>Numéro</th>
+                    <th>Date </th>
+                    <th>Payer Point</th>
+                    <th>Correspondant</th>
+                    <th>Régisseur</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let pv of pointVente; let i = index">
+                    <td>{{ pv.numPointVente }}</td>
+                    <td>{{ pv.datePointVente }}</td>
+                    <td *ngIf="pv.payerPoint===true">Payer</td>
+                    <td *ngIf="pv.payerPoint===false">NON Payer</td>
+                    <td>{{ pv.correspondant.magasinier.nomMagasinier }}  {{ pv.correspondant.magasinier.prenomMagasinier }}</td>
+                    <td>{{ pv.regisseur.magasinier.nomMagasinier }}  {{ pv.regisseur.magasinier.prenomMagasinier }} </td> 
+                    <td>
+                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditPointVente(i)"><span class="fa fa-edit"></span></button>
+                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeletePointVente(i)"><span class="fa fa-trash"></span></button>
+                        <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
+                        <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                        <!--Le bouton des options-->
+                        <div class="btn-group" dropdown>
+                          <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                          <ul *dropdownMenu class="dropdown-menu" role="menu">
+                            <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                            <li role="menuitem"><a class="dropdown-item" >Another action</a>
+                            </li>
+                            <li role="menuitem"><a class="dropdown-item" >Something else
+                              here</a></li>
+                            <li class="divider dropdown-divider"></li>
+                            <li role="menuitem"><a class="dropdown-item" >Separated link</a>
+                            </li>
+                          </ul>
                         </div>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Numéro</th>
+                    <th>Date </th>
+                    <th>Payer Point</th>
+                    <th>Correspondant</th>
+                    <th>Régisseur</th>
+                    <th>Actions</th>
+                </tr>
+            </tfoot>
+        </table>
+  
+    <!--Modal add-->
+        <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-primary modal-xl" role="document">
+              <form [formGroup]="addPointVenteFormGroup" (ngSubmit)="onSubmitAddPointVenteFormsGroup()">
+                <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">Ajouter un Point de vente</h4>
+                      <button type="button" class="close" (click)="addComModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="form-group col-sm-6">
+                        <label for="addNumPv">Numéro</label>
+                        <input type="text" class="form-control" id="addNumPv"
+                          formControlName="addNumPv" placeholder="Numéro du point">
+                      </div>
+                      <div class="form-group col-sm-6">
+                        <label for="addDatePv">Date</label>
+                        <input type="date" class="form-control" id="addDatePv"
+                         formControlName="addDatePv">
+                      </div>
+  
+                    </div><!--/.row-->
+  
+                    <div class="row">
+                      <div class="form-group col-sm-6">
+                        <label for="addCorres">Correspondant</label>
+                          <select id="addCorres" name="addCorres" class="form-control"
+                          formControlName="addCorres">
+                            <option *ngFor="let corres of correspondant; let i = index" [value]="i">
+                              {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
+                            </option>
+                          </select>
+                      </div>
+                      <div class="form-group col-sm-6">
+                        <label for="addReg">Régisseur</label>
+                        <select id="addReg" name="addReg" class="form-control"
+                        formControlName="addReg">
+                          <option *ngFor="let reg of regisseur; let i = index" [value]="i">
+                            {{ reg.idRegisseur }} - {{ reg.magasinier.nomMagasinier }} {{ reg.magasinier.prenomMagasinier }}
+                          </option>
+                        </select>
+                      </div>
+                    </div><!--/.row-->
+                    <div class="row">
+                      <button type="button" data-toggle="modal" (click)="onShowAddArticleModalAddingPointVente()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                    </div>
+                    <div class="row">
+                        <table class="table table-bordered table-striped table-lg">
+                          <thead>
+                            <tr>
+                              <th>Code Article</th>
+                              <th>Libellé de l'Article</th>
+                              <th>Prix Unit.</th>
+                              <th>Quantité</th>
+                              <th>Numéro de Série</th>
+                              <th>Montant</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let addLignPv of tempAddLignePointVente; let i = index">
+                              <td>{{ addLignPv.article.codeArticle  }}</td>
+                              <td>{{ addLignPv.article.libArticle }}</td>
+                              <td><input [(ngModel)]="tempAddLignePointVente[i].pulignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                              <td><input [(ngModel)]="tempAddLignePointVente[i].quantiteLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                              <td>
+                                <div><input [(ngModel)]="tempAddLignePointVente[i].numDebLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
+                                <p class="text-center" style="margin-bottom: 0%;">à</p>
+                                <div><input [(ngModel)]="tempAddLignePointVente[i].numFinLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
+                              </td>
+                              <td>{{ (tempAddLignePointVente[i].quantiteLignePointVente*tempAddLignePointVente[i].pulignePointVente) }}</td>
+                              <td>
+                                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfPointVente(i)"><span class="fa fa-trash"></span></button>
+                              </td>
+                            </tr>
+    
+                          </tbody>
+                        </table>
+                      </div>
+  
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
+                      <button type="submit" class="btn btn-primary" [disabled]="addPointVenteFormGroup.invalid">Enrégistrer</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </form>
+  
+            </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+    <!--Modal edit-->
+    <div bsModal #editComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-warning modal-xl" role="document">
+          <form [formGroup]="editPointVenteFormGroup" (ngSubmit)="onSubmitEditPointVenteFormsGroup()">
+            <div class="modal-content">
+              <div class="modal-header">
+              <h4 class="modal-title">Modifer un Point de vente</h4>
+              <button type="button" class="close" (click)="editComModal.hide()" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+              </div>
+              <div class="modal-body">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="form-group col-sm-6">
+                      <label for="editNumPv">Numéro</label>
+                      <input type="text" class="form-control" id="editNumPv"
+                        formControlName="editNumPv" placeholder="Numéro du point" 
+                        [ngModel]="editPointVente.numPointVente" readonly>
+                    </div>
+                    <div class="form-group col-sm-6">
+                      <label for="editDatePv">Date</label>
+                      <input type="date" class="form-control" id="editDatePv"
+                       formControlName="editDatePv" [ngModel]="editPointVente.datePointVente">
                     </div>
 
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addPVModal.show()" type="button">Ajouter nouveau <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
-                        </div>
+                  </div><!--/.row-->
+
+                  <div class="row">
+                    <div class="form-group col-sm-6">
+                      <label for="addCorres">Correspondant</label>
+                        <select id="editCorres" name="editCorres" class="form-control"
+                        formControlName="editCorres">
+                          <option *ngFor="let corres of correspondant; let i = index" [value]="i">
+                            {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
+                          </option>
+                        </select>
                     </div>
+                    <div class="form-group col-sm-6">
+                      <label for="editReg">Régisseur</label>
+                      <select id="editReg" name="editReg" class="form-control"
+                      formControlName="editReg">
+                        <option *ngFor="let reg of regisseur; let i = index" [value]="i">
+                          {{ reg.idRegisseur }} - {{ reg.magasinier.nomMagasinier }} {{ reg.magasinier.prenomMagasinier }}
+                        </option>
+                      </select>
+                    </div>
+                  </div><!--/.row-->
+                  <div class="row">
+                    <button type="button" data-toggle="modal" (click)="onShowAddArticleModalEditingPointVente()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                  </div>
+                  <div class="row">
+                      <table class="table table-bordered table-striped table-lg">
+                        <thead>
+                          <tr>
+                            <th>Code Article</th>
+                            <th>Libellé de l'Article</th>
+                            <th>Prix Unit.</th>
+                            <th>Quantité</th>
+                            <th>Numéro de Série</th>
+                            <th>Montant</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let editLignPv of tempEditLignePointVente; let i = index">
+                            <td>{{ editLignPv.article.codeArticle  }}</td>
+                            <td>{{ editLignPv.article.libArticle }}</td>
+                            <td><input [(ngModel)]="tempEditLignePointVente[i].pulignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                            <td><input [(ngModel)]="tempEditLignePointVente[i].quantiteLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                            <td>
+                              <div><input [(ngModel)]="tempEditLignePointVente[i].numDebLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
+                              <p class="text-center" style="margin-bottom: 0%;">à</p>
+                              <div><input [(ngModel)]="tempEditLignePointVente[i].numFinLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
+                            </td>
+                            <td>{{ (tempEditLignePointVente[i].quantiteLignePointVente*tempEditLignePointVente[i].pulignePointVente) }}</td>
+                            <td>
+                              <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfPointVente(i)"><span class="fa fa-trash"></span></button>
+                            </td>
+                          </tr>
+  
+                        </tbody>
+                      </table>
+                    </div>
+
                 </div>
-                <br> <br> <br> 
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fa fa-align-justify"></i> Listes des points de vente
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered table-striped table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Date</th>
-                                        <th>Payer</th>
-                                        <th>Exercice</th>
-                                        <th>Correspondant</th>
-                                        <th>Régisseur</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>PV210</td>
-                                        <td>19/01/2021</td>
-                                        <td>oui</td>
-                                        <td>2021</td>
-                                        <td>DOSSOU Monse</td>
-                                        <td>ALLABA Romain</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editPVModal.show()"><span class="fa fa-edit"></span></button>
-                                            <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deletePVModal.show()"><span class="fa fa-trash"></span></button>
-                                            <button class="btn btn-info btn-sm" data-toggle="modal" (click)="detailPVModal.show()"><span class="fa fa-eye"></span></button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Date</th>
-                                        <th>Payer</th>
-                                        <th>Exercice</th>
-                                        <th>Correspondant</th>
-                                        <th>Régisseur</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                            <nav>
-                                <ul class="pagination">
-                                <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                                <li class="page-item active">
-                                    <a class="page-link" href="#">1</a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                </ul>
-                            </nav>
-                        <!--Modal add-->
-                            <div bsModal #addPVModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-success" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Ajouter un point de vente</h4>
-                                            <button type="button" class="close" (click)="addPVModal.hide()" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                        
-                                            <div class="card-body p-4">
-                                                <form>
-                                                    <div class="form-group mb-3">
-                                                        <label for="codevalo">Numéro</label>
-                                                        <input type="text" class="form-control" autocomplete="codevalo" required>
-                                                    </div>
-                                                    <div class="form-group mb-3">
-                                                        <label for="codevalo">Date</label>
-                                                        <input type="date" class="form-control" autocomplete="codevalo" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="etatvalo">Payer</label>
-                                                        <select class="form-control" id="etatvalo">
-                                                        <option>oui</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="etatvalo">Exercice</label>
-                                                        <select class="form-control" id="etatvalo">
-                                                        <option>2021</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="etatvalo">Correspondant</label>
-                                                        <select class="form-control" id="etatvalo">
-                                                        <option>AKIMBI Raymond</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="etatvalo">Régisseur</label>
-                                                        <select class="form-control" id="etatvalo">
-                                                        <option>SOSSO Jean</option>
-                                                        </select>
-                                                    </div>
-                                                
-                                                </form>
-                                            </div>
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" (click)="addPVModal.hide()">Annuler</button>
-                                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                                        </div>
-                                    </div><!-- /.modal-content -->
-                                </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        <!--Modal edit-->
-                        <div bsModal #editPVModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-warning" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Modifer un point de vente</h4>
-                                <button type="button" class="close" (click)="editPVModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="card-body p-4">
-                                        <form>
-                                            <div class="form-group mb-3">
-                                                <label for="codevalo">Numéro</label>
-                                                <input type="text" class="form-control" autocomplete="codevalo" required>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <label for="codevalo">Date</label>
-                                                <input type="date" class="form-control" autocomplete="codevalo" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="etatvalo">Payer</label>
-                                                <select class="form-control" id="etatvalo">
-                                                <option>oui</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="etatvalo">Exercice</label>
-                                                <select class="form-control" id="etatvalo">
-                                                <option>2021</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="etatvalo">Correspondant</label>
-                                                <select class="form-control" id="etatvalo">
-                                                <option>AKIMBI Raymond</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="etatvalo">Régisseur</label>
-                                                <select class="form-control" id="etatvalo">
-                                                <option>SOSSO Jean</option>
-                                                </select>
-                                            </div>
-                                        
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="editPVModal.hide()">Annuler</button>
-                                <button type="button" class="btn btn-warning">Modifier</button>
-                                </div>
-                            </div><!-- /.modal-content -->
-                            </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        <!--Modal delete-->
-
-                        <div bsModal #deletePVModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-danger" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title text-center">Supprimer un point de vente</h4>
-                                <button type="button" class="close" (click)="deletePVModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                <p style="font-size: 20px;"> <strong> Voulez-vous réellement supprimer ce point de vente ?</strong></p>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="deletePVModal.hide()">Annuler</button>
-                                <button type="button" class="btn btn-danger">Supprimer</button>
-                                </div>
-                            </div><!-- /.modal-content -->
-                            </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        
-                    </div>
-                    </div>
-                    <!--/.col-->
-                </div>
+               
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
+              <button type="submit" class="btn btn-warning" [disabled]="editPointVenteFormGroup.invalid">Modifier</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </form>
+  
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+    <!--Modal delete-->
+  
+    <div bsModal #deleteComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title text-center">Supprimer un Point Vente</h4>
+            <button type="button" class="close" (click)="deleteComModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
             </div>
-        </tab>
-    </tabset>
-</div>
+            <div class="modal-body">
+              <p>Vous êtes sur le point de supprimer le point de vente <mark style="color: red;">{{ suprPointVente.numPointVente }}</mark></p>
+              <p>Le confirmez-vous ?</p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="deleteComModal.hide()">Annuler</button>
+            <button type="button" class="btn btn-danger" (click)="onConfirmDeletePointVente()">Supprimer</button>
+            </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+    <!--Modal de selection d'Article pour ajout de Reception-->
+    <div bsModal #addArticle1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-success modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Sélectionner les articles</h4>
+            <button type="button" class="close" (click)="addArticle1.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+  
+              <div class="card" style="margin: 0;">
+                <div class="card-body">
+                  <table class="table table-striped" id="tabListArt"
+                    > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Libellé</th>
+                        <th>Prix unitaire</th>
+                        <th>Choix?</th>
+                      </tr>
+                    </thead>
+                    <tbody >
+                      <tr *ngFor="let articl of articles; let i = index">
+                        <td>{{ articl.codeArticle }}</td>
+                        <td>{{ articl.libArticle }}</td>
+                        <td>{{ articl.prixVenteArticle }}</td>
+                        <td>
+                          <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                             (click)="addArticleForAddingOfPointVente(i)"></p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+  
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+  
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+  
+     <!--Modal de selection d'Article pour edition de Reception-->
+     <div bsModal #addArticle2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-success modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Sélectionner les articles</h4>
+            <button type="button" class="close" (click)="addArticle2.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+  
+              <div class="card" style="margin: 0;">
+                <div class="card-body">
+                  <table class="table table-striped" id="tabListArt"
+                  > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Libellé</th>
+                      <th>Prix unitaire</th>
+                      <th>Choix?</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr *ngFor="let articl of articles; let i = index">
+                      <td>{{ articl.codeArticle }}</td>
+                      <td>{{ articl.libArticle }}</td>
+                      <td>{{ articl.prixVenteArticle }}</td>
+                      <td>
+                        <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                           (click)="addArticleForEditingOfPointVente(i)"></p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+              </div>
+  
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+  
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+  
+  
+  
+    </div>
+  </div>
+  

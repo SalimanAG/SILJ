@@ -1,181 +1,416 @@
-<div class="col-md-12 mb-4">
-    <tabset>
-        <tab>
-            <ng-template tabHeading><i class="icon-user"></i> Placement</ng-template>
-        
-            <div class="row">
-                <div class="row">
-                    <div class="col-lg-8"> 
-                        <div class="input-group" style="margin-left: 15px; width: 400px;">
-                            <input type="text" class="form-control" placeholder="Rechercher..." aria-label="Rechercher...">
-                        
-                        </div>
-                    </div>
+<div class="card">
+  <div class="card-header">
+      <i class="fa fa-align-justify"></i> Listes des Placements
+  </div>
+  <div class="card-body">
+    <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="addComModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+    </div>
 
-                    <div class="col-lg-4" > 
-                        <div class="input-group" style="margin-right: 100px;">
-                        
-                            <button class="btn btn-success" data-toggle="modal" (click)="addPlaModal.show()" type="button">Ajouter nouveau <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                            
-                        </div>
-                    </div>
+      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1">
+          <thead>
+              <tr>
+                  <th>Numéro</th>
+                  <th>Date</th>
+                  <th>Correspondant</th>
+                  <th>Régisseur</th>
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let place of placements; let i = index">
+                  <td>{{ place.numPlacement }}</td>
+                  <td>{{ place.datePlacement }}</td>
+                  <td>{{ place.correspondant.idCorrespondant }} - {{ place.correspondant.magasinier.nomMagasinier }} {{ place.correspondant.magasinier.prenomMagasinier }}</td>
+                  <td>{{ place.regisseur.idRegisseur }} - {{ place.regisseur.magasinier.nomMagasinier }} {{ place.regisseur.magasinier.prenomMagasinier }}</td>
+                  <td>
+                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
+                      <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
+                      <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
+                      <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                      <!--Le bouton des options-->
+                      <div class="btn-group" dropdown>
+                        <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                        <ul *dropdownMenu class="dropdown-menu" role="menu">
+                          <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                          <li role="menuitem"><a class="dropdown-item" >Another action</a>
+                          </li>
+                          <li role="menuitem"><a class="dropdown-item" >Something else
+                            here</a></li>
+                          <li class="divider dropdown-divider"></li>
+                          <li role="menuitem"><a class="dropdown-item" >Separated link</a>
+                          </li>
+                        </ul>
+                      </div>
+                  </td>
+              </tr>
+          </tbody>
+          <tfoot>
+              <tr>
+                <th>Numéro</th>
+                <th>Date</th>
+                <th>Correspondant</th>
+                <th>Régisseur</th>
+                <th>Actions</th>
+              </tr>
+          </tfoot>
+      </table>
+
+  <!--Modal add-->
+      <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-primary modal-xl" role="document">
+            <form [formGroup]="addPlacementFormGroup" (ngSubmit)="onSubmitAddCommandeFormsGroup()">
+              <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ajouter un Placement</h4>
+                    <button type="button" class="close" (click)="addComModal.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <br> <br> <br> 
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fa fa-align-justify"></i> Listes des bon placement
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered table-striped table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Date</th>
-                                        <th>Exercice</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>P210</td>
-                                        <td>19/01/2021</td>
-                                        <td>2021</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="editPlaModal.show()"><span class="fa fa-edit"></span></button>
-                                            <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="deletePlaModal.show()"><span class="fa fa-trash"></span></button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Date</th>
-                                        <th>Exercice</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                            <nav>
-                                <ul class="pagination">
-                                <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                                <li class="page-item active">
-                                    <a class="page-link" href="#">1</a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                </ul>
-                            </nav>
-                        <!--Modal add-->
-                            <div bsModal #addPlaModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-success" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Ajouter un placement</h4>
-                                            <button type="button" class="close" (click)="addPlaModal.hide()" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                        
-                                            <div class="card-body p-4">
-                                                <form>
-                                                    <div class="form-group mb-3">
-                                                        <label for="codevalo">Numéro</label>
-                                                        <input type="text" class="form-control" autocomplete="codevalo" required>
-                                                    </div>
-                                                    <div class="form-group mb-3">
-                                                        <label for="codevalo">Date</label>
-                                                        <input type="date" class="form-control" autocomplete="codevalo" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="etatvalo">Exercice</label>
-                                                        <select class="form-control" id="etatvalo">
-                                                        <option>2021</option>
-                                                        </select>
-                                                    </div>
-                                                
-                                                </form>
-                                            </div>
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" (click)="addPlaModal.hide()">Annuler</button>
-                                            <button type="button" class="btn btn-success">Sauvegarder</button>
-                                        </div>
-                                    </div><!-- /.modal-content -->
-                                </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        <!--Modal edit-->
-                        <div bsModal #editPlaModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-warning" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title">Modifer placement</h4>
-                                <button type="button" class="close" (click)="editPlaModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="card-body p-4">
-                                        <form>
-                                            <div class="form-group mb-3">
-                                                <label for="codevalo">Numéro</label>
-                                                <input type="text" class="form-control" autocomplete="codevalo" required>
-                                            </div>
-                                            <div class="form-group mb-3">
-                                                <label for="codevalo">Date</label>
-                                                <input type="date" class="form-control" autocomplete="codevalo" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="etatvalo">Exercice</label>
-                                                <select class="form-control" id="etatvalo">
-                                                <option>2021</option>
-                                                </select>
-                                            </div>
-                                        
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="editPlaModal.hide()">Annuler</button>
-                                <button type="button" class="btn btn-warning">Modifier</button>
-                                </div>
-                            </div><!-- /.modal-content -->
-                            </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        <!--Modal delete-->
-
-                        <div bsModal #deletePlaModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-danger" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <h4 class="modal-title text-center">Supprimer un placement</h4>
-                                <button type="button" class="close" (click)="deletePlaModal.hide()" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                <p style="font-size: 20px;"> <strong> Voulez-vous réellement rétirer ce placement ?</strong></p>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" (click)="deletePlaModal.hide()">Annuler</button>
-                                <button type="button" class="btn btn-danger">Supprimer</button>
-                                </div>
-                            </div><!-- /.modal-content -->
-                            </div><!-- /.modal-dialog -->
-                        </div><!-- /.modal -->
-
-                        
+                <div class="card-body">
+                  <div class="row">
+                    <div class="form-group col-sm-4">
+                      <label for="addNumPlacement">Numéro</label>
+                      <input type="text" class="form-control" id="addNumPlacement"
+                        formControlName="addNumPlacement" placeholder="Numéro du Placement">
                     </div>
+                    <div class="form-group col-sm-4">
+                      <label for="addDatePlacement">Date</label>
+                      <input type="date" class="form-control" id="addDatePlacement"
+                       formControlName="addDatePlacement">
                     </div>
-                    <!--/.col-->
+                    <div class="form-group col-sm-4">
+                      <label for="addExoSlected">Exercice</label>
+                      <input type="text" class="form-control" id="addExoSlected" readonly
+                      [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                       [ngModelOptions]="{standalone: true}">
+                    </div>
+
+                  </div><!--/.row-->
+
+                  <div class="row">
+                    <div class="form-group col-sm-4">
+                      <label for="addArrondissement">Arrondissement</label>
+                        <select id="addArrondissement" name="addArrondissement" class="form-control"
+                        formControlName="addArrondissement" (click)="onAddArrondiSelected()">
+                          <option *ngFor="let arron of arrondissements; let i = index" [value]="i">
+                            {{ arron.codeArrondi }} - {{ arron.nomArrondi }}
+                          </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-4">
+                      <label for="addCorrespondant">Correspondant</label>
+                        <select id="addCorrespondant" name="addCorrespondant" class="form-control"
+                        formControlName="addCorrespondant">
+                          <option *ngFor="let corres of correspondantsByArrondi; let i = index" [value]="i">
+                            {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
+                          </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-4">
+                      <label for="addRegiConcerned">Régisseur</label>
+                      <input type="text" class="form-control" id="addRegiConcerned" readonly
+                      [ngModel]="concernedRegisse.idRegisseur.concat(' - '.concat(concernedRegisse.magasinier.nomMagasinier.concat(' '.concat(concernedRegisse.magasinier.prenomMagasinier))))" placeholder="Régisseur Concerné"
+                       [ngModelOptions]="{standalone: true}">
+                    </div>
+                  </div><!--/.row-->
+                  <div class="row">
+                    <button type="button" data-toggle="modal" (click)="onShowAddArticleModalAddingCommande()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                  </div>
+                  <div class="row">
+                    <table class="table table-bordered table-striped table-lg">
+                      <thead>
+                        <tr>
+                          <th>Code Article</th>
+                          <th>Libellé de l'Article</th>
+                          <th>Prix Unit.</th>
+                          <th>Quantité</th>
+                          <th>Montant</th>
+                          <th>Plage(s)</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let addLignPlace of tempAddLignePlacement; let i = index">
+                          <td>{{ addLignPlace.article.codeArticle }}</td>
+                          <td>{{ addLignPlace.article.libArticle }}</td>
+                          <td><input [(ngModel)]="tempAddLignePlacement[i].pulignePlacement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td><input [(ngModel)]="tempAddLignePlacement[i].quantiteLignePlacement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td>{{ tempAddLignePlacement[i].quantiteLignePlacement*tempAddLignePlacement[i].pulignePlacement }}</td>
+                          <td>
+                            <div class="row">
+                              <div class="col"><button type="button" class="btn btn-primary" style="width: 100%;" (click)="onAddAPlageNumArticleClicked1(i)">Ajouter <span class="fa fa-plus-circle"></span></button></div>
+                            </div>
+                            <div *ngFor="let plage of tempAddPlageNumArticle; let i2 = index">
+                              <div class="row" style="margin-top: 1%;" *ngIf="plage.lignePlacement.article.codeArticle == tempAddLignePlacement[i].article.codeArticle">
+                                <div class="col-sm-5"><input [(ngModel)]="tempAddPlageNumArticle[i2].numDebPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
+                                <div class="col-sm-1"><p class="align-center" >à</p></div>
+                                <div class="col-sm-4"><input [(ngModel)]="tempAddPlageNumArticle[i2].numFinPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
+                                <div class="col-sm-1" ><button type="button" (click)="popALigneOfPlageNumArticle1(i2)" class="btn btn-danger btn-sm" data-toggle="modal"><span class="fa fa-minus-circle"></span></button></div>
+                              </div>
+                            </div>
+
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfComm1(i)"><span class="fa fa-trash"></span></button>
+                          </td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+                  </div>
+
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addPlacementFormGroup.invalid">Enrégistrer</button>
+                </div>
+              </div><!-- /.modal-content -->
+            </form>
+
+          </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal edit-->
+  <div bsModal #editComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-warning modal-xl" role="document">
+        <form [formGroup]="editPlacementFormGroup" (ngSubmit)="onSubmitEditCommandeFormsGroup()">
+          <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title">Modifer un Placement</h4>
+            <button type="button" class="close" (click)="editComModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
             </div>
-        </tab>
-    </tabset>
+            <div class="modal-body">
+              <div class="card-body">
+                <div class="row">
+                  <div class="form-group col-sm-4">
+                    <label for="editNumPlacement">Numéro</label>
+                    <input type="text" class="form-control" id="editNumPlacement" readonly
+                    [ngModel]="editPlacement.numPlacement"  formControlName="editNumPlacement" placeholder="Numéro du Placement">
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editDatePlacement">Date</label>
+                    <input type="date" class="form-control" id="editDatePlacement"
+                     [ngModel]="editPlacement.datePlacement" formControlName="editDatePlacement">
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editExoSlected">Exercice</label>
+                    <input type="text" class="form-control" id="editExoSlected" readonly
+                    [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                     [ngModelOptions]="{standalone: true}">
+                  </div>
+
+                </div><!--/.row-->
+
+                <div class="row">
+                  <div class="form-group col-sm-4">
+                    <label for="editArrondissement">Arrondissement</label>
+                      <select id="editArrondissement" name="editArrondissement" class="form-control"
+                      formControlName="editArrondissement" (click)="onEditArrondiSelected()">
+                        <option *ngFor="let arron of arrondissements; let i = index" [value]="i">
+                          {{ arron.codeArrondi }} - {{ arron.nomArrondi }}
+                        </option>
+                      </select>
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editCorrespondant">Correspondant</label>
+                      <select id="editCorrespondant" name="editCorrespondant" class="form-control"
+                      formControlName="editCorrespondant">
+                        <option *ngFor="let corres of correspondantsByArrondi; let i = index" [value]="i">
+                          {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
+                        </option>
+                      </select>
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editRegiConcerned">Régisseur</label>
+                    <input type="text" class="form-control" id="editRegiConcerned" readonly
+                    [ngModel]="concernedRegisse.idRegisseur.concat(' - '.concat(concernedRegisse.magasinier.nomMagasinier.concat(' '.concat(concernedRegisse.magasinier.prenomMagasinier))))" placeholder="Régisseur Concerné"
+                     [ngModelOptions]="{standalone: true}">
+                  </div>
+                </div><!--/.row-->
+                <div class="row">
+                  <button type="button" data-toggle="modal" (click)="onShowAddArticleModalEditingCommande()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                </div>
+                <div class="row">
+                  <table class="table table-bordered table-striped table-lg">
+                    <thead>
+                      <tr>
+                        <th>Code Article</th>
+                        <th>Libellé de l'Article</th>
+                        <th>Prix Unit.</th>
+                        <th>Quantité</th>
+                        <th>Montant</th>
+                        <th>Plage(s)</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let editLignPlace of tempEditLignePlacement; let i = index">
+                        <td>{{ editLignPlace.article.codeArticle }}</td>
+                        <td>{{ editLignPlace.article.libArticle }}</td>
+                        <td><input [(ngModel)]="tempEditLignePlacement[i].pulignePlacement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td><input [(ngModel)]="tempEditLignePlacement[i].quantiteLignePlacement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td>{{ tempEditLignePlacement[i].quantiteLignePlacement*tempEditLignePlacement[i].pulignePlacement }}</td>
+                        <td>
+                          <div class="row">
+                            <div class="col"><button type="button" class="btn btn-primary" style="width: 100%;" (click)="onAddAPlageNumArticleClicked2(i)">Ajouter <span class="fa fa-plus-circle"></span></button></div>
+                          </div>
+                          <div *ngFor="let plage of tempEditPlageNumArticle; let i2 = index">
+                            <div class="row" style="margin-top: 1%;" *ngIf="plage.lignePlacement.article.codeArticle == tempEditLignePlacement[i].article.codeArticle">
+                              <div class="col-sm-5"><input [(ngModel)]="tempEditPlageNumArticle[i2].numDebPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
+                              <div class="col-sm-1"><p class="align-center" >à</p></div>
+                              <div class="col-sm-4"><input [(ngModel)]="tempEditPlageNumArticle[i2].numFinPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
+                              <div class="col-sm-1" ><button type="button" (click)="popALigneOfPlageNumArticle2(i2)" class="btn btn-danger btn-sm" data-toggle="modal"><span class="fa fa-minus-circle"></span></button></div>
+                            </div>
+                          </div>
+
+                        </td>
+                        <td>
+                          <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfComm1(i)"><span class="fa fa-trash"></span></button>
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
+            <button type="submit" class="btn btn-warning" [disabled]="editPlacementFormGroup.invalid">Modifier</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </form>
+
+      </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal delete-->
+
+  <div bsModal #deleteComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-danger" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h4 class="modal-title text-center">Supprimer un Placement</h4>
+          <button type="button" class="close" (click)="deleteComModal.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <div class="modal-body">
+            <p>Vous êtes sur le point de supprimer le Placement <mark style="color: red;">{{ suprPlacement.numPlacement }}</mark></p>
+            <p>Le confirmez-vous ?</p>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="deleteComModal.hide()">Annuler</button>
+          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteCommande()">Supprimer</button>
+          </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal de selection d'Article pour ajout de Commande-->
+  <div bsModal #addArticle1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Sélectionner les articles</h4>
+          <button type="button" class="close" (click)="addArticle1.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+            <div class="card" style="margin: 0;">
+              <div class="card-body">
+                <table class="table table-striped" id="tabListArt" datatable [dtOptions]="dtOptions2"
+                 [dtTrigger]="dtTrigger2">
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Libellé</th>
+                      <th>Prix unitaire</th>
+                      <th>Choix?</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr *ngFor="let articl of articles; let i = index">
+                      <td>{{ articl.codeArticle }}</td>
+                      <td>{{ articl.libArticle }}</td>
+                      <td>{{ articl.prixVenteArticle }}</td>
+                      <td>
+                        <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                           (click)="addArticleForAddingOfComm1(i)"></p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+   <!--Modal de selection d'Article pour edition de commande-->
+   <div bsModal #addArticle2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Sélectionner les articles</h4>
+          <button type="button" class="close" (click)="addArticle2.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+            <div class="card" style="margin: 0;">
+              <div class="card-body">
+                <table class="table table-striped" id="tabListArt" datatable [dtOptions]="dtOptions3"
+                 [dtTrigger]="dtTrigger3">
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Libellé</th>
+                      <th>Prix unitaire</th>
+                      <th>Choix?</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr *ngFor="let articl of articles; let i = index">
+                      <td>{{ articl.codeArticle }}</td>
+                      <td>{{ articl.libArticle }}</td>
+                      <td>{{ articl.prixVenteArticle }}</td>
+                      <td>
+                        <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                          (click)="addArticleForEditingOfComm1(i)"></p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+
+
+  </div>
 </div>

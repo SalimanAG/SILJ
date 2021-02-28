@@ -17,6 +17,8 @@ import { ArticleService } from '../../../../services/definition/article.service'
 import { FournisseurService } from '../../../../services/definition/fournisseur.service';
 import { CommandeService } from '../../../../services/saisie/commande.service';
 import { ReceptionService } from '../../../../services/saisie/reception.service';
+import {jsPDF} from 'jspdf';
+import autoTable from 'jspdf-autotable'
 
 @Component({
   selector: 'app-reception',
@@ -632,6 +634,76 @@ export class ReceptionComponent implements OnInit {
       }
     );
 
+  }
+
+  initPrintPdfOfAnReception(inde:number){
+    const reception = this.receptions[inde];
+    let receptComm = new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false));
+    const doc = new jsPDF();
+    let lignes = [];
+    let totalHT, totalTTC, totalRemise, totalTVA;
+    totalHT = 0;
+    totalRemise = 0;
+    totalTVA = 0;
+    totalTTC = 0;
+    this.ligneReceptions.forEach(element => {
+      if(element.reception.numReception == reception.numReception){
+        let lig = [];
+        receptComm = element.ligneCommande.numCommande;
+        lig.push(element.ligneCommande.article.codeArticle);
+        lig.push(element.ligneCommande.article.libArticle);
+        lig.push(element.quantiteLigneReception);
+        lig.push(element.puligneReception);
+        lig.push(element.ligneCommande.tva);
+        lig.push(element.ligneCommande.remise);
+        lig.push(element.puligneReception*element.quantiteLigneReception*(1+(element.ligneCommande.tva/100))-element.ligneCommande.remise);
+        lig.push(element.numSerieDebLigneReception.toString()+'  à  '+element.numSerieFinLigneReception.toString());
+        lig.push(element.observationLigneReception);
+        lignes.push(lig);
+
+        totalRemise += element.ligneCommande.remise;
+        totalTVA += element.puligneReception*element.quantiteLigneReception*(element.ligneCommande.tva/100);
+        totalHT += element.puligneReception*element.quantiteLigneReception;
+        totalTTC += element.puligneReception*element.quantiteLigneReception*(1+(element.ligneCommande.tva/100))-element.ligneCommande.remise;
+
+      }
+
+    });
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(25);
+    doc.text('ENTREE ACHAT', 65, 30);
+    doc.setFontSize(14);
+    doc.text('Référence : '+reception.numReception, 15, 45);
+    doc.text('Date : '+reception.dateReception, 152, 45);
+    doc.text('Commande : '+receptComm.numCommande+'\tDu\t'+receptComm.dateCommande, 15, 55);
+    doc.text('Fournisseur : '+receptComm.frs.identiteFrs, 15, 65);
+    doc.text('Observation : '+reception.observation, 15, 75);
+    autoTable(doc, {
+      head: [['Article', 'Désignation', 'Quantité', 'PU', 'TVA(en %)', 'Remise', 'Montant TTC', 'Plage', 'Obs.']],
+      margin: { top: 100 },
+      body: lignes
+      ,
+    });
+
+    autoTable(doc, {
+      theme: 'grid',
+      margin: { top: 100, left:130 },
+      columnStyles: {
+        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+      },
+      body: [
+        ['Total HT', totalHT],
+        ['Total Montant TVA', totalTVA],
+        ['Total Remise', totalRemise],
+        ['Total TTC', totalTTC]
+      ]
+      ,
+    });
+    //doc.autoPrint();
+    doc.output('dataurlnewwindow');
   }
 
 }

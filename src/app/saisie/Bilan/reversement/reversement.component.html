@@ -1,1 +1,357 @@
-<p>reversement works!</p>
+<div class="card">
+    <div class="card-header">
+        <i class="fa fa-align-justify"></i> Listes des Reversement
+    </div>
+    <div class="card-body">
+      <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+        <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddReversement()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+        <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+      </div>
+  
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1">
+            <thead>
+                <tr>
+                    <th>Numéro</th>
+                    <th>Date </th>
+                    <th>Régisseur</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let revers of reversement; let i = index">
+                    <td>{{ revers.numReversement }}</td>
+                    <td>{{ revers.dateVersement }}</td>
+                    <td>{{ revers.regisseur.magasinier.nomMagasinier }}  {{ revers.regisseur.magasinier.prenomMagasinier }} </td> 
+                    <td>
+                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditReversement(i)"><span class="fa fa-edit"></span></button>
+                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReversement(i)"><span class="fa fa-trash"></span></button>
+                        <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
+                        <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                        <!--Le bouton des options-->
+                        <div class="btn-group" dropdown>
+                          <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                          <ul *dropdownMenu class="dropdown-menu" role="menu">
+                            <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                            <li role="menuitem"><a class="dropdown-item" >Another action</a>
+                            </li>
+                            <li role="menuitem"><a class="dropdown-item" >Something else
+                              here</a></li>
+                            <li class="divider dropdown-divider"></li>
+                            <li role="menuitem"><a class="dropdown-item" >Separated link</a>
+                            </li>
+                          </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Numéro</th>
+                    <th>Date </th>
+                    <th>Régisseur</th>
+                    <th>Actions</th>
+                </tr>
+            </tfoot>
+        </table>
+  
+    <!--Modal add-->
+        <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-primary modal-xl" role="document">
+              <form [formGroup]="addReversementFormGroup" (ngSubmit)="onSubmitAddReversementFormsGroup()">
+                <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">Ajouter un Reversement</h4>
+                      <button type="button" class="close" (click)="addComModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="form-group col-sm-4">
+                        <label for="addNumRevers">Numéro</label>
+                        <input type="text" class="form-control" id="addNumRevers"
+                          formControlName="addNumRevers" placeholder="Numéro du reversement">
+                      </div>
+                      <div class="form-group col-sm-4">
+                        <label for="addDateRevers">Date</label>
+                        <input type="date" class="form-control" id="addDateRevers"
+                         formControlName="addDateRevers">
+                      </div>
+                      <div class="form-group col-sm-4">
+                        <label for="addReg">Régisseur</label>
+                        <select id="addReg" name="addReg" class="form-control"
+                        formControlName="addReg">
+                          <option *ngFor="let reg of regisseur; let i = index" [value]="i">
+                            {{ reg.idRegisseur }} - {{ reg.magasinier.nomMagasinier }} {{ reg.magasinier.prenomMagasinier }}
+                          </option>
+                        </select>
+                      </div>
+  
+                    </div><!--/.row-->
+
+                    <div class="row">
+                      <button type="button" data-toggle="modal" (click)="onShowAddArticleModalAddingReversement()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                    </div>
+                    <div class="row">
+                        <table class="table table-bordered table-striped table-lg">
+                          <thead>
+                            <tr>
+                              <th>Code Article</th>
+                              <th>Libellé de l'Article</th>
+                              <th>Prix Unit.</th>
+                              <th>Quantité</th>
+                              <th>Montant</th>
+                              <th>Quittance</th>
+                              <th>Date Quittance</th>
+                              <th>Bénéficiaire</th>
+                              <th>Observation</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let addLignRevers of tempAddLigneReversement; let i = index">
+                              <td>{{ addLignRevers.article.codeArticle  }}</td>
+                              <td>{{ addLignRevers.article.libArticle }}</td>
+                              <td><input [(ngModel)]="tempAddLigneReversement[i].puligneReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                              <td><input [(ngModel)]="tempAddLigneReversement[i].quantiteLigneReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                              <td>{{ (tempAddLigneReversement[i].quantiteLigneReversement*tempAddLigneReversement[i].puligneReversement) }}</td>
+                              <td><input [(ngModel)]="tempAddLigneReversement[i].quittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                              <td><input [(ngModel)]="tempAddLigneReversement[i].dateQuittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="date" ></td>
+                              <td><input [(ngModel)]="tempAddLigneReversement[i].beneficiaire" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                              <td><input [(ngModel)]="tempAddLigneReversement[i].observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                            
+                              <td>
+                                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfReversement(i)"><span class="fa fa-trash"></span></button>
+                              </td>
+                            </tr>
+    
+                          </tbody>
+                        </table>
+                      </div>
+  
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
+                      <button type="submit" class="btn btn-primary" [disabled]="addReversementFormGroup.invalid">Enrégistrer</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </form>
+  
+            </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+    <!--Modal edit-->
+    <div bsModal #editComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-warning modal-xl" role="document">
+          <form [formGroup]="editReversementFormGroup" (ngSubmit)="onSubmitEditReversementFormsGroup()">
+            <div class="modal-content">
+              <div class="modal-header">
+              <h4 class="modal-title">Modifer un Reversement</h4>
+              <button type="button" class="close" (click)="editComModal.hide()" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+              </div>
+              <div class="modal-body">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="form-group col-sm-4">
+                      <label for="editNumRevers">Numéro</label>
+                      <input type="text" class="form-control" id="editNumRevers"
+                        formControlName="editNumRevers" placeholder="Numéro du point" 
+                        [ngModel]="editReversement.numReversement" readonly>
+                    </div>
+                    <div class="form-group col-sm-4">
+                      <label for="editDateRevers">Date</label>
+                      <input type="date" class="form-control" id="editDateRevers"
+                       formControlName="editDateRevers" [ngModel]="editReversement.dateVersement">
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <label for="editReg">Régisseur</label>
+                        <select id="editReg" name="editReg" class="form-control"
+                        formControlName="editReg">
+                          <option *ngFor="let reg of regisseur; let i = index" [value]="i">
+                            {{ reg.idRegisseur }} - {{ reg.magasinier.nomMagasinier }} {{ reg.magasinier.prenomMagasinier }}
+                          </option>
+                        </select>
+                      </div>
+
+                  </div><!--/.row-->
+
+                  <div class="row">
+                    <button type="button" data-toggle="modal" (click)="onShowAddArticleModalEditingReversement()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
+                  </div>
+                  <div class="row">
+                    <table class="table table-bordered table-striped table-lg">
+                      <thead>
+                        <tr>
+                          <th>Code Article</th>
+                          <th>Libellé de l'Article</th>
+                          <th>Prix Unit.</th>
+                          <th>Quantité</th>
+                          <th>Montant</th>
+                          <th>Quittance</th>
+                          <th>Date Quittance</th>
+                          <th>Bénéficiaire</th>
+                          <th>Observation</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let editLignRevers of tempEditLigneReversement; let i = index">
+                          <td>{{ editLignRevers.article.codeArticle  }}</td>
+                          <td>{{ editLignRevers.article.libArticle }}</td>
+                          <td><input [(ngModel)]="tempEditLigneReversement[i].puligneReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                          <td><input [(ngModel)]="tempEditLigneReversement[i].quantiteLigneReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td>{{ (tempEditLigneReversement[i].quantiteLigneReversement*tempEditLigneReversement[i].puligneReversement) }}</td>
+                          <td><input [(ngModel)]="tempEditLigneReversement[i].quittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                          <td><input [(ngModel)]="tempEditLigneReversement[i].dateQuittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="date" ></td>
+                          <td><input [(ngModel)]="tempEditLigneReversement[i].beneficiaire" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                          <td><input [(ngModel)]="tempEditLigneReversement[i].observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                        
+                          <td>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfReversement(i)"><span class="fa fa-trash"></span></button>
+                          </td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+               
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
+              <button type="submit" class="btn btn-warning" [disabled]="editReversementFormGroup.invalid">Modifier</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </form>
+  
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+    <!--Modal delete-->
+  
+    <div bsModal #deleteComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title text-center">Supprimer un Point Vente</h4>
+            <button type="button" class="close" (click)="deleteComModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+              <p>Vous êtes sur le point de supprimer le point de vente <mark style="color: red;">{{ suprReversement.numReversement }}</mark></p>
+              <p>Le confirmez-vous ?</p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="deleteComModal.hide()">Annuler</button>
+            <button type="button" class="btn btn-danger" (click)="onConfirmDeleteReversement()">Supprimer</button>
+            </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+    <!--Modal de selection d'Article pour ajout de Reception-->
+    <div bsModal #addArticle1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-success modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Sélectionner les articles</h4>
+            <button type="button" class="close" (click)="addArticle1.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+  
+              <div class="card" style="margin: 0;">
+                <div class="card-body">
+                  <table class="table table-striped" id="tabListArt"
+                    > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Libellé</th>
+                        <th>Prix unitaire</th>
+                        <th>Choix?</th>
+                      </tr>
+                    </thead>
+                    <tbody >
+                      <tr *ngFor="let articl of articles; let i = index">
+                        <td>{{ articl.codeArticle }}</td>
+                        <td>{{ articl.libArticle }}</td>
+                        <td>{{ articl.prixVenteArticle }}</td>
+                        <td>
+                          <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                             (click)="addArticleForAddingOfReversement(i)"></p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+  
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+  
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+  
+     <!--Modal de selection d'Article pour edition de Reception-->
+     <div bsModal #addArticle2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-success modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Sélectionner les articles</h4>
+            <button type="button" class="close" (click)="addArticle2.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+  
+              <div class="card" style="margin: 0;">
+                <div class="card-body">
+                    <table class="table table-striped" id="tabListArt"
+                    > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Libellé</th>
+                        <th>Prix unitaire</th>
+                        <th>Choix?</th>
+                      </tr>
+                    </thead>
+                    <tbody >
+                      <tr *ngFor="let articl of articles; let i = index">
+                        <td>{{ articl.codeArticle }}</td>
+                        <td>{{ articl.libArticle }}</td>
+                        <td>{{ articl.prixVenteArticle }}</td>
+                        <td>
+                          <p style="text-align: center;"><input class="form-check-input" type="checkbox"
+                             (click)="addArticleForEditingOfReversement(i)"></p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+  
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+  
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+  
+  
+  
+    </div>
+  </div>
+  

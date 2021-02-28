@@ -13,19 +13,13 @@
               <tr>
                   <th>Numéro</th>
                   <th>Date</th>
-                  <th>Description</th>
-                  <th>Délai de Livraison</th>
-                  <th>Fournisseur</th>
                   <th>Actions</th>
               </tr>
           </thead>
           <tbody>
-              <tr *ngFor="let comm of commandes; let i = index">
-                  <td>{{ comm.numCommande }}</td>
-                  <td>{{ comm.dateCommande }}</td>
-                  <td>{{ comm.description }}</td>
-                  <td>{{ comm.delaiLivraison }} Jour(s)</td>
-                  <td>{{ comm.frs.codeFrs }} - {{ comm.frs.identiteFrs }}</td>
+              <tr *ngFor="let demAppro of demandeAppros; let i = index">
+                  <td>{{ demAppro.numDA }}</td>
+                  <td>{{ demAppro.dateDA }}</td>
                   <td>
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
                       <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
@@ -52,9 +46,6 @@
               <tr>
                   <th>Numéro</th>
                   <th>Date</th>
-                  <th>Description</th>
-                  <th>Délai de Livraison</th>
-                  <th>Fournisseur</th>
                   <th>Actions</th>
               </tr>
           </tfoot>
@@ -63,10 +54,10 @@
   <!--Modal add-->
       <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-primary modal-xl" role="document">
-            <form [formGroup]="addCommandeFormGroup" (ngSubmit)="onSubmitAddCommandeFormsGroup()">
+            <form [formGroup]="addDemandeApproFormGroup" (ngSubmit)="onSubmitAddCommandeFormsGroup()">
               <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Ajouter une Commande</h4>
+                    <h4 class="modal-title">Ajouter une Demande d'Approvisionnement</h4>
                     <button type="button" class="close" (click)="addComModal.hide()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -74,39 +65,24 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="form-group col-sm-4">
-                      <label for="addNumCommande">Numéro</label>
-                      <input type="text" class="form-control" id="addNumCommande"
-                        formControlName="addNumCommande" placeholder="Numéro de la commande">
+                      <label for="addNumDA">Numéro</label>
+                      <input type="text" class="form-control" id="addNumDA"
+                        formControlName="addNumDA" placeholder="Numéro de la Demande">
                     </div>
                     <div class="form-group col-sm-4">
-                      <label for="addDateCommande">Date</label>
-                      <input type="date" class="form-control" id="addDateCommande"
-                       formControlName="addDateCommande">
+                      <label for="addDateDA">Date</label>
+                      <input type="date" class="form-control" id="addDateDA"
+                       formControlName="addDateDA">
                     </div>
                     <div class="form-group col-sm-4">
-                      <label for="addDelaiLivraison">Délais de Livraison (Nbr Jour)</label>
-                      <input type="number" class="form-control" id="addDelaiLivraison"
-                       formControlName="addDelaiLivraison" placeholder="Délais en jour">
+                      <label for="addExoSlected">Exercice</label>
+                      <input type="text" class="form-control" id="addExoSlected" readonly
+                      [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                       [ngModelOptions]="{standalone: true}">
                     </div>
 
                   </div><!--/.row-->
 
-                  <div class="row">
-                    <div class="form-group col-sm-6">
-                      <label for="addFrs">Fournisseur</label>
-                        <select id="addFrs" name="addFrs" class="form-control"
-                        formControlName="addFrs">
-                          <option *ngFor="let frs of fournisseurs; let i = index" [value]="i">
-                            {{ frs.codeFrs }} - {{ frs.identiteFrs }}
-                          </option>
-                        </select>
-                    </div>
-                    <div class="form-group col-sm-6">
-                      <label for="addDescription">Description</label>
-                      <input type="text" class="form-control" id="addDescription"
-                       formControlName="addDescription" placeholder="Description...">
-                    </div>
-                  </div><!--/.row-->
                   <div class="row">
                     <button type="button" data-toggle="modal" (click)="onShowAddArticleModalAddingCommande()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
                   </div>
@@ -118,21 +94,17 @@
                           <th>Libellé de l'Article</th>
                           <th>Prix Unit.</th>
                           <th>Quantité</th>
-                          <th>TVA(en %)</th>
-                          <th>Remise</th>
-                          <th>Montant TTC(-Remise)</th>
+                          <th>Montant</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr *ngFor="let addLignCom of tempAddLigneCommandes; let i = index">
-                          <td>{{ addLignCom.article.codeArticle }}</td>
-                          <td>{{ addLignCom.article.libArticle }}</td>
-                          <td><input [(ngModel)]="tempAddLigneCommandes[i].puligneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                          <td><input [(ngModel)]="tempAddLigneCommandes[i].qteLigneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                          <td><input [(ngModel)]="tempAddLigneCommandes[i].tva" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                          <td><input [(ngModel)]="tempAddLigneCommandes[i].remise" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></td>
-                          <td>{{ (tempAddLigneCommandes[i].qteLigneCommande*tempAddLigneCommandes[i].puligneCommande*(1+(tempAddLigneCommandes[i].tva/100)))-tempAddLigneCommandes[i].remise }}</td>
+                        <tr *ngFor="let addLignDemAppro of tempAddLigneDemandeAppro; let i = index">
+                          <td>{{ addLignDemAppro.article.codeArticle }}</td>
+                          <td>{{ addLignDemAppro.article.libArticle }}</td>
+                          <td>{{ addLignDemAppro.article.prixVenteArticle }}</td>
+                          <td><input [(ngModel)]="tempAddLigneDemandeAppro[i].quantiteDemandee" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td>{{ tempAddLigneDemandeAppro[i].quantiteDemandee*tempAddLigneDemandeAppro[i].article.prixVenteArticle }}</td>
                           <td>
                             <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfComm1(i)"><span class="fa fa-trash"></span></button>
                           </td>
@@ -156,7 +128,7 @@
   <!--Modal edit-->
   <div bsModal #editComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-warning modal-xl" role="document">
-        <form [formGroup]="editCommandeFormGroup" (ngSubmit)="onSubmitEditCommandeFormsGroup()">
+        <form [formGroup]="editDemandeApproFormGroup" (ngSubmit)="onSubmitEditCommandeFormsGroup()">
           <div class="modal-content">
             <div class="modal-header">
             <h4 class="modal-title">Modifer Commande</h4>
@@ -168,42 +140,25 @@
               <div class="card-body">
                 <div class="row">
                   <div class="form-group col-sm-4">
-                    <label for="editNumCommande">Numéro</label>
-                    <input type="text" class="form-control" id="editNumCommande"
-                      formControlName="editNumCommande" placeholder="Numéro de la commande"
-                      [ngModel]="editCommande.numCommande" readonly>
+                    <label for="editNumDA">Numéro</label>
+                    <input type="text" class="form-control" id="editNumDA"
+                      formControlName="editNumDA" placeholder="Numéro de la Demande"
+                      [ngModel]="editDemandeAppro.numDA">
                   </div>
                   <div class="form-group col-sm-4">
-                    <label for="editDateCommande">Date</label>
-                    <input type="date" class="form-control" id="editDateCommande"
-                     formControlName="editDateCommande" [ngModel]="editCommande.dateCommande">
+                    <label for="editDateDA">Date</label>
+                    <input type="date" class="form-control" id="editDateDA"
+                     formControlName="editDateDA" [ngModel]="editDemandeAppro.dateDA">
                   </div>
                   <div class="form-group col-sm-4">
-                    <label for="editDelaiLivraison">Délais de Livraison (Nbr Jour)</label>
-                    <input type="number" class="form-control" id="editDelaiLivraison"
-                     formControlName="editDelaiLivraison" placeholder="Délais en jour"
-                     [ngModel]="editCommande.delaiLivraison">
+                    <label for="editExoSlected">Exercice Sélectionné</label>
+                    <input type="text" class="form-control" id="editExoSlected" readonly
+                     [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Code de l'Exercice Selectionné"
+                     [ngModelOptions]="{standalone: true}">
                   </div>
 
                 </div><!--/.row-->
 
-                <div class="row">
-                  <div class="form-group col-sm-6">
-                    <label for="editFrs">Fournisseur</label>
-                      <select id="editFrs" name="editFrs" class="form-control"
-                      formControlName="editFrs" >
-                        <option *ngFor="let frs of fournisseurs; let i = index" [value]="i">
-                          {{ frs.codeFrs }} - {{ frs.identiteFrs }}
-                        </option>
-                      </select>
-                  </div>
-                  <div class="form-group col-sm-6">
-                    <label for="editDescription">Description</label>
-                    <input type="text" class="form-control" id="editDescription"
-                     formControlName="editDescription" placeholder="Description..."
-                     [ngModel]="editCommande.description">
-                  </div>
-                </div><!--/.row-->
                 <div class="row">
                   <button type="button" data-toggle="modal" (click)="onShowAddArticleModalEditingCommande()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
                 </div>
@@ -215,21 +170,17 @@
                         <th>Libellé de l'Article</th>
                         <th>Prix Unit.</th>
                         <th>Quantité</th>
-                        <th>TVA(en %)</th>
-                        <th>Remise</th>
-                        <th>Montant TTC(-Remise)</th>
+                        <th>Montant</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let editLignCom of tempEditLigneCommandes; let i = index">
-                        <td>{{ editLignCom.article.codeArticle }}</td>
-                        <td>{{ editLignCom.article.libArticle }}</td>
-                        <td><input [(ngModel)]="tempEditLigneCommandes[i].puligneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                        <td><input [(ngModel)]="tempEditLigneCommandes[i].qteLigneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                        <td><input [(ngModel)]="tempEditLigneCommandes[i].tva" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                        <td><input [(ngModel)]="tempEditLigneCommandes[i].remise" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></td>
-                        <td>{{ (tempEditLigneCommandes[i].qteLigneCommande*tempEditLigneCommandes[i].puligneCommande*(1+(tempEditLigneCommandes[i].tva/100)))-tempEditLigneCommandes[i].remise }}</td>
+                      <tr *ngFor="let editLignDemAppro of tempEditLigneDemandeAppro; let i = index">
+                        <td>{{ editLignDemAppro.article.codeArticle }}</td>
+                        <td>{{ editLignDemAppro.article.libArticle }}</td>
+                        <td>{{ editLignDemAppro.article.prixVenteArticle }}</td>
+                        <td><input [(ngModel)]="tempEditLigneDemandeAppro[i].quantiteDemandee" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td>{{ tempEditLigneDemandeAppro[i].quantiteDemandee*tempEditLigneDemandeAppro[i].article.prixVenteArticle }}</td>
                         <td>
                           <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfComm1(i)"><span class="fa fa-trash"></span></button>
                         </td>
@@ -263,7 +214,7 @@
           </button>
           </div>
           <div class="modal-body">
-            <p>Vous êtes sur le point de supprimer la Commande <mark style="color: red;">{{ suprCommande.numCommande }}</mark></p>
+            <p>Vous êtes sur le point de supprimer la Demande d'Appprovisionnement <mark style="color: red;">{{ suprDemandeAppro.numDA }}</mark></p>
             <p>Le confirmez-vous ?</p>
           </div>
           <div class="modal-footer">
@@ -274,7 +225,7 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
-  <!--Modal de selection d'Article pour ajout de Commande-->
+  <!--Modal de selection d'Article pour ajout de Demande d'Appro-->
   <div bsModal #addArticle1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-success modal-lg" role="document">
       <div class="modal-content">
