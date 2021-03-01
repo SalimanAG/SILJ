@@ -93,10 +93,12 @@ export class FournisseursComponent implements OnInit {
     this.frsService.getAllFrs().subscribe(
       (data) => {
         this.fournisseurs = data;
-        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        $('#dataTable1').dataTable().api().destroy();
+        this.dtTrigger1.next();
+        /*this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.destroy();
           this.dtTrigger1.next();
-        });
+        });*/
       },
       (erreur) => {
         console.log('Erreur lors de la récupération des Frs', erreur);

@@ -674,7 +674,7 @@ export class ReceptionComponent implements OnInit {
     doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
     //doc.setFont("Times New Roman");
     doc.setFontSize(25);
-    doc.text('ENTREE ACHAT', 65, 30);
+    doc.text('ENTREE ACHAT', 70, 30);
     doc.setFontSize(14);
     doc.text('Référence : '+reception.numReception, 15, 45);
     doc.text('Date : '+reception.dateReception, 152, 45);

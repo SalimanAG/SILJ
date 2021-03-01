@@ -12,6 +12,9 @@ import { Uniter } from '../../../../models/uniter.model';
 import { ExerciceService } from '../../../../services/administration/exercice.service';
 import { ArticleService } from '../../../../services/definition/article.service';
 import { DemandeApproService } from '../../../../services/saisie/demande-appro.service';
+import {jsPDF} from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-demande-approvisionnement',
@@ -26,6 +29,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
   @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
+  @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
 
 
   dtOptions1: DataTables.Settings = {};
@@ -55,9 +59,10 @@ export class DemandeApprovisionnementComponent  implements OnInit {
   exercices:Exercice[] = [];
   articles:Article[] = [];
 
+  pdfToShow = null;
 
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
-    private formBulder:FormBuilder) {
+    private formBulder:FormBuilder, private sanitizer: DomSanitizer) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -252,7 +257,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
 
   addArticleForEditingOfComm1(inde:number){
     let exist:boolean = false;
-    
+
     this.tempEditLigneDemandeAppro.forEach(element => {
       if(element.article.codeArticle==this.articles[inde].codeArticle){
         exist = true;
@@ -471,6 +476,62 @@ export class DemandeApprovisionnementComponent  implements OnInit {
     );
 
 
+  }
+
+  initPrintPdfOfAnDemAppro(inde:number){
+    const demandeAppro = this.demandeAppros[inde];
+    const doc = new jsPDF();
+    let lignes = [];
+    let totalTTC;
+
+    totalTTC = 0;
+    this.ligneDemandeAppros.forEach(element => {
+      if(element.appro.numDA == demandeAppro.numDA){
+        let lig = [];
+        lig.push(element.article.codeArticle);
+        lig.push(element.article.libArticle);
+        lig.push(element.quantiteDemandee);
+        lig.push(element.article.prixVenteArticle);
+        lig.push(element.article.prixVenteArticle*element.quantiteDemandee);
+        lignes.push(lig);
+
+        totalTTC += element.article.prixVenteArticle*element.quantiteDemandee;
+
+      }
+
+    });
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(18);
+    doc.text('DEMANDE APPROVISIONNEMENT', 53, 30);
+    doc.setFontSize(14);
+    doc.text('Référence : '+demandeAppro.numDA, 15, 45);
+    doc.text('Date : '+demandeAppro.dateDA, 152, 45);
+    autoTable(doc, {
+      head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant']],
+      margin: { top: 70 },
+      body: lignes
+      ,
+    });
+
+    autoTable(doc, {
+      theme: 'grid',
+      margin: { top: 100, left:130 },
+      columnStyles: {
+        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+      },
+      body: [
+        ['Total', totalTTC]
+      ]
+      ,
+    });
+    //doc.autoPrint();
+    //doc.output('dataurlnewwindow');
+
+    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'demandeAppro.pdf'}));
+    this.viewPdfModal.show();
   }
 
 }

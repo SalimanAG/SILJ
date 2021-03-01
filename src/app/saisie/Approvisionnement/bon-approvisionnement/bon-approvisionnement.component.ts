@@ -18,6 +18,10 @@ import { ExerciceService } from '../../../../services/administration/exercice.se
 import { ArticleService } from '../../../../services/definition/article.service';
 import { BonApproService } from '../../../../services/saisie/bon-appro.service';
 import { DemandeApproService } from '../../../../services/saisie/demande-appro.service';
+import {jsPDF} from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { DomSanitizer } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-bon-approvisionnement',
@@ -32,6 +36,7 @@ export class BonApprovisionnementComponent  implements OnInit {
   @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
+  @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
 
 
   dtOptions1: DataTables.Settings = {};
@@ -82,9 +87,10 @@ export class BonApprovisionnementComponent  implements OnInit {
   oldApproLines:LigneAppro[] = [];
   oldPlageNumArtLines:PlageNumArticle[] = [];
 
+  pdfToShow = null;
 
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
-    private formBulder:FormBuilder, private serviceBonAppro:BonApproService) {
+    private formBulder:FormBuilder, private serviceBonAppro:BonApproService, private sanitizer:DomSanitizer) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -834,6 +840,88 @@ export class BonApprovisionnementComponent  implements OnInit {
 
 
 
+  }
+
+  initPrintToPdfOfAnAppro(inde:number){
+    const appro = this.approvisionnements[inde];
+    let approDemAppro = new DemandeApprovisionnement('', '', new Exercice('', '', new Date(), new Date(), '', false));
+    const doc = new jsPDF();
+    let lignes = [];
+    let plages:PlageNumArticle[] = [];
+    let totalTTC;
+    totalTTC = 0;
+
+    this.plageNumArticles.forEach(element => {
+      if(element.ligneAppro != null && element.ligneAppro.appro.numAppro == appro.numAppro){
+        plages.push(element);
+      }
+    });
+
+
+    this.ligneAppros.forEach(element => {
+      if(element.appro.numAppro == appro.numAppro){
+        let lig = [];
+        approDemAppro = element.ligneDA.appro;
+        lig.push(element.ligneDA.article.codeArticle);
+        lig.push(element.ligneDA.article.libArticle);
+        lig.push(element.quantiteLigneAppro);
+        lig.push(element.puligneAppro);
+        lig.push(element.puligneAppro*element.quantiteLigneAppro);
+        let pla:String = '';
+        let num:number = 0;
+        plages.forEach((element2, index) => {
+
+          if(element2.ligneAppro.idLigneAppro == element.idLigneAppro){
+
+            if(num == 0){
+              pla = pla.concat(''+element2.numDebPlage+' à '+element2.numFinPlage+' ');
+              num = index;
+            }
+            else{
+              pla = pla.concat('| '+element2.numDebPlage+' à '+element2.numFinPlage+' ');
+
+            }
+          }
+        });
+        lig.push(pla);
+        lignes.push(lig);
+        totalTTC += element.puligneAppro*element.quantiteLigneAppro;
+
+      }
+
+    });
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(22);
+    doc.text('BON APPROVISIONNEMENT', 57, 30);
+    doc.setFontSize(14);
+    doc.text('Référence : '+appro.numAppro, 15, 45);
+    doc.text('Date : '+appro.dateAppro, 152, 45);
+    doc.text('Demande d\'Appro N° : '+approDemAppro.numDA+'\tDu\t'+approDemAppro.dateDA, 15, 55);
+    doc.text('Description : '+appro.descriptionAppro, 15, 65);
+    autoTable(doc, {
+      head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant', 'Plage(s)']],
+      margin: { top: 100 },
+      body: lignes
+      ,
+    });
+
+    autoTable(doc, {
+      theme: 'grid',
+      margin: { top: 100, left:130 },
+      columnStyles: {
+        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+      },
+      body: [
+        ['Total TTC', totalTTC]
+      ]
+      ,
+    });
+    //doc.autoPrint();
+    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonAppro.pdf'}));
+    this.viewPdfModal.show();
   }
 
 }
