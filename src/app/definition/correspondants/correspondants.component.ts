@@ -218,7 +218,8 @@ export class CorrespondantsComponent implements OnInit {
     this.serviceCorres.getAllCorres().subscribe(
       (data) => {
         this.correspondants = data;
-
+        $('#dataTable1').dataTable().api().destroy();
+        this.dtTrigger1.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des correspondant', erreur);
@@ -447,7 +448,8 @@ export class CorrespondantsComponent implements OnInit {
     this.serviceCorres.getAllEtreAffecte().subscribe(
       (data) => {
         this.etreAffectes = data;
-
+        $('#dataTable2').dataTable().api().destroy();
+        this.dtTrigger2.next();
       }
     );
   }

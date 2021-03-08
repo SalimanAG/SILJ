@@ -32,6 +32,10 @@ import { RegisseurService } from '../../../../services/definition/regisseur.serv
 import { BonApproService } from '../../../../services/saisie/bon-appro.service';
 import { CommandeService } from '../../../../services/saisie/commande.service';
 import { PlacementService } from '../../../../services/saisie/placement.service';
+import {jsPDF} from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-placement',
@@ -46,6 +50,7 @@ export class PlacementComponent  implements OnInit {
   @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
+  @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
 
 
   dtOptions1: DataTables.Settings = {};
@@ -104,12 +109,14 @@ export class PlacementComponent  implements OnInit {
   tempDeletePlageNumArticle:PlageNumArticle[] = [];
   oldPlageNumArtLines:PlageNumArticle[] = [];
 
+  pdfToShow = null;
+
   constructor(private serviceCommande:CommandeService, public serviceExercice:ExerciceService,
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService,
     private formBulder:FormBuilder, private servicePlacement:PlacementService,
     private servicePlageNumArticle:BonApproService, private serviceCorres:CorrespondantService,
     private serviceCommune:CommuneService, private serviceRegisseur:RegisseurService,
-    private serviceUtilisateur:UtilisateurService) {
+    private serviceUtilisateur:UtilisateurService, private sanitizer:DomSanitizer) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -353,7 +360,8 @@ export class PlacementComponent  implements OnInit {
     this.servicePlacement.getAllPlacement().subscribe(
       (data) => {
         this.placements = data;
-
+        $('#dataTable1').dataTable().api().destroy();
+        this.dtTrigger1.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des placements', erreur);
@@ -978,6 +986,111 @@ export class PlacementComponent  implements OnInit {
     );
 
 
+  }
+
+  initPrintToPdfOfAnPlacem(inde:number){
+    const placem = this.placements[inde];
+    const doc = new jsPDF();
+    let lignes = [];
+    let plages:PlageNumArticle[] = [];
+    let totalTTC;
+    totalTTC = 0;
+
+    this.plageNumArticles.forEach(element => {
+      if(element.lignePlacement != null && element.lignePlacement.placement.numPlacement == placem.numPlacement){
+        plages.push(element);
+      }
+    });
+
+
+    this.lignePlacements.forEach(element => {
+      if(element.placement.numPlacement == placem.numPlacement){
+        let lig = [];
+        lig.push(element.article.codeArticle);
+        lig.push(element.article.libArticle);
+        lig.push(element.quantiteLignePlacement);
+        lig.push(element.pulignePlacement);
+        lig.push(element.pulignePlacement*element.quantiteLignePlacement);
+        let pla:String = '';
+        let first:boolean = true;
+        plages.forEach((element2, index) => {
+
+          if(element2.lignePlacement.idLignePlacement == element.idLignePlacement){
+
+            if(first == true){
+              pla = pla.concat(''+element2.numDebPlage+' à '+element2.numFinPlage+' ');
+              first = false;
+            }
+            else{
+              pla = pla.concat('| '+element2.numDebPlage+' à '+element2.numFinPlage+' ');
+
+            }
+          }
+        });
+        lig.push(pla);
+        lignes.push(lig);
+        totalTTC += element.pulignePlacement*element.quantiteLignePlacement;
+
+      }
+
+    });
+    moment.locale('fr');
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(22);
+    doc.text('BON PLACEMENT', 75, 30);
+    doc.setFontSize(14);
+    doc.text('Référence : '+placem.numPlacement, 15, 45);
+    doc.text('Date : '+moment(placem.datePlacement).format('DD/MM/YYYY') , 152, 45);
+    doc.text('Correspondant : '+placem.correspondant.magasinier.nomMagasinier+' '+placem.correspondant.magasinier.prenomMagasinier, 15, 55);
+    doc.text('Contact : (+229) '+placem.correspondant.magasinier.telMagasinier, 15, 65);
+    doc.text('Régisseur : '+placem.regisseur.magasinier.nomMagasinier+' '+placem.regisseur.magasinier.prenomMagasinier, 15, 75);
+    autoTable(doc, {
+      theme: 'grid',
+      head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant', 'Plage(s)']],
+      headStyles:{
+        fillColor: [41, 128, 185],
+        textColor: 255,
+        fontStyle: 'bold' ,
+     },
+      margin: { top: 100 },
+      body: lignes
+      ,
+    });
+
+    autoTable(doc, {
+      theme: 'grid',
+      margin: { top: 100, left:130 },
+      columnStyles: {
+        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+      },
+      body: [
+        ['Total TTC', totalTTC]
+      ]
+      ,
+    });
+
+    autoTable(doc, {
+      theme: 'plain',
+      margin: { top: 100 },
+      columnStyles: {
+        0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+        2: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+      },
+      body: [
+        ['Le Correspondant\n\n\n\n\n'+placem.correspondant.magasinier.nomMagasinier+' '+placem.correspondant.magasinier.prenomMagasinier,
+        '\t\t\t\t\t\t\t\t\t\t\t\t',
+         'Le Régisseur\n\n\n\n\n'+this.serviceUtilisateur.connectedUser.nomUtilisateur+' '+this.serviceUtilisateur.connectedUser.prenomUtilisateur]
+      ]
+      ,
+    });
+
+
+    //doc.autoPrint();
+    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonAppro.pdf'}));
+    this.viewPdfModal.show();
   }
 
 }

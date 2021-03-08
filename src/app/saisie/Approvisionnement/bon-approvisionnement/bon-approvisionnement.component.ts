@@ -21,7 +21,7 @@ import { DemandeApproService } from '../../../../services/saisie/demande-appro.s
 import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import * as moment from  'moment';
 
 @Component({
   selector: 'app-bon-approvisionnement',
@@ -231,6 +231,8 @@ export class BonApprovisionnementComponent  implements OnInit {
     this.serviceBonAppro.getAllAppro().subscribe(
       (data) => {
         this.approvisionnements = data;
+        $('#dataTable1').dataTable().api().destroy();
+        this.dtTrigger1.next();
 
       },
       (erreur) => {
@@ -463,7 +465,7 @@ export class BonApprovisionnementComponent  implements OnInit {
               (data2) => {
                 this.plageNumArticles = data2;
                 this.plageNumArticles.forEach(element2 => {
-                  if(element.idLigneAppro == element2.ligneAppro.idLigneAppro){
+                  if(element2.ligneAppro != null && element.idLigneAppro == element2.ligneAppro.idLigneAppro){
                     this.tempEditPlageNumArticle.push(element2);
                   }
                 });
@@ -491,7 +493,7 @@ export class BonApprovisionnementComponent  implements OnInit {
     });
 
     this.plageNumArticles.forEach(element => {
-      if(element.ligneAppro.appro.numAppro == this.editAppro.numAppro){
+      if(element.ligneAppro!=null && element.ligneAppro.appro.numAppro == this.editAppro.numAppro){
         this.oldPlageNumArtLines.push(element);
       }
     });
@@ -763,7 +765,7 @@ export class BonApprovisionnementComponent  implements OnInit {
             this.ligneAppros = data2;
             //suppression pour les lignes d'Appro ayant de plage et qui concernent l'Appro
             this.plageNumArticles.forEach(element => {
-              if(element.ligneAppro.appro.numAppro == this.suprAppro.numAppro){
+              if(element.ligneAppro!=null && element.ligneAppro.appro.numAppro == this.suprAppro.numAppro){
                 this.serviceBonAppro.deleteAPlageNumArticle(element.idPlage.toString()).subscribe(
                   (data3) => {
                     this.serviceBonAppro.deleteALigneAppro(element.ligneAppro.idLigneAppro.toString()).subscribe(
@@ -890,6 +892,7 @@ export class BonApprovisionnementComponent  implements OnInit {
       }
 
     });
+    moment.locale('fr');
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
@@ -898,11 +901,18 @@ export class BonApprovisionnementComponent  implements OnInit {
     doc.text('BON APPROVISIONNEMENT', 57, 30);
     doc.setFontSize(14);
     doc.text('Référence : '+appro.numAppro, 15, 45);
-    doc.text('Date : '+appro.dateAppro, 152, 45);
-    doc.text('Demande d\'Appro N° : '+approDemAppro.numDA+'\tDu\t'+approDemAppro.dateDA, 15, 55);
+    doc.text('Date : '+moment(appro.dateAppro).format('DD/MM/YYYY'), 152, 45);
+
+    doc.text('Demande d\'Appro N° : '+approDemAppro.numDA+'\tDu\t'+moment(new Date(approDemAppro.dateDA.toString())).format('DD/MM/YYYY'), 15, 55);
     doc.text('Description : '+appro.descriptionAppro, 15, 65);
     autoTable(doc, {
+      theme: 'grid',
       head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant', 'Plage(s)']],
+      headStyles:{
+        fillColor: [41, 128, 185],
+        textColor: 255,
+        fontStyle: 'bold' ,
+     },
       margin: { top: 100 },
       body: lignes
       ,

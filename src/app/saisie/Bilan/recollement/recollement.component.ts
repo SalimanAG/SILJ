@@ -24,6 +24,11 @@ import { Service } from '../../../../models/service.model';
 import { RecollementService } from '../../../../services/saisie/recollement.service';
 import { Magasin } from '../../../../models/magasin.model';
 
+import {jsPDF} from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as moment from 'moment';
+import { DomSanitizer } from '@angular/platform-browser';
+
 @Component({
   selector: 'app-recollement',
   templateUrl: './recollement.component.html',
@@ -31,12 +36,17 @@ import { Magasin } from '../../../../models/magasin.model';
 })
 export class RecollementComponent implements OnInit {
 
+  pdfToShow = null;
+
   //Commune
   @ViewChild('addComModal') public addComModal: ModalDirective;
   @ViewChild('editComModal') public editComModal: ModalDirective;
   @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
+
+  //
+  @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
 
   dtOptions1: DataTables.Settings = {};
   dtOptions2: DataTables.Settings = {};
@@ -78,9 +88,11 @@ export class RecollementComponent implements OnInit {
   articlesOfAConcernedRecollementEditingRecoll:Article[] = [];
 
   constructor(private serviceRecollement:RecollementService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService, 
-    private serviceArticle:ArticleService, private serviceCorrespodant:CorrespondantService, private formBulder:FormBuilder) { 
+    private serviceArticle:ArticleService, private serviceCorrespodant:CorrespondantService, private formBulder:FormBuilder,
+    private sanitizer:DomSanitizer) { 
     this.initDtOptions();
     this.initFormsGroup();
+    moment.locale('fr');
   }
 
   initDtOptions(){
@@ -231,6 +243,8 @@ export class RecollementComponent implements OnInit {
     this.serviceRecollement.getAllRecollement().subscribe(
       (data) => {
         this.recollement = data;
+        //$('#RecollDataTable').dataTable().api().destroy();
+        //this.dtTrigger1.next();
         //this.dtTrigger1.next();
       },
       (erreur) => {
@@ -512,6 +526,83 @@ onConfirmDeleteRecollement(){
     );
   }
 
+}
+
+initPrintPdfOfRecollement(inde:number){
+  const commande = this.recollement[inde];
+  const doc = new jsPDF();
+  let lignes = [];
+  let totalHT, totalTTC, totalRemise, totalTVA;
+  totalHT = 0;
+  totalRemise = 0;
+  totalTVA = 0;
+  totalTTC = 0;
+  this.ligneRecollement.forEach(element => {
+    if(element.recollement.numRecollement == commande.numRecollement){
+      let lig = [];
+      lig.push(element.article.codeArticle);
+      lig.push(element.article.libArticle);
+      lig.push(element.quantiteLigneRecollement);
+      lig.push(element.puligneRecollement);
+      
+      lig.push(element.puligneRecollement*element.quantiteLigneRecollement);
+      lig.push(element.observationLigneRecollement);
+      lignes.push(lig);
+
+      totalHT += element.puligneRecollement*element.quantiteLigneRecollement;
+    
+
+    }
+
+  });
+  doc.setDrawColor(0);
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(50, 20, 100, 15, 3, 3, 'FD');
+  //doc.setFont("Times New Roman");
+  
+  doc.setFontSize(25);
+  doc.text('RECOLLEMENT', 62, 30);
+  doc.setFontSize(14);
+  doc.text('Référence : '+commande.numRecollement, 15, 45);
+  doc.text('Magasin : '+commande.magasin.libMagasin, 15, 55);
+  doc.text('Description : '+commande.descriptionRecollement, 15, 65);
+  doc.text('Régisseur : '+commande.regisseur.magasinier.nomMagasinier+' '+
+  commande.regisseur.magasinier.prenomMagasinier, 15, 75);
+  doc.text('Date : '+moment(commande.dateRecollement).format('DD/MM/YYYY'), 145, 45);
+  
+ 
+  autoTable(doc, {
+    theme: 'grid',
+    head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant','Observation']],
+    headStyles: {
+       fillColor: [41, 128, 185],
+        textColor: 255, 
+        fontStyle: 'bold' ,
+    },
+    margin: { top: 100 },
+    
+    body: lignes
+    ,
+  });
+
+  autoTable(doc, {
+    theme: 'grid',
+    margin: { top: 100, left:130 },
+    columnStyles: {
+      0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+    },
+    body: [
+      ['Montant Total', totalHT]
+      
+    ]
+  
+  });
+  doc.text('Powered by Guichet Unique', 130, 230);
+  //doc.autoPrint();
+  //doc.output('dataurlnewwindow');
+
+  this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'recollement.pdf'}));
+  this.viewPdfModal.show();
 }
 
 

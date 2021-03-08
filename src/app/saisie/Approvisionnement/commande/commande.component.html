@@ -8,7 +8,8 @@
       <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
     </div>
 
-      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1">
+      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+      [dtTrigger]="dtTrigger1" id="dataTable1">
           <thead>
               <tr>
                   <th>Numéro</th>
@@ -92,7 +93,7 @@
                   </div><!--/.row-->
 
                   <div class="row">
-                    <div class="form-group col-sm-6">
+                    <div class="form-group col-sm-4">
                       <label for="addFrs">Fournisseur</label>
                         <select id="addFrs" name="addFrs" class="form-control"
                         formControlName="addFrs">
@@ -101,10 +102,15 @@
                           </option>
                         </select>
                     </div>
-                    <div class="form-group col-sm-6">
+                    <div class="form-group col-sm-4">
                       <label for="addDescription">Description</label>
                       <input type="text" class="form-control" id="addDescription"
                        formControlName="addDescription" placeholder="Description...">
+                    </div>
+                    <div class="form-group col-sm-4">
+                      <label for="addDateRemiseCommande">Date de Remise</label>
+                      <input type="date" class="form-control" id="addDateRemiseCommande"
+                       formControlName="addDateRemiseCommande">
                     </div>
                   </div><!--/.row-->
                   <div class="row">
@@ -188,7 +194,7 @@
                 </div><!--/.row-->
 
                 <div class="row">
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-4">
                     <label for="editFrs">Fournisseur</label>
                       <select id="editFrs" name="editFrs" class="form-control"
                       formControlName="editFrs" >
@@ -197,11 +203,16 @@
                         </option>
                       </select>
                   </div>
-                  <div class="form-group col-sm-6">
+                  <div class="form-group col-sm-4">
                     <label for="editDescription">Description</label>
                     <input type="text" class="form-control" id="editDescription"
                      formControlName="editDescription" placeholder="Description..."
                      [ngModel]="editCommande.description">
+                  </div>
+                  <div class="form-group col-sm-4">
+                    <label for="editDateRemiseCommande">Date de Remise</label>
+                    <input type="date" class="form-control" id="editDateRemiseCommande"
+                     formControlName="editDateRemiseCommande">
                   </div>
                 </div><!--/.row-->
                 <div class="row">
@@ -367,6 +378,30 @@
           <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
 
         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!--Modal View PDF-->
+
+  <div bsModal #viewPdfModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-xl" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h4 class="modal-title text-center">Apperçu</h4>
+          <button type="button" class="close" (click)="viewPdfModal.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <iframe class="col" [src]="pdfToShow" frameborder="0" style="height: 400px;"></iframe>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="viewPdfModal.hide()">Fermer</button>
+          </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->

@@ -218,6 +218,8 @@ export class AssocierUtilisateurComponent implements OnInit {
     this.serviceAssocierUser.getAllAffecter().subscribe(
       (data) => {
         this.affecters = data;
+        $('#dataTable2').dataTable().api().destroy();
+        this.dtTrigger2.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération des affectations de User à Caisse : ', erreur);
@@ -344,7 +346,8 @@ export class AssocierUtilisateurComponent implements OnInit {
     this.serviceAssocierUser.getAllAffectUserGroup().subscribe(
       (data) => {
         this.affectUserToGroups = data;
-
+        $('#dataTable3').dataTable().api().destroy();
+        this.dtTrigger3.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des affectation des utilisateurs au groupes', erreur );

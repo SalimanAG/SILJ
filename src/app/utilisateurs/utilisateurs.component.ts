@@ -70,12 +70,13 @@ export class UtilisateursComponent implements OnInit {
 
     this.editUserFormsGroup = this.formBulder.group({
       editLogin:['', Validators.required],
-      editMotDePass:['', Validators.required],
+      editMotDePass:'',
       editNomUtilisateur:['', Validators.required],
       editPrenomUtilisateur:['', Validators.required],
       editFonctionUtilisateur:'',
       editActiveUtilisateur:false,
-      editService:0
+      editService:0,
+      editAskMdp:false
     });
   }
 
@@ -137,10 +138,10 @@ export class UtilisateursComponent implements OnInit {
   }
 
   onSubmitAddUserFormsGroup(){
-    const newUser = new Utilisateur(this.addUserFormsGroup.value['addLogin'], this.addUserFormsGroup.value['addMotDePass'],
+    const newUser = new Utilisateur(this.addUserFormsGroup.value['addLogin'], null,
     this.addUserFormsGroup.value['addNomUtilisateur'], this.addUserFormsGroup.value['addPrenomUtilisateur'],
     this.addUserFormsGroup.value['addFonctionUtilisateur'], this.addUserFormsGroup.value['addActiveUtilisateur'],
-    this.services[this.addUserFormsGroup.value['addService']]);
+    this.services[this.addUserFormsGroup.value['addService']], true);
 
     this.serviceUser.addAUser(newUser).subscribe(
       (data) => {
@@ -156,10 +157,10 @@ export class UtilisateursComponent implements OnInit {
   }
 
   onSubmitEditUserFormsGroup(){
-    const newUser = new Utilisateur(this.editUserFormsGroup.value['editLogin'], this.editUserFormsGroup.value['editMotDePass'],
+    const newUser = new Utilisateur(this.editUserFormsGroup.value['editLogin'], null,
     this.editUserFormsGroup.value['editNomUtilisateur'], this.editUserFormsGroup.value['editPrenomUtilisateur'],
     this.editUserFormsGroup.value['editFonctionUtilisateur'], this.editUserFormsGroup.value['editActiveUtilisateur'],
-    this.services[this.editUserFormsGroup.value['editService']]);
+    this.services[this.editUserFormsGroup.value['editService']], this.editUserFormsGroup.value['editAskMdp']);//editAskMdp
 
     newUser.idUtilisateur = this.editUser.idUtilisateur;
 

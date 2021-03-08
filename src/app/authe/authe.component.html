@@ -5,17 +5,18 @@
           <div class="col-md-8 mx-auto">
             <div class="card-group">
               <div class="card p-4">
-                <div class="card-body">
-                  <h4 class="text-center" style="color: green;">PERFORA-GPC</h4>
+                <div class="card-body" style="padding-top: 0px;">
+                  <!--<h4 class="text-center" style="color: green;">PERFORA-GPC</h4>-->
+                  <img src="../assets/img/gpc/logoPerforaGPC.png" alt="Perfora GPC Logo" style="max-width: 100%; max-height: 60%;">
                   <form [formGroup]="connnectForm" (ngSubmit)="onSubmitConnect()">
-                    <h1>Connexion</h1>
+                    <h4>Connexion</h4>
                     <p class="text-muted">Connectez-vous en utilisant votre compte</p>
                     <div class="input-group mb-3">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="icon-user"></i></span>
                       </div>
                       <input type="text" id="login" class="form-control" placeholder="Nom D'Utilisateur" autocomplete="username"
-                      formControlName="login">
+                      formControlName="login" (change)="showConfirmation()">
                     </div>
                     <div class="input-group mb-4">
                       <div class="input-group-prepend">
@@ -23,6 +24,13 @@
                       </div>
                       <input type="password" id="mdp" class="form-control" placeholder="Mot de passe" autocomplete="current-password"
                       formControlName="mdp">
+                    </div>
+                    <div class="input-group mb-4" *ngIf="confirmation">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="icon-lock"></i></span>
+                      </div>
+                      <input type="password" id="mdp2" class="form-control" placeholder="Confirmez le Mot de passe" autocomplete="current-password"
+                      formControlName="mdp2">
                     </div>
                     <div class="row">
                       <div class="col-6">
@@ -57,7 +65,7 @@
                 </button>
               </div>
               <div class="modal-body">
-                <p>Nom d'Utilisateur ou Mot de passe Incorrete</p>
+                <p>{{ messageErreur }}</p>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">OK</button>

@@ -15,6 +15,8 @@ import { DemandeApproService } from '../../../../services/saisie/demande-appro.s
 import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
+import { UtilisateurService } from '../../../../services/administration/utilisateur.service';
 
 @Component({
   selector: 'app-demande-approvisionnement',
@@ -62,7 +64,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
   pdfToShow = null;
 
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
-    private formBulder:FormBuilder, private sanitizer: DomSanitizer) {
+    private formBulder:FormBuilder, private sanitizer: DomSanitizer, private serviceUser: UtilisateurService) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -182,7 +184,8 @@ export class DemandeApprovisionnementComponent  implements OnInit {
     this.serviceDemandeAppro.getAllDemandeAppro().subscribe(
       (data) => {
         this.demandeAppros = data;
-
+        $('#dataTable1').dataTable().api().destroy();
+        this.dtTrigger1.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des demandes dAppro', erreur);
@@ -500,6 +503,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
       }
 
     });
+    moment.locale('fr');
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
@@ -508,9 +512,15 @@ export class DemandeApprovisionnementComponent  implements OnInit {
     doc.text('DEMANDE APPROVISIONNEMENT', 53, 30);
     doc.setFontSize(14);
     doc.text('Référence : '+demandeAppro.numDA, 15, 45);
-    doc.text('Date : '+demandeAppro.dateDA, 152, 45);
+    doc.text('Date : '+moment(new Date(demandeAppro.dateDA.toString())).format('DD/MM/YYYY'), 152, 45);
     autoTable(doc, {
+      theme: 'grid',
       head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant']],
+      headStyles:{
+        fillColor: [41, 128, 185],
+        textColor: 255,
+        fontStyle: 'bold' ,
+     },
       margin: { top: 70 },
       body: lignes
       ,
@@ -524,6 +534,19 @@ export class DemandeApprovisionnementComponent  implements OnInit {
       },
       body: [
         ['Total', totalTTC]
+      ]
+      ,
+    });
+
+    autoTable(doc, {
+      theme: 'plain',
+      margin: { top: 100, left:130 },
+      columnStyles: {
+        0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+
+      },
+      body: [
+        ['Le Régisseur\n\n\n\n\n'+this.serviceUser.connectedUser.nomUtilisateur+' '+this.serviceUser.connectedUser.prenomUtilisateur]
       ]
       ,
     });

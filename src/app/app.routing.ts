@@ -55,6 +55,7 @@ import { SauvegardeComponent } from './sauvegarde/sauvegarde.component';
 import { ImportationExportationComponent } from './importation-exportation/importation-exportation.component';
 import { PlacementComponent } from './saisie/Approvisionnement/placement/placement.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { AuthGuardService } from '../services/administration/auth-guard.service';
 
 export const routes: Routes = [
   {
@@ -71,7 +72,7 @@ export const routes: Routes = [
     path: 'forgot-password',
     component: ForgotPasswordComponent,
   },
-  
+
   {
     path: '404',
     component: P404Component,
@@ -106,6 +107,7 @@ export const routes: Routes = [
     data: {
       title: 'Home'
     },
+    canActivate:[AuthGuardService],
     children: [
 
       {
@@ -287,7 +289,7 @@ export const routes: Routes = [
         path: 'comptabilite',
         component: ComptabiliteComponent
       },
-      
+
       {
         path: 'aide',
         component: AideComponent
@@ -365,7 +367,7 @@ export const routes: Routes = [
         path: 'widgets',
         loadChildren: () => import('./views/widgets/widgets.module').then(m => m.WidgetsModule)
       }
-     
+
     ]
   },
   { path: '**', component: P404Component }

@@ -1,122 +1,84 @@
-<div class="col-md-12 mb-4">
-<tabset>
-<tab>
-    <ng-template tabHeading><i class="icon-home"></i> Livraison</ng-template>
-   
-    <div class="row">
-        <div class="row">
-            
+<div class="card">
+  <div class="card-header">
+      <i class="fa fa-align-justify"></i> Listes des Actes Livrables facturés non livrés
+  </div>
+  <div class="card-body">
+    <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;" >
+      
+      <label > 
+        Caisse:
+                <select  [formControl]="opCaisseLivre" name="caisseSelected">
+                    <option *ngFor="let c of caisses; let i=index" [value]="c.codeCaisse">{{c.libeCaisse}}</option>
+                </select>
+      </label>
 
-                <div class="input-group col-md-3">
-                    <label for="etatvalo" style="margin-right: 15px;"> <strong>  Caisse : </strong></label>
-                    <select class="form-control" id="etatvalo">
-                      <option>Caisse 1</option>
-                      <option>Caisse 2</option>
-                    </select>
-                  </div>
-                <div class="input-group col-md-4" style="width: 300px;">
-                    <label for="codevalo" style="margin-right: 15px;" > <strong> Début : </strong> </label>
-                    <input type="date" class="form-control" placeholder="date début">
-                    
-                   
-                </div>
+      <label style="padding-left: 20px;">
+        Date Début:
+        <input type="date" [formControl]="debut" id="dateDebut" >
+      </label>
 
-                <div class="input-group col-md-4" style="width: 300px;">
-                    <label for="codevalo" style="margin-right: 15px;" > <strong> Fin : </strong> </label>
-                    <input type="date" class="form-control" placeholder="date fin">
-                    
-                   
-                </div>
-            
+      <label style="padding-left: 20px;">
+        Date Fin:
+        <input type="date" [formControl]="fin" name="dateFin">
+      </label>
 
+      <label style="padding-left: 20px;">
 
-                <div class="col-md-1" > 
-                    <div class="input-group" style="margin-right: 100px;">
-                    
-                        <button class="btn btn-success" data-toggle="modal" (click)="addvaliderModal.show()" type="button">OK</button>
-                        
-                    </div>
-                 </div>
-        </div>
-        <br> <br> <br>
-        <div class="col-lg-12">
-          <div class="card">
-            <div class="card-header">
-              <i class="fa fa-align-justify"></i> Listes des valeurs locatives non livrés
-            </div>
-            <div class="card-body">
-              <table class="table table-bordered table-striped table-sm">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Référence</th>
-                        <th>Article</th>
-                        <th>Désignation</th>
-                        <th>Qte</th>
-                        <th>Montant</th>
-                        <th>Contribuable</th>
-                        <!--th>Actions</th-->
-                      </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>25/01/2021</td>
-                    <td>Op202101210005</td>
-                    <td>Timbre</td>
-                    <td>Timbre de dépot</td>
-                    <td>2</td>
-                    <td>800</td>
-                    <td>Simon joël</td>
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  </tr>
-                  <tr>
-                    <td>25/01/2021</td>
-                    <td>Op202101210005</td>
-                    <td>Timbre</td>
-                    <td>Timbre de dépot</td>
-                    <td>2</td>
-                    <td>800</td>
-                    <td>Simon joël</td>
-                  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                      <th>Date</th>
-                      <th>Référence</th>
-                      <th>Article</th>
-                      <th>Désignation</th>
-                      <th>Qte</th>
-                      <th>Montant</th>
-                      <th>Contribuable</th>
-                      <!--th>Actions</th-->
-                    </tr>
-                  </tfoot>
-              </table>
-              <nav>
-                <ul class="pagination">
-                  <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                  <li class="page-item active">
-                    <a class="page-link" href="#">1</a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">4</a></li>
-                  <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        <button class="btn btn-primary" data-toggle="modal" (click)="verifierRecuperation()">OK <!--span class="fa fa-plus-circle"></span--></button>
+       
+      </label>
+     
 
-                  <div class="input-group" style="margin-left: 700px;">
-                    
-                    <button class="btn btn-success" data-toggle="modal" (click)="addvaliderModal.show()" type="button">Livrer</button>
-                    
-                </div>
-                </ul>
-               
-              </nav>
-            </div>
-          </div>
-        </div>
-        <!--/.col-->
-      </div>
-  </tab>
-</tabset>
+      <!--div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddPointVente()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddPointVente()">CAISSE <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddPointVente()">DATE1 <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddPointVente()">DATE2 <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddPointVente()">OK <span class="fa fa-plus-circle"></span></button></div-->
+
+      
+      <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+    </div>
+
+      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1" id="actualise">
+          <thead>
+              <tr>
+                  <th>Date</th>
+                  <th>Numéro </th>
+                  <th>Code Article </th>
+                  <th>Libellé Article</th>
+                  <th>Quantité</th>
+                  <th>Montant</th>
+                  <th>Contribuable</th>
+                  <th>Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let opliv of ligneopcaisse; let i = index">
+                  <td>{{ opliv.opCaisse.dateOpCaisse }}</td>
+                  <td>{{ opliv.opCaisse.numOpCaisse }}</td>
+                  <td>{{ opliv.article.codeArticle }}</td>
+                  <td>{{ opliv.article.libArticle }}</td>
+                  <td>{{ opliv.qteLigneOperCaisse }}</td>
+                  <td>{{ opliv.qteLigneOperCaisse*opliv.prixLigneOperCaisse }}</td>
+                  <td>{{ opliv.opCaisse.contribuable }}</td>
+                  <td>
+                      <button class="btn btn-primary" (click)="validerLivraison(i)"> Livré</button>
+                  </td>
+              </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Date</th>
+              <th>Numéro </th>
+              <th>Code Article </th>
+              <th>Libellé Article</th>
+              <th>Quantité</th>
+              <th>Montant</th>
+              <th>Contribuable</th>
+              <th>Actions</th>
+          </tr>
+          </tfoot>
+      </table>
+
+  </div>
 </div>

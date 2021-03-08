@@ -104,7 +104,7 @@ export class RegisseurComponent implements OnInit {
     this.getAllMagasinier();
 
     this.getAllGerer();
-    this.getAllRegisseur();
+    //this.getAllRegisseur();
 
     this.serviceRegisseur.getAllRegisseur().subscribe(
       (data) => {
@@ -122,6 +122,8 @@ export class RegisseurComponent implements OnInit {
     this.serviceRegisseur.getAllRegisseur().subscribe(
       (data) => {
         this.regisseur = data;
+        $('#regisseurdata').dataTable().api().destroy();
+         this.dtTrigger1.next();
 
       },
       (erreur) => {
@@ -240,6 +242,7 @@ export class RegisseurComponent implements OnInit {
                   (data4) => {
                     this.primaryModal.hide();
                     this.getAllRegisseur();
+                    this.getAllGerer();
                   },
                   (erreur) => {
                     console.log('Erreur lors de la création du regissuer : ', erreur);
@@ -274,11 +277,52 @@ export class RegisseurComponent implements OnInit {
     let magasin = this.getMagasinByCodeMagasinier(this.suprReg.magasinier.numMAgasinier.toString());
     let gerer = this.getGererByCodeMagasinier(this.suprReg.magasinier.numMAgasinier.toString());
 
-    gerer.forEach(element => {
-      console.log('gestion ******',element.idGerer); 
-      
+    this.gerers.forEach(element => {
+       
+      console.log('gestion ******',element.idGerer);
+      if(element.magasinier.numMAgasinier == this.suprReg.magasinier.numMAgasinier)
+      {
+        console.log('gestion ******',element.idGerer);
       this.serviceCorres.deleteAGerer(element.idGerer.toString()).subscribe(
         (data) => {
+
+          
+
+          //
+         // magasin.forEach(element => {
+            this.serviceCorres.deleteAMagasin(element.magasin.codeMagasin).subscribe(
+              (data2) => {
+      
+              },
+              (erreur) => {
+                console.log('Erreur lors de la suppression dUn magasin : ', erreur);
+                processed = false;
+              }
+            );
+         // });
+
+         this.serviceRegisseur.deleteRegisseur(this.suprReg.idRegisseur).subscribe(
+          (data) => {
+
+            this.serviceCorres.deleteAMagasinier( this.suprReg.magasinier.numMAgasinier.toString()).subscribe(
+              (data3) => {
+                this.dangerModal.hide();
+              },
+              (erreur) => {
+                console.log('Erreur lors de la suppression dUn magasinier', erreur);
+                processed = false;
+              }
+            );
+    
+            this.getAllRegisseur();
+            this.getAllGerer();
+    
+          },
+          (erreur) => {
+            console.log('Erreur lors de la suppression du correspondant : ', erreur);
+            processed = false;
+          }
+        );
 
         },
         (erreur) => {
@@ -286,12 +330,13 @@ export class RegisseurComponent implements OnInit {
           processed = false;
         }
       );
+    }
     });
 
-    if(processed===true)
+    /*if(processed===true)
     magasin.forEach(element => {
       this.serviceCorres.deleteAMagasin(element.codeMagasin).subscribe(
-        (data) => {
+        (data2) => {
 
         },
         (erreur) => {
@@ -299,9 +344,9 @@ export class RegisseurComponent implements OnInit {
           processed = false;
         }
       );
-    });
+    });*/
 
-    if(processed===true)
+    /*if(processed===true)
     this.serviceRegisseur.deleteRegisseur(this.suprReg.idRegisseur).subscribe(
       (data) => {
 
@@ -312,18 +357,18 @@ export class RegisseurComponent implements OnInit {
         console.log('Erreur lors de la suppression du correspondant : ', erreur);
         processed = false;
       }
-    );
+    );*/
 
-    if(processed===true)
+    /*if(processed===true)
     this.serviceCorres.deleteAMagasinier( this.suprReg.magasinier.numMAgasinier.toString()).subscribe(
-      (data) => {
+      (data3) => {
         this.dangerModal.hide();
       },
       (erreur) => {
         console.log('Erreur lors de la suppression dUn magasinier', erreur);
         processed = false;
       }
-    );
+    );*/
 
 
   }

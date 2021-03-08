@@ -14,6 +14,8 @@ import { Immeuble } from '../../models/immeuble.model';
 import { Echeance } from '../../models/echeance.model';
 import { PrixImmeuble } from '../../models/prixImmeuble.model';
 import { Correspondant } from '../../models/Correspondant.model';
+import { PointVente } from '../../models/pointVente.model';
+import { LignePointVente } from '../../models/lignePointVente.model';
 
 @Injectable({
   providedIn: 'root'
@@ -127,8 +129,20 @@ export class OperationCaisseService {
     return this.lien.get<PrixImmeuble[]>(this.host+'location/priximmeuble/list');
   }
 
-  getCorresImput(){
-    return this.lien.get<Correspondant[]>(this.host+'/stock/correspondant/imputable');
+  getCorres(){
+    return this.lien.get<Correspondant[]>(this.host+'/stock/correspondant/list');
+  }
+
+  getAllCor(){
+    return this.lien.get<Correspondant[]>(this.host+'stock/correspondant/list');
+  }
+
+  getAllPV(){
+    return this.lien.get<PointVente[]>(this.host+'stock/pointvente/list');
+  }
+
+  getAllLPV(){
+    return this.lien.get<LignePointVente[]>(this.host+'stock/lignepointvente/list');
   }
 
 }

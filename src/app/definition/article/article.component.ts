@@ -229,6 +229,8 @@ export class ArticleComponent implements OnInit {
     .subscribe(
       (data) => {
         this.articles = data;
+        $('#dataTable1').dataTable().api().destroy();
+        this.dtTrigger1.next();
         /*this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.destroy();
           this.dtTrigger1.next();
@@ -317,6 +319,8 @@ export class ArticleComponent implements OnInit {
     .subscribe(
       (data) => {
         this.familles = data;
+        $('#dataTable2').dataTable().api().destroy();
+        this.dtTrigger2.next();
         /*this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.destroy();
           this.dtTrigger2.next();
@@ -390,6 +394,8 @@ export class ArticleComponent implements OnInit {
     .subscribe(
       (data) => {
         this.unites = data;
+        $('#dataTable3').dataTable().api().destroy();
+        this.dtTrigger3.next();
         /*this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.destroy();
           this.dtTrigger3.next();

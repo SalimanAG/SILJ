@@ -507,6 +507,8 @@ export class CommuneComponent implements OnInit {
     .subscribe(
       (data) => {
         this.pays = data;
+        $('#paysDataTable').dataTable().api().destroy();
+        this.dtTrigger1.next();
       },
       (erreur) => {
         console.log('Erreur de récupération ', erreur);
@@ -582,6 +584,8 @@ export class CommuneComponent implements OnInit {
     .subscribe(
       (data) => {
         this.departement = data;
+        $('#DepDataTable').dataTable().api().destroy();
+        this.dtTrigger2.next();
       },
       (erreur) => {
         console.log('Erreur', erreur);
@@ -662,6 +666,8 @@ export class CommuneComponent implements OnInit {
     .subscribe(
       (data) => {
         this.commune = data;
+        $('#ComDataTable').dataTable().api().destroy();
+        this.dtTrigger3.next();
         console.log('****+++++ Dans le get All',this.commune);
       },
       (erreur) => {
@@ -752,6 +758,8 @@ export class CommuneComponent implements OnInit {
     .subscribe(
       (data) => {
         this.arrondissement = data;
+        $('#ArrondDataTable').dataTable().api().destroy();
+        this.dtTrigger4.next();
         //console.log('****+++++ Dans le get All',this.commune);
       },
       (erreur) => {
@@ -840,6 +848,8 @@ export class CommuneComponent implements OnInit {
     .subscribe(
       (data) => {
         this.quartier = data;
+        $('#QuaDataTable').dataTable().api().destroy();
+        this.dtTrigger5.next();
         //console.log('****+++++ Dans le get All',this.commune);
       },
       (erreur) => {
@@ -928,6 +938,8 @@ export class CommuneComponent implements OnInit {
     .subscribe(
       (data) => {
         this.service = data;
+        $('#ServDataTable').dataTable().api().destroy();
+        this.dtTrigger6.next();
         //console.log('****+++++ Dans le get All',this.commune);
       },
       (erreur) => {
@@ -1003,6 +1015,8 @@ export class CommuneComponent implements OnInit {
     .subscribe(
       (data) => {
         this.site = data;
+        $('#SiteDataTable').dataTable().api().destroy();
+        this.dtTrigger7.next();
       },
       (erreur) => {
         console.log('Erreur de récupération ', erreur);

@@ -12,6 +12,8 @@ export class UtilisateurService {
 
   public connectedUser:Utilisateur = new Utilisateur('', '', '', '','', false, new Service('', ''));
 
+  public isAuth:boolean = false;
+
   constructor(private httpCli:HttpClient) { }
 
   getAllUsers(){

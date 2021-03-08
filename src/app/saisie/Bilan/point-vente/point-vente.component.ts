@@ -22,6 +22,10 @@ import { Regisseur } from '../../../../models/regisseur.model';
 import { Utilisateur } from '../../../../models/utilisateur.model';
 import { Service } from '../../../../models/service.model';
 import { PointVenteService } from '../../../../services/saisie/point-vente.service';
+import {jsPDF} from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as moment from 'moment';
+import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-point-vente',
   templateUrl: './point-vente.component.html',
@@ -29,12 +33,17 @@ import { PointVenteService } from '../../../../services/saisie/point-vente.servi
 })
 export class PointVenteComponent implements OnInit {
 
+  pdfToShow = null;
+
   //Commune
   @ViewChild('addComModal') public addComModal: ModalDirective;
   @ViewChild('editComModal') public editComModal: ModalDirective;
   @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
+
+  //
+  @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
 
   dtOptions1: DataTables.Settings = {};
   dtOptions2: DataTables.Settings = {};
@@ -83,9 +92,11 @@ export class PointVenteComponent implements OnInit {
 
 
   constructor(private servicePointVente:PointVenteService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService, 
-    private serviceArticle:ArticleService, private serviceCorres:CorrespondantService, private formBulder:FormBuilder) { 
+    private serviceArticle:ArticleService, private serviceCorres:CorrespondantService, private formBulder:FormBuilder,
+    private sanitizer:DomSanitizer ){ 
       this.initDtOptions();
       this.initFormsGroup();
+      moment.locale('fr');
       console.log('+++++', this.serviceExercice.exoSelectionner);
   }
 
@@ -195,6 +206,8 @@ export class PointVenteComponent implements OnInit {
     this.servicePointVente.getAllPointVente().subscribe(
       (data) => {
         this.pointVente = data;
+        //$('#PvDataTable').dataTable().api().destroy();
+        //this.dtTrigger1.next();
         //this.dtTrigger1.next();
       },
       (erreur) => {
@@ -525,6 +538,87 @@ export class PointVenteComponent implements OnInit {
       );
     }
 
+  }
+
+  initPrintPdfOfAnCommande(inde:number){
+    const commande = this.pointVente[inde];
+    const doc = new jsPDF();
+    let lignes = [];
+    let totalHT, totalTTC, totalRemise, totalTVA;
+    totalHT = 0;
+    totalRemise = 0;
+    totalTVA = 0;
+    totalTTC = 0;
+    this.lignePointVente.forEach(element => {
+      if(element.pointVente.numPointVente == commande.numPointVente){
+        let lig = [];
+        lig.push(element.article.codeArticle);
+        lig.push(element.article.libArticle);
+        lig.push(element.quantiteLignePointVente);
+        lig.push(element.numDebLignePointVente+' à '+element.numFinLignePointVente);
+        lig.push(element.pulignePointVente);
+        
+        lig.push(element.pulignePointVente*element.quantiteLignePointVente);
+        lignes.push(lig);
+
+        totalHT += element.pulignePointVente*element.quantiteLignePointVente;
+      
+
+      }
+
+    });
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    
+    doc.setFontSize(25);
+    doc.text('POINT DE VENTE', 62, 30);
+    doc.setFontSize(14);
+    doc.text('Référence : '+commande.numPointVente, 15, 45);
+    doc.text('Date : '+moment(commande.datePointVente).format('DD/MM/YYYY'), 145, 45);
+    doc.text('Correspondant : '+commande.correspondant.magasinier.nomMagasinier+ ' '+
+    commande.correspondant.magasinier.prenomMagasinier, 15, 55);
+    doc.text('Régisseur : '+commande.regisseur.magasinier.nomMagasinier+' '+
+    commande.regisseur.magasinier.prenomMagasinier, 15, 65);
+    if(commande.payerPoint==false){doc.text('Statut du paiement : '+'NON PAYER', 15, 75)}
+    if(commande.payerPoint==true){doc.text('Statut du paiement : '+' PAYER', 15, 75)}
+    //doc.text('Payer point : '+commande.payerPoint, 15, 75);
+    autoTable(doc, {
+      theme: 'grid',
+      head: [['Article', 'Désignation', 'Quantité', 'Numéro de série', 'PU', 'Montant']],
+      headStyles: {
+         fillColor: [41, 128, 185],
+          textColor: 255, 
+          fontStyle: 'bold' ,
+      },
+      margin: { top: 100 },
+      
+      body: lignes
+      ,
+    });
+
+    autoTable(doc, {
+      theme: 'grid',
+      margin: { top: 100, left:130 },
+      columnStyles: {
+        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+      },
+      body: [
+        ['Montant Total', totalHT]
+      ]
+    
+    });
+    doc.text('Powered by Guichet Unique', 130, 230);
+    //doc.autoPrint();
+    //doc.output('dataurlnewwindow');
+
+    
+
+  
+
+    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'pointVente.pdf'}));
+    this.viewPdfModal.show();
   }
 
 

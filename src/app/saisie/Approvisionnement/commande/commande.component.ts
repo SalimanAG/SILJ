@@ -16,8 +16,9 @@ import { ArticleService } from '../../../../services/definition/article.service'
 import { FournisseurService } from '../../../../services/definition/fournisseur.service';
 import { CommandeService } from '../../../../services/saisie/commande.service';
 import {jsPDF} from 'jspdf';
-import autoTable from 'jspdf-autotable'
-
+import autoTable from 'jspdf-autotable';
+import * as moment from 'moment';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-commande',
@@ -32,6 +33,7 @@ export class CommandeComponent implements OnInit {
   @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
+  @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
 
 
   dtOptions1: DataTables.Settings = {};
@@ -64,9 +66,11 @@ export class CommandeComponent implements OnInit {
   articles:Article[] = [];
   fournisseurs:Fournisseur[] = [];
 
+  pdfToShow = null;
+
   constructor(private serviceCommande:CommandeService, private serviceExercice:ExerciceService,
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService,
-    private formBulder:FormBuilder) {
+    private formBulder:FormBuilder, private sanitizer:DomSanitizer) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -142,7 +146,8 @@ export class CommandeComponent implements OnInit {
       addDateCommande:[new Date(), Validators.required],
       addDescription:'',
       addDelaiLivraison:[0, Validators.required],
-      addFrs:[0, Validators.required]
+      addFrs:[0, Validators.required],
+      addDateRemiseCommande:[new Date(), Validators.required]
     });
 
     this.editCommandeFormGroup = this.formBulder.group({
@@ -150,7 +155,8 @@ export class CommandeComponent implements OnInit {
       editDateCommande:[new Date(), Validators.required],
       editDescription:'',
       editDelaiLivraison:[0, Validators.required],
-      editFrs:[0, Validators.required]
+      editFrs:[0, Validators.required],
+      editDateRemiseCommande:[new Date(), Validators.required]
     });
   }
 
@@ -220,6 +226,8 @@ export class CommandeComponent implements OnInit {
     this.serviceCommande.getAllCommande().subscribe(
       (data) => {
         this.commandes = data;
+        $('#dataTable1').dataTable().api().destroy();
+        this.dtTrigger1.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de liste des commandes', erreur);
@@ -520,6 +528,7 @@ export class CommandeComponent implements OnInit {
       }
 
     });
+    moment.locale('fr');
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
@@ -528,12 +537,18 @@ export class CommandeComponent implements OnInit {
     doc.text('COMMANDE ACHAT', 62, 30);
     doc.setFontSize(14);
     doc.text('Référence : '+commande.numCommande, 15, 45);
-    doc.text('Date : '+commande.dateCommande, 152, 45);
+    doc.text('Date : '+moment(commande.dateCommande).format('DD/MM/YYYY'), 152, 45);
     doc.text('Fournisseur : '+commande.frs.identiteFrs, 15, 55);
     doc.text('Délais de Livraison : '+commande.delaiLivraison+'  Jour(s)', 15, 65);
     doc.text('Description : '+commande.description, 15, 75);
     autoTable(doc, {
+      theme: 'grid',
       head: [['Article', 'Désignation', 'Quantité', 'PU', 'TVA(en %)', 'Remise', 'Montant TTC']],
+      headStyles:{
+         fillColor: [41, 128, 185],
+         textColor: 255,
+         fontStyle: 'bold' ,
+      },
       margin: { top: 100 },
       body: lignes
       ,
@@ -553,8 +568,26 @@ export class CommandeComponent implements OnInit {
       ]
       ,
     });
+
+    autoTable(doc, {
+      theme: 'plain',
+      margin: { top: 100 },
+      columnStyles: {
+        0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+        2: { textColor: 0, fontStyle: 'bold', halign: 'left' },
+      },
+      body: [
+        ['Le Trésorier Communal\n\n\n\n\n',
+        '\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t',
+         'Le Maire\n\n\n\n\n\t\t\t\t\t\t\t\t\t\t\t\t']
+      ]
+      ,
+    });
+
     //doc.autoPrint();
-    doc.output('dataurlnewwindow');
+    //doc.output('dataurlnewwindow');
+    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonCommande.pdf'}));
+    this.viewPdfModal.show();
   }
 
 }

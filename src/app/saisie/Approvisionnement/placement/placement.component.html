@@ -8,7 +8,8 @@
       <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
     </div>
 
-      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1">
+      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+       [dtTrigger]="dtTrigger1" id="dataTable1">
           <thead>
               <tr>
                   <th>Numéro</th>
@@ -28,7 +29,7 @@
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
                       <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
                       <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
-                      <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                      <button class="btn btn-dark btn-sm" (click)="initPrintToPdfOfAnPlacem(i)"><span class="fa fa-file-o"></span></button>
                       <!--Le bouton des options-->
                       <div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
@@ -405,6 +406,31 @@
           <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
 
         </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+  <!--Modal View PDF-->
+
+  <div bsModal #viewPdfModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-xl" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h4 class="modal-title text-center">Apperçu</h4>
+          <button type="button" class="close" (click)="viewPdfModal.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <iframe class="col" [src]="pdfToShow" frameborder="0" style="height: 400px;"></iframe>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="viewPdfModal.hide()">Fermer</button>
+          </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->

@@ -19,6 +19,9 @@ import { CommandeService } from '../../../../services/saisie/commande.service';
 import { ReceptionService } from '../../../../services/saisie/reception.service';
 import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable'
+import { DomSanitizer } from '@angular/platform-browser';
+import { UtilisateurService } from '../../../../services/administration/utilisateur.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-reception',
@@ -33,7 +36,7 @@ export class ReceptionComponent implements OnInit {
   @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
-
+  @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
 
   dtOptions1: DataTables.Settings = {};
   dtOptions2: DataTables.Settings = {};
@@ -76,9 +79,11 @@ export class ReceptionComponent implements OnInit {
   articles:Article[] = [];
   fournisseurs:Fournisseur[] = [];
 
+  pdfToShow = null;
+
   constructor(private serviceCommande:CommandeService, private serviceExercice:ExerciceService,
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService, private serviceReception:ReceptionService,
-    private formBulder:FormBuilder) {
+    private formBulder:FormBuilder, private sanitizer:DomSanitizer, private serviceUser:UtilisateurService) {
       this.getAllLigneReception();
       this.initDtOptions();
       this.initFormsGroup();
@@ -237,6 +242,8 @@ export class ReceptionComponent implements OnInit {
     this.serviceReception.getAllReception().subscribe(
       (data) => {
         this.receptions = data;
+        $('#dataTable1').dataTable().api().destroy();
+        this.dtTrigger1.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des réceptions', erreur);
@@ -669,20 +676,27 @@ export class ReceptionComponent implements OnInit {
       }
 
     });
+    moment.locale('fr');
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
     //doc.setFont("Times New Roman");
     doc.setFontSize(25);
-    doc.text('ENTREE ACHAT', 70, 30);
+    doc.text('RECEPTION ACHAT', 60, 30);
     doc.setFontSize(14);
     doc.text('Référence : '+reception.numReception, 15, 45);
-    doc.text('Date : '+reception.dateReception, 152, 45);
-    doc.text('Commande : '+receptComm.numCommande+'\tDu\t'+receptComm.dateCommande, 15, 55);
+    doc.text('Date : '+moment(reception.dateReception).format('DD/MM/YYYY') , 152, 45);
+    doc.text('Commande : '+receptComm.numCommande+'\tDu\t'+moment(receptComm.dateCommande).format('DD/MM/YYYY'), 15, 55);
     doc.text('Fournisseur : '+receptComm.frs.identiteFrs, 15, 65);
     doc.text('Observation : '+reception.observation, 15, 75);
     autoTable(doc, {
+      theme: 'grid',
       head: [['Article', 'Désignation', 'Quantité', 'PU', 'TVA(en %)', 'Remise', 'Montant TTC', 'Plage', 'Obs.']],
+      headStyles:{
+        fillColor: [41, 128, 185],
+        textColor: 255,
+        fontStyle: 'bold' ,
+      },
       margin: { top: 100 },
       body: lignes
       ,
@@ -702,8 +716,27 @@ export class ReceptionComponent implements OnInit {
       ]
       ,
     });
+
+    autoTable(doc, {
+      theme: 'plain',
+      margin: { top: 100 },
+      columnStyles: {
+        0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+        2: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+      },
+      body: [
+        ['Le Trésorier Communal\n\n\n\n\n',
+        '\t\t\t\t\t\t\t\t\t\t\t\t\t',
+         'Le Régisseur\n\n\n\n\n'+this.serviceUser.connectedUser.nomUtilisateur+' '+this.serviceUser.connectedUser.prenomUtilisateur]
+      ]
+      ,
+    });
+
+
     //doc.autoPrint();
-    doc.output('dataurlnewwindow');
+    //doc.output('dataurlnewwindow');
+    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonCommande.pdf'}));
+    this.viewPdfModal.show();
   }
 
 }

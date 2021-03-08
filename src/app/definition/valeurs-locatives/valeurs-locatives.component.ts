@@ -244,6 +244,9 @@ export class ValeursLocativesComponent implements OnInit {
     .subscribe(
       (data) => {
         this.immeuble = data;
+
+         //$('#valLocative').dataTable().api().destroy();
+         //this.dtTrigger1.next();
         this.dtTrigger1.next();
         //console.log('****+++++ Dans le ngOnInit',this.commune);
       },
@@ -300,6 +303,8 @@ export class ValeursLocativesComponent implements OnInit {
     .subscribe(
       (data) => {
         this.immeuble = data;
+        $('#valLocative').dataTable().api().destroy();
+         this.dtTrigger1.next();
       },
       (erreur) => {
         console.log('Erreur de récupération ', erreur);
@@ -388,6 +393,9 @@ export class ValeursLocativesComponent implements OnInit {
     .subscribe(
       (data) => {
         this.typeImmeuble = data;
+        $('#TypevalLocative').dataTable().api().destroy();
+         this.dtTrigger2.next();
+        
       },
       (erreur) => {
         console.log('Erreur de récupération ', erreur);
@@ -457,6 +465,8 @@ export class ValeursLocativesComponent implements OnInit {
     .subscribe(
       (data) => {
         this.prixImmeuble = data;
+        $('#PrixvalLocative').dataTable().api().destroy();
+         this.dtTrigger3.next();
       },
       (erreur) => {
         console.log('Erreur de récupération ', erreur);
@@ -497,6 +507,8 @@ export class ValeursLocativesComponent implements OnInit {
     const newPrixIm = new PrixImmeuble(this.editPrixImFormsGroup.value['editIdPrixIm'], this.editPrixImFormsGroup.value['editDateDebutPrixIm'],
     this.editPrixImFormsGroup.value['editDateFinPrixIm'], this.editPrixImFormsGroup.value['editPrixIm'],
     this.immeuble[this.editPrixImFormsGroup.value['editVal']]);
+    console.log('++++', newPrixIm);
+    
     this.valeurLocativeService.editPrixImmeuble(this.editPrixImmeuble.idPrixIm, newPrixIm)
     .subscribe(
       (data) => {

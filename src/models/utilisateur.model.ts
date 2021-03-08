@@ -7,8 +7,8 @@ export class Utilisateur
 
   constructor(public login:String, public motDePass:String, public nomUtilisateur:String,
     public prenomUtilisateur:String, public fonctionUtilisateur:String,
-    public activeUtilisateur:Boolean, public service:Service){
-
+    public activeUtilisateur:Boolean, public service:Service, public askMdp1erLance?:boolean ){
+      
   }
 
 }

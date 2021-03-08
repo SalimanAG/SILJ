@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { url } from 'inspector';
 import { Correspondant } from '../../models/Correspondant.model';
 import { EtreAffecte } from '../../models/etreAffecte.model';
 import { Gerer } from '../../models/gerer.model';
 import { Magasin } from '../../models/magasin.model';
 import { Magasinier } from '../../models/magasinier.model';
+import { Stocker } from '../../models/stocker.model';
 import { TypCorres } from '../../models/typCorres.model';
 
 @Injectable({
@@ -136,6 +138,27 @@ export class CorrespondantService {
 
   deleteAEtreAffecte(code:String){
     return this.httpCli.delete<EtreAffecte>(this.host+'/commune/Affect/byId/'+code);
+  }
+
+  //Partie réservée pour Stocker du stockage d'un article dans un magasin
+  getAllStocker(){
+    return this.httpCli.get<Stocker[]>(this.host+'/stock/stocker/list');
+  }
+
+  getAStockerById(code:String){
+    return this.httpCli.get<Stocker>(this.host+'/stock/stocker/byCodSto/'+code);
+  }
+
+  addAStocker(corps:Stocker){
+    return this.httpCli.post<Stocker>(this.host+'/stock/stocker/list', corps);
+  }
+
+  editAStocker(code:String, corps:Stocker){
+    return this.httpCli.put<Stocker>(this.host+'/stock/stocker/byCodSto/'+code, corps);
+  }
+
+  deleteAStocker(code:String){
+    return this.httpCli.delete<boolean>(this.host+'/stock/stocker/byCodSto/'+code);
   }
 
 

@@ -19,6 +19,11 @@ import { Utilisateur } from '../../../../models/utilisateur.model';
 import { Service } from '../../../../models/service.model';
 import { ReversementService } from '../../../../services/saisie/reversement.service';
 import { Reversement } from '../../../../models/reversement.model';
+
+import {jsPDF} from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as moment from 'moment';
+import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-reversement',
   templateUrl: './reversement.component.html',
@@ -26,12 +31,17 @@ import { Reversement } from '../../../../models/reversement.model';
 })
 export class ReversementComponent implements OnInit {
 
+  pdfToShow = null;
+
    //Commune
    @ViewChild('addComModal') public addComModal: ModalDirective;
    @ViewChild('editComModal') public editComModal: ModalDirective;
    @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
    @ViewChild('addArticle1') public addArticle1: ModalDirective;
    @ViewChild('addArticle2') public addArticle2: ModalDirective;
+
+   //
+  @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
  
    dtOptions1: DataTables.Settings = {};
    dtOptions2: DataTables.Settings = {};
@@ -74,9 +84,11 @@ export class ReversementComponent implements OnInit {
   
 
   constructor(private serviceReversement:ReversementService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService, 
-    private serviceArticle:ArticleService,private formBulder:FormBuilder) { 
+    private serviceArticle:ArticleService,private formBulder:FormBuilder,
+    private sanitizer:DomSanitizer) { 
     this.initDtOptions();
     this.initFormsGroup();
+    moment.locale('fr');
   }
 
   initDtOptions(){
@@ -179,6 +191,8 @@ export class ReversementComponent implements OnInit {
     this.serviceReversement.getAllReversement().subscribe(
       (data) => {
         this.reversement = data;
+        //$('#RecovDataTable').dataTable().api().destroy();
+        //this.dtTrigger1.next();
        // this.dtTrigger1.next();
       },
       (erreur) => {
@@ -489,6 +503,84 @@ onConfirmDeleteReversement(){
     );
   }
 
+}
+
+initPrintPdfOfReversement(inde:number){
+  const commande = this.reversement[inde];
+  const doc = new jsPDF();
+  let lignes = [];
+  let totalHT, totalTTC, totalRemise, totalTVA;
+  totalHT = 0;
+  totalRemise = 0;
+  totalTVA = 0;
+  totalTTC = 0;
+  this.ligneReversement.forEach(element => {
+    if(element.numReversement.numReversement == commande.numReversement){
+      let lig = [];
+      lig.push(element.article.codeArticle);
+      lig.push(element.article.libArticle);
+      lig.push(element.quantiteLigneReversement);
+     // lig.push(element.num+' à '+element.numFinLignePointVente);
+      lig.push(element.puligneReversement);
+      
+      lig.push(element.puligneReversement*element.quantiteLigneReversement);
+      lig.push(element.quittanceReversement);
+      lig.push(moment(element.dateQuittanceReversement).format('DD/MM/YYYY'));
+      lig.push(element.beneficiaire);
+      lig.push(element.observation);
+      lignes.push(lig);
+
+      totalHT += element.puligneReversement*element.quantiteLigneReversement;
+    
+
+    }
+
+  });
+  doc.setDrawColor(0);
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+  //doc.setFont("Times New Roman");
+  
+  doc.setFontSize(25);
+  doc.text('REVERSEMENT', 62, 30);
+  doc.setFontSize(14);
+  doc.text('Référence : '+commande.numReversement, 15, 45);
+  doc.text('Régisseur : '+commande.regisseur.magasinier.nomMagasinier+' '+
+  commande.regisseur.magasinier.prenomMagasinier, 15, 55);
+  doc.text('Date : '+moment(commande.dateVersement).format('DD/MM/YYYY'), 145, 45);
+  
+ 
+  autoTable(doc, {
+    theme: 'grid',
+    head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant','Numéro Quittance','Date Quittance','Bénéficiaire','Observation']],
+    headStyles: {
+       fillColor: [41, 128, 185],
+        textColor: 255, 
+        fontStyle: 'bold' ,
+    },
+    margin: { top: 100 },
+    
+    body: lignes
+    ,
+  });
+
+  autoTable(doc, {
+    theme: 'grid',
+    margin: { top: 100, left:130 },
+    columnStyles: {
+      0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+    },
+    body: [
+      ['Montant Total', totalHT]
+    ]
+  
+  });
+  doc.text('Powered by Guichet Unique', 130, 230);
+  //doc.autoPrint();
+  //doc.output('dataurlnewwindow');
+
+  this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'reversement.pdf'}));
+  this.viewPdfModal.show();
 }
 
 }

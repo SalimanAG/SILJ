@@ -11,7 +11,7 @@
               <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
-                [dtTrigger]="dtTrigger1">
+                [dtTrigger]="dtTrigger1" id="paysDataTable">
               <thead>
                 <tr>
                   <th>Code</th>
@@ -202,7 +202,7 @@
               <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2"
-            [dtTrigger]="dtTrigger2" >
+            [dtTrigger]="dtTrigger2" id="DepDataTable">
               <thead>
                 <tr>
                   <th>Code</th>
@@ -434,7 +434,7 @@
               <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions3"
-            [dtTrigger]="dtTrigger3" >
+            [dtTrigger]="dtTrigger3" id="ComDataTable" >
               <thead>
                 <tr>
                   <th>Code</th>
@@ -702,7 +702,7 @@
               <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions4"
-            [dtTrigger]="dtTrigger4" >
+            [dtTrigger]="dtTrigger4" id="ArrondDataTable">
               <thead>
                 <tr>
                   <th>Code</th>
@@ -970,7 +970,7 @@
               <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions5"
-            [dtTrigger]="dtTrigger5" >
+            [dtTrigger]="dtTrigger5" id="QuaDataTable">
               <thead>
                 <tr>
                   <th>Code</th>
@@ -1030,7 +1030,7 @@
                       <form [formGroup]="addQuaFormsGroup" (ngSubmit)="onSubmitAddQuaFormsGroup()">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h4 class="modal-title">Enrégistrer un Arrondissement</h4>
+                            <h4 class="modal-title">Enrégistrer un Quartier</h4>
                             <button type="button" class="close" (click)="primaryModal5.hide()" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
@@ -1039,7 +1039,7 @@
                             <!-- Formulaire pour enrégistrer un article-->
                             <div class="card">
                               <div class="card-header">
-                                <strong>Nouveau arrondissement</strong>
+                                <strong>Nouveau quartier</strong>
     
                               </div>
                               <div class="card-body">
@@ -1239,7 +1239,7 @@
               <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions6"
-                [dtTrigger]="dtTrigger6">
+                [dtTrigger]="dtTrigger6" id="ServDataTable">
               <thead>
                 <tr>
                   <th>Code</th>
@@ -1409,7 +1409,7 @@
               <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions7"
-            [dtTrigger]="dtTrigger7" >
+            [dtTrigger]="dtTrigger7" id="SiteDataTable">
               <thead>
                 <tr>
                   <th>Code</th>

@@ -20,14 +20,18 @@ import { Locataire } from '../../../models/locataire.model';
 import { Contrat } from '../../../models/contrat.model';
 import { Immeuble } from '../../../models/immeuble.model';
 import { Echeance } from '../../../models/echeance.model';
-import { isDate } from 'moment';
-import { decimalDigest } from '@angular/compiler/src/i18n/digest';
 import { PrixImmeuble } from '../../../models/prixImmeuble.model';
 import { ValeurLocativeService } from '../../../services/definition/valeur-locative.service';
-import { formatDate } from '@angular/common';
+import { DatePipe, formatDate } from '@angular/common';
 import { PointVente } from '../../../models/pointVente.model';
 import { LignePointVente } from '../../../models/lignePointVente.model';
 import { Correspondant } from '../../../models/Correspondant.model';
+import { Magasinier } from '../../../models/magasinier.model';
+import {jsPDF} from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { DomSanitizer } from '@angular/platform-browser';
+import { UtilisateurService } from '../../../services/administration/utilisateur.service';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-operation-caisse',
@@ -42,8 +46,11 @@ export class OperationCaisseComponent implements OnInit {
   @ViewChild('addLoyer') public addLoyer:ModalDirective;
   @ViewChild('detailOp') public detailOp:ModalDirective;
   @ViewChild('addImput') public addImput:ModalDirective;
+  @ViewChild('appercu') public appercu:ModalDirective;
 
+  pdfToShow;
   ////Accueil
+  timp:String[]=['Ticket','Reçu'];
   tabOpeCa: DataTables.Settings = {};
   dtOpeCa: Subject<any> = new Subject<any>();
   listOp:OpCaisse[];
@@ -53,12 +60,13 @@ export class OperationCaisseComponent implements OnInit {
   modes : ModePaiement[];
   exercices : Exercice[];
   users : Utilisateur[];
+  datePipe: DatePipe;
   //tabLigne:DataTables.Settings={};
   //dtLigne: Subject<OpCaisse>=new Subject<OpCaisse>();
 
   ///////Vente
   tabArtV: DataTables.Settings = {};
-  dtArtV: Subject<any> = new Subject<any>();
+  dtArt: Subject<any> = new Subject<any>();
   addVentGroup:FormGroup;
   line:OpCaisse[]=[];
   totalVente:number;
@@ -67,13 +75,14 @@ export class OperationCaisseComponent implements OnInit {
   lignesOp:LigneOpCaisse[];
 ////////Ajout d'article
   tabArt: DataTables.Settings = {};
-  dtArt: Subject<LigneOpCaisse> = new Subject<LigneOpCaisse>();
+  dtArtV: Subject<LigneOpCaisse> = new Subject<LigneOpCaisse>();
   addArtGroup:FormGroup;
   tempLigneOpCais:LigneOpCaisse[]=[];
   lignesOfOp:LigneOpCaisse[];
   tmpOpC:OpCaisse;
   serVal:ValeurLocativeService;
 
+  today:Date=new Date();
   ////////Détail opération de caise
   vnum:String;  vdat:Date;  vcai:String;  vcon:String;  vtyp:String;
   vmod:String;  vobs:String;  vexo:String;  vuse:String;  dats:Date;
@@ -93,22 +102,30 @@ export class OperationCaisseComponent implements OnInit {
   immeubleContrat:Immeuble[]=[];
   echeances:Echeance[];
   echeanceContrat:Echeance[]=[];
+  exist:Echeance[]=[];
   echeanceAPayer:Echeance[]=[];
   echeancetmp:Echeance[]=[];
   prixIm:PrixImmeuble[];
-  prixEche:PrixImmeuble[]=[];
+  prix:PrixImmeuble[];
   totalLoyer:number
 
   ///////Imputation
   addImputGroup:FormGroup;
-  correspondants:Correspondant[];
+  co:Correspondant[]=[];
+  coi:Correspondant[]=[];
   tabLignePoint:DataTables.Settings={};
   //deEcheance:Subject<Echeance>=new Subject<Echeance>()
+  ind : number=0;
   pointV:PointVente[];
-  lignePV:LignePointVente[]=[];
-  totalPoint:number
+  pointPayable:PointVente[];
+  lignePV:LignePointVente[];
+  ImputLine:LignePointVente[]=[ ];
+  lineOfPV:LignePointVente[];
+  totalImput:number
+  total:number;
 
-  constructor( private servOp:OperationCaisseService, private fbuilder:FormBuilder, private router:Router) {
+  constructor( private serU: UtilisateurService, private servOp:OperationCaisseService, private fbuilder:FormBuilder, private router:Router,
+    private sanitizer : DomSanitizer) {
 
     this.tabArt = {
       pagingType: 'full_numbers',
@@ -153,12 +170,27 @@ export class OperationCaisseComponent implements OnInit {
     };
 
     this.tabEcheance = {
-      columnDefs: [
-        { targets: 0,
-          visible: false },
-        { targets: 1,
-          visible: false }
-    ],
+      pagingType: 'full_numbers',
+      pageLength: 5,
+      lengthMenu: [5, 10, 25, 50, 100],
+      language: {
+        lengthMenu: "Affichage de _MENU_ lignes par page",
+        zeroRecords: "Aucune ligne trouvée - Desolé",
+        info: "Affichage de la page _PAGE_ sur _PAGES_",
+        infoEmpty: "Pas de ligne trouvée",
+        infoFiltered: "(Filtré à partie de _MAX_ lignes)",
+        search: "Rechercher",
+        loadingRecords: "Chargement en cours...",
+        paginate:{
+          first:"Début",
+          last: "Fin",
+          next: "Suivant",
+          previous: "Précédent"
+        }
+      }
+    };
+
+    this.tabOpeCa = {
       pagingType: 'full_numbers',
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
@@ -205,75 +237,66 @@ export class OperationCaisseComponent implements OnInit {
     console.log(this.lignesOfOp.length+' lignes concernée(s)');
   }
 
-  chargerImmeubles(loc:Locataire){
-    this.contratLocataire=this.contrats.filter(function(contrat){
-      return contrat.locataire.idLocataire===loc.idLocataire;
-    });
+  chargerImmeubles(loc : Locataire){
+    if(loc!==null){
+      this.contratLocataire=this.contrats.filter(function(contrat){
+        return contrat.locataire.idLocataire===loc.idLocataire;
+      });
+    }
   }
 
-  chargerPrixImmeubles(loc:Locataire){
-    this.contratLocataire=this.contrats.filter(function(contrat){
-      return contrat.locataire.idLocataire===loc.idLocataire;
-    });
-
+  chargerPrixImmeubles(imm:Immeuble){
+    this.prix=this.prixIm.filter(p=>p.immeuble.codeIm===imm.codeIm);
   }
 
   genererEcheancier(con:Contrat){
-    if(this.echeances.length!==0){
-      this.echeanceAPayer=this.echeances.filter(function(echeance){
+    this.chargerEcheances();
+    this.echeanceAPayer=[];
+    this.totalLoyer=0;
+    var dde:Date=new Date();
+    if(this.echeances.length>0){
+      this.echeanceContrat=this.echeances.filter(function(echeance){
         return (echeance.contrat.numContrat===con.numContrat);
       });
-    }
-
-    var des:Date=new Date(), d:Date=new Date();
-    if(this.echeanceContrat.length>0){
-      this.echeanceContrat.sort(function(a,b){
-        return b.idEcheance-a.idEcheance;
+      if(this.echeanceContrat.length>0){
+        this.echeanceContrat.sort( function(a,b){
+        return Date.parse(a.dateEcheance.toLocaleDateString())-Date.parse(b.dateEcheance.toLocaleDateString());
       });
-      d=new Date(this.echeanceContrat[0].dateEcheance);
+        dde=new Date(this.echeanceContrat[this.echeanceContrat.length-1].dateEcheance);
+      }
+      else{
+        dde=new Date(con.dateEffetContrat);
+      }
     }
     else{
-      d=new Date(con.dateEffetContrat);
+      dde=new Date(con.dateEffetContrat);
     }
-    des=d;
-    des.setMonth(des.getMonth()+1);
     var mois=new Array("Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet",
       "Août", "Septembre", "Octobre", "Novembre", "Décembre");
+    var i=0, n=0;
+    var fa=new Date(new Date().getFullYear(),11,31);
 
-    console.log('Repère ',d, 'Echeance 1:', des);
-    var i=0;
-    while( des <= new Date()) {
-      console.log('Passage '+i++);
-          this.prixEche=this.prixIm.filter(pri=>
-            pri.immeuble.codeIm===con.immeuble.codeIm && new Date(pri.dateDebPrixIm) <= des &&
-            (new Date(pri.dateFinPrixIm) > des || new Date(pri.dateFinPrixIm)===null));
-              if(this.prixEche.length !==0){
-                const newEche=new Echeance(mois[d.getMonth()],d.getFullYear(),new Date(des),false,this.prixEche[0].prixIm,con,null);
-                var existe=this.echeances.filter(function(eche){
-                  return eche.contrat.numContrat===newEche.contrat.numContrat && eche.dateEcheance===newEche.dateEcheance;
-                });
-                if(existe.length===0){
-                  this.servOp.addEcheance(newEche)
-                  .subscribe(
-                    data=>{
-                      console.log('Enregistrement de: ', newEche);
-                    },
-                    err=>{
-                      console.log('Erreur: ',err);
-                    }
-                  );
-                }
-                else{
-                  console.log(existe[0].contrat.numContrat);
-                }
-            }
-            else{
-              console.log('boutique sans prix au '+des);
-            }
-      d=des;
-      des.setMonth(des.getMonth()+1);
+    while( dde <= fa && (dde<=new Date(con.dateFinContrat) || con.dateFinContrat===null)) {
+      var des=new Date(dde.getFullYear(),dde.getMonth()+1,dde.getDate());
+      var exist=this.echeanceAPayer.filter(function(eche){
+        return eche.dateEcheance===des && eche.contrat.numContrat===con.numContrat;});
+        if(exist.length===0){
+          var prix = this.prixIm.filter(pri=>
+            pri.immeuble.codeIm===con.immeuble.codeIm && new Date(pri.dateDebPrixIm) <= dde &&
+            (new Date(pri.dateFinPrixIm) > dde || new Date(pri.dateFinPrixIm)<= fa));
+          if(prix.length>0){
+            prix.reverse();
+            const eche=new Echeance(mois[dde.getMonth()],dde.getFullYear(),des, false,prix[0].prixIm,con,null);
+            this.echeanceAPayer.splice(this.echeanceAPayer.length,0,eche);
+            n++;
+          }
+        }
+        dde=des;
     }
-    this.chargerEcheances(con);
+  }
+
+  typeImprime(typ : any){
+    this.ind=typ;
   }
 
   initOpCaisse(){
@@ -283,7 +306,7 @@ export class OperationCaisseComponent implements OnInit {
       nVentCont:new FormControl(),
       nVentObs:new FormControl(),
       nVentCais:new FormControl(),
-      nVentTyp:new FormControl(),
+      nVTimp:new FormControl(),
       nVentMod:new FormControl(),
       nTotalV:new FormControl(),
       tabVent: new FormControl()
@@ -316,11 +339,15 @@ export class OperationCaisseComponent implements OnInit {
       addImNum:new FormControl(),
       addImDat:new FormControl(),
       addImCai:new FormControl(),
-      addImMod:new FormControl()
+      addImMod:new FormControl(),
+      addDebIm:new FormControl(),
+      addFinIm:new FormControl()
     });
 
     this.chargerOperations();
     this.rechargerLigneOpCaisse();
+    this.chargerCorres();
+    this.chargerEcheances();
   }
 
   initdetail(op:OpCaisse){
@@ -347,13 +374,10 @@ export class OperationCaisseComponent implements OnInit {
     this.caisses[0],this.opTypes[0], this.modes[0],this.exercices[0],this.users[0]);
   }
 
-
   initNewImput(){
-    this.totalPoint=0;
+    this.totalLoyer=0;
     this.addImput.show();
-    //this.chargerCorres();
-    this.tmpOpC=new OpCaisse(new Date().getUTCFullYear+'-000001',new Date(),'Divers',true,'',new Date(),
-    this.caisses[0],this.opTypes[0], this.modes[0],this.exercices[0],this.users[0]);
+    this.chargerCorres();
   }
 
   chargerOperations(){
@@ -361,6 +385,7 @@ export class OperationCaisseComponent implements OnInit {
     .subscribe(
       (data) => {
         this.listOp = data;
+        //this.dtOpeCa.next();
       },
       (erreur) => {
         console.log('Opération : '+erreur);
@@ -445,8 +470,9 @@ export class OperationCaisseComponent implements OnInit {
         console.log('prix immeuble: ',err);
       }
     );
+  }
 
-    /////Echances
+  chargerEcheances(){
     this.servOp.getAllEcheances()
     .subscribe(
       (data)=>{
@@ -458,35 +484,40 @@ export class OperationCaisseComponent implements OnInit {
     );
   }
 
-  chargerEcheances(con){
+  chargerEcheancesContrat(con){
     this.echeancetmp=this.echeances.filter(function(echeance){
       return (echeance.contrat.numContrat===con.numContrat && echeance.payeEcheance===false);
     });
+    console.log(this.echeancetmp.length);
   }
 
   chargerLocataire(){
-  this.servOp.getAllLocataires()
-    .subscribe(
-      (data)=>{
-        this.locataires=data;
-      },
-      (err)=>{
-        console.log('Locataire erreur: ', err);
-      }
-    );
-  }
+    this.servOp.getAllLocataires()
+      .subscribe(
+        (data)=>{
+          this.locataires=data;
+        },
+        (err)=>{
+          console.log('Locataire erreur: ', err);
+        }
+      );
+    }
 
   chargerCorres(){
-    /*this.servOp.getCorresImput()
-    .subscribe(
-      (data)=>{
-        this.correspondants=data;
-      },
-      (err)=>{
-        console.log('correspondant: ', err);
+      this.servOp.getAllCor()
+        .subscribe(
+          (data)=>{
+            this.co=data;
+          },
+          (err)=>{
+            console.log('Locataire erreur: ', err);
+          }
+        );
+        this.coi=this.co.filter(function(c){
+          return c.imputableCorres===true;
+        });
+
       }
-    );*/
-  }
 
   initLoyer(){
   this.chargerLocataire();
@@ -499,13 +530,58 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   ngOnInit(){
-  this.ChargerAccessoires();
-  this.initOpCaisse();
-  this.chargerOperations();
+    //console.log(this.datePipe.transform(new Date(),"dd/MM/yyyy"));
+
+    this.ChargerAccessoires();
+    this.initOpCaisse();
+    this.servOp.getAllOp()
+      .subscribe(
+        (data) => {
+          this.listOp = data;
+          this.dtOpeCa.next();
+        },
+      (erreur) => {
+        console.log('Opération : '+erreur);
+      }
+    );
   //this.chargerLigneDuneOpCaisse(this.listOp[0]);
   }
 
-  chargerPointNI( corres: Correspondant){
+  chargerPointNI( cor: Correspondant){
+    this.ImputLine=[];
+    this.totalImput=0;
+    this.servOp.getAllLPV()
+    .subscribe(
+      (data)=>{
+        this.lignePV=data;
+        this.lineOfPV=this.lignePV.filter(lpv=>
+          lpv.pointVente.correspondant.idCorrespondant===cor.idCorrespondant && lpv.pointVente.payerPoint===false);
+          console.log(this.lineOfPV);
+
+        this.lineOfPV.forEach(elt => {
+          var lpvp = this.ImputLine.find(limp=>
+            limp.article.codeArticle===elt.article.codeArticle
+          );
+          if(lpvp===undefined){
+            console.log('Rechercher:',elt);
+            this.ImputLine.push(new LignePointVente(elt.quantiteLignePointVente,elt.pulignePointVente,0,0,null,
+              elt.article));
+          }
+          else{
+            lpvp.quantiteLignePointVente+=elt.quantiteLignePointVente;
+            console.log('Ajout de quantité');
+          }
+        });
+        this.totalImput=this.ImputLine.reduce((tt,lin)=>tt+=lin.quantiteLignePointVente*lin.pulignePointVente,0);
+        console.log('fin du game: '+this.totalImput);
+        console.log('imputation: ',this.ImputLine);
+        const pp=this.ImputLine.map(pv=>pv.pointVente);
+        console.log('Points concernés', pp);
+      },
+      (err)=>{
+        console.log('lpv', err);
+      }
+    );
 
   }
 
@@ -516,6 +592,7 @@ export class OperationCaisseComponent implements OnInit {
     .subscribe(
       (data) => {
         this.Articles = data;
+        this.dtArt.next();
       },
       (erreur) => {
         console.log('Erreur : '+erreur);
@@ -538,8 +615,9 @@ export class OperationCaisseComponent implements OnInit {
       }
     });
 
-    if(trver===false) this.tempLigneOpCais.push(new LigneOpCaisse(0,artChoisi.prixVenteArticle,
-      '', this.tmpOpC,artChoisi));
+    if(trver===false) {
+      this.tempLigneOpCais.push(new LigneOpCaisse(0,artChoisi.prixVenteArticle, '', this.tmpOpC,artChoisi));
+    }
 
   }
 
@@ -549,64 +627,136 @@ export class OperationCaisseComponent implements OnInit {
         this.totalLoyer+=p;
       }
       else{
-        this.totalLoyer-=p;
+        if(this.totalLoyer>0)
+         this.totalLoyer-=p;
         }
-      console.log(this.totalLoyer);
-      //,' payé: ',this.echeancetmp[n].payeEcheance);
     }
   }
 
-  AjouteVente(){
+  valideVente():OpCaisse{
+    let op:OpCaisse = null;
     const newOC=new OpCaisse(this.addVentGroup.value['nVentNum'], new Date(this.addVentGroup.value['nVentDat']),
     this.addVentGroup.value['nVentCont'],true,this.addVentGroup.value['nVentObs'], new Date(),
-    this.caisses[this.addVentGroup.value['nVentCais']], this.opTypes[this.addVentGroup.value['nVentTyp']],
+    this.caisses[this.addVentGroup.value['nVentCais']], new TypeRecette('VD','Vente Directe'),
     this.modes[this.addVentGroup.value['nVentMod']], this.exercices[0],this.users[0]);
-    console.log('Exope', newOC.exercice);
-    console.log('usope', newOC.utilisateur);
     this.servOp.ajouteOp(newOC)
     .subscribe(
       (data)=>{
-        this.tempLigneOpCais.forEach(element => {
-          console.log('Avant envoi: ', element, newOC);
+        this.tempLigneOpCais.forEach((element, index) => {
           const newLine = new LigneOpCaisse(element.qteLigneOperCaisse,element.prixLigneOperCaisse,
-            element.commentaireLigneOperCaisse, newOC,element.article);
-          this.servOp.addOpLine(newOC, newLine)
-          .subscribe(
-            (data)=>{
-              this.supTempLigneOpCais(this.tempLigneOpCais.indexOf(newLine));
-            },
-            (erreur)=>{
-            console.log('Ligne échouée', erreur);
-            }
+            element.commentaireLigneOperCaisse, data,element.article);
+            this.servOp.addOpLine(data, newLine)
+            .subscribe(
+              (data2)=>{
+                this.supTempLigneOpCais(this.tempLigneOpCais.indexOf(newLine));
+                if(this.tempLigneOpCais.length == 0){
+                  this.servOp.getAllOpLines()
+                    .subscribe(
+                      (data3)=>{
+                        this.lignesOp=data3;
+                        this.imprimeFacture(data);
+                      },
+                      (err)=>{
+                        console.log('all lines: ',err);
+                      }
+                    );
+                }
 
-          );
-        });
-        console.log(newOC);
-      },
-      (err)=>{
-        console.log('Opération échouée',err);
-      }
-    );
+              },
+          (erreur)=>{
+          console.log('Ligne échouée', erreur);
+          }
+        );
+        this.rechargerLigneOpCaisse();
+      });
+      this.chargerOperations();
+      op= data;
+    },
+    (err)=>{
+      console.log('Opération échouée',err);
+    }
+  );
+  this.addVentGroup.reset();
+  this.totalVente=0;
 
-    this.chargerOperations();
-    this.addVentGroup.reset();
-    //this.tempLigneOpCais=[];
-    this.totalVente=0;
+    return op;
+
+  }
+
+  AjouteVente(){
+    let op:OpCaisse;
+    const newOC=new OpCaisse(this.addVentGroup.value['nVentNum'], new Date(this.addVentGroup.value['nVentDat']),
+    this.addVentGroup.value['nVentCont'],true,this.addVentGroup.value['nVentObs'], new Date(),
+    this.caisses[this.addVentGroup.value['nVentCais']], new TypeRecette('VD','Vente Directe'),
+    this.modes[this.addVentGroup.value['nVentMod']], this.exercices[0],this.users[0]);
+    this.servOp.ajouteOp(newOC)
+    .subscribe(
+      (data)=>{
+        this.tempLigneOpCais.forEach((element, index) => {
+          const newLine = new LigneOpCaisse(element.qteLigneOperCaisse,element.prixLigneOperCaisse,
+            element.commentaireLigneOperCaisse, data,element.article);
+            this.servOp.addOpLine(data, newLine)
+            .subscribe(
+              (data2)=>{
+                this.supTempLigneOpCais(this.tempLigneOpCais.indexOf(newLine));
+                if(this.tempLigneOpCais.length == 0){
+                  this.servOp.getAllOpLines()
+                    .subscribe(
+                      (data3)=>{
+                        this.lignesOp=data3;
+                        this.imprimeFacture(data);
+                      },
+                      (err)=>{
+                        console.log('all lines: ',err);
+                      }
+                    );
+                }
+              },
+          (erreur)=>{
+          console.log('Ligne échouée', erreur);
+          }
+        );
+        this.rechargerLigneOpCaisse();
+      });
+      this.chargerOperations();
+      console.log(this.tempLigneOpCais.length);
+
+      //if(this.tempLigneOpCais.length===0 ){
+        /*switch(this.addVentGroup.value['nVTimp']){
+          case "Ticket":{
+            console.log("imp ticket");
+            break;
+          }
+          case "Reçu":{*/
+            /*break;
+          }
+          default:{
+            break;
+          }
+        }*/
+      //}
+    },
+    (err)=>{
+      console.log('Opération échouée',err);
+      op=null;
+    }
+  );
+  this.addVentGroup.reset();
+  this.totalVente=0;
+    console.log(this.ind);
+
+      //this.afficheFacture(this.valideVente(),);
   }
 
   recupererTotalVente(n:number){
-    console.log("ligne: "+n);
     this.tligne=this.tempLigneOpCais[n].prixLigneOperCaisse*
     this.tempLigneOpCais[n].qteLigneOperCaisse;
     this.totaltmp=this.totalVente-this.tligne;
-    console.log("ligne:"+(this.tligne)+" tempon: "+(this.totaltmp)+" Total vente: "+(this.totalVente));
-
   }
 
   recalculerTotalvente(i:number){
     this.totalVente=this.totaltmp+this.tempLigneOpCais[i].prixLigneOperCaisse*
     this.tempLigneOpCais[i].qteLigneOperCaisse;
-    console.log(this.totalVente);
 
   }
 
@@ -616,42 +766,38 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   ajoutePaiement(){
-    if(this.addLoyerGroup.value['loyCai']!==null && this.addLoyerGroup.value['loyMod']!==null){
-      console.log('enregistrement de location en cours');
-
-      const newOC=new OpCaisse(this.addLoyerGroup.value['loyNum'], this.addLoyerGroup.value['loyDat'],
+    if(this.addLoyerGroup.value['loyCai']!==null && this.addLoyerGroup.value['loyMod']!==null && this.totalLoyer>0){
+    const newOC=new OpCaisse(this.addLoyerGroup.value['loyNum'], this.addLoyerGroup.value['loyDat'],
     this.addLoyerGroup.value['loyCon'],true,this.addLoyerGroup.value['loyObs'], new Date(),
     this.caisses[this.addLoyerGroup.value['loyCai']], new TypeRecette('L','Location'),
     this.modes[this.addLoyerGroup.value['loyMod']], this.exercices[0],this.users[0]);
     console.log(newOC);
-
-      this.servOp.ajouteOp(newOC)
-      .subscribe(
-        (data)=>{
-          this.echeancetmp.forEach(elt => {
-            if(elt.payeEcheance){
-              const newEche=new Echeance(elt.moisEcheance,elt.annee,elt.dateEcheance,true,elt.prix,
-                elt.contrat, newOC);
-                console.log('Echeance '+elt.idEcheance+' nouvelles valeurs ',newEche);
-              this.servOp.editEcheance(elt.idEcheance,new Echeance(elt.moisEcheance,elt.annee,elt.dateEcheance,true,elt.prix,
-                elt.contrat, newOC))
-                .subscribe(
-                  (data)=>{
-                    this.chargerEcheances(elt.contrat);
-                  },
-                  (err)=>{
-                    console.log('Echéance: ', err);
-                  }
-                );
-            }
-          });
-        },
-        (err)=>{
-          (err)=>{
-            console.log('Location: ', err);
+    this.servOp.ajouteOp(newOC)
+    .subscribe(
+      (data)=>{
+        this.echeanceAPayer.forEach(elt => {
+          if(elt.payeEcheance){
+            const newEche = new Echeance(elt.moisEcheance, elt.annee, elt.dateEcheance, true,elt.prix,elt.contrat,data);
+            this.servOp.addEcheance(newEche)
+            .subscribe(
+              (data)=>{
+                this.echeanceAPayer.splice(this.echeanceAPayer.indexOf(newEche) );
+              },
+              (erreur)=>{
+              console.log('Ligne échouée', erreur);
+              }
+            );
           }
-        }
-      );
+          else{
+            exit;
+          }
+        });
+        this.afficheFacture(data);
+      },
+      (err)=>{
+        console.log('Opération échouée',err);
+      }
+    );
 
     }
     else{
@@ -687,7 +833,7 @@ export class OperationCaisseComponent implements OnInit {
                 elt.contrat, newOC))
                 .subscribe(
                   (data)=>{
-                    this.chargerEcheances(elt.contrat);
+                    this.chargerEcheancesContrat(elt.contrat);
                   },
                   (err)=>{
                     console.log('Echéance: ', err);
@@ -710,42 +856,372 @@ export class OperationCaisseComponent implements OnInit {
     this.chargerOperations();
   }
 
-  AjouteImputation(){
-    const newOC=new OpCaisse(this.addVentGroup.value['nVentNum'], new Date(this.addVentGroup.value['nVentDat']),
-    this.addVentGroup.value['nVentCont'],true,this.addVentGroup.value['nVentObs'], new Date(),
-    this.caisses[this.addVentGroup.value['nVentCais']], this.opTypes[this.addVentGroup.value['nVentTyp']],
-    this.modes[this.addVentGroup.value['nVentMod']], this.exercices[0],this.users[0]);
-    console.log('Exope', newOC.exercice);
-    console.log('usope', newOC.utilisateur);
-    this.servOp.ajouteOp(newOC)
-    .subscribe(
-      (data)=>{
-        this.tempLigneOpCais.forEach(element => {
-          console.log('Avant envoi: ', element, newOC);
-          const newLine = new LigneOpCaisse(element.qteLigneOperCaisse,element.prixLigneOperCaisse,
-            element.commentaireLigneOperCaisse, newOC,element.article);
-          this.servOp.addOpLine(newOC, newLine)
-          .subscribe(
-            (data)=>{
-              this.supTempLigneOpCais(this.tempLigneOpCais.indexOf(newLine));
-            },
-            (erreur)=>{
-            console.log('Ligne échouée', erreur);
-            }
+  afficheFacture(opc: OpCaisse){
 
-          );
+        const fact=new jsPDF();
+    fact.text("Arrondissement : "+opc.caisse.arrondissement.nomArrondi,20,30);
+    fact.text("Caisse : "+opc.caisse.libeCaisse+"\tReçu N° : "+ opc.numOpCaisse+"\tDate : "+opc.dateOpCaisse.toLocaleString(),20,40);
+    let ligne=[];
+    this.total=0;
+
+
+    switch(opc.typeRecette.codeTypRec){
+      case 'VD':{
+        fact.text("Contribuable : "+opc.contribuable,20,50);
+        this.rechargerLigneOpCaisse();
+        var loptmp=this.lignesOp.filter(function(lop){
+          return lop.opCaisse.numOpCaisse===opc.numOpCaisse;
         });
-        console.log(newOC);
+        loptmp.forEach(element => {
+          let lig=[];
+          lig.push(element.article.codeArticle);
+          lig.push(element.article.libArticle);
+          lig.push(element.qteLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse*element.qteLigneOperCaisse);
+          lig.push(element.commentaireLigneOperCaisse);
+          this.total+=element.prixLigneOperCaisse*element.qteLigneOperCaisse;
+          ligne.push(lig);
+        });
+        autoTable(fact,{
+          head:[['Article','Désignation','Qte','PU','Montant','Obs']],
+          margin:{top:60},
+          body:ligne,
+        });
+        break;
+      }
+
+      case 'L':{
+        console.log("location", opc.numOpCaisse);
+
+        this.chargerEcheances();
+        var eche=this.echeances.filter(function(e){
+          return e.opCaisse.numOpCaisse===opc.numOpCaisse;
+        });
+
+        fact.text("Contrat : "+eche[0].contrat.numContrat+" Locataire : "+eche[0].contrat.locataire.identiteLocataire+
+        "Contribuable : "+opc.contribuable,20,50);
+        eche.forEach(element => {
+          let lig=[];
+          lig.push(element.moisEcheance);
+          lig.push(element.annee);
+          lig.push(element.prix);
+          ligne.push(lig);
+          this.total+=element.prix.valueOf();
+        });
+        autoTable(fact,{
+          head:[['Mois','Année','Montant']],
+          margin:{top:60},
+          body:ligne,
+        });
+        break;
+      }
+      case 'IC':{
+        console.log('Imputation');
+        break;
+      }
+    }
+
+    autoTable(fact,{
+      theme: 'grid',
+      margin: {top: 30, left : 130},
+      columnStyles:{
+        0:{ fillColor:[41,128,185], textColor: 255, fontStyle: 'bold'},
+      },
+      body: [['Total', this.total]
+    ],
+    });
+
+    autoTable(fact,{
+      theme: 'plain',
+
+      margin: {top: 30, left : 130},
+      columnStyles:{
+        0:{ textColor: 0, fontStyle: 'bold', fontSize: 12},
+      },
+      body: [["Le(La) caissier(ère)"+"\n\n\n"+this.serU.connectedUser.nomUtilisateur+" "+
+        this.serU.connectedUser.prenomUtilisateur]]
+
+    });
+
+    //fact.autoPrint();
+
+    this.pdfToShow=this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', {filename:'facture.pdf'}));
+    this.appercu.show();
+
+  }
+
+  imprimeFacture(opc:OpCaisse){
+
+    const fact=new jsPDF();
+    fact.text("Arrondissement : "+opc.caisse.arrondissement.nomArrondi,20,30);
+    fact.text("Caisse : "+opc.caisse.libeCaisse+"\tReçu N° : "+ opc.numOpCaisse+"\tDate : "+opc.dateOpCaisse.toLocaleString(),20,40);
+    let ligne=[];
+    let total=0;
+
+
+    switch(opc.typeRecette.codeTypRec){
+      case 'VD':{
+        fact.text("Contribuable : "+opc.contribuable,20,50);
+        this.rechargerLigneOpCaisse();
+        var loptmp=this.lignesOp.filter(function(lop){
+          return lop.opCaisse.numOpCaisse===opc.numOpCaisse;
+        });
+        loptmp.forEach(element => {
+          let lig=[];
+          lig.push(element.article.codeArticle);
+          lig.push(element.article.libArticle);
+          lig.push(element.qteLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse*element.qteLigneOperCaisse);
+          lig.push(element.commentaireLigneOperCaisse);
+          total+=element.prixLigneOperCaisse*element.qteLigneOperCaisse;
+          ligne.push(lig);
+        });
+        autoTable(fact,{
+          head:[['Article','Désignation','Qte','PU','Montant','Obs']],
+          margin:{top:60},
+          body:ligne,
+        });
+        break;
+      }
+
+      case 'L':{
+        console.log("location", opc.numOpCaisse);
+
+        this.chargerEcheances();
+        var eche=this.echeances.filter(function(e){
+          return e.opCaisse.numOpCaisse===opc.numOpCaisse;
+        });
+
+        fact.text("Contrat : "+eche[0].contrat.numContrat+" Locataire : "+eche[0].contrat.locataire.identiteLocataire+
+        "Contribuable : "+opc.contribuable,20,50);
+        eche.forEach(element => {
+          let lig=[];
+          lig.push(element.moisEcheance);
+          lig.push(element.annee);
+          lig.push(element.prix);
+          ligne.push(lig);
+          total+=lig[3];
+        });
+        autoTable(fact,{
+          head:[['Mois','Année','Montant']],
+          margin:{top:30},
+          body:ligne,
+        });
+        break;
+      }
+      case 'IC':{
+        console.log('Imputation');
+        break;
+      }
+    }
+
+    autoTable(fact,{
+      theme: 'grid',
+      margin: {top: 30, left : 130},
+      columnStyles:{
+        0:{ fillColor:[41,128,185], textColor: 255, fontStyle: 'bold'},
+      },
+      body: [['Total', total]
+    ],
+    });
+
+    autoTable(fact,{
+      theme: 'plain',
+
+      margin: {top: 30, left : 130},
+      columnStyles:{
+        0:{ textColor: 0, fontStyle: 'bold', fontSize: 12},
+      },
+      body: [["Le(La) caissier(ère)"+"\n\n\n"+this.serU.connectedUser.nomUtilisateur+" "+
+        this.serU.connectedUser.prenomUtilisateur]]
+
+    });
+
+
+    fact.autoPrint();
+    this.pdfToShow=this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', {filename:'facture.pdf'}));
+    //this.appercu.show();
+  }
+
+  imprimeTicket(opc:OpCaisse){
+
+    const fact=new jsPDF("p","mm",[80,900]);
+    autoTable(fact,{
+      theme:'plain',
+      margin:{left:-0.1, top:5, right:0, bottom:1},
+      body:[
+        ["Arrondissement : "+opc.caisse.arrondissement.nomArrondi],
+        ["Caisse : "+opc.caisse.libeCaisse],
+        ["Reçu N° : "+ opc.numOpCaisse+"\tDate : "+opc.dateOpCaisse.toLocaleString()],
+        ["Contribuable : "+opc.contribuable]
+      ],
+      bodyStyles:{
+        fontSize:8,
+        cellPadding:1,
+        halign:'center',
+      }
+    });
+    let ligne=[];
+    let total=0;
+
+    this.servOp.getAllOpLines()
+    .subscribe(
+      (data3)=>{
+        this.lignesOp=data3;
+        var loptmp=this.lignesOp.filter(function(lop){
+          return lop.opCaisse.numOpCaisse===opc.numOpCaisse;
+        });
+        loptmp.forEach(element => {
+          let lig=[];
+          lig.push(element.article.codeArticle);
+          lig.push(element.article.libArticle);
+          lig.push(element.qteLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse*element.qteLigneOperCaisse);
+          total+=element.prixLigneOperCaisse*element.qteLigneOperCaisse;
+          ligne.push(lig);
+        });
+
+        autoTable(fact,{
+          theme:'grid',
+          headStyles:{
+            fillColor:[41,128,185],
+            textColor:255,
+            fontStyle:'bold',
+          },
+          styles:{
+            fontSize:8,
+          },
+          head:[['Article','Désignation','Qte','PU','Montant']],
+          margin:{top:0, left:5, right:5},
+          body:ligne,
+        });
+
+        autoTable(fact,{
+          theme: 'grid',
+          margin:{top:0, left:30, right:5},
+          columnStyles:{
+            0:{ fillColor:[41,128,185], textColor: 255, fontStyle: 'bold', fontSize:8},
+          },
+          body: [
+            ['Total', total]
+          ],
+          bodyStyles:{
+            fontSize:8,
+            cellPadding:1,
+          },
+        });
+
+        autoTable(fact,{
+          theme: 'plain',
+          margin:{left:-0.1, top:5, right:0},
+          body: [
+            ["Le(La) caissier(ère)"+"\n\n\n"+this.serU.connectedUser.nomUtilisateur+" "+
+            this.serU.connectedUser.prenomUtilisateur]
+          ],
+          bodyStyles:{
+            fontSize:8,
+            cellPadding:1,
+            halign:'center',
+            fontStyle: 'bold'
+          },
+
+        });
+
+        this.pdfToShow=this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', {filename:'facture.pdf'}));
+        this.appercu.show();
+
       },
       (err)=>{
-        console.log('Opération échouée',err);
+        console.log('all lines: ',err);
       }
     );
 
-    this.chargerOperations();
-    this.addVentGroup.reset();
-    //this.tempLigneOpCais=[];
-    this.totalVente=0;
+/*
+    switch(opc.typeRecette.codeTypRec){
+      case 'VD':{
+        fact.text("Contribuable : "+opc.contribuable,20,50);
+        this.rechargerLigneOpCaisse();
+        var loptmp=this.lignesOp.filter(function(lop){
+          return lop.opCaisse.numOpCaisse===opc.numOpCaisse;
+        });
+        loptmp.forEach(element => {
+          let lig=[];
+          lig.push(element.article.codeArticle);
+          lig.push(element.article.libArticle);
+          lig.push(element.qteLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse*element.qteLigneOperCaisse);
+          lig.push(element.commentaireLigneOperCaisse);
+          total+=element.prixLigneOperCaisse*element.qteLigneOperCaisse;
+          ligne.push(lig);
+        });
+        autoTable(fact,{
+          head:[['Article','Désignation','Qte','PU','Montant','Obs']],
+          margin:{top:60},
+          body:ligne,
+        });
+        break;
+      }
+
+      case 'L':{
+        console.log("location", opc.numOpCaisse);
+
+        this.chargerEcheances();
+        var eche=this.echeances.filter(function(e){
+          return e.opCaisse.numOpCaisse===opc.numOpCaisse;
+        });
+
+        fact.text("Contrat : "+eche[0].contrat.numContrat+" Locataire : "+eche[0].contrat.locataire.identiteLocataire+
+        "Contribuable : "+opc.contribuable,20,50);
+        eche.forEach(element => {
+          let lig=[];
+          lig.push(element.moisEcheance);
+          lig.push(element.annee);
+          lig.push(element.prix);
+          ligne.push(lig);
+          total+=lig[3];
+        });
+        autoTable(fact,{
+          head:[['Mois','Année','Montant']],
+          margin:{top:30},
+          body:ligne,
+        });
+        break;
+      }
+      case 'IC':{
+        console.log('Imputation');
+        break;
+      }
+    }
+
+    autoTable(fact,{
+      theme: 'grid',
+      margin: {top: 30, left : 130},
+      columnStyles:{
+        0:{ fillColor:[41,128,185], textColor: 255, fontStyle: 'bold'},
+      },
+      body: [['Total', total]
+    ],
+    });
+
+    autoTable(fact,{
+      theme: 'plain',
+
+      margin: {top: 30, left : 130},
+      columnStyles:{
+        0:{ textColor: 0, fontStyle: 'bold', fontSize: 12},
+      },
+      body: [["Le(La) caissier(ère)"+"\n\n\n"+this.serU.connectedUser.nomUtilisateur+" "+
+        this.serU.connectedUser.prenomUtilisateur]]
+
+    });
+*/
+
+    //fact.autoPrint();
+
   }
 
 }
