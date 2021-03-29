@@ -10,6 +10,7 @@ import { data } from 'jquery';
 import { element } from 'protractor';
 
 
+
 import { Pays } from '../../../models/pays.model';
 import { Departement } from '../../../models/departement.model';
 import { Commune } from '../../../models/commune.model';
@@ -22,7 +23,20 @@ import { Article } from '../../../models/article.model';
 import { Famille } from '../../../models/famille.model';
 import { Service } from '../../../models/service.model';
 import { Uniter } from '../../../models/uniter.model';
+import { Affecter } from '../../../models/affecter.model';
 import { DataTableDirective } from 'angular-datatables';
+
+import { Gerer } from '../../../models/gerer.model';
+import { TypCorres } from '../../../models/typCorres.model';
+import { Correspondant } from '../../../models/Correspondant.model';
+import { Magasin } from '../../../models/magasin.model';
+import { Magasinier } from '../../../models/magasinier.model';
+import { Regisseur } from '../../../models/regisseur.model';
+import { Stocker } from '../../../models/stocker.model';
+import { ExerciceService } from '../../../services/administration/exercice.service';
+import { ArticleService } from '../../../services/definition/article.service';
+import { CorrespondantService } from '../../../services/definition/correspondant.service';
+import { UtilisateurService } from '../../../services/administration/utilisateur.service';
 
 @Component({
   selector: 'app-livraison',
@@ -45,7 +59,11 @@ export class LivraisonComponent implements OnInit {
   dtElement: DataTableDirective;
   
   opCaisse:OpCaisse[]=[];
-  caisses : Caisse[];
+  caisses : Affecter[]=[];
+  correspondant : Correspondant = new Correspondant('', false, new Magasinier('', '', ''),
+  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', '')));
+  utilisateur : Utilisateur [];
+  correspondant1 : Correspondant [];
 
   //FormControl
   debut = new FormControl((new Date()).toISOString().substring(0, 10));
@@ -53,9 +71,12 @@ export class LivraisonComponent implements OnInit {
   opCaisseLivre = new FormControl('');
 
   initialised:boolean = false;
+   magasinMagasinierConnected: Magasin = null;
+   articleLigneOpcaisseLivre:LigneOpCaisse = null;
   
 
-  constructor(private servOp:OperationCaisseService, private fbuilder:FormBuilder) {
+  constructor(private servOp:OperationCaisseService, private serviceUser:UtilisateurService, private serviceCorres:
+    CorrespondantService, private fbuilder:FormBuilder) {
     this.initDtOptions();
    }
 
@@ -85,10 +106,11 @@ export class LivraisonComponent implements OnInit {
   ngOnInit(): void {
 
   
+    //this.updateStockCorrespondant();
     this.servOp.getAllOpLines().subscribe(
       (data) => {
         data.forEach((element,index) => {
-          if(element.livre===false && element.article.livrableArticle===true && element.opCaisse.typeRecette.codeTypRec==="VD"
+          if(element.livre===false && element.article.livrableArticle===true && element.opCaisse.typeRecette.codeTypRec==="P"
           && element.opCaisse.caisse.codeCaisse===this.opCaisseLivre.value 
           && element.opCaisse.dateOpCaisse>=this.debut.value && element.opCaisse.dateOpCaisse<=this.fin.value)
           {
@@ -99,12 +121,6 @@ export class LivraisonComponent implements OnInit {
             
           }
           
-         
-            
-           // $('#actualise').dataTable().api().destroy();
-            
-           
-
         }); 
         this.dtTrigger1.next();
         
@@ -116,15 +132,63 @@ export class LivraisonComponent implements OnInit {
     
     
 
-    this.servOp.getAllCaisses()
+    this.servOp.getAllAffectations()
     .subscribe(
       (data)=>{
-        this.caisses=data;
+        //console.log("+-+-",this.serviceUser.connectedUser.idUtilisateur);
+        //console.log("+-+-",data); 
+        data.forEach(element =>{
+          if(element.utilisateur.idUtilisateur === this.serviceUser.connectedUser.idUtilisateur)
+          this.caisses.push(element);
+         // console.log("+-+-",this.caisses);
+          
+        });
+        //this.caisses=data;
       },
       (err)=>{
         console.log('Caisses:', err)
       }
     );
+
+    // Recupération du magasin de l'utilisateur connecté 
+
+    //var magasinMagasinierConnected: Magasin = null;
+    this.serviceCorres.getAllCorres().subscribe(
+      (data2) => {
+        data2.forEach(element2 => {
+          if (element2.utilisateur.idUtilisateur === this.serviceUser.connectedUser.idUtilisateur)
+          {
+              console.log("111", this.serviceUser.connectedUser.idUtilisateur);
+              this.serviceCorres.getAllGerer().subscribe(
+                (data3) => {
+                  data3.forEach(element3 => {
+                    if ( element3.magasinier.numMAgasinier === element2.magasinier.numMAgasinier)
+                    {
+                       console.log("222",element3.magasinier.numMAgasinier);
+                       this.magasinMagasinierConnected = element3.magasin;
+                       console.log("++++", this.magasinMagasinierConnected);
+                       exit;
+                      
+                    }
+
+                  });
+                },
+                (erreur) => {
+                  console.log('Erreur lors de relation gerer', erreur);
+                }
+              );
+              
+              exit;
+          }
+
+        });
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la relation utilisateur connecté', erreur);
+      }
+    );
+
   }
 
   chargerInformations(){
@@ -140,7 +204,7 @@ export class LivraisonComponent implements OnInit {
     this.servOp.getAllOpLines().subscribe(
       (data) => {
         data.forEach((element,index) => {
-          if(element.livre===false && element.article.livrableArticle===true && element.opCaisse.typeRecette.codeTypRec==="VD"
+          if(element.livre===false && element.article.livrableArticle===true && element.opCaisse.typeRecette.codeTypRec==="P"
           && element.opCaisse.caisse.codeCaisse===this.opCaisseLivre.value 
           && element.opCaisse.dateOpCaisse>=this.debut.value && element.opCaisse.dateOpCaisse<=this.fin.value)
           {
@@ -164,14 +228,17 @@ export class LivraisonComponent implements OnInit {
 
   verifierRecuperation()
   {
-   
+    
     this.chargerInformations();
    
   }
 
   validerLivraison(inde:number)
   {
+    let exist:boolean = false;
+    var concernedStocker:Stocker = null
       this.editligneOpCaisse =  this.ligneopcaisse[inde];
+      this.articleLigneOpcaisseLivre = this.editligneOpCaisse;
       this.editligneOpCaisse.livre=true;
       this.servOp.editOpLine(this.editligneOpCaisse.idLigneOperCaisse,this.editligneOpCaisse).subscribe(
         (data) => {
@@ -184,10 +251,64 @@ export class LivraisonComponent implements OnInit {
         }
 
       );
+
+      //essaie des vérification nécessaire
+      console.log("***",this.magasinMagasinierConnected);
+      console.log("+++",this.articleLigneOpcaisseLivre.article);
+    
+     this.serviceCorres.getAllStocker().subscribe(
+        (data) => {
+          data.forEach(element => {
+            
+            if ( element.magasin.codeMagasin == this.magasinMagasinierConnected.codeMagasin && element.article.codeArticle == this.articleLigneOpcaisseLivre.article.codeArticle)
+            {
+                concernedStocker = element;
+                concernedStocker.quantiterStocker = concernedStocker.quantiterStocker+(-this.articleLigneOpcaisseLivre.qteLigneOperCaisse);
+                this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
+                  (data9) => {
+                    console.log("QA",data9); 
+                    
+                  },
+                  (erreur) => {
+                    console.log('Erreur lors de la modification du Stocker pour réajustement du stock', erreur);
+                  }
+                );
+                exist = true;
+                exit;
+              
+            }
+
+            
+           
+          });
+
+          if(exist == false)
+          {
+          this.serviceCorres.addAStocker(new Stocker(-this.articleLigneOpcaisseLivre.qteLigneOperCaisse, 0, 0, 0, this.articleLigneOpcaisseLivre.article, this.magasinMagasinierConnected)).subscribe(
+          (data) => {
+            console.log("990",data); 
+            
+            
+          },
+          (erreur) => {
+            console.log('Erreur lors de lAjout du stocker', erreur);
+          }
+        );
+      }
+
+        },
+        (erreur) => {
+         console.log('Erreur lors de relation gerer', erreur);
+       }
+
+      );
+
       
-      
+
+
   }
 
-  
+
+ 
 
 }

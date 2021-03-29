@@ -4,7 +4,7 @@
   </div>
   <div class="card-body">
     <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
-      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="addComModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col align-self-start" style="padding: 0%;"><button [disabled]="carveauxMairie.codeMagasin.length == 0" class="btn btn-primary" data-toggle="modal" (click)="initAddPlacement()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
       <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
     </div>
 
@@ -27,9 +27,9 @@
                   <td>{{ place.regisseur.idRegisseur }} - {{ place.regisseur.magasinier.nomMagasinier }} {{ place.regisseur.magasinier.prenomMagasinier }}</td>
                   <td>
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
-                      <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
-                      <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
-                      <button class="btn btn-dark btn-sm" (click)="initPrintToPdfOfAnPlacem(i)"><span class="fa fa-file-o"></span></button>
+                      <button *ngIf="!place.validepl" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
+                      <button *ngIf="place.validepl" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerPlacement(i)"><span class="fa fa-undo"></span></button>
+                      <button class="btn btn-dark btn-sm" data-toggle="modal" (click)="initPrintToPdfOfAnPlacem(i)"><span class="fa fa-file-o"></span></button>
                       <!--Le bouton des options-->
                       <div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
@@ -103,7 +103,7 @@
                     <div class="form-group col-sm-4">
                       <label for="addCorrespondant">Correspondant</label>
                         <select id="addCorrespondant" name="addCorrespondant" class="form-control"
-                        formControlName="addCorrespondant">
+                        formControlName="addCorrespondant" (change)="getMagasinOfTheCorres1()">
                           <option *ngFor="let corres of correspondantsByArrondi; let i = index" [value]="i">
                             {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
                           </option>
@@ -207,7 +207,8 @@
                 </div><!--/.row-->
 
                 <div class="row">
-                  <div class="form-group col-sm-4">
+                  <!--
+                    <div class="form-group col-sm-4">
                     <label for="editArrondissement">Arrondissement</label>
                       <select id="editArrondissement" name="editArrondissement" class="form-control"
                       formControlName="editArrondissement" (click)="onEditArrondiSelected()">
@@ -215,8 +216,8 @@
                           {{ arron.codeArrondi }} - {{ arron.nomArrondi }}
                         </option>
                       </select>
-                  </div>
-                  <div class="form-group col-sm-4">
+                    </div>
+                    <div class="form-group col-sm-4">
                     <label for="editCorrespondant">Correspondant</label>
                       <select id="editCorrespondant" name="editCorrespondant" class="form-control"
                       formControlName="editCorrespondant">
@@ -224,8 +225,17 @@
                           {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
                         </option>
                       </select>
+                    </div>
+
+                  -->
+
+                  <div class="form-group col-sm-6">
+                    <label for="editCorrespondant">Correspondant</label>
+                      <input type="text" class="form-control" id="editCorrespondant" readonly
+                      [ngModel]="editPlacement.correspondant.idCorrespondant.concat(' - '.concat(editPlacement.correspondant.magasinier.nomMagasinier.concat(' '.concat(editPlacement.correspondant.magasinier.prenomMagasinier))))" placeholder="Non et Prénoms  du Correspondant"
+                      [ngModelOptions]="{standalone: true}">
                   </div>
-                  <div class="form-group col-sm-4">
+                  <div class="form-group col-sm-6">
                     <label for="editRegiConcerned">Régisseur</label>
                     <input type="text" class="form-control" id="editRegiConcerned" readonly
                     [ngModel]="concernedRegisse.idRegisseur.concat(' - '.concat(concernedRegisse.magasinier.nomMagasinier.concat(' '.concat(concernedRegisse.magasinier.prenomMagasinier))))" placeholder="Régisseur Concerné"
@@ -312,6 +322,29 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
+
+    <!--Modal Annuler-->
+
+    <div bsModal #annulerPlaModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-secondary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title text-center">Annuler un Placement</h4>
+            <button type="button" class="close" (click)="annulerPlaModal.hide()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+              <p>Vous êtes sur le point d'ANNULER le Placement <mark style="color: red;">{{ annulPlacement.numPlacement }}</mark></p>
+              <p>Le confirmez-vous ?</p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="annulerPlaModal.hide()">Abondonner</button>
+            <button type="button" class="btn btn-danger" (click)="onConfirmAnnulerPlacement()">Annuler</button>
+            </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
   <!--Modal de selection d'Article pour ajout de Commande-->
   <div bsModal #addArticle1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

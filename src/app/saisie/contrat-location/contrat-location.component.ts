@@ -17,6 +17,7 @@ import { TypeImmeuble } from '../../../models/typeImmeuble.model';
 import { LocataireService } from '../../../services/definition/locataire.service';
 import { ValeurLocativeService } from '../../../services/definition/valeur-locative.service';
 import { ContratLocationService } from '../../../services/saisie/contrat-location.service';
+import * as moment from  'moment';
 
 @Component({
   selector: 'app-contrat-location',
@@ -85,8 +86,8 @@ export class ContratLocationComponent implements OnInit {
 
     this.addContratFormsGroup = formBulder.group({
       addNumContrat:['', Validators.required],
-      addDateSignatureContrat:[new Date(), Validators.required],
-      addDateEffetContrat:[new Date(), Validators.required],
+      addDateSignatureContrat:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
+      addDateEffetContrat:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
       addAvanceContrat:[0, Validators.required],
       addCautionContrat:[0, Validators.required],
       addImmeuble:[0, Validators.required],
@@ -125,7 +126,7 @@ export class ContratLocationComponent implements OnInit {
       (data) => {
         this.typeValeursLocatives = data;
         if(this.typeValeursLocatives.length != 0){
-          this.getImmeublesByCodeType(this.typeValeursLocatives[1].codeTypIm);
+          this.getImmeublesByCodeType(this.typeValeursLocatives[0].codeTypIm);
           this.addContratFormsGroup.value['addIndeTypeIm']=0;
           this.addContratFormsGroup.value['editIndeTypeIm']=0;
         }

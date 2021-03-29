@@ -1,6 +1,5 @@
 import { Component, OnInit,ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { data } from 'jquery';
 import {ModalDirective} from 'ngx-bootstrap/modal';
 import { exit } from 'process';
 import { Subject } from 'rxjs';
@@ -10,7 +9,6 @@ import { Commande } from '../../../../models/commande.model';
 import { Correspondant } from '../../../../models/Correspondant.model';
 import { EtreAffecte } from '../../../../models/etreAffecte.model';
 import { Exercice } from '../../../../models/exercice.model';
-import { Famille } from '../../../../models/famille.model';
 import { Fournisseur } from '../../../../models/fournisseur.model';
 import { LigneCommande } from '../../../../models/ligneCommande.model';
 import { LignePlacement } from '../../../../models/lignePlacement.model';
@@ -20,7 +18,6 @@ import { PlageNumArticle } from '../../../../models/plageNumArticle.model';
 import { Regisseur } from '../../../../models/regisseur.model';
 import { Service } from '../../../../models/service.model';
 import { TypCorres } from '../../../../models/typCorres.model';
-import { Uniter } from '../../../../models/uniter.model';
 import { Utilisateur } from '../../../../models/utilisateur.model';
 import { ExerciceService } from '../../../../services/administration/exercice.service';
 import { UtilisateurService } from '../../../../services/administration/utilisateur.service';
@@ -36,6 +33,8 @@ import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
+import { Magasin } from '../../../../models/magasin.model';
+import { Stocker } from '../../../../models/stocker.model';
 
 @Component({
   selector: 'app-placement',
@@ -51,7 +50,7 @@ export class PlacementComponent  implements OnInit {
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
   @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
-
+  @ViewChild('annulerPlaModal') public annulerPlaModal: ModalDirective;
 
   dtOptions1: DataTables.Settings = {};
   dtOptions2: DataTables.Settings = {};
@@ -60,18 +59,6 @@ export class PlacementComponent  implements OnInit {
   dtTrigger2: Subject<any> = new Subject<any>();
   dtTrigger3: Subject<any> = new Subject<any>();
 
-  //++++++++++++++++
-  commandes:Commande[] = [];
-  addCommandeFormGroup:FormGroup;
-  editCommandeFormGroup:FormGroup;
-  editCommande:Commande = new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false));
-  suprCommande:Commande = new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false));
-
-  ligneCommandes:LigneCommande[] = [];
-
-  tempAddLigneCommandes:LigneCommande[] = [];
-  tempEditLigneCommandes:LigneCommande[] = [];
-  tempDeleteLigneCommandes:LigneCommande[] = [];//+++++++++++++++++++++++++++++
 
   exercices:Exercice[] = [];
   articles:Article[] = [];
@@ -84,8 +71,6 @@ export class PlacementComponent  implements OnInit {
   concernedRegisse:Regisseur = new Regisseur('',new Magasinier('','',''),
   new Utilisateur('','','','','',false, new Service('','')));
 
-  //++++++++++++++++++++++++++
-  fournisseurs:Fournisseur[] = [];//+++++++++++++++++++++++++++++
 
   placements:Placement[];
   addPlacementFormGroup:FormGroup;
@@ -94,6 +79,10 @@ export class PlacementComponent  implements OnInit {
   new Utilisateur('','','','','',false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
   new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
   suprPlacement:Placement = new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','','',false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
+  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
+
+  annulPlacement:Placement = new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
   new Utilisateur('','','','','',false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
   new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
 
@@ -110,6 +99,9 @@ export class PlacementComponent  implements OnInit {
   oldPlageNumArtLines:PlageNumArticle[] = [];
 
   pdfToShow = null;
+
+  carveauxMairie:Magasin = new Magasin('', '');
+  magOfSelectedCorres:Magasin = new Magasin('', '');
 
   constructor(private serviceCommande:CommandeService, public serviceExercice:ExerciceService,
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService,
@@ -187,26 +179,11 @@ export class PlacementComponent  implements OnInit {
      }
 
   initFormsGroup(){
-    //++++++++++++++++++++++
-    this.addCommandeFormGroup = this.formBulder.group({
-      addNumCommande:['', Validators.required],
-      addDateCommande:[new Date(), Validators.required],
-      addDescription:'',
-      addDelaiLivraison:[0, Validators.required],
-      addFrs:[0, Validators.required]
-    });
-
-    this.editCommandeFormGroup = this.formBulder.group({
-      editNumCommande:['', Validators.required],
-      editDateCommande:[new Date(), Validators.required],
-      editDescription:'',
-      editDelaiLivraison:[0, Validators.required],
-      editFrs:[0, Validators.required]
-    });//+++++++++++++++++++++++++++++++++++++++++++++
+    
 
     this.addPlacementFormGroup = this.formBulder.group({
       addNumPlacement:['', Validators.required],
-      addDatePlacement:[new Date(), Validators.required],
+      addDatePlacement:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
       addCorrespondant:[0, Validators.required],
       addArrondissement:[0, Validators.required]
     });
@@ -218,23 +195,9 @@ export class PlacementComponent  implements OnInit {
       editArrondissement:[0, Validators.required]
     });
 
-
   }
 
   ngOnInit(): void {
-
-    //++++++++++++++++++++++++++++++++++++++++
-    this.getAllFrs();
-    this.getAllLigneCommande();
-
-    this.serviceCommande.getAllCommande().subscribe(
-      (data) => {
-        this.commandes = data;
-      },
-      (erreur) => {
-        console.log('Erreur lors de la récupération de liste des commandes', erreur);
-      }
-    );//+++++++++++++++++++++++++++++++++++++
 
     this.getAllCorrespondant();
     this.getAllEtreAffecter();
@@ -243,6 +206,7 @@ export class PlacementComponent  implements OnInit {
     this.getAllArrondissement();
     this.getAllExercice();
     this.getAllUtilisateur();
+    this.getCarveauMairie();
     this.serviceRegisseur.getAllRegisseur().subscribe(
       (data) => {
         this.regisseurs = data;
@@ -298,17 +262,69 @@ export class PlacementComponent  implements OnInit {
 
   }
 
-  //++++++++++++++++++++++++++++
-  getAllFrs(){
-    this.serviceFrs.getAllFrs().subscribe(
+
+  //Récuperer le carveau Mairie
+  getCarveauMairie(){
+    this.serviceRegisseur.getAllRegisseur().subscribe(
       (data) => {
-        this.fournisseurs = data;
+        data.forEach(element => {
+          let finded:boolean = false;
+          this.serviceCorres.getAllGerer().subscribe(
+            (data2) => {
+              data2.forEach(element2 => {
+                if(element2.magasinier.numMAgasinier == element.magasinier.numMAgasinier){
+                  this.carveauxMairie = element2.magasin;
+                  finded = true;
+                  exit;
+                }
+              });
+            },
+            (erreur) => {
+              console.log('Erreur lors de la récupération de la liste des gérers', erreur);
+            }
+          );
+
+          if(finded){
+            exit;
+          }
+
+        });
       },
       (erreur) => {
-        console.log('Erreur lors de la récupératio de la liste des Fournisseurs', erreur);
+        console.log('Erreur lors de la récupération de la liste des régisseurs', erreur);
       }
     );
-  }//++++++++++++++++++++++++++++++++++++++++++++
+  }
+
+  //Récupératio du magasin du correspondant selectionné
+  getMagasinOfSelectedCorres(inde:number){
+    let selectedCorres:Correspondant = this.correspondantsByArrondi[inde];
+    this.serviceCorres.getAllGerer().subscribe(
+      (data) => {
+        let finded:boolean = false;
+        data.forEach(element => {
+          if(element.magasinier.numMAgasinier == selectedCorres.magasinier.numMAgasinier){
+            this.magOfSelectedCorres = element.magasin;
+            finded = true;
+            exit;
+          }
+        });
+
+        if(!finded) {
+          this.magOfSelectedCorres = null;
+          console.log('Erreur !! Aucun Magasin trouvé pour le correspondant selectionné');
+        }
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des gérés', erreur);
+      }
+    );
+  }
+
+  getMagasinOfTheCorres1(){
+    this.getMagasinOfSelectedCorres(this.addPlacementFormGroup.value['addCorrespondant']);
+  }
 
   getAllExercice(){
     this.serviceExercice.getAllExo().subscribe(
@@ -332,29 +348,7 @@ export class PlacementComponent  implements OnInit {
     );
   }
 
-  //+++++++++++++++++++++++++++++++++++
-  getAllCommande(){
-    this.serviceCommande.getAllCommande().subscribe(
-      (data) => {
-        this.commandes = data;
-      },
-      (erreur) => {
-        console.log('Erreur lors de la récupération de liste des commandes', erreur);
-      }
-    );
-  }//++++++++++++++++++++++++++++++++++++++
 
-  //+++++++++++++++++++++++++++++++++++++++++++++
-  getAllLigneCommande(){
-    this.serviceCommande.getAllLigneCommande().subscribe(
-      (data) => {
-        this.ligneCommandes = data;
-      },
-      (erreur) => {
-        console.log('Erreur lors de la récuparation de la liste des lignes de commande', erreur);
-      }
-    );
-  }//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   getAllPlacement(){
     this.servicePlacement.getAllPlacement().subscribe(
@@ -564,6 +558,10 @@ export class PlacementComponent  implements OnInit {
   }
 
 
+  initAddPlacement(){
+    this.addComModal.show();
+    this.getMagasinOfTheCorres1();
+  }
 
   initEditCommande(inde:number){
 
@@ -572,6 +570,21 @@ export class PlacementComponent  implements OnInit {
     this.oldPlacementLine = [];
     this.oldPlageNumArtLines = [];
     this.editPlacement = this.placements[inde];
+
+    this.serviceCorres.getAllGerer().subscribe(
+      (data) => {
+
+        data.forEach(element => {
+          if(element.magasinier.numMAgasinier == this.editPlacement.correspondant.magasinier.numMAgasinier){
+            this.magOfSelectedCorres = element.magasin;
+            exit;
+          }
+        });
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de liste des gérers', erreur);
+      }
+    );
 
     this.servicePlacement.getAllLignePlacement().subscribe(
       (data) => {
@@ -583,7 +596,6 @@ export class PlacementComponent  implements OnInit {
             this.lignePlacements.forEach(element => {
               if(element.placement.numPlacement == this.editPlacement.numPlacement){
                 this.tempEditLignePlacement.push(element);
-                this.oldPlacementLine.push(element);
               }
             });
 
@@ -592,13 +604,8 @@ export class PlacementComponent  implements OnInit {
             this.plageNumArticles.forEach(element => {
               if(element.lignePlacement!=null && element.lignePlacement.placement.numPlacement == this.editPlacement.numPlacement){
                 this.tempEditPlageNumArticle.push(element);
-                this.oldPlageNumArtLines.push(element);
               }
             });
-
-
-            console.log('Placement line',this.oldPlacementLine);
-            console.log('old plage line', this.oldPlageNumArtLines);
 
             this.editComModal.show();
 
@@ -615,6 +622,51 @@ export class PlacementComponent  implements OnInit {
 
 
 
+    this.servicePlacement.getAllLignePlacement().subscribe(
+      (data) => {
+        this.servicePlageNumArticle.getAllPlageNumArticle().subscribe(
+          (data2) => {
+            data.forEach(element => {
+              if(element.placement.numPlacement == this.editPlacement.numPlacement){
+
+                this.oldPlacementLine.push(element);
+              }
+            });
+
+
+
+            data2.forEach(element => {
+              if(element.lignePlacement!=null && element.lignePlacement.placement.numPlacement == this.editPlacement.numPlacement){
+
+                this.oldPlageNumArtLines.push(element);
+              }
+            });
+
+
+            console.log('Placement line',this.oldPlacementLine);
+            console.log('old plage line', this.oldPlageNumArtLines);
+
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération de la liste des plages', erreur);
+          }
+        );
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des lignes du placement', erreur);
+      }
+    );
+
+
+
+
+  }
+
+  initAnnulerPlacement(inde:number){
+
+    this.annulPlacement = this.placements[inde];
+    this.annulerPlaModal.show();
   }
 
   initDeleteCommande(inde:number){
@@ -647,6 +699,77 @@ export class PlacementComponent  implements OnInit {
           element.placement = data;
           this.servicePlacement.addALignePlacement(element).subscribe(
             (data2) => {
+
+              this.serviceCorres.getAllStocker().subscribe(
+                (data3) => {
+                  let exist1:boolean = false;
+                  let exist2:boolean = false;
+                  let concernedStockerCarvMairie:Stocker = null;
+                  let concernedStockerMagCorres:Stocker = null;
+                  data3.forEach(element3 => {
+                    if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == data2.article.codeArticle){
+                      concernedStockerCarvMairie = element3;
+                      exist1 = true;
+                      exit;
+                    }
+                    if(element3.magasin.codeMagasin == this.magOfSelectedCorres.codeMagasin && element3.article.codeArticle == data2.article.codeArticle){
+                      concernedStockerMagCorres = element3;
+                      exist2 = true;
+                      exit;
+                    }
+
+                  });
+
+                  if(exist1){
+                    concernedStockerCarvMairie.quantiterStocker-=data2.quantiteLignePlacement;
+                    this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                      (data4) => {
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de lEdition dUn stock', erreur);
+                      }
+                    );
+                  }
+                  else{
+                    this.serviceCorres.addAStocker(new Stocker(data2.quantiteLignePlacement*(-1), 0, 0, 0, data2.article, this.carveauxMairie)).subscribe(
+                      (data4) => {
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                      }
+                    );
+                  }
+
+                  if(exist2){
+                    concernedStockerMagCorres.quantiterStocker+=data2.quantiteLignePlacement;
+                    this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
+                      (data4) => {
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de lEdition dUn stock', erreur);
+                      }
+                    );
+                  }
+                  else{
+                    this.serviceCorres.addAStocker(new Stocker(data2.quantiteLignePlacement, 0, 0, 0, data2.article, this.magOfSelectedCorres)).subscribe(
+                      (data4) => {
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                      }
+                    );
+                  }
+
+                },
+                (erreur) => {
+                  console.log('Erreur lors de la récupération de la liste des stockés', erreur);
+                }
+              );
+
               this.tempAddPlageNumArticle.forEach(element2 => {
                 if(element2.lignePlacement.article.codeArticle == data2.article.codeArticle){
                   element2.lignePlacement = data2;
@@ -685,26 +808,99 @@ export class PlacementComponent  implements OnInit {
 
     const newPlacement = new Placement(this.editPlacementFormGroup.value['editNumPlacement'],
     this.editPlacementFormGroup.value['editDatePlacement'], this.concernedRegisse,
-    this.correspondantsByArrondi[this.editPlacementFormGroup.value['editCorrespondant']],
+    this.editPlacement.correspondant,
     this.serviceExercice.exoSelectionner);
 
-    console.log('le new ', newPlacement);
+    //console.log('le new ', newPlacement);
 
       this.servicePlacement.editAPlacement(this.editPlacement.numPlacement, newPlacement).subscribe(
         (data) => {
-          console.log('le new accepter', newPlacement);
+          //console.log('le new accepter', newPlacement);
           //Traitement des lignes de placement à ajouter et ou modifier
           this.tempEditLignePlacement.forEach(element => {
-            console.log('Traitement des lignes de placement à ajouter et ou modifier ');
+            //console.log('Traitement des lignes de placement à ajouter et ou modifier ');
             let added:boolean = true;
 
             this.oldPlacementLine.forEach(element2 => {
               if(element.idLignePlacement == element2.idLignePlacement){
                 added = false;
                 //ce n'est pas une nouvelle ligne donc je passe à son édition
-                console.log('ce n\'est pas une nouvelle ligne donc je passe à son édition', this.tempEditPlageNumArticle);
+                //console.log('ce n\'est pas une nouvelle ligne donc je passe à son édition', this.tempEditPlageNumArticle);
                 this.servicePlacement.editALignePlacement(element2.idLignePlacement.toString(), element).subscribe(
                   (data2) => {
+
+                    //Réajustement des stocks
+                    let exist1:boolean = false;
+                    let exist2:boolean = false;
+                    let concernedStockCorres:Stocker = null;
+                    let concernedStockCarveauMairie:Stocker = null;
+                    this.serviceCorres.getAllStocker().subscribe(
+                      (data3) => {
+
+                        data3.forEach(element3 => {
+                          if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == data2.article.codeArticle){
+                            concernedStockCarveauMairie = element3;
+                            exist1 = true;
+                            exit;
+                          }
+
+                          if(element3.magasin.codeMagasin == this.magOfSelectedCorres.codeMagasin && element3.article.codeArticle == data2.article.codeArticle){
+                            concernedStockCorres = element3;
+                            exist2 = true;
+                            exit;
+                          }
+                        });
+
+                        if(exist1){
+                          concernedStockCarveauMairie.quantiterStocker = concernedStockCarveauMairie.quantiterStocker + element2.quantiteLignePlacement - data2.quantiteLignePlacement;
+                          this.serviceCorres.editAStocker(concernedStockCarveauMairie.idStocker.toString(), concernedStockCarveauMairie).subscribe(
+                            (data4) => {
+
+                            },
+                            (erreur) => {
+                              console.log('Erreur lors de la modification dUn stock', erreur);
+                            }
+                          );
+                        }
+                        else{
+                          this.serviceCorres.addAStocker(new Stocker(data2.quantiteLignePlacement*(-1), 0, 0, 0, data2.article, this.carveauxMairie)).subscribe(
+                            (data4) => {
+
+                            },
+                            (erreur) => {
+                              console.log('Erreur lors de lAjout dUn stocker', erreur);
+                            }
+                          );
+                        }
+
+                        if(exist2){
+                          concernedStockCorres.quantiterStocker = concernedStockCorres.quantiterStocker - element2.quantiteLignePlacement + data2.quantiteLignePlacement;
+                          this.serviceCorres.editAStocker(concernedStockCorres.idStocker.toString(), concernedStockCorres).subscribe(
+                            (data4) => {
+
+                            },
+                            (erreur) => {
+                              console.log('Erreur lors de la modification dUn stock', erreur);
+                            }
+                          );
+                        }
+                        else{
+                          this.serviceCorres.addAStocker(new Stocker(data2.quantiteLignePlacement, 0, 0, 0, data2.article, this.magOfSelectedCorres)).subscribe(
+                            (data4) => {
+
+                            },
+                            (erreur) => {
+                              console.log('Erreur lors de lAjout dUn stocker', erreur);
+                            }
+                          );
+                        }
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de la récupération des stockés', erreur);
+                      }
+                    );
+
                     //la modification a marché don je passe à la suppression ou ajout ou modification de ces plages
                     this.tempEditPlageNumArticle.forEach(element3 => {
                       //filtrage important
@@ -727,7 +923,7 @@ export class PlacementComponent  implements OnInit {
                         });
 
                         if(exis == false){
-                          console.log('Baddd');
+                          //console.log('Baddd');
                           element3.lignePlacement = data2;
                           this.servicePlageNumArticle.addAPlageNumArticle(element3).subscribe(
                             (data3) => {
@@ -804,10 +1000,83 @@ export class PlacementComponent  implements OnInit {
 
             if(added==true){
               element.placement = data;
-              console.log('+', element);
+              //console.log('+', element);
               this.servicePlacement.addALignePlacement(element).subscribe(
                 (data9) => {
-                  console.log('liste', this.tempEditPlageNumArticle);
+                  //ajustement des stocks
+                  this.serviceCorres.getAllStocker().subscribe(
+                    (data3) => {
+                      let exist1:boolean = false;
+                      let exist2:boolean = false;
+                      let concernedStockerCarvMairie:Stocker = null;
+                      let concernedStockerMagCorres:Stocker = null;
+                      data3.forEach(element3 => {
+                        if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == data9.article.codeArticle){
+                          concernedStockerCarvMairie = element3;
+                          exist1 = true;
+                          exit;
+                        }
+                        if(element3.magasin.codeMagasin == this.magOfSelectedCorres.codeMagasin && element3.article.codeArticle == data9.article.codeArticle){
+                          concernedStockerMagCorres = element3;
+                          exist2 = true;
+                          exit;
+                        }
+
+                      });
+
+                      if(exist1){
+                        concernedStockerCarvMairie.quantiterStocker-=data9.quantiteLignePlacement;
+                        this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                          (data4) => {
+
+                          },
+                          (erreur) => {
+                            console.log('Erreur lors de lEdition dUn stock', erreur);
+                          }
+                        );
+                      }
+                      else{
+                        this.serviceCorres.addAStocker(new Stocker(data9.quantiteLignePlacement*(-1), 0, 0, 0, data9.article, this.carveauxMairie)).subscribe(
+                          (data4) => {
+
+                          },
+                          (erreur) => {
+                            console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                          }
+                        );
+                      }
+
+                      if(exist2){
+                        concernedStockerMagCorres.quantiterStocker+=data9.quantiteLignePlacement;
+                        this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
+                          (data4) => {
+
+                          },
+                          (erreur) => {
+                            console.log('Erreur lors de lEdition dUn stock', erreur);
+                          }
+                        );
+                      }
+                      else{
+                        this.serviceCorres.addAStocker(new Stocker(data9.quantiteLignePlacement, 0, 0, 0, data9.article, this.magOfSelectedCorres)).subscribe(
+                          (data4) => {
+
+                          },
+                          (erreur) => {
+                            console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                          }
+                        );
+                      }
+
+                    },
+                    (erreur) => {
+                      console.log('Erreur lors de la récupération de la liste des stockés', erreur);
+                    }
+                  );
+
+
+
+                  //console.log('liste', this.tempEditPlageNumArticle);
                   this.tempEditPlageNumArticle.forEach(element3 => {
                     if(element3.lignePlacement.article.codeArticle == data9.article.codeArticle){
                       console.log('++', element3);
@@ -835,8 +1104,8 @@ export class PlacementComponent  implements OnInit {
 
         //Traitement des lignes de placement à supprimer
 
-        console.log('Placement line',this.oldPlacementLine);
-        console.log('old plage line', this.oldPlageNumArtLines);
+        //console.log('Placement line',this.oldPlacementLine);
+        //console.log('old plage line', this.oldPlageNumArtLines);
 
         this.oldPlacementLine.forEach(element => {
           console.log('Traitement des lignes de placement à supprimer');
@@ -849,13 +1118,85 @@ export class PlacementComponent  implements OnInit {
           });
 
           if(mainte == false){
-            console.log('Traitement des lignes de placement à supprimer');
+            //console.log('Traitement des lignes de placement à supprimer');
             this.oldPlageNumArtLines.forEach(element3 => {
               if(element3.lignePlacement.idLignePlacement === element.idLignePlacement){
                 this.servicePlageNumArticle.deleteAPlageNumArticle(element3.idPlage.toString()).subscribe(
                   (data7) => {
                     this.servicePlacement.deleteALignePlacement(element.idLignePlacement.toString()).subscribe(
                       (data8) => {
+                        //ajustement de stock si succès
+                        console.log('Delete Res 2', data8);
+                        if(!data8)
+                        this.serviceCorres.getAllStocker().subscribe(
+                          (data3) => {
+                            let exist1:boolean = false;
+                            let exist2:boolean = false;
+                            let concernedStockerCarvMairie:Stocker = null;
+                            let concernedStockerMagCorres:Stocker = null;
+                            data3.forEach(element3 => {
+                              if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == element.article.codeArticle){
+                                concernedStockerCarvMairie = element3;
+                                exist1 = true;
+                                exit;
+                              }
+                              if(element3.magasin.codeMagasin == this.magOfSelectedCorres.codeMagasin && element3.article.codeArticle == element.article.codeArticle){
+                                concernedStockerMagCorres = element3;
+                                exist2 = true;
+                                exit;
+                              }
+
+                            });
+
+                            if(exist1){
+                              concernedStockerCarvMairie.quantiterStocker+=element.quantiteLignePlacement;
+                              this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                                (data4) => {
+                                  console.log('pase pase 1');
+                                },
+                                (erreur) => {
+                                  console.log('Erreur lors de lEdition dUn stock', erreur);
+                                }
+                              );
+                            }
+                            else{
+                              this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePlacement, 0, 0, 0, element.article, this.carveauxMairie)).subscribe(
+                                (data4) => {
+
+                                },
+                                (erreur) => {
+                                  console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                                }
+                              );
+                            }
+
+                            if(exist2){
+                              concernedStockerMagCorres.quantiterStocker-=element.quantiteLignePlacement;
+                              this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
+                                (data4) => {
+                                  console.log('pase pase 2');
+                                },
+                                (erreur) => {
+                                  console.log('Erreur lors de lEdition dUn stock', erreur);
+                                }
+                              );
+                            }
+                            else{
+                              this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePlacement*(-1), 0, 0, 0, element.article, this.magOfSelectedCorres)).subscribe(
+                                (data4) => {
+
+                                },
+                                (erreur) => {
+                                  console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                                }
+                              );
+                            }
+
+                          },
+                          (erreur) => {
+                            console.log('Erreur lors de la récupération de la liste des stockés', erreur);
+                          }
+                        );
 
                       },
                       (erreur) => {
@@ -875,6 +1216,77 @@ export class PlacementComponent  implements OnInit {
 
             this.servicePlacement.deleteALignePlacement(element.idLignePlacement.toString()).subscribe(
               (data8) => {
+                //console.log('Delete Res ', data8);
+                if(!data8)
+                this.serviceCorres.getAllStocker().subscribe(
+                  (data3) => {
+                    let exist1:boolean = false;
+                    let exist2:boolean = false;
+                    let concernedStockerCarvMairie:Stocker = null;
+                    let concernedStockerMagCorres:Stocker = null;
+                    data3.forEach(element3 => {
+                      if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == element.article.codeArticle){
+                        concernedStockerCarvMairie = element3;
+                        exist1 = true;
+                        exit;
+                      }
+                      if(element3.magasin.codeMagasin == this.magOfSelectedCorres.codeMagasin && element3.article.codeArticle == element.article.codeArticle){
+                        concernedStockerMagCorres = element3;
+                        exist2 = true;
+                        exit;
+                      }
+
+                    });
+
+                    if(exist1){
+                      concernedStockerCarvMairie.quantiterStocker+=element.quantiteLignePlacement;
+                      this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                        (data4) => {
+                          console.log('pase pase 3');
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de lEdition dUn stock', erreur);
+                        }
+                      );
+                    }
+                    else{
+                      this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePlacement, 0, 0, 0, element.article, this.carveauxMairie)).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                        }
+                      );
+                    }
+
+                    if(exist2){
+                      concernedStockerMagCorres.quantiterStocker-=element.quantiteLignePlacement;
+                      this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
+                        (data4) => {
+                          console.log('pase pase 4');
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de lEdition dUn stock', erreur);
+                        }
+                      );
+                    }
+                    else{
+                      this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePlacement*(-1), 0, 0, 0, element.article, this.magOfSelectedCorres)).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                        }
+                      );
+                    }
+
+                  },
+                  (erreur) => {
+                    console.log('Erreur lors de la récupération de la liste des stockés', erreur);
+                  }
+                );
 
               },
               (erreur) => {
@@ -897,6 +1309,131 @@ export class PlacementComponent  implements OnInit {
         }
       );
 
+
+  }
+
+  onConfirmAnnulerPlacement(){
+
+    this.serviceCorres.getAllGerer().subscribe(
+      (data) => {
+        let finded:boolean = false;
+        let concernedMagOfCorresp:Magasin = null;
+        data.forEach(element => {
+          if(element.magasinier.numMAgasinier == this.annulPlacement.correspondant.magasinier.numMAgasinier){
+            concernedMagOfCorresp = element.magasin;
+            finded = true;
+            exit;
+          }
+        });
+
+        if(finded){
+          const pla = new Placement(this.annulPlacement.numPlacement, this.annulPlacement.datePlacement,
+            this.annulPlacement.regisseur, this.annulPlacement.correspondant, this.annulPlacement.exercice);
+          pla.validepl = false;
+          //console.log('Element modifier',pla);
+          this.servicePlacement.editAPlacement(this.annulPlacement.numPlacement, pla).subscribe(
+            (data2) => {
+
+              this.servicePlacement.getAllLignePlacement().subscribe(
+                (data3) => {
+
+                  data3.forEach(element3 => {
+                    if(element3.placement.numPlacement == data2.numPlacement){
+                      this.serviceCorres.getAllStocker().subscribe(
+                        (data4) => {
+                          let exist1:boolean = false;
+                          let exist2:boolean = false;
+                          let concernedStockerCarvMairie:Stocker = null;
+                          let concernedStockerMagCorres:Stocker = null;
+                          data4.forEach(element4 => {
+                            if(element4.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
+                              concernedStockerCarvMairie = element4;
+                              exist1 = true;
+                              exit;
+                            }
+                            if(element4.magasin.codeMagasin == concernedMagOfCorresp.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
+                              concernedStockerMagCorres = element4;
+                              exist2 = true;
+                              exit;
+                            }
+
+                          });
+
+                          if(exist1){
+                            concernedStockerCarvMairie.quantiterStocker+=element3.quantiteLignePlacement;
+                            this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lEdition dUn stock', erreur);
+                              }
+                            );
+                          }
+                          else{
+                            this.serviceCorres.addAStocker(new Stocker(element3.quantiteLignePlacement, 0, 0, 0, element3.article, this.carveauxMairie)).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                              }
+                            );
+                          }
+
+                          if(exist2){
+                            concernedStockerMagCorres.quantiterStocker-=element3.quantiteLignePlacement;
+                            this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lEdition dUn stock', erreur);
+                              }
+                            );
+                          }
+                          else{
+                            this.serviceCorres.addAStocker(new Stocker(element3.quantiteLignePlacement*(-1), 0, 0, 0, element3.article, this.magOfSelectedCorres)).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                              }
+                            );
+                          }
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de la récupération des stockers', erreur);
+                        }
+                      );
+                    }
+                  });
+                },
+                (erreur) => {
+                  console.log('Erreur lors de la récupération de la liste des lignes de placement', erreur);
+                }
+              );
+
+              this.annulerPlaModal.hide();
+              this.getAllPlacement();
+
+            },
+            (erreur) => {
+              console.log('Erreur lors de la modification du placement', erreur);
+            }
+          );
+        }
+        else{
+          console.log('Erreur !! Aucun magasin trouvé pour le correspondant concerné');
+        }
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des gérers', erreur);
+      }
+    );
 
   }
 
@@ -1002,95 +1539,103 @@ export class PlacementComponent  implements OnInit {
       }
     });
 
+    this.servicePlacement.getAllLignePlacement().subscribe(
+      (dataa) => {
+        dataa.forEach(element => {
+          if(element.placement.numPlacement == placem.numPlacement){
+            let lig = [];
+            lig.push(element.article.codeArticle);
+            lig.push(element.article.libArticle);
+            lig.push(element.quantiteLignePlacement);
+            lig.push(element.pulignePlacement);
+            lig.push(element.pulignePlacement*element.quantiteLignePlacement);
+            let pla:String = '';
+            let first:boolean = true;
+            plages.forEach((element2, index) => {
 
-    this.lignePlacements.forEach(element => {
-      if(element.placement.numPlacement == placem.numPlacement){
-        let lig = [];
-        lig.push(element.article.codeArticle);
-        lig.push(element.article.libArticle);
-        lig.push(element.quantiteLignePlacement);
-        lig.push(element.pulignePlacement);
-        lig.push(element.pulignePlacement*element.quantiteLignePlacement);
-        let pla:String = '';
-        let first:boolean = true;
-        plages.forEach((element2, index) => {
+              if(element2.lignePlacement.idLignePlacement == element.idLignePlacement){
 
-          if(element2.lignePlacement.idLignePlacement == element.idLignePlacement){
+                if(first == true){
+                  pla = pla.concat(''+element2.numDebPlage+' à '+element2.numFinPlage+' ');
+                  first = false;
+                }
+                else{
+                  pla = pla.concat('| '+element2.numDebPlage+' à '+element2.numFinPlage+' ');
 
-            if(first == true){
-              pla = pla.concat(''+element2.numDebPlage+' à '+element2.numFinPlage+' ');
-              first = false;
-            }
-            else{
-              pla = pla.concat('| '+element2.numDebPlage+' à '+element2.numFinPlage+' ');
+                }
+              }
+            });
+            lig.push(pla);
+            lignes.push(lig);
+            totalTTC += element.pulignePlacement*element.quantiteLignePlacement;
 
-            }
           }
+
         });
-        lig.push(pla);
-        lignes.push(lig);
-        totalTTC += element.pulignePlacement*element.quantiteLignePlacement;
+        moment.locale('fr');
+        doc.setDrawColor(0);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
+        //doc.setFont("Times New Roman");
+        doc.setFontSize(22);
+        doc.text('BON PLACEMENT', 75, 30);
+        doc.setFontSize(14);
+        doc.text('Référence : '+placem.numPlacement, 15, 45);
+        doc.text('Date : '+moment(placem.datePlacement).format('DD/MM/YYYY') , 152, 45);
+        doc.text('Correspondant : '+placem.correspondant.magasinier.nomMagasinier+' '+placem.correspondant.magasinier.prenomMagasinier, 15, 55);
+        doc.text('Contact : (+229) '+placem.correspondant.magasinier.telMagasinier, 15, 65);
+        doc.text('Régisseur : '+placem.regisseur.magasinier.nomMagasinier+' '+placem.regisseur.magasinier.prenomMagasinier, 15, 75);
+        autoTable(doc, {
+          theme: 'grid',
+          head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant', 'Plage(s)']],
+          headStyles:{
+            fillColor: [41, 128, 185],
+            textColor: 255,
+            fontStyle: 'bold' ,
+         },
+          margin: { top: 100 },
+          body: lignes
+          ,
+        });
 
+        autoTable(doc, {
+          theme: 'grid',
+          margin: { top: 100, left:130 },
+          columnStyles: {
+            0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+          },
+          body: [
+            ['Total TTC', totalTTC]
+          ]
+          ,
+        });
+
+        autoTable(doc, {
+          theme: 'plain',
+          margin: { top: 100 },
+          columnStyles: {
+            0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+            2: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+          },
+          body: [
+            ['Le Correspondant\n\n\n\n\n'+placem.correspondant.magasinier.nomMagasinier+' '+placem.correspondant.magasinier.prenomMagasinier,
+            '\t\t\t\t\t\t\t\t\t\t\t\t',
+             'Le Régisseur\n\n\n\n\n'+this.serviceUtilisateur.connectedUser.nomUtilisateur+' '+this.serviceUtilisateur.connectedUser.prenomUtilisateur]
+          ]
+          ,
+        });
+
+
+        //doc.autoPrint();
+        this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonAppro.pdf'}));
+        this.viewPdfModal.show();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des lignes de placement', erreur);
       }
-
-    });
-    moment.locale('fr');
-    doc.setDrawColor(0);
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
-    //doc.setFont("Times New Roman");
-    doc.setFontSize(22);
-    doc.text('BON PLACEMENT', 75, 30);
-    doc.setFontSize(14);
-    doc.text('Référence : '+placem.numPlacement, 15, 45);
-    doc.text('Date : '+moment(placem.datePlacement).format('DD/MM/YYYY') , 152, 45);
-    doc.text('Correspondant : '+placem.correspondant.magasinier.nomMagasinier+' '+placem.correspondant.magasinier.prenomMagasinier, 15, 55);
-    doc.text('Contact : (+229) '+placem.correspondant.magasinier.telMagasinier, 15, 65);
-    doc.text('Régisseur : '+placem.regisseur.magasinier.nomMagasinier+' '+placem.regisseur.magasinier.prenomMagasinier, 15, 75);
-    autoTable(doc, {
-      theme: 'grid',
-      head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant', 'Plage(s)']],
-      headStyles:{
-        fillColor: [41, 128, 185],
-        textColor: 255,
-        fontStyle: 'bold' ,
-     },
-      margin: { top: 100 },
-      body: lignes
-      ,
-    });
-
-    autoTable(doc, {
-      theme: 'grid',
-      margin: { top: 100, left:130 },
-      columnStyles: {
-        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
-      },
-      body: [
-        ['Total TTC', totalTTC]
-      ]
-      ,
-    });
-
-    autoTable(doc, {
-      theme: 'plain',
-      margin: { top: 100 },
-      columnStyles: {
-        0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
-        2: { textColor: 0, fontStyle: 'bold', halign: 'center' },
-      },
-      body: [
-        ['Le Correspondant\n\n\n\n\n'+placem.correspondant.magasinier.nomMagasinier+' '+placem.correspondant.magasinier.prenomMagasinier,
-        '\t\t\t\t\t\t\t\t\t\t\t\t',
-         'Le Régisseur\n\n\n\n\n'+this.serviceUtilisateur.connectedUser.nomUtilisateur+' '+this.serviceUtilisateur.connectedUser.prenomUtilisateur]
-      ]
-      ,
-    });
+    );
 
 
-    //doc.autoPrint();
-    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonAppro.pdf'}));
-    this.viewPdfModal.show();
   }
 
 }

@@ -4,7 +4,7 @@ import { Fournisseur } from './fournisseur.model';
 export class Commande{
 
   constructor(public numCommande:String, public dateCommande:Date, public description:String,
-    public delaiLivraison:number, public frs:Fournisseur, public exercice:Exercice){
+    public delaiLivraison:number, public frs:Fournisseur, public exercice:Exercice, public dateRemise?:Date){
 
   }
 

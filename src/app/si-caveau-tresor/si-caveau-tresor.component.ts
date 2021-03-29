@@ -6,6 +6,7 @@ import {ModalDirective} from 'ngx-bootstrap/modal';
 import { exit } from 'process';
 import { Subject } from 'rxjs';
 import { Article } from '../../models/article.model';
+import { Exercice } from '../../models/exercice.model';
 import { Famille } from '../../models/famille.model';
 import { Fournisseur } from '../../models/fournisseur.model';
 import { Gerer } from '../../models/gerer.model';
@@ -58,6 +59,13 @@ export class SiCaveauTresorComponent implements OnInit {
   carveauxTresor:Magasin = new Magasin('', '');
   addStockFormsGroup: FormGroup;
   editStockFormsGroup: FormGroup;
+
+  editSI:Article = new Article('', '', true, true, true, true, 0, '', new Famille('',''),
+  new Uniter('',''));
+  suprSI:Article = new Article('', '', true, true, true, true, 0, '', new Famille('',''),
+  new Uniter('',''));
+  infosSI:Article = new Article('', '', true, true, true, true, 0, '', new Famille('',''),
+  new Uniter('',''), 0, 0, new Date(), new Exercice('','', new Date(), new Date(), '', false));
 
   constructor(private formBulder: FormBuilder, private frsService:FournisseurService,
     private serviceCorres:CorrespondantService, private serviceRegisseur:RegisseurService,
@@ -203,20 +211,24 @@ export class SiCaveauTresorComponent implements OnInit {
     this.serviceArticle.getAllArticle().subscribe(
       (data) => {
         this.articles = data;
-        console.log('All Article ', this.articles);
         this.articlesByExoNotNull = [];
         $('#dataTable1').dataTable().api().destroy();
         this.dtTrigger1.next();
         this.articlesByExoNull = [];
-        data.forEach(element => {
+        data.forEach((element, index) => {
           if(element.exo === null){
             this.articlesByExoNull.push(element);
           }
           else{
             this.articlesByExoNotNull.push(element);
-            $('#dataTable1').dataTable().api().destroy();
-            this.dtTrigger1.next();
+
           }
+
+          if(index == data.length-1){
+            /*$('#dataTable1').dataTable().api().destroy();
+            this.dtTrigger1.next();*/
+          }
+
         });
       },
       (erreur) => {
@@ -281,17 +293,17 @@ export class SiCaveauTresorComponent implements OnInit {
   }//+++++++++++++++++++++++++++++++++++++++++
 
   initInfosSI(inde:number){
-    this.infosFrs = this.fournisseurs[inde];
+    this.infosSI = this.articlesByExoNotNull[inde];
     this.infoModal.show();
   }
 
   initEditSI(inde:number){
-    this.editFrs = this.fournisseurs[inde];
+    this.editSI = this.articlesByExoNotNull[inde];
     this.warningModal.show();
   }
 
   initDeleteSI(inde:number){
-    this.suprFrs = this.fournisseurs[inde];
+    this.suprSI = this.articlesByExoNotNull[inde];
     this.dangerModal.show();
   }
 
@@ -393,11 +405,103 @@ export class SiCaveauTresorComponent implements OnInit {
   }
 
   onSubmitEditSIFormsGroup(){
+    this.serviceCorres.getAllStocker().subscribe(
+      (data) => {
+        let exist:boolean = false;
+        var concernedStocker:Stocker = null
+        data.forEach(element => {
+          if(element.magasin.codeMagasin == this.carveauxTresor.codeMagasin
+             && element.article.codeArticle == this.editSI.codeArticle){
+               concernedStocker = element;
+               exist = true;
+               exit;
+             }
+        });
+
+        if(exist){
+
+          concernedStocker.quantiterStocker = concernedStocker.quantiterStocker - this.editSI.qteStIniTres + this.editStockFormsGroup.value['editStockInit'];
+          this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
+            (data2) => {
+              this.editSI.qteStIniTres = this.editStockFormsGroup.value['editStockInit'];
+              this.editSI.puStIniTres = this.editStockFormsGroup.value['editPrixUnit'];
+              this.editSI.datStInitArtTres = this.editStockFormsGroup.value['editDate'];
+              this.serviceArticle.editArticle(this.editSI.codeArticle, this.editSI).subscribe(
+                (data3) => {
+                  this.getAllStockInitial();
+                  this.warningModal.hide();
+                },
+                (erreur) => {
+                  console.log('Erreur lors de lEdition du SI de lArticle', erreur);
+                }
+              );
+
+            },
+            (erreur) => {
+              console.log('Erreur lors de lAjustement du Stock', erreur);
+            }
+          );
+        }
+        else {
+          console.log('Erreur, Il nY a pas de relation stocké pour ce que vous voulez Editer');
+        }
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des stockés', erreur);
+      }
+    );
 
   }
 
   onConfirmDeleteSI(){
+    this.serviceCorres.getAllStocker().subscribe(
+      (data) => {
+        let exist:boolean = false;
+        var concernedStocker:Stocker = null
+        data.forEach(element => {
+          if(element.magasin.codeMagasin == this.carveauxTresor.codeMagasin
+             && element.article.codeArticle == this.suprSI.codeArticle){
+               concernedStocker = element;
+               exist = true;
+               exit;
+             }
+        });
 
+        if(exist){
+
+          concernedStocker.quantiterStocker = concernedStocker.quantiterStocker - this.suprSI.qteStIniTres;
+          this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
+            (data2) => {
+              this.suprSI.qteStIniTres = 0;
+              this.suprSI.puStIniTres = 0;
+              this.suprSI.datStInitArtTres = null;
+              this.suprSI.exo = null;
+              this.serviceArticle.editArticle(this.suprSI.codeArticle, this.suprSI).subscribe(
+                (data3) => {
+                  this.getAllStockInitial();
+                  this.dangerModal.hide();
+                },
+                (erreur) => {
+                  console.log('Erreur lors de la suppression du SI de lArticle', erreur);
+                }
+              );
+
+            },
+            (erreur) => {
+              console.log('Erreur lors de lAjustement du Stock', erreur);
+            }
+          );
+        }
+        else {
+          console.log('Erreur, Il nY a pas de relation stocké pour ce que vous voulez supprimer');
+        }
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des stockés', erreur);
+      }
+    );
   }
 
   //+++++++++++++++++++++++++++++++++++

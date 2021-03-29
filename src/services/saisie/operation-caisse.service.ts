@@ -16,6 +16,8 @@ import { PrixImmeuble } from '../../models/prixImmeuble.model';
 import { Correspondant } from '../../models/Correspondant.model';
 import { PointVente } from '../../models/pointVente.model';
 import { LignePointVente } from '../../models/lignePointVente.model';
+import { Gerer } from '../../models/gerer.model';
+import { Affecter } from '../../models/affecter.model';
 
 @Injectable({
   providedIn: 'root'
@@ -52,8 +54,12 @@ export class OperationCaisseService {
     return this.lien.get<ModePaiement[]>(this.host+'facturation/modePaiement/list');
   }
 
+  getAllAffectations(){
+    return this.lien.get<Affecter[]>(this.host+'facturation/affecter/list');
+  }
+
   getAllCaisses(){
-    return this.lien.get<Caisse[]>(this.host+'facturation/caisse/list');
+    return this.lien.get<Affecter[]>(this.host+'facturation/caisse/list');
   }
 
   getAllTypes(){
@@ -97,6 +103,10 @@ export class OperationCaisseService {
     return this.lien.put<Echeance>(this.host+'location/echeance/byCodEch/'+id,e);
   }
 
+  delEcheance(id : number){
+    return this.lien.delete<Echeance>(this.host+'location/echeance/byCodEch/'+id);
+  }
+
   getAllImmeubles(){
     return this.lien.get<Immeuble[]>(this.host+'location/immeuble/list');
   }
@@ -113,12 +123,8 @@ export class OperationCaisseService {
     return this.lien.put<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byCodLigOpCai/'+(id),corps);
   }
 
-  deleteOpLine(id:number){
+  deleteAOpLine(id:number){
     return this.lien.delete<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byCodLigOpCai/'+(id));
-  }
-
-  getOpLinesByOpCais(n: String, opcais:OpCaisse){
-    return this.lien.get<LigneOpCaisse[]>(this.host+'facturation/ligneOpCaisse/byNumOp/'+n,);
   }
 
   getContratByLocataire(id:number){

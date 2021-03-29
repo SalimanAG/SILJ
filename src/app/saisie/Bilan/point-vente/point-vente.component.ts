@@ -205,6 +205,7 @@ export class PointVenteComponent implements OnInit {
   getAllPointVente(){
     this.servicePointVente.getAllPointVente().subscribe(
       (data) => {
+        //data.forEach
         this.pointVente = data;
         //$('#PvDataTable').dataTable().api().destroy();
         //this.dtTrigger1.next();
@@ -253,7 +254,11 @@ export class PointVenteComponent implements OnInit {
   getAllCorrespondant(){
     this.serviceCorres.getAllCorres().subscribe(
       (data) => {
-        this.correspondant = data;
+        data.forEach(element =>{
+          if(element.typecorres.libTypeCorres === "Agent Collecteur")
+          this.correspondant.push(element);
+        });
+        
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des correspondants', erreur);

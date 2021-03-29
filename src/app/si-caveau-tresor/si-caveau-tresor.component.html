@@ -28,9 +28,9 @@
           <td>{{ si.puStIniTres }}</td>
           <td>{{ si.exo.codeExercice }} - {{ si.exo.libExercice }}</td>
           <td>
-            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditFrs(i)"><span class="fa fa-edit"></span></button>
-            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteFrs(i)"><span class="fa fa-trash"></span></button>
-            <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosFrs(i)"><span class="fa fa-eye"></span></button>
+            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditSI(i)"><span class="fa fa-edit"></span></button>
+            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteSI(i)"><span class="fa fa-trash"></span></button>
+            <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosSI(i)"><span class="fa fa-eye"></span></button>
             <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
             <!--Le bouton des options-->
             <div class="btn-group" dropdown>
@@ -135,7 +135,7 @@
               <form [formGroup]="editStockFormsGroup" (ngSubmit)="onSubmitEditSIFormsGroup()">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 class="modal-title">Modifier Un Fournisseur</h4>
+                    <h4 class="modal-title">Modifier Un Stock Initial</h4>
                     <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -144,17 +144,16 @@
                     <!-- Formulaire pour enrégistrer un SI-->
                     <div class="card">
                       <div class="card-header">
-                        <strong>Nouveau Stock Initial au Carveaux Trésor</strong>
+                        <strong>Modifier un Stock Initial au Carveaux Trésor</strong>
 
                       </div>
                       <div class="card-body">
                         <div class="row">
                           <div class="form-group col-sm-12">
                             <label for="editArticle">Article</label>
-                              <select id="editArticle" name="editArticle" class="form-control"
-                              formControlName="editArticle">
-                                <option *ngFor="let article of articlesByExoNull; let i = index" [value]="i">
-                                  {{ article.codeArticle }} - {{ article.libArticle }}</option>
+                              <select id="editArticle" name="editArticle" class="form-control">
+                                <option>
+                                  {{ editSI.codeArticle }} - {{ editSI.libArticle }}</option>
 
                               </select>
 
@@ -165,7 +164,7 @@
                           <div class="form-group col-sm-12">
                             <label for="editPrixUnit">Prix Unitaire</label>
                             <input type="number" class="form-control" id="editPrixUnit" placeholder="Prix Unitaire"
-                            formControlName="editPrixUnit">
+                            formControlName="editPrixUnit" [ngModel]="editSI.puStIniTres">
                           </div>
 
                         </div><!--/.row-->
@@ -173,14 +172,14 @@
                           <div class="form-group col-sm-12">
                             <label for="editStockInit">Stock Initial (Quantité)</label>
                             <input type="number" class="form-control" id="editStockInit"
-                            formControlName="editStockInit">
+                            formControlName="editStockInit" [ngModel]="editSI.qteStIniTres">
                           </div>
                         </div><!--/.row-->
                         <div class="row">
                           <div class="form-group col-sm-12">
                             <label for="editDate">Date</label>
                             <input type="date" class="form-control" id="editDate"
-                            formControlName="editDate">
+                            formControlName="editDate" [ngModel]="editSI.datStInitArtTres">
                           </div>
                         </div><!--/.row-->
                       </div>
@@ -202,18 +201,18 @@
             <div class="modal-dialog modal-danger" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h4 class="modal-title">Suprimmer Un Fournisseur</h4>
+                  <h4 class="modal-title">Suprimmer Un Stock Initial</h4>
                   <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
-                  <p>Vous êtes sur le point de supprimer le Fournisseur <mark style="color: red;">{{ suprFrs.codeFrs }}</mark></p>
+                  <p>Vous êtes sur le point de supprimer le Stock Initial de l'Article <mark style="color: red;">{{ suprSI.codeArticle }} - {{ suprSI.libArticle }}</mark> au Carveaux Trésor</p>
                   <p>Le confirmez-vous ?</p>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
-                  <button type="button" class="btn btn-danger" (click)="onConfirmDeleteFrs()">Supprimer</button>
+                  <button type="button" class="btn btn-danger" (click)="onConfirmDeleteSI()">Supprimer</button>
                 </div>
               </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -224,7 +223,7 @@
             <div class="modal-dialog modal-info modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h4 class="modal-title">Détail Sur Fournisseur</h4>
+                  <h4 class="modal-title">Détail Sur le SI d'un article au Carveaux Trésor</h4>
                   <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -234,32 +233,32 @@
 
                     <tbody>
                       <tr>
-                        <th>Code</th>
-                        <td>{{ infosFrs.codeFrs }}</td>
+                        <th>Code Article</th>
+                        <td>{{ infosSI.codeArticle }}</td>
                       </tr>
                       <tr>
-                        <th>Identité</th>
-                        <td>{{ infosFrs.identiteFrs }}</td>
+                        <th>Désignation</th>
+                        <td>{{ infosSI.libArticle }}</td>
                       </tr>
                       <tr>
-                        <th>Téléphone</th>
-                        <td>{{ infosFrs.telFRS }}</td>
+                        <th>Prix du SI</th>
+                        <td>{{ infosSI.puStIniTres }}</td>
                       </tr>
                       <tr>
-                        <th>Raison Sociale</th>
-                        <td>{{ infosFrs.raisonSociale }}</td>
+                        <th>Stock Initial</th>
+                        <td>{{ infosSI.qteStIniTres }}</td>
                       </tr>
                       <tr>
-                        <th>Adresse</th>
-                        <td>{{ infosFrs.adresseFrs }}</td>
+                        <th>Date</th>
+                        <td>{{ infosSI.datStInitArtTres }}</td>
                       </tr>
                       <tr>
-                        <th>Numéro IFU</th>
-                        <td>{{ infosFrs.numIfuFrs }}</td>
+                        <th>Exercice Concerné</th>
+                        <td>{{ infosSI.exo.codeExercice }} - {{ infosSI.exo.libExercice }}</td>
                       </tr>
                       <tr>
-                        <th>Autres Infos</th>
-                        <td>{{ infosFrs.description }}</td>
+                        <th>Etat de l'Exercice</th>
+                        <td>{{ infosSI.exo.etatExo }}</td>
                       </tr>
                     </tbody>
                   </table>

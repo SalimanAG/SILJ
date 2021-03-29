@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { data }from 'jquery';
 import { InstituReverse } from '../../../models/institution.model';
 import { InstitutionReversementService } from '../../../services/definition/institution-reversement.service';
+import { Pourcentage } from '../../../models/pourcentage.model';
+import { Article } from '../../../models/article.model';
+import { ArticleService } from '../../../services/definition/article.service';
 
 @Component({
   selector: 'app-institution-reversement',
@@ -14,39 +17,93 @@ import { InstitutionReversementService } from '../../../services/definition/inst
 })
 export class InstitutionReversementComponent implements OnInit {
 
-  ins:String;
-  perce:Number;
-  addInstRevForm:FormGroup;
-  modInstRevForm:FormGroup;
-  addPourcenForm:FormGroup;
-  modPourcenForm:FormGroup;
-  tabInst:DataTables.Settings={};
-  dtrigInst:Subject<any>=new Subject<any>();
-  tabPeRev:DataTables.Settings={};
-  dtrigPeRev:Subject<any>=new Subject<any>();
 
-  addInstGroup:FormGroup;
+  ////////////////////// institution
+  institutions: InstituReverse[];
+  inst=new InstituReverse('','');
+  addInstGrou:FormGroup;
+  modInstGrou:FormGroup;
+  tabInst:DataTables.Settings={};
+  dtrigInst:Subject<InstituReverse>=new Subject<InstituReverse>();
 
   @ViewChild('addInst') public addInst:ModalDirective;
   @ViewChild('modInst') public modInst:ModalDirective;
-  @ViewChild('addPerce') public addPerce:ModalDirective;
-  @ViewChild('modPerce') public modPerce:ModalDirective;
   @ViewChild('delInst') public delInst:ModalDirective;
-  @ViewChild('delPerce') public delPerce:ModalDirective;
 
-  acodInst:String;
-  addInstGrou:FormGroup;
-  modInstGrou:FormGroup;
+  //////////////////////Pourcentage de reversement
+  per=new Pourcentage(null,new InstituReverse('',''),new Article('','',null,null,null,null,null,null,null,null));
+  pourcentages : Pourcentage[];
+  indInst: number;
+  indArt: number;
   addPercGrou:FormGroup;
   modPercGrou:FormGroup;
+  tabPeRev:DataTables.Settings={};
+  dtrigPeRev:Subject<Pourcentage>=new Subject<Pourcentage>();
 
-  institutions: InstituReverse[];
-  add: InstituReverse = new InstituReverse('', '');
-  editeArti: InstituReverse = new InstituReverse('', '');
+  @ViewChild('addPerce') public addPerce:ModalDirective;
+  @ViewChild('modPerce') public modPerce:ModalDirective;
+  @ViewChild('delPerce') public delPerce:ModalDirective;
+  articles : Article[];
 
-  constructor(private instServ: InstitutionReversementService, private fbuilder:FormBuilder, private router:Router) {
+  constructor(private instServ: InstitutionReversementService, private fbuilder:FormBuilder, private router:Router,
+    private serArt : ArticleService) {
     this.initialiseTableau();
-    this.initialiseFenetre();
+  }
+
+  ngOnInit(): void {
+    this.serArt.getAllArticle().subscribe(
+      data=>{
+        this.articles=data;
+      }
+    );
+    this.instServ.getAllInstitutes()
+    .subscribe(
+      (data) => {
+        this.institutions = data;
+        this.dtrigInst.next();
+        console.log(this.institutions);
+
+      },
+      (erreur) => {
+        console.log('erreur chargement institution : '+erreur);
+      }
+    );
+
+    this.instServ.getAllPeRev()
+    .subscribe(
+      (data) => {
+        this.pourcentages = data;
+        console.log(this.pourcentages);
+
+        this.dtrigPeRev.next();
+      },
+      (erreur) => {
+        console.log('erreur chargement institution : '+erreur);
+      }
+    );
+
+    this.addInstGrou=this.fbuilder.group({
+      addInstCod:['',Validators.requiredTrue],
+      addInstLib:['',Validators.requiredTrue]
+    });
+
+    this.modInstGrou=this.fbuilder.group({
+      modInstCod:['hhhh',Validators.requiredTrue],
+      modInstLib: ['hhhh',Validators.requiredTrue],
+    });
+
+    this.addPercGrou=this.fbuilder.group({
+      addPerInst:['',Validators.requiredTrue],
+      addPerArt:['',Validators.requiredTrue],
+      addVal:['',Validators.required]
+    });
+
+    this.modPercGrou=this.fbuilder.group({
+      modPerInst:['',Validators.requiredTrue],
+      modPerArt:['',Validators.requiredTrue],
+      modVal:['',Validators.required]
+    });
+
   }
 
   initialiseTableau(){
@@ -72,32 +129,6 @@ export class InstitutionReversementComponent implements OnInit {
     };
 
     this.tabPeRev = {
-      columnDefs:[
-        {
-          "targets":[1],
-          visible:false
-        }],
-
-
-      /*"columnDefs": [
-        {
-            "targets": [ 1 ],
-            "visible": false
-            //data:Number,
-            //orderable:true
-        },
-        {
-            "targets": [ 4 ],
-            "visible": false
-            //data:Number,
-            //orderable:true
-        },
-        {
-            "targets": [ 2 ],
-            "visible": false
-        }
-    ],*/
-
 
       responsive:true,
       pagingType: 'full_numbers',
@@ -122,96 +153,160 @@ export class InstitutionReversementComponent implements OnInit {
 
   }
 
-  initialiseFenetre(){
-    this.addInstGrou=this.fbuilder.group({
-      addInstCod:['',Validators.required],
-      addInstLib:['',Validators.required]
-    });
+  ////////////////////////Institution de reversement
 
-    this.modInstGrou=this.fbuilder.group({
-      modInstCod:['',Validators.required],
-      modInstLib:['',Validators.required]
-    });
-
-    this.addPercGrou=this.fbuilder.group({
-      addPInsCod:['',Validators.required],
-      addPInsLib:[''],
-      addPArtCod:['',Validators.required],
-      addPArtLib:[''],
-      addVal:['',Validators.required]
-    });
-
-    this.modPercGrou=this.fbuilder.group({
-      modPInsCod:['',Validators.required],
-      modPInsLib:[''],
-      modPArtCod:['',Validators.required],
-      modPArtLib:[''],
-      modVal:['',Validators.required]
-    });
-  }
-
-  ngOnInit(): void {
-    console.log('AAA');
-    this.instServ.ListerInstitution()
-    .subscribe(
-      (data) => {
-        this.institutions = data;
+  ChargerInstitution(){
+    this.instServ.getAllInstitutes().subscribe(
+      data=>{
+        this.institutions=data;
+        $('#dtInst').dataTable().api().destroy();
         this.dtrigInst.next();
       },
-      (erreur) => {
-        console.log('uuuuuuu : '+erreur);
+      err=>{
+        console.log('Chargement echouée',err);
       }
     );
   }
 
-  ajouteInst(){
-    console.log('Créer ('+this.addInstGrou.value['addInstCod']+';'+
-    this.addInstGrou.value['addInstLib']+')');
+  initAddInst(){
+    this.addInstGrou.reset();
+    this.addInst.show();
   }
 
-  initmodInst(ainst:String){
-    this.modInst.show();
-    this.acodInst=ainst
-    console.log(this.acodInst);
+  ajouteInst(){
+    this.instServ.addAnInstitute(new InstituReverse(this.addInstGrou.value['addInstCod'],
+    this.addInstGrou.value['addInstLib'])).subscribe(
+      data=>{
+        console.log('ajout avec succès');
+        this.ChargerInstitution();
+      },
+      err=>{
+        console.log('Nouvelle institution échouée ',err);
+      }
+    );
+    this.addInstGrou.reset();
+    this.addInst.hide();
+  }
+
+  initDelInst(i : number){
+    this.inst = this.institutions[i];
+    console.log(i, this.inst);
+
+    this.delInst.show();
   }
 
   modifieInst(){
-    console.log('Modification de '+this.acodInst+' en ('+this.modInstGrou.value['modInstCod']+';'+
-    this.modInstGrou.value['modInstLib']+')');
-    this.acodInst=null;
+    this.instServ.editAnInstitute(this.inst.codeInstRevers,new InstituReverse(this.modInstGrou.value['modInstCod'],
+    this.modInstGrou.value['modInstLib'])).subscribe(
+      data=>{
+        console.log('ajout avec succès');
+        this.ChargerInstitution();
+      },
+      err=>{
+        console.log('Nouvelle institution échouée ',err);
+      }
+    );
     this.modInst.hide();
   }
 
-  initdelInst(ainst:String){
-    this.acodInst=ainst
-    this.delInst.show();
-  }
+  initModInst(i : number){
+    this.inst=this.institutions[i];
+    this.modInst.show();
+}
 
   deleteInst(){
-    console.log('Suppression de '+this.addInst);
+    this.instServ.deleteAnInstitute(this.inst.codeInstRevers).subscribe(
+      data=>{
+        this.ChargerInstitution();
+      },
+      err=>{
+        console.log('Suppression échouée ', err);
+      }
+    );
+    this.delInst.hide();
   }
 
 /////////Pourcentage de reversement
-  ajoutePerce(){
-    console.log('Créer ('+this.addInstGrou.value['addInstCod']+'; '+this.addInstGroup.value['addInstLib']);
+
+  initAddPeRev(){
+    this.addPercGrou.reset();
+    this.addPerce.show();
   }
 
-  initmodPerce(ainst:String){
-    this.acodInst=ainst
+  ajoutePerce(){
+    console.log(this.addPercGrou.value['addVal'],
+    this.institutions[this.addPercGrou.value['addPerInst']],this.articles[this.addPercGrou.value['addPerArt']]);
+
+    if(this.addPercGrou.value['addPerInst']>=0 && this.addPercGrou.value['addPerArt']>=0 &&
+    this.addPercGrou.value['addVal']>0){
+      this.per=new Pourcentage(this.addPercGrou.value['addVal'],
+      this.institutions[this.addPercGrou.value['addPerInst']],this.articles[this.addPercGrou.value['addPerArt']]);
+      this.instServ.addAPeRev(this.per).subscribe(
+        data=>{
+          console.log('Ajout réussi');
+          this.chargerPourcentatges();
+        },
+        err=>{
+          console.log('Ajout échoué: ', err);
+
+        }
+      );
+    }
+  }
+
+  chargerPourcentatges(){
+    this.instServ.getAllPeRev().subscribe(
+      data=>{
+        this.pourcentages=data;
+        $('#dtPeRev').dataTable().api().destroy();
+        this.dtrigPeRev.next();
+      }
+    );
+  }
+
+  initModPerev(i : number){
+    this.per=this.pourcentages[i];
+    console.log(i,this.per,'\nId:'+this.per.idPourcenRevers);
+
+    this.indInst=this.institutions.indexOf(this.per.instituReverse,2);
+    this.indArt=this.articles.indexOf(this.per.article,0);
+    console.log('Indix de l\'innstitution: '+this.indInst,'\nIndix de l\'article: '+this.indArt);
+
+    this.modPerce.show();
   }
 
   modifiePerce(){
-    console.log('Modification de '+this.acodInst+' en ('+this.modInstGrou.value['modInstCod']+';'+
-    this.modInstGrou.value['modInstLib']+')');
-    this.acodInst=null;
+    const np=new Pourcentage(this.modPercGrou.value['modVal'],
+    this.institutions[this.modPercGrou.value['modPerInst']],this.articles[this.modPercGrou.value['modPerArt']]);
+    console.log('ancien pourcentage', this.per,'\nNouveau: ',np);
+
+    this.instServ.editAPeRev(this.per.idPourcenRevers.toString(),np).subscribe(
+      data=>{
+        console.log('Modification effectuée avec succès');
+        this.chargerPourcentatges();
+      },
+      err=>{
+        console.log('La modification a échoué. ', err);
+
+      }
+    );
   }
 
-  initdelPerce(ainst:String){
-    this.acodInst=ainst
-    this.delInst.show();
+  initDelPeRev(i:number){
+    this.per=this.pourcentages[i];
+    this.delPerce.show();
   }
 
   deletePerce(){
-    console.log('Suppression de '+this.addInst);
+    this.instServ.deleteAPeRev(this.per.idPourcenRevers.toString()).subscribe(
+      data=>{
+        console.log('Suppresion réussie');
+        this.chargerPourcentatges();
+      },
+      err=>{
+        console.log('Suppression échouée ', err);
+
+      }
+    );
   }
 }

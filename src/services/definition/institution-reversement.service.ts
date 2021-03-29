@@ -3,6 +3,7 @@ import { from } from 'rxjs';
 import { InstituReverse } from '../../models/institution.model';
 import { HttpClient } from '@angular/common/http';
 import { listenToTriggers } from 'ngx-bootstrap/utils';
+import { Pourcentage } from '../../models/pourcentage.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,27 +11,48 @@ import { listenToTriggers } from 'ngx-bootstrap/utils';
 export class InstitutionReversementService {
 
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1/commune/ins/';
+  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
 
   constructor(private lien:HttpClient) {
-    console.log(lien);
-
+    }
+    getAllInstitutes(){
+      return this.lien.get<InstituReverse[]>(this.host+'/commune/ins/list');
     }
 
-    ListerInstitution(){
-
-      return this.lien.get<InstituReverse[]>(this.host+'list');
+    getInstitueById(code:String){
+      return this.lien.get<InstituReverse[]>(this.host+'/commune/ins/byCodIns'+code);
     }
 
-    ajouteInstitution(instit:InstituReverse){
-      return this.lien.get<InstituReverse[]>(this.host+'list');
+    addAnInstitute(corps:InstituReverse){
+      return this.lien.post<InstituReverse>(this.host+'/commune/ins/list', corps);
     }
 
-    ModifieInstitution(){
-      return this.lien.get<InstituReverse[]>('127.0.0.1:8080/perfora-gpc/v1/commune/ins/list');
+    editAnInstitute(code:String, corps:InstituReverse){
+      return this.lien.put<InstituReverse>(this.host+'/commune/ins/byCodIns/'+code, corps);
     }
 
-    suppInstitution(){
-      return this.lien.get<InstituReverse[]>('127.0.0.1:8080/perfora-gpc/v1/commune/ins/list');
+    deleteAnInstitute(code:String){
+      return this.lien.delete<Boolean>(this.host+'/commune/ins/byCodIns/'+code);
+    }
+
+    getAllPeRev(){
+      return this.lien.get<Pourcentage[]>(this.host+'/commune/pourcentage/list');
+    }
+
+    getPeRevById(code:String){
+      return this.lien.get<Pourcentage[]>(this.host+'/commune/pourcentage/byId'+code);
+    }
+
+    addAPeRev(corps:Pourcentage){
+      return this.lien.post<Pourcentage>(this.host+'/commune/pourcentage/list', corps);
+    }
+
+    editAPeRev(code:String, corps:Pourcentage){
+      console.log(code, corps);
+      return this.lien.put<Pourcentage>(this.host+'/commune/pourcentage/byId/'+code, corps);
+    }
+
+    deleteAPeRev(code:String){
+      return this.lien.delete<Boolean>(this.host+'/commune/pourcentage/byId/'+code);
     }
 }

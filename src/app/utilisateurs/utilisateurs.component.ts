@@ -99,6 +99,7 @@ export class UtilisateursComponent implements OnInit {
     this.serviceCommune.getAllService().subscribe(
       (data) => {
         this.services = data;
+        
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des services : ', erreur);

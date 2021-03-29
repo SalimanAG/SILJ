@@ -4,7 +4,7 @@
   </div>
   <div class="card-body">
     <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
-      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddReception()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddReception()" [disabled]="carveauxTresor.codeMagasin.length==0">Nouveau <span class="fa fa-plus-circle"></span></button></div>
       <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
     </div>
 
@@ -29,9 +29,9 @@
                   <td>{{ getCommandeOfAReception(recept.numReception).frs.codeFrs }} - {{ getCommandeOfAReception(recept.numReception).frs.identiteFrs }}</td>
                   <td>
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditReception(i)"><span class="fa fa-edit"></span></button>
-                      <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReception(i)"><span class="fa fa-trash"></span></button>
-                      <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
-                      <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfAnReception(i)" ><span class="fa fa-file-o"></span></button>
+                      <button *ngIf="!recept.valideRecep"class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReception(i)"><span class="fa fa-trash"></span></button>
+                      <button *ngIf="recept.valideRecep" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerPlacement(i)"><span class="fa fa-undo"></span></button>
+                      <button class="btn btn-dark btn-sm" data-toggle="modal" (click)="initPrintPdfOfAnReception(i)" ><span class="fa fa-file-o"></span></button>
                       <!--Le bouton des options-->
                       <div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
@@ -301,6 +301,29 @@
           <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="deleteComModal.hide()">Annuler</button>
           <button type="button" class="btn btn-danger" (click)="onConfirmDeleteReception()">Supprimer</button>
+          </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+   <!--Modal Annuler-->
+
+  <div bsModal #annulerReceptModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-secondary" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h4 class="modal-title text-center">Annuler un Placement</h4>
+          <button type="button" class="close" (click)="annulerReceptModal.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <div class="modal-body">
+            <p>Vous êtes sur le point d'ANNULER le Placement <mark style="color: red;">{{ annulReception.numReception }}</mark></p>
+            <p>Le confirmez-vous ?</p>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="annulerReceptModal.hide()">Annuler</button>
+          <button type="button" class="btn btn-danger" (click)="onConfirmAnnulerReception()">Annuler</button>
           </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

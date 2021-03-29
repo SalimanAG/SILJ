@@ -100,12 +100,13 @@
                       </div>
                       <div class="form-group col-sm-6">
                         <label for="addReg">Régisseur</label>
-                        <select id="addReg" name="addReg" class="form-control"
+                        <select id="addReg" name="addReg" readonly="true" class="form-control"
                         formControlName="addReg">
-                          <option *ngFor="let reg of regisseur; let i = index" [value]="i">
+                          <option *ngFor="let reg of regisseur; let i = index" [value]="i" readonly="true" >
                             {{ reg.idRegisseur }} - {{ reg.magasinier.nomMagasinier }} {{ reg.magasinier.prenomMagasinier }}
                           </option>
                         </select>
+
                       </div>
                     </div><!--/.row-->
                     <div class="row">

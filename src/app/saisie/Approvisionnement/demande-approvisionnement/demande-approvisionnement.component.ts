@@ -138,7 +138,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
 
     this.addDemandeApproFormGroup = this.formBulder.group({
       addNumDA:['', Validators.required],
-      addDateDA:[new Date(), Validators.required]
+      addDateDA:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required]
     });
 
     this.editDemandeApproFormGroup = this.formBulder.group({

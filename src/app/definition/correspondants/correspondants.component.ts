@@ -20,6 +20,7 @@ import { Utilisateur } from '../../../models/utilisateur.model';
 import { UtilisateurService } from '../../../services/administration/utilisateur.service';
 import { CommuneService } from '../../../services/definition/commune.service';
 import { CorrespondantService } from '../../../services/definition/correspondant.service';
+import * as moment from  'moment';
 
 @Component({
   selector: 'app-correspondants',
@@ -154,15 +155,15 @@ export class CorrespondantsComponent implements OnInit {
       });
 
       this.addAffecteSiteFormsGroup = this.formBulder.group({
-        addDateArrivee:[new Date(), Validators.required],
-        addDateDepart:new Date(),
+        addDateArrivee:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
+        addDateDepart:'',
         addCorres:[0, Validators.required],
         addSite:[0, Validators.required]
       });
 
       this.editAffecteSiteFormsGroup = this.formBulder.group({
         editDateArrivee:[new Date(), Validators.required],
-        editDateDepart:new Date(),
+        editDateDepart:'',
         editCorres:[0, Validators.required],
         editSite:[0, Validators.required]
       });

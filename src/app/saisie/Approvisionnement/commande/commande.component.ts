@@ -143,11 +143,11 @@ export class CommandeComponent implements OnInit {
   initFormsGroup(){
     this.addCommandeFormGroup = this.formBulder.group({
       addNumCommande:['', Validators.required],
-      addDateCommande:[new Date(), Validators.required],
+      addDateCommande:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
       addDescription:'',
       addDelaiLivraison:[0, Validators.required],
       addFrs:[0, Validators.required],
-      addDateRemiseCommande:[new Date(), Validators.required]
+      addDateRemiseCommande:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required]
     });
 
     this.editCommandeFormGroup = this.formBulder.group({
@@ -333,8 +333,10 @@ export class CommandeComponent implements OnInit {
     this.addCommandeFormGroup.value['addDescription'],
     this.addCommandeFormGroup.value['addDelaiLivraison'],
     this.fournisseurs[this.addCommandeFormGroup.value['addFrs']],
-    this.serviceExercice.exoSelectionner);
-    console.log(this.tempAddLigneCommandes, newComm);
+    this.serviceExercice.exoSelectionner,
+    this.addCommandeFormGroup.value['addDateRemiseCommande']);
+
+    //console.log(this.tempAddLigneCommandes, newComm);
     this.serviceCommande.addACommande(newComm).subscribe(
       (data) => {
         this.tempAddLigneCommandes.forEach(element => {
@@ -369,7 +371,8 @@ export class CommandeComponent implements OnInit {
     this.editCommandeFormGroup.value['editDescription'],
     this.editCommandeFormGroup.value['editDelaiLivraison'],
     this.fournisseurs[this.editCommandeFormGroup.value['editFrs']],
-    this.serviceExercice.exoSelectionner);
+    this.serviceExercice.exoSelectionner,
+    this.editCommandeFormGroup.value['editDateRemiseCommande']);
 
     let oldCommandeLines:LigneCommande[] = [];
 

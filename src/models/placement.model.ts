@@ -4,6 +4,7 @@ import { Regisseur } from './regisseur.model';
 
 export class Placement {
 
+  public validepl:boolean;
 
   constructor(public numPlacement:String, public datePlacement:Date, public regisseur:Regisseur,
     public correspondant:Correspondant, public exercice:Exercice){

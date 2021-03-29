@@ -17,6 +17,7 @@ import { CaisseService } from '../../services/administration/caisse.service';
 import { DroitGroupeService } from '../../services/administration/droit-groupe.service';
 import { UtilisateurService } from '../../services/administration/utilisateur.service';
 import { CommuneService } from '../../services/definition/commune.service';
+import * as moment from  'moment';
 
 @Component({
   selector: 'app-associer-utilisateur',
@@ -142,8 +143,8 @@ export class AssocierUtilisateurComponent implements OnInit {
 
   initForms(){
     this.addAffecterFormsGroup = this.formBulder.group({
-      addDateDebAffecter:[new Date(), Validators.required],
-      addDateFinAffecter:new Date(),
+      addDateDebAffecter:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
+      addDateFinAffecter:'',
       addCaisse:[0, Validators.required],
       addUtilisateur:[0, Validators.required],
       addArrondissement:[0, Validators.required]
@@ -151,7 +152,7 @@ export class AssocierUtilisateurComponent implements OnInit {
 
     this.editAffecterFormsGroup = this.formBulder.group({
       editDateDebAffecter:[new Date(), Validators.required],
-      editDateFinAffecter:new Date(),
+      editDateFinAffecter:'',
       editCaisse:[0, Validators.required],
       editUtilisateur:[0, Validators.required],
       editArrondissement:[0, Validators.required]

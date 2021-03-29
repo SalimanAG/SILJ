@@ -1,1 +1,111 @@
-<p>etat-stock works!</p>
+<div class="accordion" id="accordion" role="tablist">
+  <div class="card mb-0">
+    <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
+      <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Etat du Stock Aux Carvaux</a></h5>
+    </div>
+    <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion"
+    [ngClass]="{
+      collapse:true,
+      show: clicked === 1,
+      collapsing:false,
+      animated:true,
+      fadeIn:true
+    }">
+      <div class="card-body">
+        <form [formGroup] = "repport1FormsGroup" (ngSubmit)="onRep1GenerateClicked()">
+          <div class="row">
+            <div class="form-group col-sm-4">
+              <label for="rep1Carveau">Carveau</label>
+                <select id="rep1Carveau" name="rep1Carveau" formControlName="rep1Carveau"
+                class="form-control"
+                >
+                  <option value="0">Carveau Trésors</option>
+                  <option value="1">Carveau Mairie</option>
+                </select>
+
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Générer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="card mb-0">
+    <div class="card-header" id="headingTwo" role="tab" (click)="manageCollapses(2)">
+      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Etat du Stock au Niveau d'un Correspondant</a></h5>
+    </div>
+    <div id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion"
+    [ngClass]="{
+      collapse:true,
+      show: clicked === 2,
+      collapsing:false,
+      animated:true,
+      fadeIn:true
+    }">
+      <div class="card-body">
+        <form [formGroup] = "repport2FormsGroup" (ngSubmit)="onRep2GenerateClicked()">
+          <div class="row">
+            <div class="form-group col-sm-4">
+              <label for="rep2Arrondi">Arrondissement</label>
+                <select id="rep2Arrondi" name="rep2Arrondi" class="form-control"
+                formControlName="rep2Arrondi" (click)="onAddArrondiSelected()">
+                  <option *ngFor="let arron of arrondissements; let i = index" [value]="i">
+                    {{ arron.codeArrondi }} - {{ arron.nomArrondi }}
+                  </option>
+                </select>
+            </div>
+            <div class="form-group col-sm-4">
+              <label for="rep2Corres">Correspondant</label>
+                <select id="rep2Corres" name="rep2Corres" class="form-control"
+                formControlName="rep2Corres">
+                  <option *ngFor="let corres of correspondantsByArrondi; let i = index" [value]="i">
+                    {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
+                  </option>
+                </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Générer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="card mb-0">
+    <div class="card-header" id="headingThree" role="tab" (click)="manageCollapses(3)">
+      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseThree">Etat du Stock au Niveau des Correspondants d'un Site</a></h5>
+    </div>
+    <div id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion"
+    [ngClass]="{
+      collapse:true,
+      show: clicked === 3,
+      collapsing:false,
+      animated:true,
+      fadeIn:true
+    }">
+      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+    </div>
+  </div>
+</div>
+
+<!--Modal View PDF-->
+
+<div bsModal #viewPdfModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-success modal-xl" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h4 class="modal-title text-center">Apperçu</h4>
+        <button type="button" class="close" (click)="viewPdfModal.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <iframe class="col" [src]="pdfToShow" frameborder="0" style="height: 400px;"></iframe>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="viewPdfModal.hide()">Fermer</button>
+        </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

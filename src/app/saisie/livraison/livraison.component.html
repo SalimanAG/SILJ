@@ -8,7 +8,7 @@
       <label > 
         Caisse:
                 <select  [formControl]="opCaisseLivre" name="caisseSelected">
-                    <option *ngFor="let c of caisses; let i=index" [value]="c.codeCaisse">{{c.libeCaisse}}</option>
+                    <option *ngFor="let c of caisses; let i=index" [value]="c.caisse.codeCaisse">{{c.caisse.libeCaisse}}</option>
                 </select>
       </label>
 
@@ -54,7 +54,7 @@
           </thead>
           <tbody>
               <tr *ngFor="let opliv of ligneopcaisse; let i = index">
-                  <td>{{ opliv.opCaisse.dateOpCaisse }}</td>
+                  <td>{{ opliv.opCaisse.dateOpCaisse | date :  "dd/MM/y" }}</td>
                   <td>{{ opliv.opCaisse.numOpCaisse }}</td>
                   <td>{{ opliv.article.codeArticle }}</td>
                   <td>{{ opliv.article.libArticle }}</td>

@@ -22,6 +22,11 @@ import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from  'moment';
+import { Magasin } from '../../../../models/magasin.model';
+import { CorrespondantService } from '../../../../services/definition/correspondant.service';
+import { RegisseurService } from '../../../../services/definition/regisseur.service';
+import { TresorierCommunalService } from '../../../../services/definition/tresorier-communal.service';
+import { Stocker } from '../../../../models/stocker.model';
 
 @Component({
   selector: 'app-bon-approvisionnement',
@@ -37,6 +42,7 @@ export class BonApprovisionnementComponent  implements OnInit {
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
   @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
+  @ViewChild('annulerApproModal') public annulerApproModal: ModalDirective;
 
 
   dtOptions1: DataTables.Settings = {};
@@ -70,6 +76,7 @@ export class BonApprovisionnementComponent  implements OnInit {
   approvisionnements:Approvisionnement[];
   editAppro:Approvisionnement = new Approvisionnement('', '', new Date(), new Exercice('', '', new Date(), new Date(), '', false));
   suprAppro:Approvisionnement = new Approvisionnement('', '', new Date(), new Exercice('', '', new Date(), new Date(), '', false));
+  annulAppro:Approvisionnement = new Approvisionnement('', '', new Date(), new Exercice('', '', new Date(), new Date(), '', false));
   addApproFormsGroup:FormGroup;
   editApproFormsGroup:FormGroup;
   concernedDemandeAppro:DemandeApprovisionnement = new DemandeApprovisionnement('', '', new Exercice('', '', new Date(), new Date(), '', false));
@@ -89,8 +96,13 @@ export class BonApprovisionnementComponent  implements OnInit {
 
   pdfToShow = null;
 
+  carveauxMairie:Magasin = new Magasin('', '');
+  carveauxTresor:Magasin = new Magasin('', '');
+
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
-    private formBulder:FormBuilder, private serviceBonAppro:BonApproService, private sanitizer:DomSanitizer) {
+    private formBulder:FormBuilder, private serviceBonAppro:BonApproService, private sanitizer:DomSanitizer,
+    private serviceCorres:CorrespondantService, private serviceRegiss:RegisseurService,
+    private serviceTresorier:TresorierCommunalService) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -165,7 +177,7 @@ export class BonApprovisionnementComponent  implements OnInit {
     this.addApproFormsGroup = this.formBulder.group({
       addNumAppro:['', Validators.required],
       addDescriptionAppro:'',
-      addDateAppro:['', Validators.required],
+      addDateAppro:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
       addDemandeAppro:[0, Validators.required]
     });
 
@@ -184,6 +196,8 @@ export class BonApprovisionnementComponent  implements OnInit {
     this.getAllExercice();
     this.getAllLigneAppro();
     this.getAllPlageNumArticle();
+    this.getCarveauMairie();
+    this.getCarveauTresor();
 
     this.serviceBonAppro.getAllAppro().subscribe(
       (data) => {
@@ -226,6 +240,76 @@ export class BonApprovisionnementComponent  implements OnInit {
 
 
   }
+
+  //Récuperer le carveau Mairie
+  getCarveauMairie(){
+    this.serviceRegiss.getAllRegisseur().subscribe(
+      (data) => {
+        data.forEach(element => {
+          let finded:boolean = false;
+          this.serviceCorres.getAllGerer().subscribe(
+            (data2) => {
+              data2.forEach(element2 => {
+                if(element2.magasinier.numMAgasinier == element.magasinier.numMAgasinier){
+                  this.carveauxMairie = element2.magasin;
+                  finded = true;
+                  exit;
+                }
+              });
+            },
+            (erreur) => {
+              console.log('Erreur lors de la récupération de la liste des gérers', erreur);
+            }
+          );
+
+          if(finded){
+            exit;
+          }
+
+        });
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des régisseurs', erreur);
+      }
+    );
+  }
+
+
+  //Récuperer le carveau Trésor
+  getCarveauTresor(){
+    this.serviceTresorier.getAllTresCom().subscribe(
+      (data) => {
+        data.forEach(element => {
+          let finded:boolean = false;
+          this.serviceCorres.getAllGerer().subscribe(
+            (data2) => {
+              data2.forEach(element2 => {
+                if(element2.magasinier.numMAgasinier == element.magasinier.numMAgasinier){
+                  this.carveauxTresor = element2.magasin;
+                  finded = true;
+                  exit;
+                }
+              });
+            },
+            (erreur) => {
+              console.log('Erreur lors de la récupération de la liste des gérers', erreur);
+            }
+          );
+
+          if(finded){
+            exit;
+          }
+
+        });
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des régisseurs', erreur);
+      }
+    );
+  }
+
+
+
 
   getAllAppro(){
     this.serviceBonAppro.getAllAppro().subscribe(
@@ -518,6 +602,12 @@ export class BonApprovisionnementComponent  implements OnInit {
     this.deleteComModal.show();
   }
 
+  initAnnulerAppro(inde:number){
+
+    this.annulAppro = this.approvisionnements[inde];
+    this.annulerApproModal.show();
+  }
+
   onSubmitAddCommandeFormsGroup(){
 
     const newAppro = new Approvisionnement(this.addApproFormsGroup.value['addNumAppro'],
@@ -531,6 +621,81 @@ export class BonApprovisionnementComponent  implements OnInit {
           element.appro = data;
           this.serviceBonAppro.addALigneAppro(element).subscribe(
             (data2) => {
+
+              //ajustement de stock
+              this.serviceCorres.getAllStocker().subscribe(
+                (data3) => {
+                  let concernedStockerCarvMairie:Stocker = null;
+                  let concernedStockerCarvTresor:Stocker = null;
+                  let exi1:boolean = false;
+                  let exi2:boolean = false;
+
+                  data3.forEach(element3 => {
+                    if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == data2.ligneDA.article.codeArticle){
+                      concernedStockerCarvMairie = element3;
+                      exi1 = true;
+                      exit;
+                    }
+
+                    if(element3.magasin.codeMagasin == this.carveauxTresor.codeMagasin && element3.article.codeArticle == data2.ligneDA.article.codeArticle){
+                      concernedStockerCarvTresor = element3;
+                      exi2 = true;
+                      exit;
+                    }
+                  });
+
+                  if(exi1){
+                    concernedStockerCarvMairie.quantiterStocker += data2.quantiteLigneAppro;
+                    this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                      (data4) => {
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de lEdition du stock', erreur);
+                      }
+                    );
+                  }
+                  else{
+                    this.serviceCorres.addAStocker(new Stocker(data2.quantiteLigneAppro, 0, 0, 0, data2.ligneDA.article, this.carveauxMairie)).subscribe(
+                      (data4) => {
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de la création dUn Stocker', erreur);
+                      }
+                    );
+
+                  }
+
+                  if(exi2){
+                    concernedStockerCarvTresor.quantiterStocker -= data2.quantiteLigneAppro;
+                    this.serviceCorres.editAStocker(concernedStockerCarvTresor.idStocker.toString(), concernedStockerCarvTresor).subscribe(
+                      (data4) => {
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de lEdition du stock', erreur);
+                      }
+                    );
+                  }
+                  else{
+                    this.serviceCorres.addAStocker(new Stocker(data2.quantiteLigneAppro*(-1), 0, 0, 0, data2.ligneDA.article, this.carveauxTresor)).subscribe(
+                      (data4) => {
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de la création dUn Stocker', erreur);
+                      }
+                    );
+
+                  }
+
+
+                },
+                (erreur) => {
+                  console.log('Erreur lors de la récupération des stockés', erreur);
+                }
+              );
 
               this.tempAddPlageNumArticle.forEach(element2 => {
                 if(element2.ligneAppro.ligneDA.idLigneDA == data2.ligneDA.idLigneDA){
@@ -590,6 +755,83 @@ export class BonApprovisionnementComponent  implements OnInit {
               this.serviceBonAppro.editALigneAppro(element2.idLigneAppro.toString(), element).subscribe(
 
                 (data12) => {
+
+                  //ajustement de stock si modification simple de la ligne d'Appro
+                  this.serviceCorres.getAllStocker().subscribe(
+                    (data3) => {
+                      let concernedStockerCarvMairie:Stocker = null;
+                      let concernedStockerCarvTresor:Stocker = null;
+                      let exi1:boolean = false;
+                      let exi2:boolean = false;
+
+                      data3.forEach(element3 => {
+                        if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == data12.ligneDA.article.codeArticle){
+                          concernedStockerCarvMairie = element3;
+                          exi1 = true;
+                          exit;
+                        }
+
+                        if(element3.magasin.codeMagasin == this.carveauxTresor.codeMagasin && element3.article.codeArticle == data12.ligneDA.article.codeArticle){
+                          concernedStockerCarvTresor = element3;
+                          exi2 = true;
+                          exit;
+                        }
+                      });
+
+                      if(exi1){
+                        concernedStockerCarvMairie.quantiterStocker = concernedStockerCarvMairie.quantiterStocker - element2.quantiteLigneAppro + data12.quantiteLigneAppro;
+                        this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                          (data4) => {
+
+                          },
+                          (erreur) => {
+                            console.log('Erreur lors de lEdition du stock', erreur);
+                          }
+                        );
+                      }
+                      else{
+                        this.serviceCorres.addAStocker(new Stocker(data12.quantiteLigneAppro, 0, 0, 0, data12.ligneDA.article, this.carveauxMairie)).subscribe(
+                          (data4) => {
+
+                          },
+                          (erreur) => {
+                            console.log('Erreur lors de la création dUn Stocker', erreur);
+                          }
+                        );
+
+                      }
+
+                      if(exi2){
+                        concernedStockerCarvTresor.quantiterStocker = concernedStockerCarvTresor.quantiterStocker + element2.quantiteLigneAppro - data12.quantiteLigneAppro;
+                        this.serviceCorres.editAStocker(concernedStockerCarvTresor.idStocker.toString(), concernedStockerCarvTresor).subscribe(
+                          (data4) => {
+
+                          },
+                          (erreur) => {
+                            console.log('Erreur lors de lEdition du stock', erreur);
+                          }
+                        );
+                      }
+                      else{
+                        this.serviceCorres.addAStocker(new Stocker(data12.quantiteLigneAppro*(-1), 0, 0, 0, data12.ligneDA.article, this.carveauxTresor)).subscribe(
+                          (data4) => {
+
+                          },
+                          (erreur) => {
+                            console.log('Erreur lors de la création dUn Stocker', erreur);
+                          }
+                        );
+
+                      }
+
+
+                    },
+                    (erreur) => {
+                      console.log('Erreur lors de la récupération des stockés', erreur);
+                    }
+                  );
+
+
                   this.tempEditPlageNumArticle.forEach(element3 => {
                     //filtrage important
                     if(element3.ligneAppro.ligneDA.idLigneDA === data12.ligneDA.idLigneDA){
@@ -662,15 +904,92 @@ export class BonApprovisionnementComponent  implements OnInit {
 
           if(added==true){
             element.appro = data;
-            console.log('+', element);
+            //console.log('+', element);
             this.serviceBonAppro.addALigneAppro(element).subscribe(
               (data9) => {
-                console.log('liste', this.tempEditPlageNumArticle);
+
+                //ajustement de stock
+                this.serviceCorres.getAllStocker().subscribe(
+                  (data3) => {
+                    let concernedStockerCarvMairie:Stocker = null;
+                    let concernedStockerCarvTresor:Stocker = null;
+                    let exi1:boolean = false;
+                    let exi2:boolean = false;
+
+                    data3.forEach(element3 => {
+                      if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == data9.ligneDA.article.codeArticle){
+                        concernedStockerCarvMairie = element3;
+                        exi1 = true;
+                        exit;
+                      }
+
+                      if(element3.magasin.codeMagasin == this.carveauxTresor.codeMagasin && element3.article.codeArticle == data9.ligneDA.article.codeArticle){
+                        concernedStockerCarvTresor = element3;
+                        exi2 = true;
+                        exit;
+                      }
+                    });
+
+                    if(exi1){
+                      concernedStockerCarvMairie.quantiterStocker += data9.quantiteLigneAppro;
+                      this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de lEdition du stock', erreur);
+                        }
+                      );
+                    }
+                    else{
+                      this.serviceCorres.addAStocker(new Stocker(data9.quantiteLigneAppro, 0, 0, 0, data9.ligneDA.article, this.carveauxMairie)).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de la création dUn Stocker', erreur);
+                        }
+                      );
+
+                    }
+
+                    if(exi2){
+                      concernedStockerCarvTresor.quantiterStocker -= data9.quantiteLigneAppro;
+                      this.serviceCorres.editAStocker(concernedStockerCarvTresor.idStocker.toString(), concernedStockerCarvTresor).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de lEdition du stock', erreur);
+                        }
+                      );
+                    }
+                    else{
+                      this.serviceCorres.addAStocker(new Stocker(data9.quantiteLigneAppro*(-1), 0, 0, 0, data9.ligneDA.article, this.carveauxTresor)).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de la création dUn Stocker', erreur);
+                        }
+                      );
+
+                    }
+
+
+                  },
+                  (erreur) => {
+                    console.log('Erreur lors de la récupération des stockés', erreur);
+                  }
+                );
+
+
+                //console.log('liste', this.tempEditPlageNumArticle);
                 this.tempEditPlageNumArticle.forEach(element3 => {
                   if(element3.ligneAppro.ligneDA.article.codeArticle == data9.ligneDA.article.codeArticle){
-                    console.log('++', element3);
+                    //console.log('++', element3);
                     element3.ligneAppro = data9;
-                    console.log('+++', element3);
+                    //console.log('+++', element3);
                     this.serviceBonAppro.addAPlageNumArticle(element3).subscribe(
                       (data2) => {
 
@@ -730,6 +1049,82 @@ export class BonApprovisionnementComponent  implements OnInit {
 
             this.serviceBonAppro.deleteALigneAppro(element.idLigneAppro.toString()).subscribe(
               (data8) => {
+
+                //ajustement de stock en cas de suppression de la ligne d'appro
+                this.serviceCorres.getAllStocker().subscribe(
+                  (data3) => {
+                    let concernedStockerCarvMairie:Stocker = null;
+                    let concernedStockerCarvTresor:Stocker = null;
+                    let exi1:boolean = false;
+                    let exi2:boolean = false;
+
+                    data3.forEach(element3 => {
+                      if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == element.ligneDA.article.codeArticle){
+                        concernedStockerCarvMairie = element3;
+                        exi1 = true;
+                        exit;
+                      }
+
+                      if(element3.magasin.codeMagasin == this.carveauxTresor.codeMagasin && element3.article.codeArticle == element.ligneDA.article.codeArticle){
+                        concernedStockerCarvTresor = element3;
+                        exi2 = true;
+                        exit;
+                      }
+                    });
+
+                    if(exi1){
+                      concernedStockerCarvMairie.quantiterStocker -= element.quantiteLigneAppro;
+                      this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de lEdition du stock', erreur);
+                        }
+                      );
+                    }
+                    else{
+                      this.serviceCorres.addAStocker(new Stocker(element.quantiteLigneAppro*(-1), 0, 0, 0, element.ligneDA.article, this.carveauxMairie)).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de la création dUn Stocker', erreur);
+                        }
+                      );
+
+                    }
+
+                    if(exi2){
+                      concernedStockerCarvTresor.quantiterStocker += element.quantiteLigneAppro;
+                      this.serviceCorres.editAStocker(concernedStockerCarvTresor.idStocker.toString(), concernedStockerCarvTresor).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de lEdition du stock', erreur);
+                        }
+                      );
+                    }
+                    else{
+                      this.serviceCorres.addAStocker(new Stocker(element.quantiteLigneAppro, 0, 0, 0, element.ligneDA.article, this.carveauxTresor)).subscribe(
+                        (data4) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de la création dUn Stocker', erreur);
+                        }
+                      );
+
+                    }
+
+
+                  },
+                  (erreur) => {
+                    console.log('Erreur lors de la récupération des stockés', erreur);
+                  }
+                );
+
 
               },
               (erreur) => {
@@ -841,6 +1236,106 @@ export class BonApprovisionnementComponent  implements OnInit {
     );
 
 
+
+  }
+
+  onConfirmAnnulerAppro(){
+
+          let appr:Approvisionnement = new Approvisionnement(this.annulAppro.numAppro, this.annulAppro.descriptionAppro, this.annulAppro.dateAppro, this.annulAppro.exercice);
+          appr.valideAppro = false;
+          this.serviceBonAppro.editAAppro(this.annulAppro.numAppro, appr).subscribe(
+            (data2) => {
+
+              this.serviceBonAppro.getAllLigneAppro().subscribe(
+                (data3) => {
+
+                  data3.forEach(element3 => {
+                    if(element3.appro.numAppro == data2.numAppro){
+                      this.serviceCorres.getAllStocker().subscribe(
+                        (data4) => {
+                          let exist1:boolean = false;
+                          let exist2:boolean = false;
+                          let concernedStockerCarvMairie:Stocker = null;
+                          let concernedStockerCarvTresor:Stocker = null;
+                          data4.forEach(element4 => {
+                            if(element4.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element4.article.codeArticle == element3.ligneDA.article.codeArticle){
+                              concernedStockerCarvMairie = element4;
+                              exist1 = true;
+                              exit;
+                            }
+                            if(element4.magasin.codeMagasin == this.carveauxTresor.codeMagasin && element4.article.codeArticle == element3.ligneDA.article.codeArticle){
+                              concernedStockerCarvTresor = element4;
+                              exist2 = true;
+                              exit;
+                            }
+
+                          });
+
+                          if(exist1){
+                            concernedStockerCarvMairie.quantiterStocker-=element3.quantiteLigneAppro;
+                            this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lEdition dUn stock', erreur);
+                              }
+                            );
+                          }
+                          else{
+                            this.serviceCorres.addAStocker(new Stocker(element3.quantiteLigneAppro*(-1), 0, 0, 0, element3.ligneDA.article, this.carveauxMairie)).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                              }
+                            );
+                          }
+
+                          if(exist2){
+                            concernedStockerCarvTresor.quantiterStocker+=element3.quantiteLigneAppro;
+                            this.serviceCorres.editAStocker(concernedStockerCarvTresor.idStocker.toString(), concernedStockerCarvTresor).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lEdition dUn stock', erreur);
+                              }
+                            );
+                          }
+                          else{
+                            this.serviceCorres.addAStocker(new Stocker(element3.quantiteLigneAppro, 0, 0, 0, element3.ligneDA.article, this.carveauxTresor)).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                              }
+                            );
+                          }
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de la récupération des stockers', erreur);
+                        }
+                      );
+                    }
+                  });
+                },
+                (erreur) => {
+                  console.log('Erreur lors de la récupération de la liste des lignes de placement', erreur);
+                }
+              );
+
+              this.annulerApproModal.hide();
+              this.getAllAppro();
+
+            },
+            (erreur) => {
+              console.log('Erreur lors de la modification du placement', erreur);
+            }
+          );
 
   }
 
