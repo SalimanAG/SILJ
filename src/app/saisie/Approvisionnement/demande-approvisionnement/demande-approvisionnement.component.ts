@@ -137,7 +137,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
   initFormsGroup(){
 
     this.addDemandeApproFormGroup = this.formBulder.group({
-      addNumDA:['', Validators.required],
+      addNumDA:'',
       addDateDA:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required]
     });
 
@@ -485,76 +485,86 @@ export class DemandeApprovisionnementComponent  implements OnInit {
     const demandeAppro = this.demandeAppros[inde];
     const doc = new jsPDF();
     let lignes = [];
-    let totalTTC;
+    let totalTTC = 0;
 
-    totalTTC = 0;
-    this.ligneDemandeAppros.forEach(element => {
-      if(element.appro.numDA == demandeAppro.numDA){
-        let lig = [];
-        lig.push(element.article.codeArticle);
-        lig.push(element.article.libArticle);
-        lig.push(element.quantiteDemandee);
-        lig.push(element.article.prixVenteArticle);
-        lig.push(element.article.prixVenteArticle*element.quantiteDemandee);
-        lignes.push(lig);
+    this.serviceDemandeAppro.getAllLigneDemandeAppro().subscribe(
+      (data) => {
+        this.ligneDemandeAppros = data;
 
-        totalTTC += element.article.prixVenteArticle*element.quantiteDemandee;
+        this.ligneDemandeAppros.forEach(element => {
+          if(element.appro.numDA == demandeAppro.numDA){
+            let lig = [];
+            lig.push(element.article.codeArticle);
+            lig.push(element.article.libArticle);
+            lig.push(element.quantiteDemandee);
+            lig.push(element.article.prixVenteArticle);
+            lig.push(element.article.prixVenteArticle*element.quantiteDemandee);
+            lignes.push(lig);
 
+            totalTTC += element.article.prixVenteArticle*element.quantiteDemandee;
+
+          }
+
+        });
+        moment.locale('fr');
+        doc.setDrawColor(0);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+        //doc.setFont("Times New Roman");
+        doc.setFontSize(18);
+        doc.text('DEMANDE APPROVISIONNEMENT', 53, 30);
+        doc.setFontSize(14);
+        doc.text('Référence : '+demandeAppro.numDA, 15, 45);
+        doc.text('Date : '+moment(new Date(demandeAppro.dateDA.toString())).format('DD/MM/YYYY'), 152, 45);
+        autoTable(doc, {
+          theme: 'grid',
+          head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant']],
+          headStyles:{
+            fillColor: [41, 128, 185],
+            textColor: 255,
+            fontStyle: 'bold' ,
+        },
+          margin: { top: 70 },
+          body: lignes
+          ,
+        });
+
+        autoTable(doc, {
+          theme: 'grid',
+          margin: { top: 100, left:130 },
+          columnStyles: {
+            0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+          },
+          body: [
+            ['Total', totalTTC]
+          ]
+          ,
+        });
+
+        autoTable(doc, {
+          theme: 'plain',
+          margin: { top: 100, left:130 },
+          columnStyles: {
+            0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+
+          },
+          body: [
+            ['Le Régisseur\n\n\n\n\n'+this.serviceUser.connectedUser.nomUtilisateur+' '+this.serviceUser.connectedUser.prenomUtilisateur]
+          ]
+          ,
+        });
+        //doc.autoPrint();
+        //doc.output('dataurlnewwindow');
+
+        this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'demandeAppro.pdf'}));
+        this.viewPdfModal.show();
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des lignes de demande dAppro', erreur)
       }
+    );
 
-    });
-    moment.locale('fr');
-    doc.setDrawColor(0);
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
-    //doc.setFont("Times New Roman");
-    doc.setFontSize(18);
-    doc.text('DEMANDE APPROVISIONNEMENT', 53, 30);
-    doc.setFontSize(14);
-    doc.text('Référence : '+demandeAppro.numDA, 15, 45);
-    doc.text('Date : '+moment(new Date(demandeAppro.dateDA.toString())).format('DD/MM/YYYY'), 152, 45);
-    autoTable(doc, {
-      theme: 'grid',
-      head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant']],
-      headStyles:{
-        fillColor: [41, 128, 185],
-        textColor: 255,
-        fontStyle: 'bold' ,
-     },
-      margin: { top: 70 },
-      body: lignes
-      ,
-    });
-
-    autoTable(doc, {
-      theme: 'grid',
-      margin: { top: 100, left:130 },
-      columnStyles: {
-        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
-      },
-      body: [
-        ['Total', totalTTC]
-      ]
-      ,
-    });
-
-    autoTable(doc, {
-      theme: 'plain',
-      margin: { top: 100, left:130 },
-      columnStyles: {
-        0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
-
-      },
-      body: [
-        ['Le Régisseur\n\n\n\n\n'+this.serviceUser.connectedUser.nomUtilisateur+' '+this.serviceUser.connectedUser.prenomUtilisateur]
-      ]
-      ,
-    });
-    //doc.autoPrint();
-    //doc.output('dataurlnewwindow');
-
-    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'demandeAppro.pdf'}));
-    this.viewPdfModal.show();
   }
 
 }

@@ -179,10 +179,10 @@ export class PlacementComponent  implements OnInit {
      }
 
   initFormsGroup(){
-    
+
 
     this.addPlacementFormGroup = this.formBulder.group({
-      addNumPlacement:['', Validators.required],
+      addNumPlacement:'',
       addDatePlacement:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
       addCorrespondant:[0, Validators.required],
       addArrondissement:[0, Validators.required]
@@ -453,10 +453,12 @@ export class PlacementComponent  implements OnInit {
       (data) => {
 
         data.forEach(element => {
-          if(element.site.arrondissement.codeArrondi == this.arrondissements[inde].codeArrondi){
+          if(element.arrondissement.codeArrondi == this.arrondissements[inde].codeArrondi){
             this.correspondantsByArrondi.push(element.corres);
           }
         });
+
+        if(this.correspondantsByArrondi.length != 0) this.getMagasinOfTheCorres1();
 
 
       },
@@ -560,7 +562,7 @@ export class PlacementComponent  implements OnInit {
 
   initAddPlacement(){
     this.addComModal.show();
-    this.getMagasinOfTheCorres1();
+    if(this.correspondantsByArrondi.length != 0) this.getMagasinOfTheCorres1();
   }
 
   initEditCommande(inde:number){
@@ -692,6 +694,8 @@ export class PlacementComponent  implements OnInit {
     this.correspondantsByArrondi[this.addPlacementFormGroup.value['addCorrespondant']],
     this.serviceExercice.exoSelectionner);
 
+    //console.log('6666', this.magOfSelectedCorres);
+    //return;
 
     this.servicePlacement.addAPlacement(newPlacement).subscribe(
       (data) => {

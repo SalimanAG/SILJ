@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Exercice } from '../../models/exercice.model';
+import { AssocierUtilisateurService } from './associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,9 +9,9 @@ import { Exercice } from '../../models/exercice.model';
 export class ExerciceService {
 
   public exoSelectionner:Exercice = new Exercice('', '', new Date(), new Date(), '', false);
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpCli:HttpClient) {
+  constructor(private httpCli:HttpClient, private serviceIp:AssocierUtilisateurService) {
     this.getAllExo().subscribe(
       (data) => {
         this.exoSelectionner = data[data.length-1];

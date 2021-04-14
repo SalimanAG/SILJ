@@ -99,9 +99,9 @@ export class InstitutionReversementComponent implements OnInit {
     });
 
     this.modPercGrou=this.fbuilder.group({
-      modPerInst:['',Validators.requiredTrue],
-      modPerArt:['',Validators.requiredTrue],
-      modVal:['',Validators.required]
+      modPerInst:[this.indInst,Validators.requiredTrue],
+      modPerArt:[this.indArt,Validators.requiredTrue],
+      modVal:[this.per.valPourcenRevers,Validators.required]
     });
 
   }
@@ -245,6 +245,7 @@ export class InstitutionReversementComponent implements OnInit {
         data=>{
           console.log('Ajout réussi');
           this.chargerPourcentatges();
+          this.addPerce.hide();
         },
         err=>{
           console.log('Ajout échoué: ', err);
@@ -264,12 +265,12 @@ export class InstitutionReversementComponent implements OnInit {
     );
   }
 
-  initModPerev(i : number){
-    this.per=this.pourcentages[i];
-    console.log(i,this.per,'\nId:'+this.per.idPourcenRevers);
+  initModPerev(pr : Pourcentage){
+    this.per=pr;
+    console.log(this.per,'\nId:'+this.per.idPourcenRevers);
 
-    this.indInst=this.institutions.indexOf(this.per.instituReverse,2);
-    this.indArt=this.articles.indexOf(this.per.article,0);
+    this.indInst=this.institutions.map(i=>i.codeInstRevers).indexOf(this.per.instituReverse.codeInstRevers);
+    this.indArt=this.articles.map(a=>a.codeArticle).indexOf(this.per.article.codeArticle);
     console.log('Indix de l\'innstitution: '+this.indInst,'\nIndix de l\'article: '+this.indArt);
 
     this.modPerce.show();
@@ -280,14 +281,14 @@ export class InstitutionReversementComponent implements OnInit {
     this.institutions[this.modPercGrou.value['modPerInst']],this.articles[this.modPercGrou.value['modPerArt']]);
     console.log('ancien pourcentage', this.per,'\nNouveau: ',np);
 
-    this.instServ.editAPeRev(this.per.idPourcenRevers.toString(),np).subscribe(
+    this.instServ.editAPeRev(this.per.idPourcenRevers,np).subscribe(
       data=>{
         console.log('Modification effectuée avec succès');
         this.chargerPourcentatges();
+        this.modPerce.hide();
       },
       err=>{
         console.log('La modification a échoué. ', err);
-
       }
     );
   }
@@ -302,6 +303,7 @@ export class InstitutionReversementComponent implements OnInit {
       data=>{
         console.log('Suppresion réussie');
         this.chargerPourcentatges();
+        this.delPerce.hide();
       },
       err=>{
         console.log('Suppression échouée ', err);
@@ -309,4 +311,5 @@ export class InstitutionReversementComponent implements OnInit {
       }
     );
   }
+
 }

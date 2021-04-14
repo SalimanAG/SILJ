@@ -18,15 +18,16 @@ import { PointVente } from '../../models/pointVente.model';
 import { LignePointVente } from '../../models/lignePointVente.model';
 import { Gerer } from '../../models/gerer.model';
 import { Affecter } from '../../models/affecter.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OperationCaisseService {
 
-  private host:string='http://127.0.0.1:8080/perfora-gpc/v1/'
+  private host:string='http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1/'
 
-  constructor(private lien:HttpClient) {
+  constructor(private lien:HttpClient, private serviceIp:AssocierUtilisateurService) {
 
   }
 

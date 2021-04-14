@@ -142,7 +142,7 @@ export class CommandeComponent implements OnInit {
 
   initFormsGroup(){
     this.addCommandeFormGroup = this.formBulder.group({
-      addNumCommande:['', Validators.required],
+      addNumCommande:'',
       addDateCommande:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
       addDescription:'',
       addDelaiLivraison:[0, Validators.required],
@@ -268,7 +268,7 @@ export class CommandeComponent implements OnInit {
     });
 
     if(exist===false){
-      this.tempAddLigneCommandes.push(new LigneCommande(0, this.articles[inde].prixVenteArticle, 0, 0,
+      this.tempAddLigneCommandes.push(new LigneCommande(0, 0, 0, 0,
         new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false)),
         this.articles[inde]));
     }
@@ -286,7 +286,7 @@ export class CommandeComponent implements OnInit {
     });
 
     if(exist===false){
-      this.tempEditLigneCommandes.push(new LigneCommande(0, this.articles[inde].prixVenteArticle, 0, 0,
+      this.tempEditLigneCommandes.push(new LigneCommande(0, 0, 0, 0,
         new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false)),
         this.articles[inde]));
     }
@@ -511,86 +511,97 @@ export class CommandeComponent implements OnInit {
     totalRemise = 0;
     totalTVA = 0;
     totalTTC = 0;
-    this.ligneCommandes.forEach(element => {
-      if(element.numCommande.numCommande == commande.numCommande){
-        let lig = [];
-        lig.push(element.article.codeArticle);
-        lig.push(element.article.libArticle);
-        lig.push(element.qteLigneCommande);
-        lig.push(element.puligneCommande);
-        lig.push(element.tva);
-        lig.push(element.remise);
-        lig.push(element.puligneCommande*element.qteLigneCommande*(1+(element.tva/100))-element.remise);
-        lignes.push(lig);
 
-        totalRemise += element.remise;
-        totalTVA += element.puligneCommande*element.qteLigneCommande*(element.tva/100);
-        totalHT += element.puligneCommande*element.qteLigneCommande;
-        totalTTC += element.puligneCommande*element.qteLigneCommande*(1+(element.tva/100))-element.remise;
+    this.serviceCommande.getAllLigneCommande().subscribe(
+      (dataa) => {
+        this.ligneCommandes = dataa;
 
+        this.ligneCommandes.forEach(element => {
+          if(element.numCommande.numCommande == commande.numCommande){
+            let lig = [];
+            lig.push(element.article.codeArticle);
+            lig.push(element.article.libArticle);
+            lig.push(element.qteLigneCommande);
+            lig.push(element.puligneCommande);
+            lig.push(element.tva);
+            lig.push(element.remise);
+            lig.push(element.puligneCommande*element.qteLigneCommande*(1+(element.tva/100))-element.remise);
+            lignes.push(lig);
+
+            totalRemise += element.remise;
+            totalTVA += element.puligneCommande*element.qteLigneCommande*(element.tva/100);
+            totalHT += element.puligneCommande*element.qteLigneCommande;
+            totalTTC += element.puligneCommande*element.qteLigneCommande*(1+(element.tva/100))-element.remise;
+
+          }
+
+        });
+        moment.locale('fr');
+        doc.setDrawColor(0);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+        //doc.setFont("Times New Roman");
+        doc.setFontSize(25);
+        doc.text('COMMANDE ACHAT', 62, 30);
+        doc.setFontSize(14);
+        doc.text('Référence : '+commande.numCommande, 15, 45);
+        doc.text('Date : '+moment(commande.dateCommande).format('DD/MM/YYYY'), 152, 45);
+        doc.text('Fournisseur : '+commande.frs.identiteFrs, 15, 55);
+        doc.text('Délais de Livraison : '+commande.delaiLivraison+'  Jour(s)', 15, 65);
+        doc.text('Description : '+commande.description, 15, 75);
+        autoTable(doc, {
+          theme: 'grid',
+          head: [['Article', 'Désignation', 'Quantité', 'PU', 'TVA(en %)', 'Remise', 'Montant TTC']],
+          headStyles:{
+            fillColor: [41, 128, 185],
+            textColor: 255,
+            fontStyle: 'bold' ,
+          },
+          margin: { top: 100 },
+          body: lignes
+          ,
+        });
+
+        autoTable(doc, {
+          theme: 'grid',
+          margin: { top: 100, left:130 },
+          columnStyles: {
+            0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+          },
+          body: [
+            ['Total HT', totalHT],
+            ['Total Montant TVA', totalTVA],
+            ['Total Remise', totalRemise],
+            ['Total TTC', totalTTC]
+          ]
+          ,
+        });
+
+        autoTable(doc, {
+          theme: 'plain',
+          margin: { top: 100 },
+          columnStyles: {
+            0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+            2: { textColor: 0, fontStyle: 'bold', halign: 'left' },
+          },
+          body: [
+            ['Le Trésorier Communal\n\n\n\n\n',
+            '\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t',
+            'Le Maire\n\n\n\n\n\t\t\t\t\t\t\t\t\t\t\t\t']
+          ]
+          ,
+        });
+
+        //doc.autoPrint();
+        //doc.output('dataurlnewwindow');
+        this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonCommande.pdf'}));
+        this.viewPdfModal.show();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récuparation de la liste des lignes de commande', erreur);
       }
+    );
 
-    });
-    moment.locale('fr');
-    doc.setDrawColor(0);
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
-    //doc.setFont("Times New Roman");
-    doc.setFontSize(25);
-    doc.text('COMMANDE ACHAT', 62, 30);
-    doc.setFontSize(14);
-    doc.text('Référence : '+commande.numCommande, 15, 45);
-    doc.text('Date : '+moment(commande.dateCommande).format('DD/MM/YYYY'), 152, 45);
-    doc.text('Fournisseur : '+commande.frs.identiteFrs, 15, 55);
-    doc.text('Délais de Livraison : '+commande.delaiLivraison+'  Jour(s)', 15, 65);
-    doc.text('Description : '+commande.description, 15, 75);
-    autoTable(doc, {
-      theme: 'grid',
-      head: [['Article', 'Désignation', 'Quantité', 'PU', 'TVA(en %)', 'Remise', 'Montant TTC']],
-      headStyles:{
-         fillColor: [41, 128, 185],
-         textColor: 255,
-         fontStyle: 'bold' ,
-      },
-      margin: { top: 100 },
-      body: lignes
-      ,
-    });
-
-    autoTable(doc, {
-      theme: 'grid',
-      margin: { top: 100, left:130 },
-      columnStyles: {
-        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
-      },
-      body: [
-        ['Total HT', totalHT],
-        ['Total Montant TVA', totalTVA],
-        ['Total Remise', totalRemise],
-        ['Total TTC', totalTTC]
-      ]
-      ,
-    });
-
-    autoTable(doc, {
-      theme: 'plain',
-      margin: { top: 100 },
-      columnStyles: {
-        0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
-        2: { textColor: 0, fontStyle: 'bold', halign: 'left' },
-      },
-      body: [
-        ['Le Trésorier Communal\n\n\n\n\n',
-        '\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t',
-         'Le Maire\n\n\n\n\n\t\t\t\t\t\t\t\t\t\t\t\t']
-      ]
-      ,
-    });
-
-    //doc.autoPrint();
-    //doc.output('dataurlnewwindow');
-    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonCommande.pdf'}));
-    this.viewPdfModal.show();
   }
 
 }

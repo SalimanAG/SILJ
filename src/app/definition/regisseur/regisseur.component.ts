@@ -227,7 +227,7 @@ export class RegisseurComponent implements OnInit {
 
 
 
-    const newMagasin = new Magasin(newMagasinier.telMagasinier, newMagasinier.nomMagasinier.concat(newMagasinier.prenomMagasinier.valueOf()))
+    const newMagasin = new Magasin('CM', 'Caveau Mairie')
 
     this.serviceCorres.addAMagasinier(newMagasinier).subscribe(
       (data) => {
@@ -240,6 +240,8 @@ export class RegisseurComponent implements OnInit {
                                   this.utilisateur[this.addRegFormsGroup.value['addUser']]);
                 this.serviceRegisseur.addRegisseur(newReg).subscribe(
                   (data4) => {
+                    this.addRegFormsGroup.reset();
+                    this.initFormsGroup();
                     this.primaryModal.hide();
                     this.getAllRegisseur();
                     this.getAllGerer();

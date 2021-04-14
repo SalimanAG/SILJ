@@ -3,15 +3,16 @@ import { Injectable } from '@angular/core';
 import { Approvisionnement } from '../../models/approvisionnement.model';
 import { LigneAppro } from '../../models/ligneAppro.model';
 import { PlageNumArticle } from '../../models/plageNumArticle.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BonApproService {
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpCli:HttpClient) { }
+  constructor(private httpCli:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   //Partie réservée pour Bon Approvisionnement
   getAllAppro(){

@@ -23,7 +23,7 @@
           <tbody>
               <tr *ngFor="let comm of commandes; let i = index">
                   <td>{{ comm.numCommande }}</td>
-                  <td>{{ comm.dateCommande }}</td>
+                  <td>{{ comm.dateCommande | date:"dd-MM-yyyy" }}</td>
                   <td>{{ comm.description }}</td>
                   <td>{{ comm.delaiLivraison }} Jour(s)</td>
                   <td>{{ comm.frs.codeFrs }} - {{ comm.frs.identiteFrs }}</td>
@@ -75,14 +75,23 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="form-group col-sm-4">
+                      <label for="addFrs">Fournisseur</label>
+                        <select id="addFrs" name="addFrs" class="form-control"
+                        formControlName="addFrs">
+                          <option *ngFor="let frs of fournisseurs; let i = index" [value]="i">
+                            {{ frs.codeFrs }} - {{ frs.identiteFrs }}
+                          </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-4" style="display: none;">
                       <label for="addNumCommande">Numéro</label>
                       <input type="text" class="form-control" id="addNumCommande"
-                        formControlName="addNumCommande" placeholder="Numéro de la commande">
+                        autocomplete="off" formControlName="addNumCommande" placeholder="Numéro de la commande">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="addDateCommande">Date</label>
                       <input type="date" class="form-control" id="addDateCommande"
-                       formControlName="addDateCommande">
+                       autocomplete="off" formControlName="addDateCommande">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="addDelaiLivraison">Délais de Livraison (Nbr Jour)</label>
@@ -93,19 +102,11 @@
                   </div><!--/.row-->
 
                   <div class="row">
-                    <div class="form-group col-sm-4">
-                      <label for="addFrs">Fournisseur</label>
-                        <select id="addFrs" name="addFrs" class="form-control"
-                        formControlName="addFrs">
-                          <option *ngFor="let frs of fournisseurs; let i = index" [value]="i">
-                            {{ frs.codeFrs }} - {{ frs.identiteFrs }}
-                          </option>
-                        </select>
-                    </div>
+
                     <div class="form-group col-sm-4">
                       <label for="addDescription">Description</label>
                       <input type="text" class="form-control" id="addDescription"
-                       formControlName="addDescription" placeholder="Description...">
+                       autocomplete="off" formControlName="addDescription" placeholder="Description...">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="addDateRemiseCommande">Date de Remise</label>
@@ -151,7 +152,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addCommandeFormGroup.invalid || tempAddLigneCommandes.length == 0">Enrégistrer</button>
                 </div>
               </div><!-- /.modal-content -->
             </form>
@@ -206,7 +207,7 @@
                   <div class="form-group col-sm-4">
                     <label for="editDescription">Description</label>
                     <input type="text" class="form-control" id="editDescription"
-                     formControlName="editDescription" placeholder="Description..."
+                     autocomplete="off" formControlName="editDescription" placeholder="Description..."
                      [ngModel]="editCommande.description">
                   </div>
                   <div class="form-group col-sm-4">
@@ -254,7 +255,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
-            <button type="submit" class="btn btn-warning">Modifier</button>
+            <button type="submit" class="btn btn-warning" [disabled]="tempEditLigneCommandes.length == 0 || editCommandeFormGroup.invalid">Modifier</button>
             </div>
           </div><!-- /.modal-content -->
         </form>

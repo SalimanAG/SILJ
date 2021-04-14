@@ -13,6 +13,8 @@ import { OperationCaisseService } from '../../../../services/saisie/operation-ca
 import * as moment from 'moment';
 import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { exit } from 'process';
+import { CaisseService } from '../../../../services/administration/caisse.service';
 
 @Component({
   selector: 'app-recap-livrable',
@@ -34,7 +36,7 @@ export class RecapLivrableComponent implements OnInit {
 
   constructor(private formBulder:FormBuilder, private sanitizer:DomSanitizer, private serviceOpCaisse:OperationCaisseService,
     private serviceUser:UtilisateurService, private serviceAssoUserToCaisse:AssocierUtilisateurService,
-    private serviceArticle:ArticleService) {
+    private serviceArticle:ArticleService, private serviceCaisse:CaisseService) {
     moment.locale('fr');
 
     this.repport1FormsGroup = this.formBulder.group({
@@ -58,21 +60,62 @@ export class RecapLivrableComponent implements OnInit {
   ngOnInit(): void {
     this.serviceAssoUserToCaisse.getAllAffecter().subscribe(
       (data) => {
-        data.forEach(element => {
-          if(element.utilisateur.idUtilisateur === this.serviceUser.connectedUser.idUtilisateur){
-            let exist:boolean = false;
-            this.userAssociatedCaisse.forEach(element2 => {
-              if(element.caisse.codeCaisse === element2.codeCaisse){
-                exist = true;
+        this.serviceAssoUserToCaisse.getAllAffectUserToArrondi().subscribe(
+          (data2) => {
+            this.serviceCaisse.getAllCaisse().subscribe(
+              (data3) => {
+                
+                data2.forEach(element2 => {
+                  if(element2.utilisateur.idUtilisateur == this.serviceUser.connectedUser.idUtilisateur){
+                    data3.forEach(element3 => {
+                      if(element2.arrondissement.codeArrondi == element3.arrondissement.codeArrondi){
+
+                        let exister:boolean = false;
+                        this.userAssociatedCaisse.forEach(element0 => {
+                          if(element0.codeCaisse == element3.codeCaisse){
+                            exister = true;
+                            exit;
+                          }
+                        });
+
+                        if(!exister){
+                          this.userAssociatedCaisse.push(element3);
+                        }
+
+                      }
+                    });
+                  }
+                });
+
+                data.forEach(element => {
+                  if(element.utilisateur.idUtilisateur === this.serviceUser.connectedUser.idUtilisateur){
+                    let exist:boolean = false;
+                    this.userAssociatedCaisse.forEach(element2 => {
+                      if(element.caisse.codeCaisse === element2.codeCaisse){
+                        exist = true;
+                      }
+                    });
+        
+                    if(!exist){
+                      this.userAssociatedCaisse.push(element.caisse);
+                    }
+        
+                  }
+                });
+        
+
+              },
+              (erreur) => {
+                console.log('Erreur lors de la récupération de la liste des caisses', erreur);
               }
-            });
-
-            if(!exist){
-              this.userAssociatedCaisse.push(element.caisse);
-            }
-
+            );
+            
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération de la liste des affectations aux arrondissements', erreur)
           }
-        });
+        );
+        
       },
       (erreur) => {
         console.log('Erreur lors de la récupération des associations de lUtilisateur à des caisses', erreur);

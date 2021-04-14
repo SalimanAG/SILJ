@@ -66,7 +66,7 @@
                                   <div class="form-group col-sm-12">
                                     <label for="addCodePays">Code du pays</label>
                                     <input type="text" class="form-control" id="addCodePays" placeholder="Code du pays"
-                                    formControlName="addCodePays">
+                                    formControlName="addCodePays" autocomplete="off">
                                   </div>
     
                                 </div><!--/.row-->
@@ -74,7 +74,7 @@
                                   <div class="form-group col-sm-12">
                                     <label for="addLibPays">Nom du pays</label>
                                     <input type="texte" class="form-control" id="addLibPays" placeholder="nom du pays"
-                                    formControlName="addLibPays">
+                                    formControlName="addLibPays" autocomplete="off">
                                   </div>
     
                                 </div><!--/.row-->
@@ -83,7 +83,7 @@
                                     <div class="form-group col-sm-12">
                                       <label for="addLibCompPays">Nom Complet du pays</label>
                                       <input type="texte" class="form-control" id="addLibCompPays" placeholder="nom complet du pays"
-                                      formControlName="addLibCompPays">
+                                      formControlName="addLibCompPays" autocomplete="off">
                                     </div>
       
                                   </div><!--/.row-->
@@ -125,7 +125,7 @@
                                     <label for="editCodePays">Code du pays</label>
                                     <input type="text" class="form-control" id="editCodePays" readonly="true"
                                     formControlName="editCodePays" placeholder="Code du pays"
-                                    [ngModel]="editPayss.codePays">
+                                    [ngModel]="editPayss.codePays" autocomplete="off">
                                   </div>
     
                                 </div><!--/.row-->
@@ -134,7 +134,7 @@
                                     <label for="editLibPays">Nom du pays</label>
                                     <input type="texte" class="form-control" id="editLibPays"
                                     formControlName="editLibPays" placeholder="Libellé du pays"
-                                    [ngModel]="editPayss.nomPays">
+                                    [ngModel]="editPayss.nomPays" autocomplete="off">
                                   </div>
     
                                 </div><!--/.row-->
@@ -144,7 +144,7 @@
                                       <label for="editLibCompPays">Nom complet du pays</label>
                                       <input type="texte" class="form-control" id="editLibCompPays"
                                       formControlName="editLibCompPays" placeholder="Libellé complet du pays"
-                                      [ngModel]="editPayss.nomCompletPays">
+                                      [ngModel]="editPayss.nomCompletPays" autocomplete="off">
                                     </div>
       
                                   </div><!--/.row-->
@@ -273,14 +273,14 @@
                                   <div class="form-group col-sm-12">
                                     <label for="addCodeDepartement">Code</label>
                                     <input type="text" class="form-control" id="addCodeDepartement" placeholder="Code du département"
-                                      formControlName="addCodeDepartement">
+                                      formControlName="addCodeDepartement" autocomplete="off">
                                   </div>
                                 </div><!--/.row-->
                                 <div class="row">
                                     <div class="form-group col-sm-12">
                                         <label for="addNomDepartement">Nom</label>
                                         <input type="text" class="form-control" id="addNomDepartement" placeholder="Entrer le nom du département"
-                                          formControlName="addNomDepartement">
+                                          formControlName="addNomDepartement" autocomplete="off">
                                       </div>
                                 </div>
                                 <div class="row">
@@ -329,12 +329,12 @@
                                   <div class="form-group col-sm-3">
                                     <label for="editCodeDepartement">Code</label>
                                     <input type="text" class="form-control" id="editCodeDepartement" placeholder="Code du département"
-                                      formControlName="editCodeDepartement" readonly="true" [ngModel]="editDep.codeDepartement">
+                                      formControlName="editCodeDepartement" readonly="true" [ngModel]="editDep.codeDepartement" autocomplete="off">
                                   </div>
                                   <div class="form-group col-sm-9">
                                     <label for="editNomDepartement">Nom</label>
                                     <input type="text" class="form-control" id="editNomDepartement" placeholder="Entrer le nom du département"
-                                      formControlName="editNomDepartement" [ngModel]="editDep.nomDepartement">
+                                      formControlName="editNomDepartement" [ngModel]="editDep.nomDepartement" autocomplete="off">
                                   </div>
                                 </div><!--/.row-->
                                 <div class="row">
@@ -511,24 +511,24 @@
                                   <div class="form-group col-sm-6">
                                     <label for="addCodeCommune">Code</label>
                                     <input type="text" class="form-control" id="addCodeCommune" placeholder="Code du commune"
-                                      formControlName="addCodeCommune">
+                                      formControlName="addCodeCommune" autocomplete="off">
                                   </div>
                                   <div class="form-group col-sm-6">
                                     <label for="addNomCommune">Nom</label>
                                     <input type="text" class="form-control" id="addNomCommune" placeholder="Entrer le nom de la commune"
-                                      formControlName="addNomCommune">
+                                      formControlName="addNomCommune" autocomplete="off">
                                   </div>                              
                                 </div><!--/.row-->
                                 <div class="row">
                                     <div class="form-group col-sm-6">
-                                        <label for="addTelCommune">Téphone</label>
+                                        <label for="addTelCommune">Téléphone</label>
                                         <input type="text" class="form-control" id="addTelCommune" placeholder="Entrer téléphone"
-                                        formControlName="addTelCommune">
+                                        formControlName="addTelCommune" autocomplete="off">
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="addAdrCommune">Adresse</label>
                                         <input type="text" class="form-control" id="addAdrCommune" placeholder="Entrer adresse"
-                                        formControlName="addAdrCommune">
+                                        formControlName="addAdrCommune" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -577,24 +577,24 @@
                                   <div class="form-group col-sm-6">
                                     <label for="editCodeCommune">Code</label>
                                     <input type="text" class="form-control" id="editCodeCommune" placeholder="Code du département"
-                                      formControlName="editCodeCommune" readonly="true" [ngModel]="editCom.codeCommune">
+                                      formControlName="editCodeCommune" readonly="true" [ngModel]="editCom.codeCommune" autocomplete="off">
                                   </div>
                                   <div class="form-group col-sm-6">
                                     <label for="editNomCommune">Nom</label>
                                     <input type="text" class="form-control" id="editNomCommune" placeholder="Entrer le nom du commune"
-                                      formControlName="editNomCommune" [ngModel]="editCom.nomCommune">
+                                      formControlName="editNomCommune" [ngModel]="editCom.nomCommune" autocomplete="off">
                                   </div>
                                 </div><!--/.row-->
                                 <div class="row">
                                     <div class="form-group col-sm-6">
-                                        <label for="editTelCommune">Téphone</label>
+                                        <label for="editTelCommune">Téléphone</label>
                                         <input type="text" class="form-control" id="editTelCommune" placeholder="Entrer téléphone"
-                                        formControlName="editTelCommune" [ngModel]="editCom.numTelMairie">
+                                        formControlName="editTelCommune" [ngModel]="editCom.numTelMairie" autocomplete="off">
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="editAdrCommune">Adresse</label>
                                         <input type="text" class="form-control" id="editAdrCommune" placeholder="Entrer adresse"
-                                        formControlName="editAdrCommune"  [ngModel]="editCom.adresseMairie">
+                                        formControlName="editAdrCommune"  [ngModel]="editCom.adresseMairie" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -779,24 +779,24 @@
                                   <div class="form-group col-sm-6">
                                     <label for="addCodeArr">Code</label>
                                     <input type="text" class="form-control" id="addCodeArr" placeholder="Code arrondissement"
-                                      formControlName="addCodeArr">
+                                      formControlName="addCodeArr" autocomplete="off">
                                   </div>
                                   <div class="form-group col-sm-6">
                                     <label for="addNomArr">Nom</label>
                                     <input type="text" class="form-control" id="addNomArr" placeholder="Entrer le nom de l' arrondissement"
-                                      formControlName="addNomArr">
+                                      formControlName="addNomArr" autocomplete="off">
                                   </div>                              
                                 </div><!--/.row-->
                                 <div class="row">
                                     <div class="form-group col-sm-6">
-                                        <label for="addTelArr">Téphone</label>
+                                        <label for="addTelArr">Téléphone</label>
                                         <input type="text" class="form-control" id="addTelArr" placeholder="Entrer téléphone"
-                                        formControlName="addTelArr">
+                                        formControlName="addTelArr" autocomplete="off">
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="addAdrArr">Adresse</label>
                                         <input type="text" class="form-control" id="addAdrArr" placeholder="Entrer adresse"
-                                        formControlName="addAdrArr">
+                                        formControlName="addAdrArr" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -845,24 +845,24 @@
                                   <div class="form-group col-sm-6">
                                     <label for="editCodeArr">Code</label>
                                     <input type="text" class="form-control" id="editCodeArr" placeholder="Code de l'arrondissement"
-                                      formControlName="editCodeArr" readonly="true" [ngModel]="editArr.codeArrondi">
+                                      formControlName="editCodeArr" readonly="true" [ngModel]="editArr.codeArrondi" autocomplete="off">
                                   </div>
                                   <div class="form-group col-sm-6">
                                     <label for="editNomArr">Nom</label>
                                     <input type="text" class="form-control" id="editNomArr" placeholder="Entrer le nom "
-                                      formControlName="editNomArr" [ngModel]="editArr.nomArrondi">
+                                      formControlName="editNomArr" [ngModel]="editArr.nomArrondi" autocomplete="off">
                                   </div>
                                 </div><!--/.row-->
                                 <div class="row">
                                     <div class="form-group col-sm-6">
-                                        <label for="editTelArr">Téphone</label>
+                                        <label for="editTelArr">Téléphone</label>
                                         <input type="text" class="form-control" id="editTelArr" placeholder="Entrer téléphone"
-                                        formControlName="editTelArr" [ngModel]="editArr.numTelArrondi">
+                                        formControlName="editTelArr" [ngModel]="editArr.numTelArrondi" autocomplete="off">
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="editAdrArr">Adresse</label>
                                         <input type="text" class="form-control" id="editAdrArr" placeholder="Entrer adresse"
-                                        formControlName="editAdrArr"  [ngModel]="editArr.adresseArrondi">
+                                        formControlName="editAdrArr"  [ngModel]="editArr.adresseArrondi" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -1047,31 +1047,31 @@
                                   <div class="form-group col-sm-6">
                                     <label for="addCodeQua">Code</label>
                                     <input type="text" class="form-control" id="addCodeQua" placeholder="Code quartier"
-                                      formControlName="addCodeQua">
+                                      formControlName="addCodeQua" autocomplete="off">
                                   </div>
                                   <div class="form-group col-sm-6">
                                     <label for="addNomQua">Nom</label>
                                     <input type="text" class="form-control" id="addNomQua" placeholder="Entrer du quartier"
-                                      formControlName="addNomQua">
+                                      formControlName="addNomQua" autocomplete="off">
                                   </div>                              
                                 </div><!--/.row-->
                                 <div class="row">
                                     <div class="form-group col-sm-6">
-                                        <label for="addTelQua">Téphone</label>
+                                        <label for="addTelQua">Téléphone</label>
                                         <input type="text" class="form-control" id="addTelQua" placeholder="Entrer téléphone"
-                                        formControlName="addTelQua">
+                                        formControlName="addTelQua" autocomplete="off">
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="addAdrQua">Adresse</label>
                                         <input type="text" class="form-control" id="addAdrQua" placeholder="Entrer adresse"
-                                        formControlName="addAdrQua">
+                                        formControlName="addAdrQua" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="row">
                                   <div class="form-group col-sm-12">
                                     <label for="addArr">Arrondissement</label>
                                       <select id="addArr" name="addArr" class="form-control"
-                                      formControlName = "addArr">
+                                      formControlName = "addArr" autocomplete="off">
                                         <option *ngFor="let arrondissement of arrondissement; let i = index"
                                         [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
                                       </select>
@@ -1113,24 +1113,24 @@
                                   <div class="form-group col-sm-6">
                                     <label for="editCodeQua">Code</label>
                                     <input type="text" class="form-control" id="editCodeQua" placeholder="Code du quartier"
-                                      formControlName="editCodeQua" readonly="true" [ngModel]="editQua.codeQuartier">
+                                      formControlName="editCodeQua" readonly="true" [ngModel]="editQua.codeQuartier" autocomplete="off">
                                   </div>
                                   <div class="form-group col-sm-6">
                                     <label for="editNomQua">Nom</label>
                                     <input type="text" class="form-control" id="editNomQua" placeholder="Entrer le nom "
-                                      formControlName="editNomQua" [ngModel]="editQua.nomQuartier">
+                                      formControlName="editNomQua" [ngModel]="editQua.nomQuartier" autocomplete="off">
                                   </div>
                                 </div><!--/.row-->
                                 <div class="row">
                                     <div class="form-group col-sm-6">
-                                        <label for="editTelQua">Téphone</label>
+                                        <label for="editTelQua">Téléphone</label>
                                         <input type="text" class="form-control" id="editTelQua" placeholder="Entrer téléphone"
-                                        formControlName="editTelQua" [ngModel]="editQua.numTelQuartier">
+                                        formControlName="editTelQua" [ngModel]="editQua.numTelQuartier" autocomplete="off">
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="editAdrQua">Adresse</label>
                                         <input type="text" class="form-control" id="editAdrQua" placeholder="Entrer adresse"
-                                        formControlName="editAdrQua"  [ngModel]="editQua.adresseQuartier">
+                                        formControlName="editAdrQua"  [ngModel]="editQua.adresseQuartier" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -1291,7 +1291,7 @@
                                   <div class="form-group col-sm-12">
                                     <label for="addCodeService">Code du service</label>
                                     <input type="text" class="form-control" id="addCodePays" placeholder="Code du service"
-                                    formControlName="addCodeService">
+                                    formControlName="addCodeService" autocomplete="off">
                                   </div>
     
                                 </div><!--/.row-->
@@ -1299,7 +1299,7 @@
                                   <div class="form-group col-sm-12">
                                     <label for="addLibService">Libellé du service</label>
                                     <input type="texte" class="form-control" id="addLibService" placeholder="libellé du servie"
-                                    formControlName="addLibService">
+                                    formControlName="addLibService" autocomplete="off">
                                   </div>
     
                                 </div><!--/.row-->
@@ -1341,7 +1341,7 @@
                                     <label for="editCodeService">Code du pays</label>
                                     <input type="text" class="form-control" id="editCodeService" readonly="true"
                                     formControlName="editCodeService" placeholder="Code du service"
-                                    [ngModel]="editService.codeService">
+                                    [ngModel]="editService.codeService" autocomplete="off">
                                   </div>
     
                                 </div><!--/.row-->
@@ -1350,7 +1350,7 @@
                                     <label for="editLibService">Libellé duu service</label>
                                     <input type="texte" class="form-control" id="editLibService"
                                     formControlName="editLibService" placeholder="Libellé du service"
-                                    [ngModel]="editService.libService">
+                                    [ngModel]="editService.libService" autocomplete="off">
                                   </div>
     
                                 </div><!--/.row-->
@@ -1483,21 +1483,21 @@
                                   <div class="form-group col-sm-12">
                                     <label for="addCodeSite">Code</label>
                                     <input type="text" class="form-control" id="addCodeSite" placeholder="Code du site"
-                                      formControlName="addCodeSite">
+                                      formControlName="addCodeSite" autocomplete="off">
                                   </div>
                                 </div><!--/.row-->
                                 <div class="row">
                                     <div class="form-group col-sm-12">
                                         <label for="addLibSite">Libellé</label>
                                         <input type="text" class="form-control" id="addLibSite" placeholder="Entrer le libellé du site"
-                                          formControlName="addLibSite">
+                                          formControlName="addLibSite" autocomplete="off">
                                       </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-sm-12">
                                         <label for="addDescriSite">Description</label>
                                         <input type="text" class="form-control" id="addDescriSite" placeholder="Descriptiondu site"
-                                          formControlName="addDescriSite">
+                                          formControlName="addDescriSite" autocomplete="off">
                                       </div>
                                 </div>
                                 <div class="row">
@@ -1553,14 +1553,14 @@
                                     <div class="form-group col-sm-12">
                                         <label for="editLibSite">Libellé</label>
                                         <input type="text" class="form-control" id="editLibSite" placeholder="Entrer le libellé du site"
-                                          formControlName="editLibSite" [ngModel]="editSite.libSite">
+                                          formControlName="editLibSite" [ngModel]="editSite.libSite" autocomplete="off">
                                       </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-sm-12">
                                         <label for="editDescriSite">Description</label>
                                         <input type="text" class="form-control" id="editDescriSite" placeholder="Descriptiondu site"
-                                          formControlName="editDescriSite" [ngModel]="editSite.descriSite">
+                                          formControlName="editDescriSite" [ngModel]="editSite.descriSite" autocomplete="off">
                                       </div>
                                 </div>
                                 <div class="row">

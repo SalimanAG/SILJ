@@ -76,8 +76,8 @@
                     <div class="row">
                       <div class="form-group col-sm-4">
                         <label for="addNumRecoll">Numéro</label>
-                        <input type="text" class="form-control" id="addNumRecoll"
-                          formControlName="addNumRecoll" placeholder="Numéro du point">
+                        <input type="text" class="form-control" id="addNumRecoll" readonly="true"
+                          formControlName="addNumRecoll" placeholder="Numéro du point" autocomplete="off">
                       </div>
                       <div class="form-group col-sm-4">
                         <label for="addDateRecoll">Date</label>
@@ -88,7 +88,7 @@
                       <div class="form-group col-sm-4">
                         <label for="addDesRecoll">Description</label>
                         <input type="text" class="form-control" id="addDesRecoll"
-                         formControlName="addDesRecoll">
+                         formControlName="addDesRecoll" autocomplete="off">
                       </div>
   
                     </div><!--/.row-->
@@ -175,17 +175,17 @@
                       <label for="editNumRecoll">Numéro</label>
                       <input type="text" class="form-control" id="editNumRecoll"
                         formControlName="editNumRecoll" placeholder="Numéro de recollement" 
-                        [ngModel]="editRecollement.numRecollement" readonly>
+                        [ngModel]="editRecollement.numRecollement" readonly autocomplete="off">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="editDateRecoll">Date</label>
                       <input type="date" class="form-control" id="editDateRecoll"
-                       formControlName="editDateRecoll" [ngModel]="editRecollement.dateRecollement">
+                       formControlName="editDateRecoll" [ngModel]="editRecollement.dateRecollement" autocomplete="off">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="editDesRecoll">Description</label>
                       <input type="text" class="form-control" id="editDesRecoll"
-                       formControlName="editDesRecoll" [ngModel]="editRecollement.descriptionRecollement">
+                       formControlName="editDesRecoll" [ngModel]="editRecollement.descriptionRecollement" autocomplete="off">
                     </div>
 
                   </div><!--/.row-->

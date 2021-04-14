@@ -65,7 +65,7 @@ export class UtilisateursComponent implements OnInit {
       addPrenomUtilisateur:['', Validators.required],
       addFonctionUtilisateur:'',
       addActiveUtilisateur:false,
-      addService:0
+      addService:-1
     });
 
     this.editUserFormsGroup = this.formBulder.group({
@@ -75,7 +75,7 @@ export class UtilisateursComponent implements OnInit {
       editPrenomUtilisateur:['', Validators.required],
       editFonctionUtilisateur:'',
       editActiveUtilisateur:false,
-      editService:0,
+      editService:-1,
       editAskMdp:false
     });
   }
@@ -99,7 +99,7 @@ export class UtilisateursComponent implements OnInit {
     this.serviceCommune.getAllService().subscribe(
       (data) => {
         this.services = data;
-        
+
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des services : ', erreur);
@@ -139,14 +139,28 @@ export class UtilisateursComponent implements OnInit {
   }
 
   onSubmitAddUserFormsGroup(){
+
+    let service = null;
+    if(this.addUserFormsGroup.value['addService'] != -1){
+      service = this.services[this.addUserFormsGroup.value['addService']];
+    }
+
     const newUser = new Utilisateur(this.addUserFormsGroup.value['addLogin'], null,
     this.addUserFormsGroup.value['addNomUtilisateur'], this.addUserFormsGroup.value['addPrenomUtilisateur'],
     this.addUserFormsGroup.value['addFonctionUtilisateur'], this.addUserFormsGroup.value['addActiveUtilisateur'],
-    this.services[this.addUserFormsGroup.value['addService']], true);
+    service, true);
 
     this.serviceUser.addAUser(newUser).subscribe(
       (data) => {
-        this.primaryModal.hide();
+        //this.primaryModal.hide();
+        this.addUserFormsGroup.patchValue({
+          addLogin:'',
+          addNomUtilisateur:'',
+          addPrenomUtilisateur:'',
+          addFonctionUtilisateur:'',
+          addActiveUtilisateur:false
+        });
+        this.getAllService();
         this.getAllUser();
       },
       (erreur) => {
@@ -158,10 +172,14 @@ export class UtilisateursComponent implements OnInit {
   }
 
   onSubmitEditUserFormsGroup(){
+    let service = null;
+    if(this.editUserFormsGroup.value['editService'] != -1){
+      service = this.services[this.editUserFormsGroup.value['editService']];
+    }
     const newUser = new Utilisateur(this.editUserFormsGroup.value['editLogin'], null,
     this.editUserFormsGroup.value['editNomUtilisateur'], this.editUserFormsGroup.value['editPrenomUtilisateur'],
     this.editUserFormsGroup.value['editFonctionUtilisateur'], this.editUserFormsGroup.value['editActiveUtilisateur'],
-    this.services[this.editUserFormsGroup.value['editService']], this.editUserFormsGroup.value['editAskMdp']);//editAskMdp
+    service, this.editUserFormsGroup.value['editAskMdp']);//editAskMdp
 
     newUser.idUtilisateur = this.editUser.idUtilisateur;
 

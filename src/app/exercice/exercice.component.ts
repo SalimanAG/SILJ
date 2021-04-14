@@ -72,7 +72,7 @@ export class ExerciceComponent implements OnInit {
       editExoSelectionner:false
     });
 
-    
+
 
   }
 
@@ -126,6 +126,12 @@ export class ExerciceComponent implements OnInit {
     this.serviceExo.addAExo(newExo).subscribe(
       (data) => {
         this.primaryModal.hide();
+        this.addExoFormsGroup.patchValue({
+          addCodeExercice:'',
+          addLibExercice:'',
+          addDateDebut:'',
+          addDateFin:''
+        });
         this.getAllExo();
       },
       (erreur) => {

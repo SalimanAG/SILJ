@@ -46,13 +46,18 @@ export class AutheComponent implements OnInit {
     this.serviceUser.getAllUsers().subscribe(
       (data) => {
         this.utilisateurs = data;
+        //console.log('data', data);
+        this.confirmation = false;
         data.forEach(element => {
+
           if(element.login == this.connnectForm.value['login'] && element.askMdp1erLance == true){
             this.confirmation = true;
+            //console.log('Element', element);
+            return;
           }
-          else {
-            this.confirmation = false;
-          }
+
+          //console.log('confirmation', this.confirmation);
+
         });
       },
       (erreur) => {
@@ -71,7 +76,7 @@ export class AutheComponent implements OnInit {
             if(element.login===this.connnectForm.value['login']
             && element.motDePass===this.connnectForm.value['mdp']){
 
-              console.log(this.serviceUser.connectedUser);
+              //console.log(this.serviceUser.connectedUser);
               if(element.activeUtilisateur == true){
                 this.serviceUser.connectedUser = element;
                 this.serviceUser.isAuth = true;
@@ -106,7 +111,7 @@ export class AutheComponent implements OnInit {
               if(element.login===this.connnectForm.value['login']){
                 element.motDePass = this.connnectForm.value['mdp'];
                 element.askMdp1erLance = false;
-                console.log('Elémént à envoier', element);
+                //console.log('Elémént à envoier', element);
                 this.serviceUser.editAUser(element.idUtilisateur.toString(), element).subscribe(
                   (data2) => {
                     if(element.activeUtilisateur == true){

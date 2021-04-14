@@ -2,15 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LignePlacement } from '../../models/lignePlacement.model';
 import { Placement } from '../../models/placement.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlacementService {
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpCli:HttpClient) { }
+  constructor(private httpCli:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   //partie réservée pour placement
   getAllPlacement(){

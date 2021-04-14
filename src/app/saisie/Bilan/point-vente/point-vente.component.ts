@@ -165,8 +165,8 @@ export class PointVenteComponent implements OnInit {
 
    initFormsGroup(){
     this.addPointVenteFormGroup = this.formBulder.group({
-      addNumPv:['', Validators.required],
-      addDatePv:[new Date(), Validators.required], 
+      addNumPv:['PV-20000001', Validators.required],
+      addDatePv:[new Date().toISOString().substring(0, 10), Validators.required], 
      // addpayPoint:[0, Validators.required],
       addCorres:[0, Validators.required],
       addReg:[0, Validators.required]
@@ -175,7 +175,7 @@ export class PointVenteComponent implements OnInit {
     this.editPointVenteFormGroup = this.formBulder.group({
       editNumPv:['', Validators.required],
       editDatePv:[new Date(), Validators.required], 
-      editpayPoint:[0, Validators.required],
+     // editpayPoint:[0, Validators.required],
       editCorres:[0, Validators.required],
       editReg:[0, Validators.required]
     });
@@ -255,7 +255,7 @@ export class PointVenteComponent implements OnInit {
     this.serviceCorres.getAllCorres().subscribe(
       (data) => {
         data.forEach(element =>{
-          if(element.typecorres.libTypeCorres === "Agent Collecteur")
+          if(element.typecorres.codeTypCorres != "LIV")
           this.correspondant.push(element);
         });
         
@@ -373,7 +373,8 @@ export class PointVenteComponent implements OnInit {
             }
           );
         });
-
+        this.addPointVenteFormGroup.reset();
+        this.initFormsGroup();
         this.addComModal.hide();
         this.getAllPointVente();
         this.getAllLignePointVente();
@@ -524,7 +525,6 @@ export class PointVenteComponent implements OnInit {
           },
           (erreur) => {
             console.log('Erreur lors de la suppression dUne ligne de point vente', erreur);
-            //faled=true;
           }
         );
       }

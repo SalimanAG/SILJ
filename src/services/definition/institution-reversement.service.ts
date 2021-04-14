@@ -47,9 +47,11 @@ export class InstitutionReversementService {
       return this.lien.post<Pourcentage>(this.host+'/commune/pourcentage/list', corps);
     }
 
-    editAPeRev(code:String, corps:Pourcentage){
+    editAPeRev(code:number, corps:Pourcentage){
       console.log(code, corps);
+      corps.idPourcenRevers=code;
       return this.lien.put<Pourcentage>(this.host+'/commune/pourcentage/byId/'+code, corps);
+      //return this.lien.put<Pourcentage>(this.host+'/commune/pourcentage/byId/'+code, corps);
     }
 
     deleteAPeRev(code:String){

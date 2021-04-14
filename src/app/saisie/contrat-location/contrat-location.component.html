@@ -24,8 +24,8 @@
       <tbody>
         <tr *ngFor="let contrat of contrats; let i = index" >
           <td>{{ contrat.numContrat }}</td>
-          <td>{{ contrat.dateSignatureContrat }}</td>
-          <td>{{ contrat.dateEffetContrat }}</td>
+          <td>{{ contrat.dateSignatureContrat | date:"dd-MM-yyyy" }}</td>
+          <td>{{ contrat.dateEffetContrat | date:"dd-MM-yyyy" }}</td>
           <td>{{ contrat.locataire.identiteLocataire }}</td>
           <td>{{ contrat.immeuble.codeIm }} - {{ contrat.immeuble.libIm }}</td>
           <td>{{ contrat.avanceContrat }}</td>
@@ -89,7 +89,7 @@
                           <div class="form-group col-sm-4">
                             <label for="addNumContrat">Code</label>
                             <input type="text" class="form-control" id="addNumContrat"
-                            formControlName="addNumContrat" placeholder="Code du Contrat">
+                            autocomplete="off" formControlName="addNumContrat" placeholder="Code du Contrat">
                           </div>
                           <div class="form-group col-sm-4">
                             <label for="addDateSignatureContrat">Date de Signature</label>
@@ -103,7 +103,12 @@
                           </div>
                         </div><!--/.row-->
                         <div class="row">
-                          <div class="form-group col-sm-12">
+                          <div class="form-group col-sm-4">
+                            <label for="addDateFinContrat">Date de Fin</label>
+                            <input type="date" class="form-control" id="addDateFinContrat"
+                            formControlName="addDateFinContrat" >
+                          </div>
+                          <div class="form-group col-sm-8">
                             <label for="addLocataire">Identité du Locataire</label>
                             <select id="addLocataire" name="addLocataire" class="form-control"
                             formControlName="addLocataire">
@@ -148,7 +153,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="addContratFormsGroup.invalid" >Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addContratFormsGroup.invalid || valeurLocativesByType.length == 0 || locataires.length == 0" >Enrégistrer</button>
                   </div>
                 </div><!-- /.modal-content -->
               </form>
@@ -195,6 +200,11 @@
                           </div>
                         </div><!--/.row-->
                         <div class="row">
+                          <div class="form-group col-sm-4">
+                            <label for="editDateFinContrat">Date de Fin</label>
+                            <input type="date" class="form-control" id="editDateFinContrat"
+                            formControlName="editDateFinContrat" >
+                          </div>
                           <div class="form-group col-sm-12">
                             <label for="editLocataire">Identité du Locataire</label>
                             <select id="editLocataire" name="editLocataire" class="form-control"
@@ -217,7 +227,7 @@
                             <label for="editImmeuble">Valeur Locative</label>
                             <select id="editImmeuble" name="editImmeuble" class="form-control"
                             formControlName="editImmeuble">
-                              <option *ngFor="let imm of valeurLocativesByType; let i = index" [value]="i"
+                              <option *ngFor="let imm of valeurLocativesByType2; let i = index" [value]="i"
                               >{{ imm.codeIm }} - {{ imm.libIm }}</option>
                             </select>
                           </div>

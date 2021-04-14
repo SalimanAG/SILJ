@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-      <i class="fa fa-align-justify"></i> Listes des Actes Livrables facturés non livrés
+      <i class="fa fa-align-justify"></i> Listes des Actes Livrables Facturés non Livrés
   </div>
   <div class="card-body">
     <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;" >
@@ -62,7 +62,7 @@
                   <td>{{ opliv.qteLigneOperCaisse*opliv.prixLigneOperCaisse }}</td>
                   <td>{{ opliv.opCaisse.contribuable }}</td>
                   <td>
-                      <button class="btn btn-primary" (click)="validerLivraison(i)"> Livré</button>
+                      <button class="btn btn-primary" (click)="validerLivraison(i)" [disabled]="this.magasinMagasinierConnected == null"> Livré</button>
                   </td>
               </tr>
           </tbody>

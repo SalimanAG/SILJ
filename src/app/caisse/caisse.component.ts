@@ -136,7 +136,12 @@ export class CaisseComponent implements OnInit {
     this.arrondissements[this.addCaissFormsGroup.value['addArrondissement']]);
     this.serviceCaisse.addACaisse(newCaiss).subscribe(
       (data) => {
-        this.primaryModal.hide();
+        //this.primaryModal.hide();
+        this.addCaissFormsGroup.patchValue({
+          addCodeCaisse:'',
+          addLibeCaisse:''
+        });
+        this.getAllArrondissement();
         this.getAllCaisse();
       },
       (erreur) => {

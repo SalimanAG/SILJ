@@ -22,6 +22,8 @@ import { SiteMarcher } from '../../../models/siteMarcher.model';
 })
 export class CommuneComponent implements OnInit {
 
+  
+
   dtOptions1: DataTables.Settings = {};
   dtOptions2: DataTables.Settings = {};
   dtOptions3: DataTables.Settings = {};
@@ -43,7 +45,7 @@ export class CommuneComponent implements OnInit {
   suprDep: Departement =  new Departement('', '', new Pays('','',''));
   editDep: Departement =  new Departement('', '', new Pays('','',''));
   infoDep: Departement =  new Departement('', '', new Pays('','',''));
-  editDepFormsGroup: FormGroup;
+  editDepFormsGroup: FormGroup; 
   addDepFormsGroup: FormGroup;
   dtTrigger2: Subject<any> = new Subject<any>();
 
@@ -291,13 +293,13 @@ export class CommuneComponent implements OnInit {
       this.addPaysFormsGroup = this.formBulder.group({
         addCodePays: ['', Validators.required],
         addLibPays: ['', Validators.required],
-        addLibCompPays: ['', Validators.required]
+        addLibCompPays: ''
         });
 
       this.editPaysFormsGroup = this.formBulder.group({
         editCodePays:['', Validators.required],
         editLibPays:['', Validators.required],
-        editLibCompPays:['', Validators.required]
+        editLibCompPays:''
       });
 
       this.addDepFormsGroup = this.formBulder.group(
@@ -320,8 +322,8 @@ export class CommuneComponent implements OnInit {
         {
           addCodeCommune: ['', Validators.required],
           addNomCommune: ['', Validators.required],
-          addTelCommune: ['', Validators.required],
-          addAdrCommune: ['', Validators.required],
+          addTelCommune: '',
+          addAdrCommune: '',
           addDep: 0,
         }
       );
@@ -330,8 +332,8 @@ export class CommuneComponent implements OnInit {
         {
           editCodeCommune: ['', Validators.required],
           editNomCommune: ['', Validators.required],
-          editTelCommune: ['', Validators.required],
-          editAdrCommune: ['', Validators.required],
+          editTelCommune: '',
+          editAdrCommune: '',
           editDep: 0
         }
       );
@@ -340,8 +342,8 @@ export class CommuneComponent implements OnInit {
         {
           addCodeArr: ['', Validators.required],
           addNomArr: ['', Validators.required],
-          addTelArr: ['', Validators.required],
-          addAdrArr: ['', Validators.required],
+          addTelArr: '',
+          addAdrArr: '',
           addCom: 0,
         }
       );
@@ -350,8 +352,8 @@ export class CommuneComponent implements OnInit {
         {
           editCodeArr: ['', Validators.required],
           editNomArr: ['', Validators.required],
-          editTelArr: ['', Validators.required],
-          editAdrArr: ['', Validators.required],
+          editTelArr: '',
+          editAdrArr: '',
           editCom: 0,
         }
       );
@@ -360,8 +362,8 @@ export class CommuneComponent implements OnInit {
         {
           addCodeQua: ['', Validators.required],
           addNomQua: ['', Validators.required],
-          addTelQua: ['', Validators.required],
-          addAdrQua: ['', Validators.required],
+          addTelQua: '',
+          addAdrQua: '',
           addArr: 0,
         }
       );
@@ -370,8 +372,8 @@ export class CommuneComponent implements OnInit {
         {
           editCodeQua: ['', Validators.required],
           editNomQua: ['', Validators.required],
-          editTelQua: ['', Validators.required],
-          editAdrQua: ['', Validators.required],
+          editTelQua: '',
+          editAdrQua: '',
           editArr: 0,
         }
       );
@@ -391,7 +393,7 @@ export class CommuneComponent implements OnInit {
         {
           addCodeSite: ['', Validators.required],
           addLibSite: ['', Validators.required],
-          addDescriSite: ['', Validators.required],
+          addDescriSite: '',
           addArr: 0,
         }
       );
@@ -400,7 +402,7 @@ export class CommuneComponent implements OnInit {
         {
           editCodeSite: ['', Validators.required],
           editLibSite: ['', Validators.required],
-          editDescriSite: ['', Validators.required],
+          editDescriSite: '',
           editArr: 0,
         }
       );
@@ -535,6 +537,8 @@ export class CommuneComponent implements OnInit {
     this.communeService.addAPays(newPay).subscribe(
       (data) => {
         console.log('Réussie : ', data);
+        this.addPaysFormsGroup.reset();
+        this.initForms();
         this.primaryModal2.hide();
         //this.router.navigate(['/article']);
         this.getAllPays();
@@ -618,6 +622,8 @@ export class CommuneComponent implements OnInit {
     .subscribe(
       (data) => {
         this.primaryModal.hide();
+       this.addDepFormsGroup.reset();
+        this.initForms();
         console.log('Réussie : ', data);
         this.getAllDepartement();
       },
@@ -704,6 +710,8 @@ export class CommuneComponent implements OnInit {
     this.communeService.addCommune(newCom)
     .subscribe(
       (data) => {
+        this.addComFormsGroup.reset();
+        this.initForms();
         this.primaryModal3.hide();
         console.log('Réussie : ', data);
         this.getAllCommune();
@@ -794,6 +802,7 @@ export class CommuneComponent implements OnInit {
     this.communeService.addArrondissement(newArr)
     .subscribe(
       (data) => {
+        this.addArrFormsGroup.reset();
         this.primaryModal4.hide();
         console.log('Réussie : ', data);
         this.getAllArrondissement();
@@ -816,6 +825,8 @@ export class CommuneComponent implements OnInit {
     .subscribe(
       (data) => {
         this.warningModal4.hide();
+        this.addArrFormsGroup.reset();
+        this.initForms();
         console.log('Réussie : ', data);
         this.getAllArrondissement();
       },
@@ -884,6 +895,8 @@ export class CommuneComponent implements OnInit {
     this.communeService.addQuartier(newQua)
     .subscribe(
       (data) => {
+        this.addQuaFormsGroup.reset();
+        this.initForms();
         this.primaryModal5.hide();
         console.log('Réussie : ', data);
         this.getAllQuartier();
@@ -965,6 +978,8 @@ export class CommuneComponent implements OnInit {
     this.addServiceFormsGroup.value['addLibService']);
     this.communeService.addService(newSev).subscribe(
       (data) => {
+        this.addServiceFormsGroup.reset();
+        this.initForms();
         console.log('Réussie : ', data);
         this.primaryModal6.hide();
         //this.router.navigate(['/article']);
@@ -1048,6 +1063,8 @@ export class CommuneComponent implements OnInit {
     this.arrondissement[this.addSiteFormsGroup.value['addArr']]);
     this.communeService.addSiteMarcher(newSite).subscribe(
       (data) => {
+        this.addSiteFormsGroup.reset();
+        this.initForms();
         console.log('Réussie : ', data);
         this.primaryModal7.hide();
         //this.router.navigate(['/article']);

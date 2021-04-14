@@ -7,9 +7,12 @@
         <!--Fin card header-->
         <div class="card-body">
             <div class="row">
-                <div class="col-lg-6">
-                    <h5><i class="fa fa-align-justify">Liste des opérations de caisse</i></h5>
+                <div class="col-lg-4">
+                    <h5><i class="fa fa-align-justify">Liste des opérations du jours</i></h5>
                 </div>
+                <!--div class="col-lg-2">
+                    <button class="btn btn-success" data-toggle="modal" (click)="initRecherche()" type="button">Rechercher</button>
+                </div-->
                 <div class="col-lg-2">
                     <button class="btn btn-success" data-toggle="modal" (click)="initNewVente()" type="button">Nouvelle prestation</button>
                 </div>
@@ -20,7 +23,7 @@
                     <button class="btn btn-success" data-toggle="modal" (click)="initLoyer()" type="button">Nouvelle redevance</button>
                 </div> <br><br><br>
             </div>
-            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabOpeCa" [dtTrigger]="dtOpeCa" id="dtop">
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabDailyOp" [dtTrigger]="dtrigDailyOp" id="dtop">
                 <thead>
                     <tr>
                         <th>Numero</th>
@@ -31,7 +34,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody *ngFor="let oc of listOp; let i=index;">
+                <tbody *ngFor="let oc of opDay; let i=index;">
                     <tr>
                         <td>{{oc.numOpCaisse}}</td>
                         <td>{{oc.dateOpCaisse}}</td>
@@ -83,42 +86,29 @@
             </div-->
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <label for="nVentCais">Caisse</label>
                                     <select id="nVentCais" formControlName="nVentCais" class="form-control" required>
                         <option  *ngFor="let afu of affectUser; let i = index" [value]="i">{{ afu.caisse.libeCaisse }}</option>
                     </select>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-2.5">
                                     <label class="form-label" for="nVentDat">Date</label>
-                                    <input type="datetime-local" id="nVentDat" formControlName="nVentDat" class="form-control" placeholder="Date et heure" required>
+                                    <input type="datetime" id="nVentDat" formControlName="nVentDat" class="form-control" value="new Date()" required>
                                 </div>
-                                <div class="col-sm-3">
-                                    <label class="form-label" for="nVentNum">Numéro</label>
-                                    <input type="text" id="nVentNum" formControlName="nVentNum" class="form-control" placeholder="Numéro" required>
-                                </div>
-                                <div class="col-xl-3">
+                                <div class="col-xl-2">
                                     <label for="nVentMod">Mode</label>
                                     <select id="nVentMod" formControlName="nVentMod" class="form-control" required>
                       <option *ngFor="let mod of modes; let i=index" [value]="i">{{mod.libeModPay}}</option>
                     </select>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xl-4">
+                                <div class="col-xl-3">
                                     <label class="form-label" for="nVentCont">Contribuable</label>
-                                    <input type="text" id="nVentCont" formControlName="nVentCont" class="form-control" placeholder="Contribuable">
+                                    <input type="text" id="nVentCont" formControlName="nVentCont" class="form-control" placeholder="Contribuable" autocomplete="false">
                                 </div>
-                                <div class="col-xl-4">
+                                <div class="col-xl-2.5">
                                     <label class="form-label" for="nVentObs">Observation</label>
-                                    <input type="text" id="nVentObs" formControlName="nVentObs" class="form-control" placeholder="Observation">
-                                </div>
-                                <div class="col-sm-3">
-                                    <label for="nVTimp">Iprimé</label>
-                                    <select id="nVTimp" formControlName="nVTimp" class="form-control" required (change)="typeImprime(timp[addVentGroup.value['nVTimp']])">
-                      <option *ngFor="let typI of timp; let i=index" [value]="i">{{typI}}</option>
-                      <!--option [value]=2>Reçu de caisse</option-->
-                    </select>
+                                    <input type="text" id="nVentObs" formControlName="nVentObs" class="form-control" placeholder="Observation" autocomplete="false">
                                 </div>
                             </div>
                             <br>
@@ -160,11 +150,12 @@
                                 </tfoot>
                             </table>
                         </div>
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
-                            <button type="button" class="btn btn-secondary" (click)="addVente.hide()">Fermer</button>
-                        </div>
+                        <div class="card-footer"></div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
+                    <button type="button" class="btn btn-secondary" (click)="addVente.hide()">Fermer</button>
                 </div>
                 <!--div class="modal-footer">
         </div-->
@@ -188,28 +179,42 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-sm-2"><label for="loyLoc">Locataire</label>
+                                <div class="col-xl-1">
+                                    <label for="loyLoc">Locataire</label>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-xl-3">
                                     <select formControlName="loyLoc" class="form-control" #Loca (ngModelChange)="chargerImmeubles(locataires[addLoyerGroup.value['loyLoc']])">
-                    <option *ngFor="let loc of locataires; let i=index" [value]="i">{{loc.identiteLocataire}}</option>
-                  </select>
+                                      <option *ngFor="let loc of locataires; let i=index" [value]="i">
+                                          {{loc.identiteLocataire}}
+                                      </option>
+                                  </select>
                                 </div>
-                                <div class="col-sm-2"><label for="loyLoc">Locataire</label>
+                                <!--div class="col-xl-2">
+                                    <label for="loyMtt">Montant versé</label>
+                                    <input formControlName="loyMtt" id="loyMtt" type="number" [(ngModel)]="montantarepartir" class="form-control">
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-xl-1">
+                                    <label for="loyRel">Reliquat</label>
+                                    <input formControlName="loyRel" id="loyRel" type="number" class="form-control">
+                                </div-->
+                                <div class="col-xl-1">
+                                    <label for="loyVL">Boutique</label>
+                                </div>
+                                <div class="col-xl-5">
                                     <select formControlName="loyVL" class="form-control">
-                    <option *ngFor="let cont of contratLocataire; let i=index" [value]="i">{{cont.numContrat}} {{cont.immeuble.codeIm}} {{cont.immeuble.libIm}}</option>
-                  </select>
+                                        <option *ngFor="let cont of contratLocataire; let i=index" [value]="i">{{cont.numContrat}}: {{cont.immeuble.libIm}}</option>
+                                      </select>
                                 </div>
-                                <div class="col-sm-2">
-                                    <button type="button" class="btn btn-secondary" (click)="genererEcheancier(contratLocataire[addLoyerGroup.value['loyVL']])">Générer échéancier</button>
+                                <div class="col-xl-2">
+                                    <button type="button" class="btn btn-secondary" (click)="genererEcheancier(contratLocataire[addLoyerGroup.value['loyVL']])">
+                                        Générer échéancier
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="form-group row">
-                                <div class="col-sm-8">
+                                <div class="col-xl-9">
                                     <table class="table table-bordered" datatable [dtOptions]="tabEcheance" [dtTrigger]="dtTrigEche" id="dteche">
                                         <thead>
                                             <tr>
@@ -230,7 +235,7 @@
                                                 <td>{{echetmp.dateEcheance|date: "dd/MM/yyyy"}}</td>
                                                 <td>{{echetmp.prix}}</td>
                                                 <td>
-                                                    <p style="text-align: center;"><input type="checkbox" formControlName="coche" [(ngModel)]="echetmp.payeEcheance" [(value)]="echetmp.payeEcheance" (change)="considererEcheance(echetmp.prix)"></p>
+                                                    <p style="text-align: center;"><input type="checkbox" formControlName="coche" [(ngModel)]="echetmp.payeEcheance" [(value)]="echetmp.payeEcheance" (click)="considererEcheance(i)"></p>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -245,22 +250,22 @@
                                 <div class="col-sm-3">
                                     <label for="loyCai">Caisse</label>
                                     <select id="loyCai" formControlName="loyCai" class="form-control">
-                  <option  *ngFor="let afu of affectUser; let i = index" [value]="i">{{ afu.caisse.libeCaisse }}</option>
-                </select>
+                                    <option  *ngFor="let afu of affectUser; let i = index" [value]="i">
+                                      {{ afu.caisse.libeCaisse }}</option>
+                                    </select>
                                     <label for="loyDat">Date de paiement</label>
-                                    <input formControlName="loyDat" id="loyDat" type="datetime-local" class="form-control">
-                                    <label for="loyCon">Contribuable</label>
-                                    <input formControlName="loyCon" id="loyCon" type="text" class="form-control">
-                                    <label for="loyNum">Numéro</label>
-                                    <input formControlName="loyNum" id="loyNum" type="text" class="form-control">
+                                    <input formControlName="loyDat" id="loyDat" type="datetime" class="form-control">
                                     <label for="loyCai">Mode de paiement</label>
                                     <select formControlName="loyMod" class="form-control">
-                  <option *ngFor="let m of modes; let i=index" [value]="i">{{m.libeModPay}}</option>
-                </select>
+                                      <option *ngFor="let m of modes; let i=index" [value]="i">
+                                        {{m.libeModPay}}
+                                      </option>
+                                    </select>
+                                    <label for="loyCon">Contribuable</label>
+                                    <input formControlName="loyCon" id="loyCon" type="text" class="form-control" autocomplete="false">
                                     <label for="loyObs">Observation</label>
-                                    <input formControlName="loyObs" id="loyObs" type="text" class="form-control">
-                                    <!--label for="loyMtt">Montant versé</label>
-                                    <input formControlName="loyMtt" id="loyMtt" type="number" class="form-control" (blur)="repartir()"-->
+                                    <input formControlName="loyObs" id="loyObs" type="text" class="form-control" autocomplete="false">
+                                    <!-- (blur)="repartir()"-->
                                 </div>
                             </div>
                             <div class="card-footer"></div>
@@ -281,7 +286,7 @@
 
 <!-------------------------------------------AddImput----------------------------------------->
 <div bsModal #addImput="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-primary" role="document">
+    <div class="modal-dialog modal-xl modal-primary" role="document">
         <form [formGroup]="addImputGroup" class="form-horizontal" (ngSubmit)="ajouteImputation()">
             <div class="modal-content">
                 <div class="modal-header">
@@ -333,20 +338,22 @@
                                     </table>
                                 </div>
                                 <div class="col-lg-3">
-                                    <label for="addImNum">Numéro</label>
-                                    <input formControlName="addImNum" id="addImNum" type="text" class="form-control">
                                     <label for="addImDat">Date de paiement</label>
-                                    <input formControlName="addImDat" id="addImDat" type="datetime-local" class="form-control">
+                                    <input formControlName="addImDat" id="addImDat" type="datetime" class="form-control">
                                     <label for="addImCai">Caisse</label>
                                     <select id="addImCai" formControlName="addImCai" class="form-control" required>
-                  <option  *ngFor="let afu of affectUser; let i = index" [value]="i">{{ afu.caisse.libeCaisse }}</option>
-                </select>
-                                    <label for="addImObs">Date de paiement</label>
-                                    <input formControlName="addImObs" id="addImObs" type="datetime-local" class="form-control">
+                                      <option  *ngFor="let afu of affectUser; let i = index" [value]="i">
+                                        {{ afu.caisse.libeCaisse }}
+                                      </option>
+                                    </select>
                                     <label for="addImMod">Mode</label>
                                     <select id="addImMod" formControlName="addImMod" class="form-control" required>
-                    <option  *ngFor="let mod of modes; let i = index" [value]="i">{{ mod.libeModPay }}</option>
-                </select>
+                                      <option  *ngFor="let mod of modes; let i = index" [value]="i">
+                                        {{ mod.libeModPay }}
+                                      </option>
+                                    </select>
+                                    <label for="addImObs">Date de paiement</label>
+                                    <input formControlName="addImObs" id="addImObs" type="datetime-local" class="form-control" autocomplete="false">
                                 </div>
                             </div>
                             <div class="card-footer"></div>
@@ -363,7 +370,6 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <!-------------------------------------------Détail-------------------------------------------->
 <div bsModal #detailOp="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -452,7 +458,6 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <!--Annulation-->
 <div bsModal #opAnnul="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -477,9 +482,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
-<!---------------------------------------Sppression d'opération-------------------------------------->
+<!---------------------------------------Suppression d'opération-------------------------------------->
 <div bsModal #supOP="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-warning" role="document">
         <div class="modal-content">
@@ -502,7 +506,6 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <!----------------------------------------Apperçu------------------------------------------->
 <div bsModal #appercu="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
@@ -530,8 +533,8 @@
             <div class="modal-header">
                 <h4 class="modal-title">Sélectionner les articles</h4>
                 <button type="button" class="close" (click)="addArticle.hide()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <span aria-hidden="true">&times;</span>
+      </button>
             </div>
             <div class="modal-body">
                 <div class="card" style="margin: 0;">
@@ -555,6 +558,61 @@
                                     </td>
                                 </tr>
                             </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="addArticle.hide()">Continuer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-------------------Recherche d'opération--------------->
+<div bsModal #recherche="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Rechercher...</h4>
+                <button type="button" class="close" (click)="recherche.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <div class="card" style="margin: 0;">
+                    <div class="card-body">
+                        <table class="table table-striped" id="tabListArt" datatable [dtOptions]="tabAllOp" [dtTrigger]="dtrigAllOp" id="dt1">
+                            <thead>
+                                <tr>
+                                    <th>Numero</th>
+                                    <th>Date</th>
+                                    <th>Mode de paiement</th>
+                                    <th>Type recette</th>
+                                    <th>Contribuable</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let articl of Articles; let i = index">
+                                    <td>{{ articl.codeArticle }}</td>
+                                    <td>{{ articl.libArticle }}</td>
+                                    <td>{{ articl.prixVenteArticle }}</td>
+                                    <td>
+                                        <p style="text-align: center;"><input class="form-check-input" type="checkbox" (click)="choisirArticle(i)"></p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Numero</th>
+                                    <th>Date</th>
+                                    <th>Mode de paiement</th>
+                                    <th>Type recette</th>
+                                    <th>Contribuable</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>

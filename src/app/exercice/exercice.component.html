@@ -25,8 +25,8 @@
         <tr *ngFor="let exo of exercices; let i = index">
           <td>{{ exo.codeExercice }}</td>
           <td>{{ exo.libExercice }}</td>
-          <td>{{ exo.dateDebut }}</td>
-          <td>{{ exo.dateFin }}</td>
+          <td>{{ exo.dateDebut | date:"dd-MM-yyyy" }}</td>
+          <td>{{ exo.dateFin | date:"dd-MM-yyyy" }}</td>
           <td>{{ exo.etatExo }}</td>
           <td style="text-align: center;">
             <input  type="checkbox" [name]="exo.codeExercice" [id]="exo.codeExercice"
@@ -92,12 +92,12 @@
                           <div class="form-group col-sm-3">
                             <label for="addCodeExercice">Code</label>
                             <input type="text" class="form-control" id="addCodeExercice"
-                            formControlName="addCodeExercice" placeholder="Code de l'Exercice">
+                            autocomplete="off" formControlName="addCodeExercice" placeholder="Code de l'Exercice">
                           </div>
                           <div class="form-group col-sm-9">
                             <label for="addLibExercice">Libellé</label>
                             <input type="text" class="form-control" id="addLibExercice"
-                            formControlName="addLibExercice" placeholder="Entrer le libellé de l'Exercice">
+                            autocomplete="off" formControlName="addLibExercice" placeholder="Entrer le libellé de l'Exercice">
                           </div>
                         </div><!--/.row-->
                         <div class="row">
@@ -157,12 +157,12 @@
                         <div class="form-group col-sm-3">
                           <label for="editCodeExercice">Code</label>
                           <input type="text" class="form-control" id="editCodeExercice" readonly="true"
-                          formControlName="editCodeExercice" [ngModel]="editExo.codeExercice" placeholder="Code de l'Exercice">
+                          autocomplete="off" formControlName="editCodeExercice" [ngModel]="editExo.codeExercice" placeholder="Code de l'Exercice">
                         </div>
                         <div class="form-group col-sm-9">
                           <label for="editLibExercice">Libellé</label>
                           <input type="text" class="form-control" id="editLibExercice"
-                          formControlName="editLibExercice" [ngModel]="editExo.libExercice" placeholder="Entrer le libellé de l'Exercice">
+                          autocomplete="off" formControlName="editLibExercice" [ngModel]="editExo.libExercice" placeholder="Entrer le libellé de l'Exercice">
                         </div>
                       </div><!--/.row-->
                       <div class="row">

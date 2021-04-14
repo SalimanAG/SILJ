@@ -147,10 +147,16 @@ export const navItems: INavData[] = [
               name: 'Incinération',
               url: '/bilan-incine',
               icon: 'icon-puzzle'
+            },
+            {
+              name: 'Inventaire',
+              url: '/bilan-incine',
+              icon: 'icon-puzzle'
             }
           ]
       },
-          
+
+
     ]
   },
 
@@ -169,12 +175,12 @@ export const navItems: INavData[] = [
             name: 'Journal de caisse',
             url: '/rapport-opcaisse-journalCaise',
             icon: 'icon-puzzle'
-          },
+          }/*,
           {
             name: 'Brouillard',
             url: '/rapport-opcaisse-brouillard',
             icon: 'icon-puzzle'
-          },
+          }*/,
           {
             name: 'Récap des prestations',
             url: '/rapport-opcaisse-recapPrestation',
@@ -230,7 +236,8 @@ export const navItems: INavData[] = [
             name: 'Journal opération',
             url: '/rapport-stock-jourOperat',
             icon: 'icon-puzzle'
-          }
+          },
+          
         ]
       },
       {
@@ -250,7 +257,7 @@ export const navItems: INavData[] = [
           }
         ]
      },
-          
+
     ]
   },
   //fin rapport

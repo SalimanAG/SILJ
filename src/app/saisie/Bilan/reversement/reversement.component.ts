@@ -156,8 +156,8 @@ export class ReversementComponent implements OnInit {
 
    initFormsGroup(){
     this.addReversementFormGroup = this.formBulder.group({
-      addNumRevers:['', Validators.required],
-      addDateRevers:[new Date(), Validators.required], 
+      addNumRevers:['RV-200000001', Validators.required],
+      addDateRevers:[new Date().toISOString().substring(0, 10), Validators.required], 
       addReg:[0, Validators.required]
     });
 
@@ -359,13 +359,14 @@ onSubmitAddReversementFormsGroup(){
           }
         );
       });
-
+      this.addReversementFormGroup.reset();
+      this.initFormsGroup();
       this.addComModal.hide();
       this.getAllReversement();
       this.getAllLigneReversement();
     },
     (erreur) => {
-      console.log('Erreur lors de la création de point vente', erreur);
+      console.log('Erreur lors de la création de reversement', erreur);
     }
   );
 

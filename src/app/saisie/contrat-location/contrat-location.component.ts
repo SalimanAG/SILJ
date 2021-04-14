@@ -60,6 +60,7 @@ export class ContratLocationComponent implements OnInit {
   valeurLocatives:Immeuble[] = [];
   typeValeursLocatives:TypeImmeuble[] = [];
   valeurLocativesByType:Immeuble[] = [];
+  valeurLocativesByType2:Immeuble[] = [];
 
   constructor(private serviceContrat:ContratLocationService, private formBulder:FormBuilder,
     private serviceLocataire:LocataireService, private serviceImmeuble:ValeurLocativeService) {
@@ -92,7 +93,8 @@ export class ContratLocationComponent implements OnInit {
       addCautionContrat:[0, Validators.required],
       addImmeuble:[0, Validators.required],
       addLocataire:[0, Validators.required],
-      addIndeTypeIm:[0, Validators.required]
+      addIndeTypeIm:[0, Validators.required],
+      addDateFinContrat:''
     });
 
     this.editContratFormsGroup = formBulder.group({
@@ -103,7 +105,8 @@ export class ContratLocationComponent implements OnInit {
       editCautionContrat:[0, Validators.required],
       editImmeuble:[0, Validators.required],
       editLocataire:[0, Validators.required],
-      editIndeTypeIm:[1, Validators.required]
+      editIndeTypeIm:[1, Validators.required],
+      editDateFinContrat:''
     });
 
   }
@@ -119,22 +122,36 @@ export class ContratLocationComponent implements OnInit {
       }
     );
 
-    this.getAllImmeuble();
     this.getAllLocataire();
 
-    this.serviceImmeuble.getAllTypeImmeuble().subscribe(
+    this.serviceImmeuble.getAllImmeuble().subscribe(
       (data) => {
-        this.typeValeursLocatives = data;
-        if(this.typeValeursLocatives.length != 0){
-          this.getImmeublesByCodeType(this.typeValeursLocatives[0].codeTypIm);
-          this.addContratFormsGroup.value['addIndeTypeIm']=0;
-          this.addContratFormsGroup.value['editIndeTypeIm']=0;
-        }
+        this.valeurLocatives = data;
+
+        this.serviceImmeuble.getAllTypeImmeuble().subscribe(
+          (data1) => {
+            this.typeValeursLocatives = data1;
+            if(this.typeValeursLocatives.length != 0){
+              this.valeurLocativesByType = [];
+              this.valeurLocatives.forEach(valeurLoca => {
+                if(valeurLoca.typeImmeuble.codeTypIm === data1[0].codeTypIm && valeurLoca.etatIm == false){
+                  this.valeurLocativesByType.push(valeurLoca);
+                }
+              });
+            }
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération de la liste des type de valeur locative : ', erreur);
+          }
+        );
+
+
       },
       (erreur) => {
-        console.log('Erreur lors de la récupération de la liste des type de valeur locative : ', erreur);
+        console.log('Erreur lors de la récupération de la liste des immeubles : ', erreur);
       }
     );
+
 
 
   }
@@ -190,8 +207,17 @@ export class ContratLocationComponent implements OnInit {
   getImmeublesByCodeType(code:String){
     this.valeurLocativesByType = [];
     this.valeurLocatives.forEach(valeurLoca => {
-      if(valeurLoca.typeImmeuble.codeTypIm === code){
+      if(valeurLoca.typeImmeuble.codeTypIm === code && valeurLoca.etatIm == false){
         this.valeurLocativesByType.push(valeurLoca);
+      }
+    });
+  }
+
+  getImmeublesByCodeType2(code:String){
+    this.valeurLocativesByType2 = [];
+    this.valeurLocatives.forEach(valeurLoca => {
+      if(valeurLoca.typeImmeuble.codeTypIm === code && valeurLoca.etatIm == false){
+        this.valeurLocativesByType2.push(valeurLoca);
       }
     });
   }
@@ -220,12 +246,68 @@ export class ContratLocationComponent implements OnInit {
     this.valeurLocativesByType[this.addContratFormsGroup.value['addImmeuble']],
     this.locataires[this.addContratFormsGroup.value['addLocataire']]);
 
-    console.log(newContrat, this.addContratFormsGroup.value);
+    newContrat.dateFinContrat = this.addContratFormsGroup.value['addDateFinContrat'];
+
+    //console.log(newContrat, this.addContratFormsGroup.value);
 
     this.serviceContrat.addAContrat(newContrat).subscribe(
       (data) => {
-        this.primaryModal.hide();
-        this.getAllContrat();
+        //this.primaryModal.hide();
+        this.addContratFormsGroup.patchValue({
+          addNumContrat:'',
+          addAvanceContrat:0,
+          addCautionContrat:0,
+          addDateFinContrat:''
+        })
+
+        //Mise au fin du Contrat Effectif
+        let dt:Date = new Date(Date.now());
+        let dt2:Date = null;
+        if(data.dateFinContrat != null) dt2 = new Date(data.dateFinContrat);
+
+        if(dt2 != null && dt2.getFullYear() <= dt.getFullYear()
+          && dt2.getMonth() <= dt.getMonth() && dt2.getDate() <= dt.getDate()){
+          data.immeuble.etatIm = false;
+
+        }
+        else{
+          data.immeuble.etatIm = true;
+        }
+
+        //console.log('en location ?', data.immeuble.etatIm, data.dateFinContrat, new Date(Date.now()));
+
+        this.serviceImmeuble.editImmeuble(data.immeuble.codeIm, data.immeuble).subscribe(
+          (data2) => {
+            this.getAllContrat();
+            this.serviceImmeuble.getAllImmeuble().subscribe(
+              (data3) => {
+                this.valeurLocatives = data3;
+                if(this.typeValeursLocatives.length != 0){
+                  this.valeurLocativesByType = [];
+
+                  this.valeurLocatives.forEach(valeurLoca => {
+
+                    if(valeurLoca.typeImmeuble.codeTypIm === this.typeValeursLocatives[this.addContratFormsGroup.value['addIndeTypeIm']].codeTypIm && valeurLoca.etatIm == false){
+                      this.valeurLocativesByType.push(valeurLoca);
+                    }
+                  });
+
+                  if(this.valeurLocativesByType.length == 0) this.addContratFormsGroup.value['addImmeuble'] = null;
+
+                  //console.log('Les valeurs',this.addContratFormsGroup.value);
+                }
+              },
+              (erreur) => {
+                console.log('Erreur lors de la récupération de la liste des immeubles', erreur);
+              }
+            );
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la modification de lEtat de lImmeuble', erreur);
+          }
+        );
+
       },
       (erreur) => {
         console.log('Erreur lors de lAjout du contrat : ', erreur);
@@ -242,10 +324,58 @@ export class ContratLocationComponent implements OnInit {
     this.editContratFormsGroup.value['editCautionContrat'],
     this.valeurLocativesByType[this.editContratFormsGroup.value['editImmeuble']],
     this.locataires[this.editContratFormsGroup.value['editLocataire']]);
+
+    newContrat.dateFinContrat = this.editContratFormsGroup.value['editDateFinContrat'];
+
     this.serviceContrat.editAContrat(this.editContrat.numContrat, newContrat).subscribe(
       (data) => {
         this.warningModal.hide();
-        this.getAllContrat();
+        let dt:Date = new Date(Date.now());
+        let dt2:Date = null;
+        if(data.dateFinContrat != null) dt2 = new Date(data.dateFinContrat);
+
+        if(dt2 != null && dt2.getFullYear() <= dt.getFullYear()
+          && dt2.getMonth() <= dt.getMonth() && dt2.getDate() <= dt.getDate()){
+          data.immeuble.etatIm = false;
+
+        }
+        else{
+          data.immeuble.etatIm = true;
+        }
+
+        this.serviceImmeuble.editImmeuble(data.immeuble.codeIm, data.immeuble).subscribe(
+          (data2) => {
+            this.getAllContrat();
+            this.serviceImmeuble.getAllImmeuble().subscribe(
+              (data3) => {
+                this.valeurLocatives = data3;
+                if(this.typeValeursLocatives.length != 0){
+                  this.valeurLocativesByType = [];
+
+                  this.valeurLocatives.forEach(valeurLoca => {
+
+                    if(valeurLoca.typeImmeuble.codeTypIm === this.typeValeursLocatives[this.editContratFormsGroup.value['editIndeTypeIm']].codeTypIm && valeurLoca.etatIm == false){
+                      this.valeurLocativesByType.push(valeurLoca);
+                    }
+                  });
+
+                  if(this.valeurLocativesByType.length == 0) this.editContratFormsGroup.value['editImmeuble'] = null;
+
+                  //console.log('Les valeurs',this.addContratFormsGroup.value);
+                }
+              },
+              (erreur) => {
+                console.log('Erreur lors de la récupération de la liste des immeubles', erreur);
+              }
+            );
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la modification de lEtat de lImmeuble', erreur);
+          }
+        );
+
+
       },
       (erreur) => {
         console.log('Erreur lors de lEdition du Contrat : ', erreur);
@@ -259,7 +389,53 @@ export class ContratLocationComponent implements OnInit {
     this.serviceContrat.deleteAContrat(this.suprContrat.numContrat).subscribe(
       (data) => {
         this.dangerModal.hide();
-        this.getAllContrat()
+
+        if(this.suprContrat.immeuble.etatIm == true){
+          this.suprContrat.immeuble.etatIm = false;
+          this.serviceImmeuble.editImmeuble(this.suprContrat.immeuble.codeIm, this.suprContrat.immeuble).subscribe(
+            (data2) => {
+              this.getAllContrat();
+              this.serviceImmeuble.getAllImmeuble().subscribe(
+                (data11) => {
+                  this.valeurLocatives = data11;
+
+                  this.serviceImmeuble.getAllTypeImmeuble().subscribe(
+                    (data1) => {
+                      this.typeValeursLocatives = data1;
+                      if(this.typeValeursLocatives.length != 0){
+                        this.valeurLocativesByType = [];
+                        this.valeurLocatives.forEach(valeurLoca => {
+                          if(valeurLoca.typeImmeuble.codeTypIm === data1[0].codeTypIm && valeurLoca.etatIm == false){
+                            this.valeurLocativesByType.push(valeurLoca);
+                            this.valeurLocativesByType2.push(valeurLoca);
+                          }
+                        });
+
+                      }
+                    },
+                    (erreur) => {
+                      console.log('Erreur lors de la récupération de la liste des type de valeur locative : ', erreur);
+                    }
+                  );
+
+
+                },
+                (erreur) => {
+                  console.log('Erreur lors de la récupération de la liste des immeubles : ', erreur);
+                }
+              );
+
+
+            },
+            (erreur) => {
+              console.log('Erreur lors de la modification de lEtat de lImmeuble', erreur);
+            }
+          );
+        }
+        else{
+          this.getAllContrat();
+        }
+
       },
       (erreur) => {
         console.log('Erreur lors de la suppression du Contrat : ', erreur);
@@ -270,6 +446,8 @@ export class ContratLocationComponent implements OnInit {
 
   onTypeImmeubleClicked1(){
     if(this.typeValeursLocatives.length != 0){
+      //console.log('AAA', this.addContratFormsGroup.value['addIndeTypeIm']);
+      //console.log('BBB', this.typeValeursLocatives);
       this.getImmeublesByCodeType(this.typeValeursLocatives[this.addContratFormsGroup.value['addIndeTypeIm']].codeTypIm );
     }
 
@@ -277,7 +455,7 @@ export class ContratLocationComponent implements OnInit {
 
   onTypeImmeubleClicked2(){
     if(this.typeValeursLocatives.length != 0)
-    this.getImmeublesByCodeType(this.typeValeursLocatives[this.editContratFormsGroup.value['editIndeTypeIm']].codeTypIm );
+    this.getImmeublesByCodeType2(this.typeValeursLocatives[this.editContratFormsGroup.value['editIndeTypeIm']].codeTypIm );
   }
 
 }

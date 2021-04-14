@@ -10,182 +10,174 @@
         <!--Les enfants s'amusent-->
         <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
           <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
-          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ><input type="search" class="form-control" style="padding: 0%; margin: 0%;" placeholder="Rechercher"></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
         </div>
-        <table class="table table-bordered table-striped table-sm">
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+         [dtTrigger]="dtTrigger1" id="dataTable1">
           <thead>
             <tr>
-              <th>Nom & Prénom Utilisateur</th>
+              <th>Nom et Prénom Utilisateur</th>
               <th>Arrondissement</th>
-              <th>Date d'Association</th>
+              <th>Date de début d'Association</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>KAMI Abdora</td>
-              <td>ARROND01 - 2 ième Arrondissement</td>
-              <td>05/02/2020</td>
+            <tr *ngFor="let affectUserToArr of affectUserToArrondis; let i = index">
+              <td>{{ affectUserToArr.utilisateur.idUtilisateur }} - {{ affectUserToArr.utilisateur.nomUtilisateur }} {{ affectUserToArr.utilisateur.prenomUtilisateur }}</td>
+              <td>{{ affectUserToArr.arrondissement.codeArrondi }} - {{ affectUserToArr.arrondissement.nomArrondi }}</td>
+              <td>{{ affectUserToArr.dateDebutAffectToArrondi | date:"dd-MM-yyyy" }}</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="warningModal.show()"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="dangerModal.show()"><span class="fa fa-trash"></span></button>
-                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal.show()"><span class="fa fa-eye"></span></button>-->
-                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
-                <!--Le bouton des options-->
-                <div class="btn-group" dropdown>
-                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
-                  <ul *dropdownMenu class="dropdown-menu" role="menu">
-                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
-                    </li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
-                      here</a></li>
-                    <li class="divider dropdown-divider"></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
-                    </li>
-                  </ul>
-                </div>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffectUserToArrondi(i)"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffectUserToArrondi(i)"><span class="fa fa-trash"></span></button>
+
               </td>
             </tr>
 
           </tbody>
           <tfoot>
             <tr>
-              <th>Nom & Prénom Utilisateur</th>
+              <th>Nom et Prénom Utilisateur</th>
               <th>Arrondissement</th>
-              <th>Date d'Association</th>
+              <th>Date de début d'Association</th>
               <th>Actions</th>
             </tr>
           </tfoot>
         </table>
-        <nav>
-          <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-            <li class="page-item active">
-              <a class="page-link" href="#">1</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-          </ul>
-        </nav>
+
         <!-- Les modales-->
               <!--Modale 1-->
               <div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-primary" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Enrégistrer une Association</h4>
-                      <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour enrégistrer une association à un arrondissment-->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Nouvelle Association</strong>
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Utilisateur</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Utilisateur </option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Arrondissement</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Arrondissement</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="date-Associ-Arrondi">Date d'Association</label>
-                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
-
-                            </div>
-                          </div><!--/.row-->
-                        </div>
+                  <form [formGroup]="addAffectUserToArrondiFormsGroup" (ngSubmit)="onSubmitAddAffectUserToArrondiFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Enrégistrer une Association </h4>
+                        <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
                       </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour enrégistrer une association à un arrondissment-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Nouvelle Association à un Arrondissement</strong>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addUtilisateur3">Utilisateur</label>
+                                <select id="addUtilisateur3" name="addUtilisateur3" class="form-control"
+                                formControlName="addUtilisateur3">
+                                  <option *ngFor="let user of utilisateurs; let i = index" [value]="i">{{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</option>
 
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
-                      <button type="button" class="btn btn-primary">Enrégistrer</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                                </select>
+
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addArrondissement2">Arrondissement</label>
+                                <select id="addArrondissement2" name="addArrondissement2" class="form-control"
+                                formControlName="addArrondissement2">
+                                  <option *ngFor="let arron of arrondissements; let i = index" [value]="i">
+                                    {{ arron.codeArrondi }} - {{ arron.nomArrondi }}</option>
+
+                                </select>
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addDateDebAffectUserToArrondi">Date d'Association</label>
+                                <input type="date" class="form-control" name="addDateDebAffectUserToArrondi" id="addDateDebAffectUserToArrondi"
+                                formControlName="addDateDebAffectUserToArrondi">
+                              </div>
+
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addDateFinAffectUserToArrondi">Date de Fin d'Association</label>
+                                <input type="date" class="form-control" name="addDateFinAffectUserToArrondi" id="addDateFinAffectUserToArrondi"
+                                formControlName="addDateFinAffectUserToArrondi">
+                              </div>
+
+                            </div><!--/.row-->
+                          </div>
+                        </div>
+
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="addAffectUserToArrondiFormsGroup.invalid">Enrégistrer</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 1 -->
 
               <!--Modale 2-->
               <div bsModal #warningModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-warning" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Modifier Un Article</h4>
-                      <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Formulaire pour modifier une association à un arrondissment-->
-                      <div class="card">
-                        <div class="card-header">
-                          <strong>Modifier Un Article</strong>
+                  <form [formGroup]="editAffectUserToArrondiFormsGroup" (ngSubmit)="onSubmitEditAffectUserToArrondiFormsGroup()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Modifier une Association</h4>
+                        <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour modifier une association à un arrondissment-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Modifier une Association à un Arrondissment</strong>
 
-                        </div>
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Utilisateur</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Utilisateur </option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editUtilisateur3">Utilisateur</label>
+                                <input id="editUtilisateur3" name="editUtilisateur3" class="form-control"
+                                formControlName="editUtilisateur3" readonly
+                                [ngModel] = "editAffectUserToArrondi.utilisateur.idUtilisateur.toString().concat(' - '.concat(editAffectUserToArrondi.utilisateur.nomUtilisateur.concat(' '.concat(editAffectUserToArrondi.utilisateur.prenomUtilisateur.valueOf()))))">
 
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="select1">Arrondissement</label>
-                                <select id="select1" name="select1" class="form-control">
-                                  <option value="0">Selectionner l'Arrondissement</option>
-                                  <option value="1">Option #1</option>
-                                  <option value="2">Option #2</option>
-                                  <option value="3">Option #3</option>
-                                </select>
-                            </div>
-                          </div><!--/.row-->
-                          <div class="row">
-                            <div class="form-group col-sm-12">
-                              <label for="date-Associ-Arrondi">Date d'Association</label>
-                              <input type="date" class="form-control" name="date-Associ-Arrondi" id="date-Associ-Arrondi">
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editArrondissement2">Arrondissement</label>
+                                <input id="editArrondissement2" name="editArrondissement2" class="form-control"
+                                formControlName="editArrondissement2" readonly
+                                [ngModel] = "editAffectUserToArrondi.arrondissement.codeArrondi.concat(' - '.concat(editAffectUserToArrondi.arrondissement.nomArrondi.valueOf()))">
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editDateDebAffectUserToArrondi">Date d'Association</label>
+                                <input type="date" class="form-control" name="editDateDebAffectUserToArrondi" id="editDateDebAffectUserToArrondi"
+                                formControlName="editDateDebAffectUserToArrondi" 
+                                [ngModel] = "editAffectUserToArrondi.dateDebutAffectToArrondi">
+                              </div>
 
-                            </div>
-                          </div><!--/.row-->
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editDateFinAffectUserToArrondi">Date de Fin d'Association</label>
+                                <input type="date" class="form-control" name="editDateFinAffectUserToArrondi" id="editDateFinAffectUserToArrondi"
+                                formControlName="editDateFinAffectUserToArrondi"
+                                [ngModel] = "editAffectUserToArrondi.dateFinAffectToArrondi">
+                              </div>
+
+                            </div><!--/.row-->
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
-                      <button type="button" class="btn btn-warning">Modifier</button>
-                    </div>
-                  </div><!-- /.modal-content -->
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-warning" [disabled]="editAffectUserToArrondiFormsGroup.invalid">Modifier</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
                 </div><!-- /.modal-dialog -->
               </div><!-- /.modal 2 -->
 
@@ -200,12 +192,12 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <p>Vous êtes sur le point de supprimer l'assciation de l'Utilisateur <mark style="color: red;">USR1</mark> à l'Arrondissement <mark style="color: blue;">ARRONDI01</mark></p>
+                      <p>Vous êtes sur le point de supprimer l'association de l'Utilisateur <mark style="color: red;">{{ suprAffectUserToArrondi.utilisateur.idUtilisateur }}</mark> à l'Arrondissement <mark style="color: blue;">{{ suprAffectUserToArrondi.arrondissement.codeArrondi }}</mark></p>
                       <p>Le confirmez-vous ?</p>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
-                      <button type="button" class="btn btn-danger">Supprimer</button>
+                      <button type="button" class="btn btn-danger" (click)="onConfirmDeleteAffectUserToArrondi()">Supprimer</button>
                     </div>
                   </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
@@ -241,7 +233,7 @@
               <td>{{ affect.utilisateur.idUtilisateur }} - {{ affect.utilisateur.nomUtilisateur }} {{ affect.utilisateur.prenomUtilisateur }}</td>
               <td>{{ affect.caisse.codeCaisse }} - {{ affect.caisse.libeCaisse }}</td>
               <td>{{ affect.caisse.arrondissement.nomArrondi }}</td>
-              <td>{{ affect.dateDebAffecter }}</td>
+              <td>{{ affect.dateDebAffecter | date:"dd-MM-yyyy" }}</td>
               <td>
                 <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffecter(i)"><span class="fa fa-edit"></span></button>
                 <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffecter(i)"><span class="fa fa-trash"></span></button>

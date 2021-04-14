@@ -3,15 +3,16 @@ import { Injectable } from '@angular/core';
 import { AffectDroitGroupUser } from '../../models/affectDroitGroupUser.model';
 import { DroitUser } from '../../models/droitUser.model';
 import { GroupUser } from '../../models/groupUser.model';
+import { AssocierUtilisateurService } from './associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DroitGroupeService {
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpCli:HttpClient) {
+  constructor(private httpCli:HttpClient, private serviceIp:AssocierUtilisateurService) {
 
   }
 

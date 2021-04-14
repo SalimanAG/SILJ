@@ -14,6 +14,9 @@ import { Correspondant } from '../../../../models/Correspondant.model';
 import { Arrondissement } from '../../../../models/arrondissement.model';
 import { EtreAffecte } from '../../../../models/etreAffecte.model';
 import { CommuneService } from '../../../../services/definition/commune.service';
+import { AssocierUtilisateurService } from '../../../../services/administration/associer-utilisateur.service';
+import { UtilisateurService } from '../../../../services/administration/utilisateur.service';
+import { SiteMarcher } from '../../../../models/siteMarcher.model';
 
 @Component({
   selector: 'app-etat-stock',
@@ -33,12 +36,17 @@ export class EtatStockComponent implements OnInit {
   carveauxMairie:Magasin = new Magasin('', '');
   correspondants:Correspondant[] = [];
   correspondantsByArrondi:Correspondant[] = [];
+  correspondantsBySite:Correspondant[] = [];
   arrondissements:Arrondissement[] = [];
+  affectedArrondissements:Arrondissement[] = [];
   etreAffecters:EtreAffecte[] = [];
+  sites:SiteMarcher[] = [];
+  sitesByArrondi:SiteMarcher[] = [];
 
   constructor(private formBulder:FormBuilder, private sanitizer:DomSanitizer, private serviceCorres:CorrespondantService,
     private serviceRegiss:RegisseurService, private serviceCommune:CommuneService,
-    private serviceTresorier:TresorierCommunalService) {
+    private serviceTresorier:TresorierCommunalService, private serviceAssocierUser:AssocierUtilisateurService,
+    private serviceUser:UtilisateurService) {
     moment.locale('fr');
 
       this.repport1FormsGroup = this.formBulder.group({
@@ -46,19 +54,66 @@ export class EtatStockComponent implements OnInit {
       });
 
       this.repport2FormsGroup = this.formBulder.group({
-        rep2Corres:0,
+        rep2Corres:-1,
         rep2Arrondi:0
+      });
+
+      this.repport3FormsGroup = this.formBulder.group({
+        rep3Corres:-1,
+        rep3Site:-1,
+        rep3Arrondi:0
       });
   }
 
   ngOnInit(): void {
     this.getCarveauMairie();
     this.getCarveauTresor();
-    this.getAllArrondissement();
+    this.getAllSite();
     this.getAllCorrespondant();
     this.getAllEtreAffecter();
+    this.serviceAssocierUser.getAllAffectUserToArrondi().subscribe(
+      (data) => {
+        data.forEach(element => {
+          if(element.utilisateur.idUtilisateur == this.serviceUser.connectedUser.idUtilisateur){
+            this.affectedArrondissements.push(element.arrondissement);
+          }
+        });
+        if(this.affectedArrondissements.length != 0){
+          this.getAllCorrespByArrondi(0);
+          this.serviceCommune.getAllSiteMarcher().subscribe(
+            (data2) => {
+              this.sites = data2;
+              this.sitesByArrondi = [];
+              this.sites.forEach(element2 => {
+                if(element2.arrondissement.codeArrondi == this.affectedArrondissements[0].codeArrondi){
+                  this.sitesByArrondi.push(element2);
+                }
+              });
 
-    
+              if(this.sitesByArrondi.length != 0){
+                this.serviceCorres.getAllEtreAffecte().subscribe(
+                  (data3) => {
+                    this.etreAffecters = data3;
+                    this.getCorresBySite(-1);
+                  },
+                  (erreur) => {
+                    console.log('Erreur lors de la récupération des relations etre affecté', erreur);
+                  }
+                );
+              }
+
+            },
+            (erreur) => {
+              console.log('Erreur lors de la récupération de la liste des sites', erreur);
+            }
+          );
+        }
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des association dUn user à arrondissement', erreur);
+      }
+    );
+
   }
 
   //Récuperer le carveau Trésor
@@ -163,13 +218,24 @@ export class EtatStockComponent implements OnInit {
     );
   }
 
+  getAllSite(){
+    this.serviceCommune.getAllSiteMarcher().subscribe(
+      (data) => {
+        this.sites = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des sites', erreur);
+      }
+    );
+  }
+
   getAllCorrespByArrondi(inde:number){
     this.correspondantsByArrondi = [];
     this.serviceCorres.getAllEtreAffecte().subscribe(
       (data) => {
 
         data.forEach(element => {
-          if(element.site.arrondissement.codeArrondi == this.arrondissements[inde].codeArrondi){
+          if(this.affectedArrondissements.length != 0 && element.arrondissement.codeArrondi == this.affectedArrondissements[inde].codeArrondi){
             this.correspondantsByArrondi.push(element.corres);
           }
         });
@@ -185,6 +251,58 @@ export class EtatStockComponent implements OnInit {
   onAddArrondiSelected(){
 
     this.getAllCorrespByArrondi(this.repport2FormsGroup.value['rep2Arrondi']);
+  }
+
+  getAllSiteByArrondi(inde:number){
+    this.sitesByArrondi = [];
+    this.sites.forEach(element2 => {
+      if(this.affectedArrondissements.length != 0 && element2.arrondissement.codeArrondi == this.affectedArrondissements[inde].codeArrondi){
+        this.sitesByArrondi.push(element2);
+      }
+    });
+  }
+
+  onAddArrondi2Selected(){
+    this.getAllSiteByArrondi(this.repport3FormsGroup.value['rep3Arrondi']);
+    this.onAddSiteSelected();
+  }
+
+  getCorresBySite(inde:number){
+    let concernedSites:SiteMarcher[] = [];
+    if(inde == -1){
+      concernedSites = this.sitesByArrondi;
+
+    }
+    else {
+      if(this.sitesByArrondi.length != 0)
+      concernedSites.push(this.sitesByArrondi[inde]);
+    }
+    this.correspondantsBySite = [];
+
+    concernedSites.forEach(element => {
+
+      this.etreAffecters.forEach(element2 => {
+
+        if(element2.site != null && element2.site.codeSite == element.codeSite){
+          let exister:boolean = false;
+          this.correspondantsBySite.forEach(element3 => {
+            if(element3.idCorrespondant == element2.corres.idCorrespondant){
+              exister = true;
+              exit;
+            }
+          });
+
+          if(!exister){
+            this.correspondantsBySite.push(element2.corres);
+          }
+        }
+      });
+    });
+
+  }
+
+  onAddSiteSelected(){
+    this.getCorresBySite(this.repport3FormsGroup.value['rep3Site']);
   }
 
   manageCollapses(inde:number){
@@ -276,6 +394,465 @@ export class EtatStockComponent implements OnInit {
   }
 
   onRep2GenerateClicked(){
+    const doc = new jsPDF();
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
+    doc.setFontSize(25);
+    doc.text('ETAT DE STOCK', 75, 30);
+    doc.setFontSize(14);
+    doc.text('Date : \t'+moment( Date.now()).format('DD/MM/YYYY \tà\t HH : mm '), 15, 45);
+    autoTable(doc, {
+      theme: 'plain',
+      margin: { top: 55 },
+      columnStyles: {
+        0: { textColor: 0, fontStyle: 'bold', halign: 'right' },
+        1: { textColor: 0, halign: 'left' },
+      },
+      body: [
+        ['Arrondissement / Site : ', this.affectedArrondissements[this.repport2FormsGroup.value['rep2Arrondi']].codeArrondi+' - '+this.affectedArrondissements[this.repport2FormsGroup.value['rep2Arrondi']].nomArrondi],
+
+      ]
+      ,
+    });
+
+    this.serviceCorres.getAllStocker().subscribe(
+      (data1) => {
+        this.serviceCorres.getAllGerer().subscribe(
+          (data2) => {
+
+
+            let selectedCorres:Correspondant[] = [];
+            let montantTotal:number = 0;
+
+            if(this.repport2FormsGroup.value['rep2Corres'] == -1){
+              selectedCorres = this.correspondantsByArrondi;
+            }
+            else {
+              selectedCorres.push(this.correspondantsByArrondi[this.repport2FormsGroup.value['rep2Corres']]);
+            }
+
+            selectedCorres.forEach(element => {
+
+              let lignes = [];
+              let sousTotal:number = 0;
+
+              autoTable(doc, {
+                theme: 'plain',
+                margin: { top: 35 },
+                columnStyles: {
+                  0: { textColor: 0,  halign: 'right' },
+                  1: { textColor: 0, fontStyle: 'bold', halign: 'left' },
+                },
+                body: [
+                  ['Magasin du corresponndant ',element.idCorrespondant+' - '+element.magasinier.nomMagasinier+' '+element.magasinier.prenomMagasinier],
+
+                ]
+                ,
+              });
+
+              let concernedMagasin:Magasin = null;
+              data2.forEach(element2 => {
+                if(element2.magasinier.numMAgasinier == element.magasinier.numMAgasinier){
+                  concernedMagasin = element2.magasin;
+                  exit;
+                }
+              });
+
+              if(concernedMagasin != null)
+              data1.forEach(element1 => {
+                if(element1.magasin.codeMagasin == concernedMagasin.codeMagasin){
+                  let lig = [];
+                  lig.push(element1.article.codeArticle);
+                  lig.push(element1.article.libArticle);
+                  lig.push(element1.article.prixVenteArticle);
+                  lig.push(element1.quantiterStocker);
+                  lig.push(element1.article.prixVenteArticle*element1.quantiterStocker);
+                  lig.push('');
+
+                  lignes.push(lig);
+                  sousTotal+=element1.article.prixVenteArticle*element1.quantiterStocker;
+                }
+              });
+              else console.log('Pas de Magasin trouvé pour un correspondant : ',element);
+
+              autoTable(doc, {
+                theme: 'grid',
+                head: [['Article', 'Désignation', 'Prix U.', 'Quantité', 'Montant', 'Observation']],
+                headStyles:{
+                   fillColor: [41, 128, 185],
+                   textColor: 255,
+                   fontStyle: 'bold' ,
+                },
+                margin: { top: 80 },
+                body: lignes
+                ,
+              });
+
+              autoTable(doc, {
+                theme: 'grid',
+                margin: { top: 100, left:100 },
+                columnStyles: {
+                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
+                  1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
+                },
+                body: [
+                  ['Sous Total Correspondant '+element.idCorrespondant, sousTotal],
+                ]
+                ,
+              });
+
+              montantTotal += sousTotal;
+
+            });
+
+            autoTable(doc, {
+              theme: 'grid',
+              margin: { top: 100 },
+              columnStyles: {
+                0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
+                1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
+              },
+              body: [
+                ['Total Général', montantTotal],
+              ]
+              ,
+            });
+
+            this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
+            this.viewPdfModal.show();
+
+
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération des gérers', erreur);
+          }
+        );
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des stocker ', erreur);
+      }
+    );
+
+  }
+
+  onRep3GenerateClicked(){
+    const doc = new jsPDF();
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
+    doc.setFontSize(25);
+    doc.text('ETAT DE STOCK', 75, 30);
+    doc.setFontSize(14);
+    doc.text('Date : \t'+moment( Date.now()).format('DD/MM/YYYY \tà\t HH : mm '), 15, 45);
+
+    autoTable(doc, {
+      theme: 'plain',
+      margin: { top: 55 },
+      columnStyles: {
+        0: { textColor: 0, fontStyle: 'bold', halign: 'right' },
+        1: { textColor: 0, halign: 'left' },
+      },
+      body: [
+        ['Arrondissement : ', this.affectedArrondissements[this.repport3FormsGroup.value['rep3Arrondi']].codeArrondi+' - '+this.affectedArrondissements[this.repport3FormsGroup.value['rep3Arrondi']].nomArrondi],
+
+      ]
+      ,
+    });
+
+    let selectedSites:SiteMarcher[] = [];
+    let montantTotal:number = 0;
+
+    if(this.repport3FormsGroup.value['rep3Site'] == -1){
+      selectedSites = this.sitesByArrondi;
+    }
+    else {
+      selectedSites.push(this.sitesByArrondi[this.repport3FormsGroup.value['rep3Site']]);
+    }
+
+    this.serviceCorres.getAllStocker().subscribe(
+      (data1) => {
+        this.serviceCorres.getAllGerer().subscribe(
+          (data2) => {
+
+            selectedSites.forEach(elementt => {
+
+              let montantTotalSite:number = 0;
+
+              autoTable(doc, {
+                theme: 'plain',
+                margin: { top: 55 },
+                columnStyles: {
+                  0: { textColor: 0, fontStyle: 'bold', halign: 'right' },
+                  1: { textColor: 0, halign: 'left' },
+                },
+                body: [
+                  ['Site : ', elementt.codeSite+' - '+elementt.libSite],
+
+                ]
+                ,
+              });
+
+              let selectedCorres:Correspondant[] = [];
+
+              if(this.repport3FormsGroup.value['rep3Corres'] == -1){
+                selectedCorres = this.correspondantsBySite;
+              }
+              else {
+                selectedCorres.push(this.correspondantsBySite[this.repport3FormsGroup.value['rep3Corres']]);
+              }
+
+              selectedCorres.forEach(element => {
+
+                let lignes = [];
+                let sousTotal:number = 0;
+
+                autoTable(doc, {
+                  theme: 'plain',
+                  margin: { top: 35 },
+                  columnStyles: {
+                    0: { textColor: 0,  halign: 'right' },
+                    1: { textColor: 0, fontStyle: 'bold', halign: 'left' },
+                  },
+                  body: [
+                    ['Magasin du corresponndant ',element.idCorrespondant+' - '+element.magasinier.nomMagasinier+' '+element.magasinier.prenomMagasinier],
+
+                  ]
+                  ,
+                });
+
+                let concernedMagasin:Magasin = null;
+                data2.forEach(element2 => {
+                  if(element2.magasinier.numMAgasinier == element.magasinier.numMAgasinier){
+                    concernedMagasin = element2.magasin;
+                    exit;
+                  }
+                });
+
+                if(concernedMagasin != null)
+                data1.forEach(element1 => {
+                  if(element1.magasin.codeMagasin == concernedMagasin.codeMagasin){
+                    let lig = [];
+                    lig.push(element1.article.codeArticle);
+                    lig.push(element1.article.libArticle);
+                    lig.push(element1.article.prixVenteArticle);
+                    lig.push(element1.quantiterStocker);
+                    lig.push(element1.article.prixVenteArticle*element1.quantiterStocker);
+                    lig.push('');
+
+                    lignes.push(lig);
+                    sousTotal+=element1.article.prixVenteArticle*element1.quantiterStocker;
+                  }
+                });
+                else console.log('Pas de Magasin trouvé pour un correspondant : ',element);
+
+                autoTable(doc, {
+                  theme: 'grid',
+                  head: [['Article', 'Désignation', 'Prix U.', 'Quantité', 'Montant', 'Observation']],
+                  headStyles:{
+                     fillColor: [41, 128, 185],
+                     textColor: 255,
+                     fontStyle: 'bold' ,
+                  },
+                  margin: { top: 80 },
+                  body: lignes
+                  ,
+                });
+
+                autoTable(doc, {
+                  theme: 'grid',
+                  margin: { top: 100, left:100 },
+                  columnStyles: {
+                    0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
+                    1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
+                  },
+                  body: [
+                    ['Sous Total Correspondant '+element.idCorrespondant, sousTotal],
+                  ]
+                  ,
+                });
+
+                montantTotalSite += sousTotal;
+
+              });
+
+
+
+              autoTable(doc, {
+                theme: 'grid',
+                margin: { top: 100, left:40 },
+                columnStyles: {
+                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
+                  1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
+                },
+                body: [
+                  ['Sous Total Site '+elementt.codeSite, montantTotalSite],
+                ]
+                ,
+              });
+
+              montantTotal += montantTotalSite;
+
+            });
+
+
+            autoTable(doc, {
+              theme: 'grid',
+              margin: { top: 100 },
+              columnStyles: {
+                0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
+                1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
+              },
+              body: [
+                ['Total Général', montantTotal],
+              ]
+              ,
+            });
+
+            this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
+            this.viewPdfModal.show();
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération des gérers', erreur);
+          }
+        );
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des stocker ', erreur);
+      }
+    );
+
+
+
+
+
+    return;
+
+
+
+    this.serviceCorres.getAllStocker().subscribe(
+      (data1) => {
+        this.serviceCorres.getAllGerer().subscribe(
+          (data2) => {
+
+
+            let selectedCorres:Correspondant[] = [];
+            let montantTotal:number = 0;
+
+            if(this.repport3FormsGroup.value['rep3Corres'] == -1){
+              selectedCorres = this.correspondantsBySite;
+            }
+            else {
+              selectedCorres.push(this.correspondantsBySite[this.repport3FormsGroup.value['rep3Corres']]);
+            }
+
+            selectedCorres.forEach(element => {
+
+              let lignes = [];
+              let sousTotal:number = 0;
+
+              autoTable(doc, {
+                theme: 'plain',
+                margin: { top: 35 },
+                columnStyles: {
+                  0: { textColor: 0,  halign: 'right' },
+                  1: { textColor: 0, fontStyle: 'bold', halign: 'left' },
+                },
+                body: [
+                  ['Magasin du corresponndant ',element.idCorrespondant+' - '+element.magasinier.nomMagasinier+' '+element.magasinier.prenomMagasinier],
+
+                ]
+                ,
+              });
+
+              let concernedMagasin:Magasin = null;
+              data2.forEach(element2 => {
+                if(element2.magasinier.numMAgasinier == element.magasinier.numMAgasinier){
+                  concernedMagasin = element2.magasin;
+                  exit;
+                }
+              });
+
+              if(concernedMagasin != null)
+              data1.forEach(element1 => {
+                if(element1.magasin.codeMagasin == concernedMagasin.codeMagasin){
+                  let lig = [];
+                  lig.push(element1.article.codeArticle);
+                  lig.push(element1.article.libArticle);
+                  lig.push(element1.article.prixVenteArticle);
+                  lig.push(element1.quantiterStocker);
+                  lig.push(element1.article.prixVenteArticle*element1.quantiterStocker);
+                  lig.push('');
+
+                  lignes.push(lig);
+                  sousTotal+=element1.article.prixVenteArticle*element1.quantiterStocker;
+                }
+              });
+              else console.log('Pas de Magasin trouvé pour un correspondant : ',element);
+
+              autoTable(doc, {
+                theme: 'grid',
+                head: [['Article', 'Désignation', 'Prix U.', 'Quantité', 'Montant', 'Observation']],
+                headStyles:{
+                   fillColor: [41, 128, 185],
+                   textColor: 255,
+                   fontStyle: 'bold' ,
+                },
+                margin: { top: 80 },
+                body: lignes
+                ,
+              });
+
+              autoTable(doc, {
+                theme: 'grid',
+                margin: { top: 100, left:100 },
+                columnStyles: {
+                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
+                  1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
+                },
+                body: [
+                  ['Sous Total Correspondant '+element.idCorrespondant, sousTotal],
+                ]
+                ,
+              });
+
+              montantTotal += sousTotal;
+
+            });
+
+            autoTable(doc, {
+              theme: 'grid',
+              margin: { top: 100 },
+              columnStyles: {
+                0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
+                1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
+              },
+              body: [
+                ['Total Général', montantTotal],
+              ]
+              ,
+            });
+
+            this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
+            this.viewPdfModal.show();
+
+
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération des gérers', erreur);
+          }
+        );
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des stocker ', erreur);
+      }
+    );
 
   }
 

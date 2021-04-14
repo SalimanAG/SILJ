@@ -58,9 +58,9 @@ export class ReceptionComponent implements OnInit {
   articlesOfAConcernedCommandeAddingRecept:Article[] = [];
   articlesOfAConcernedCommandeEditingRecept:Article[] = [];
 
-  editReception:Reception = new Reception('', '', new Date());
-  suprReception:Reception = new Reception('', '', new Date());
-  annulReception:Reception = new Reception('', '', new Date());
+  editReception:Reception = new Reception('', '', new Date(), new Exercice('', '', new Date(), new Date(), '', false));
+  suprReception:Reception = new Reception('', '', new Date(), new Exercice('', '', new Date(), new Date(), '', false));
+  annulReception:Reception = new Reception('', '', new Date(), new Exercice('', '', new Date(), new Date(), '', false));
 
   tempAddLigneReception:LigneReception[] = [];
   tempEditLigneReception:LigneReception[] = [];
@@ -166,7 +166,7 @@ export class ReceptionComponent implements OnInit {
 
   initFormsGroup(){
     this.addReceptionFormGroup = this.formBulder.group({
-      addNumReception:['', Validators.required],
+      addNumReception:'',
       addObservation:'',
       addDateReception:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
       addCommande:[0, Validators.required]
@@ -428,7 +428,7 @@ export class ReceptionComponent implements OnInit {
       this.tempAddLigneReception.push(
         new LigneReception(this.tempAddLigneCommandes[inde].qteLigneCommande,
           this.tempAddLigneCommandes[inde].puligneCommande,
-          '', 0, 0, this.tempAddLigneCommandes[inde], new Reception('', '', new Date()))
+          '', 0, 0, this.tempAddLigneCommandes[inde], new Reception('', '', new Date(), new Exercice('', '', new Date(), new Date(), '', false)))
       );
     }
 
@@ -448,7 +448,7 @@ export class ReceptionComponent implements OnInit {
       this.tempEditLigneReception.push(
         new LigneReception(this.tempEditLigneCommandes[inde].qteLigneCommande,
           this.tempEditLigneCommandes[inde].puligneCommande,
-          '', 0, 0, this.tempEditLigneCommandes[inde], new Reception('', '', new Date()))
+          '', 0, 0, this.tempEditLigneCommandes[inde], new Reception('', '', new Date(), new Exercice('', '', new Date(), new Date(), '', false)))
       );
     }
 
@@ -519,7 +519,7 @@ export class ReceptionComponent implements OnInit {
   onSubmitAddReceptionFormsGroup(){
 
     const newRecept = new Reception(this.addReceptionFormGroup.value['addNumReception'],
-    this.addReceptionFormGroup.value['addObservation'], this.addReceptionFormGroup.value['addDateReception']);
+    this.addReceptionFormGroup.value['addObservation'], this.addReceptionFormGroup.value['addDateReception'], this.serviceExercice.exoSelectionner);
 
     this.serviceReception.addAReception(newRecept).subscribe(
       (data) => {
@@ -603,7 +603,7 @@ export class ReceptionComponent implements OnInit {
   onSubmitEditReceptionFormsGroup(){
 
     const newRecept = new Reception(this.editReceptionFormGroup.value['editNumReception'],
-    this.editReceptionFormGroup.value['editObservation'], this.editReceptionFormGroup.value['editDateReception']);
+    this.editReceptionFormGroup.value['editObservation'], this.editReceptionFormGroup.value['editDateReception'], this.serviceExercice.exoSelectionner);
 
 
 
@@ -856,7 +856,7 @@ export class ReceptionComponent implements OnInit {
   }
 
   onConfirmAnnulerReception(){
-    let recept:Reception = new Reception(this.annulReception.numReception, this.annulReception.observation, this.annulReception.dateReception);
+    let recept:Reception = new Reception(this.annulReception.numReception, this.annulReception.observation, this.annulReception.dateReception, this.annulReception.exercice);
 
     recept.valideRecep = false;
     this.serviceReception.getAllLigneReception().subscribe(

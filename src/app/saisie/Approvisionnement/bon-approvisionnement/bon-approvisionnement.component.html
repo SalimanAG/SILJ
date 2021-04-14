@@ -21,7 +21,7 @@
           <tbody>
               <tr *ngFor="let appro of approvisionnements; let i = index">
                   <td>{{ appro.numAppro }}</td>
-                  <td>{{ appro.dateAppro }}</td>
+                  <td>{{ appro.dateAppro | date:"dd-MM-yyyy" }}</td>
                   <td>{{ appro.descriptionAppro }}</td>
                   <td>
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
@@ -68,25 +68,25 @@
                 </div>
                 <div class="card-body">
                   <div class="row">
-                    <div class="form-group col-sm-3">
+                    <div class="form-group col-sm-3" style="display: none;">
                       <label for="addNumAppro">Numéro</label>
                       <input type="text" class="form-control" id="addNumAppro"
-                        formControlName="addNumAppro" placeholder="Numéro du Bon d'Approvisionnement">
+                        autocomplete="off" formControlName="addNumAppro" placeholder="Numéro du Bon d'Approvisionnement">
                     </div>
-                    <div class="form-group col-sm-3">
+                    <div class="form-group col-sm-4">
                       <label for="addDateAppro">Date</label>
                       <input type="date" class="form-control" id="addDateAppro"
                        formControlName="addDateAppro">
                     </div>
-                    <div class="form-group col-sm-3">
+                    <div class="form-group col-sm-4">
                       <label for="addDescriptionAppro">Description</label>
                       <input type="text" class="form-control" id="addDescriptionAppro"
-                        formControlName="addDescriptionAppro" placeholder="Description...">
+                        autocomplete="off" formControlName="addDescriptionAppro" placeholder="Description...">
                     </div>
-                    <div class="form-group col-sm-3">
+                    <div class="form-group col-sm-4">
                       <label for="addExoSlected">Exercice</label>
                       <input type="text" class="form-control" id="addExoSlected" readonly
-                      [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                      [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice.valueOf()))" placeholder="Délais en jour"
                        [ngModelOptions]="{standalone: true}">
                     </div>
 
@@ -95,7 +95,7 @@
                     <div class="form-group col-sm-4">
                       <label for="addDemandeAppro">Demande d'Appro N°</label>
                         <select id="addDemandeAppro" name="addDemandeAppro" class="form-control"
-                        formControlName="addDemandeAppro" (click)="onConcernedDemandeApproSelected()">
+                        autocomplete="off" formControlName="addDemandeAppro" (click)="onConcernedDemandeApproSelected()">
                           <option *ngFor="let demAppro of demandeAppros; let i = index" [value]="i">
                             {{ demAppro.numDA }}
                           </option>
@@ -110,7 +110,7 @@
                       <label for="addExercice">Exercice</label>
                       <input type="text" class="form-control" id="addExercice" readonly
                        placeholder="Exercice de la demande d'Appro" [ngModelOptions]="{standalone: true}"
-                       [ngModel]="concernedDemandeAppro.exercice.codeExercice.concat(' - '.concat(concernedDemandeAppro.exercice.libExercice))">
+                       [ngModel]="concernedDemandeAppro.exercice.codeExercice.concat(' - '.concat(concernedDemandeAppro.exercice.libExercice.valueOf()))">
                     </div>
 
                   </div><!--/.row-->
@@ -164,7 +164,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addApproFormsGroup.invalid || tempAddLigneAppro.length == 0">Enrégistrer</button>
                 </div>
               </div><!-- /.modal-content -->
             </form>
@@ -188,7 +188,7 @@
                 <div class="row">
                   <div class="form-group col-sm-3">
                     <label for="editNumAppro">Numéro</label>
-                    <input type="text" class="form-control" id="editNumAppro"
+                    <input type="text" class="form-control" id="editNumAppro" readonly
                       formControlName="editNumAppro" placeholder="Numéro du Bon d'Approvisionnement"
                       [ngModel]="editAppro.numAppro">
                   </div>
@@ -200,13 +200,13 @@
                   <div class="form-group col-sm-3">
                     <label for="editDescriptionAppro">Description</label>
                     <input type="text" class="form-control" id="editDescriptionAppro"
-                      formControlName="editDescriptionAppro" placeholder="Description..."
+                      autocomplete="off" formControlName="editDescriptionAppro" placeholder="Description..."
                       [ngModel]="editAppro.descriptionAppro">
                   </div>
                   <div class="form-group col-sm-3">
                     <label for="editExoSlected">Exercice</label>
                     <input type="text" class="form-control" id="editExoSlected" readonly
-                    [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                    [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice.valueOf()))" placeholder="Délais en jour"
                      [ngModelOptions]="{standalone: true}">
                   </div>
 
@@ -227,7 +227,7 @@
                     <label for="editExercice">Exercice</label>
                     <input type="text" class="form-control" id="editExercice" readonly
                      placeholder="Exercice de la demande d'Appro" [ngModelOptions]="{standalone: true}"
-                     [ngModel]="concernedDemandeAppro.exercice.codeExercice.concat(' - '.concat(concernedDemandeAppro.exercice.libExercice))">
+                     [ngModel]="concernedDemandeAppro.exercice.codeExercice.concat(' - '.concat(concernedDemandeAppro.exercice.libExercice.valueOf()))">
                   </div>
 
                 </div><!--/.row-->
@@ -282,7 +282,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
-            <button type="submit" class="btn btn-warning">Modifier</button>
+            <button type="submit" class="btn btn-warning" [disabled]="editApproFormsGroup.invalid || tempEditLigneAppro.length == 0">Modifier</button>
             </div>
           </div><!-- /.modal-content -->
         </form>

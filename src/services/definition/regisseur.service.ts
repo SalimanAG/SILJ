@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Regisseur } from '../../models/regisseur.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegisseurService {
 
-  private host:String = 'http://localhost:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpClient:HttpClient) { }
+  constructor(private httpClient:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   getAllRegisseur(){
     return this.httpClient.get<Regisseur[]>(this.host+'/stock/regisseur/list');

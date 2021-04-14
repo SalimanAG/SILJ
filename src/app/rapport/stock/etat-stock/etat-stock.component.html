@@ -49,7 +49,7 @@
               <label for="rep2Arrondi">Arrondissement</label>
                 <select id="rep2Arrondi" name="rep2Arrondi" class="form-control"
                 formControlName="rep2Arrondi" (click)="onAddArrondiSelected()">
-                  <option *ngFor="let arron of arrondissements; let i = index" [value]="i">
+                  <option *ngFor="let arron of affectedArrondissements; let i = index" [value]="i">
                     {{ arron.codeArrondi }} - {{ arron.nomArrondi }}
                   </option>
                 </select>
@@ -58,13 +58,14 @@
               <label for="rep2Corres">Correspondant</label>
                 <select id="rep2Corres" name="rep2Corres" class="form-control"
                 formControlName="rep2Corres">
+                  <option value="-1">Tous les Correspondants</option>
                   <option *ngFor="let corres of correspondantsByArrondi; let i = index" [value]="i">
                     {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
                   </option>
                 </select>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary">Générer</button>
+          <button type="submit" class="btn btn-primary" [disabled]="affectedArrondissements.length == 0 || correspondantsByArrondi.length == 0">Générer</button>
         </form>
       </div>
     </div>
@@ -81,7 +82,42 @@
       animated:true,
       fadeIn:true
     }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+      <div class="card-body">
+        <form [formGroup] = "repport3FormsGroup" (ngSubmit)="onRep3GenerateClicked()">
+          <div class="row">
+            <div class="form-group col-sm-4">
+              <label for="rep3Arrondi">Arrondissement</label>
+                <select id="rep3Arrondi" name="rep3Arrondi" class="form-control"
+                formControlName="rep3Arrondi" (click)="onAddArrondi2Selected()">
+                  <option *ngFor="let arron of affectedArrondissements; let i = index" [value]="i">
+                    {{ arron.codeArrondi }} - {{ arron.nomArrondi }}
+                  </option>
+                </select>
+            </div>
+            <div class="form-group col-sm-4">
+              <label for="rep3Site">Sites</label>
+                <select id="rep3Site" name="rep3Site" class="form-control"
+                formControlName="rep3Site" (click)="onAddSiteSelected()">
+                <option value="-1">Tous les Sites</option>
+                  <option *ngFor="let sit of sitesByArrondi; let i = index" [value]="i">
+                    {{ sit.codeSite }} - {{ sit.libSite }}
+                  </option>
+                </select>
+            </div>
+            <div class="form-group col-sm-4">
+              <label for="rep3Corres">Correspondant</label>
+                <select id="rep3Corres" name="rep3Corres" class="form-control"
+                formControlName="rep3Corres">
+                  <option value="-1">Tous les Correspondants</option>
+                  <option *ngFor="let corres of correspondantsBySite; let i = index" [value]="i">
+                    {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
+                  </option>
+                </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="affectedArrondissements.length == 0 || correspondantsBySite.length == 0 || sitesByArrondi.length == 0">Générer</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>

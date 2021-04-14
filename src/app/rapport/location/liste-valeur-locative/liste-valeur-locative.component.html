@@ -1,47 +1,174 @@
 <div class="accordion" id="accordion" role="tablist">
-  <div class="card mb-0">
-    <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
-      <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Collapsible Group Item #1</a></h5>
-    </div>
-    <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion"
-    [ngClass]="{
+    <div class="card mb-0">
+
+        <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
+            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Valeur Locatives Par Arrondissement et Quartier</a></h5>
+        </div>
+        <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" [ngClass]="{
       collapse:true,
       show: clicked === 1,
       collapsing:false,
       animated:true,
       fadeIn:true
     }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+            <div class="card-body">
+                <form [formGroup]="imGroup">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="typVlA">type : </label>
+                            <select id="typVlA" class="form-control" formControlName="typVlA">
+                    <option [value]="-1"></option>
+                    <option *ngFor="let item of typesVL; let i=index" [value]="i">{{item.libTypIm}}</option>
+                  </select>
+                        </div>
+                        <div class="col-3">
+                            <label for="arrond">Arrondissement : </label>
+                            <select id="arrond" class="form-control" formControlName="arrond" (ngModelChange)="filtre(imGroup.value['arrond'])">
+                    <option [value]="-1"></option>
+                    <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.nomArrondi}}</option>
+                  </select>
+                        </div>
+                        <div class="col-3">
+                            <label for="qtr">Quartier : </label>
+                            <select id="qtr" class="form-control" formControlName="qtr">
+                    <option [value]="-1"></option>
+                    <option *ngFor="let item of aQuartiers; let i=index" [value]="i">{{item.nomQuartier}}</option>
+                  </select>
+                        </div>
+                        <div class="col-3">
+                            <label for="sit">Site : </label>
+                            <select id="sit" class="form-control" formControlName="sit">
+                    <option [value]="0"></option>
+                    <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
+                  </select>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="row">
+                        <button type="button" class="btn btn-secondary" (click)="vlParArrondissement()">Afficher les valeurs locatives correspondants</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="card mb-0">
-    <div class="card-header" id="headingTwo" role="tab" (click)="manageCollapses(2)">
-      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Collapsible Group Item #2</a></h5>
-    </div>
-    <div id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion"
-    [ngClass]="{
+    <div class="card mb-0">
+        <div class="card-header" id="headingTwo" role="tab" (click)="manageCollapses(2)">
+            <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Récapitulatif des valeurs locatives libres </a></h5>
+        </div>
+        <div id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion" [ngClass]="{
       collapse:true,
       show: clicked === 2,
       collapsing:false,
       animated:true,
       fadeIn:true
     }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
-    </div>
-  </div>
-  <div class="card mb-0">
-    <div class="card-header" id="headingThree" role="tab" (click)="manageCollapses(3)">
-      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseThree">Collapsible Group Item #3</a></h5>
-    </div>
-    <div id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion"
-    [ngClass]="{
+            <div class="card-body">
+                <form [formGroup]="imLibGroup">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="typVlAl">type : </label>
+                            <select id="typVlAl" class="form-control" formControlName="typVlAl">
+                    <option [value]="-1"></option>
+                    <option *ngFor="let item of typesVL; let i=index" [value]="i">{{item.libTypIm}}</option>
+                  </select>
+                        </div>
+                        <div class="col-3">
+                            <label for="arrondl">Arrondissement : </label>
+                            <select id="arrondl" class="form-control" formControlName="arrondl" (ngModelChange)="filtre(imLibGroup.value['arrondl'])">
+                    <option [value]="-1"></option>
+                    <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.nomArrondi}}</option>
+                  </select>
+                        </div>
+                        <div class="col-3">
+                            <label for="qtrl">Quartier : </label>
+                            <select id="qtrl" class="form-control" formControlName="qtrl">
+                    <option [value]="-1"></option>
+                    <option *ngFor="let item of aQuartiers; let i=index" [value]="i">{{item.nomQuartier}}</option>
+                  </select>
+                        </div>
+                        <div class="col-3">
+                            <label for="sitl">Site : </label>
+                            <select id="sitl" class="form-control" formControlName="sitl">
+                    <option [value]="0"></option>
+                    <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
+                  </select>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="row">
+                        <button type="button" class="btn btn-secondary" (click)="vlLibresParArrondissement()">Afficher les valeurs locatives correspondants</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card mb-0">
+            <div class="card-header" id="headingThree" role="tab" (click)="manageCollapses(3)">
+                <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseThree">Récapitulatif des valeurs locatives occupées</a></h5>
+            </div>
+            <div id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion" [ngClass]="{
       collapse:true,
       show: clicked === 3,
       collapsing:false,
       animated:true,
       fadeIn:true
     }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
-    </div>
-  </div>
-</div>
+                <div class="card-body">
+                    <form [formGroup]="imOcGroup">
+                        <div class="row">
+                            <div class="col-3">
+                                <label for="typVlAo">type : </label>
+                                <select id="typVlAo" class="form-control" formControlName="typVlAo">
+                    <option [value]="-1"></option>
+                    <option *ngFor="let item of typesVL; let i=index" [value]="i">{{item.libTypIm}}</option>
+                  </select>
+                            </div>
+                            <div class="col-3">
+                                <label for="arrondo">Arrondissement : </label>
+                                <select id="arrondo" class="form-control" formControlName="arrondo" (ngModelChange)="filtre(imOcGroup.value['arrondo'])">
+                    <option [value]="-1"></option>
+                    <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.nomArrondi}}</option>
+                  </select>
+                            </div>
+                            <div class="col-3">
+                                <label for="qtro">Quartier : </label>
+                                <select id="qtro" class="form-control" formControlName="qtro">
+                    <option [value]="-1"></option>
+                    <option *ngFor="let item of aQuartiers; let i=index" [value]="i">{{item.nomQuartier}}</option>
+                  </select>
+                            </div>
+                            <div class="col-3">
+                                <label for="sito">Site : </label>
+                                <select id="sito" class="form-control" formControlName="sito">
+                    <option [value]="0"></option>
+                    <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
+                  </select>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="row">
+                            <button type="button" class="btn btn-secondary" (click)="vlOccupeesParArrondissement()">Afficher les valeurs inactives correspondants</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <!----------------------------------------Apperçu------------------------------------------->
+        <div bsModal #appercu="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-primary" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">Apperçu</h4>
+                        <button type="button" class="close" (click)="appercu.hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <iframe class="col" [src]="vuePdf" style="height: 400px;" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

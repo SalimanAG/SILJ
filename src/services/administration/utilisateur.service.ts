@@ -2,19 +2,20 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Service } from '../../models/service.model';
 import { Utilisateur } from '../../models/utilisateur.model';
+import { AssocierUtilisateurService } from './associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilisateurService {
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
   public connectedUser:Utilisateur = new Utilisateur('', '', '', '','', false, new Service('', ''));
 
   public isAuth:boolean = false;
 
-  constructor(private httpCli:HttpClient) { }
+  constructor(private httpCli:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   getAllUsers(){
     return this.httpCli.get<Utilisateur[]>(this.host+'/commune/user/list');

@@ -3,15 +3,16 @@ import { HttpClient } from '@angular/common/http'
 import { Uniter } from '../../models/uniter.model';
 import { Famille } from '../../models/famille.model';
 import { Article } from '../../models/article.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService {
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpCli:HttpClient) { }
+  constructor(private httpCli:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   //Partie réservé pour les Unités
   getAllUniter(){

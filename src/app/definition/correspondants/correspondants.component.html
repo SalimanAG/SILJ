@@ -91,17 +91,17 @@
                                 <div class="form-group col-sm-2">
                                   <label for="addIdCorrespondant">Code</label>
                                   <input type="text" class="form-control" id="addIdCorrespondant"
-                                  formControlName="addIdCorrespondant" placeholder="Code du correspondant">
+                                  autocomplete="off" formControlName="addIdCorrespondant" placeholder="Code du correspondant">
                                 </div>
                                 <div class="form-group col-sm-4">
                                   <label for="addNomMagasinier">Nom</label>
                                   <input type="text" class="form-control" id="addNomMagasinier"
-                                  formControlName="addNomMagasinier" placeholder="Nom du Correspondant">
+                                  autocomplete="off" formControlName="addNomMagasinier" placeholder="Nom du Correspondant">
                                 </div>
                                 <div class="form-group col-sm-6">
                                   <label for="addPrenomMagasinier">Prénoms</label>
                                   <input type="text" class="form-control" id="addPrenomMagasinier"
-                                  formControlName="addPrenomMagasinier" placeholder="Prénoms du Correspondant">
+                                  autocomplete="off" formControlName="addPrenomMagasinier" placeholder="Prénoms du Correspondant">
                                 </div>
                               </div><!--/.row-->
                               <div class="row">
@@ -126,6 +126,7 @@
                                   <label for="addUtilisateur">Utilisateur</label>
                                     <select id="addUtilisateur" name="addUtilisateur" class="form-control"
                                     formControlName="addUtilisateur">
+                                      <option value="-1"></option>
                                       <option *ngFor = "let user of utilisateurs; let i = index" [value]="i">
                                         {{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}
                                       </option>
@@ -149,7 +150,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
-                          <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                          <button type="submit" class="btn btn-primary" [disabled]="addCorresFormsGroup.invalid || typCorrespondants.length == 0">Enrégistrer</button>
                         </div>
                       </div><!-- /.modal-content -->
                     </form>
@@ -186,13 +187,13 @@
                                 <div class="form-group col-sm-4">
                                   <label for="editNomMagasinier">Nom</label>
                                   <input type="text" class="form-control" id="editNomMagasinier"
-                                  formControlName="editNomMagasinier" placeholder="Nom du Correspondant"
+                                  autocomplete="off" formControlName="editNomMagasinier" placeholder="Nom du Correspondant"
                                   [ngModel]="editCorres.magasinier.nomMagasinier">
                                 </div>
                                 <div class="form-group col-sm-6">
                                   <label for="editPrenomMagasinier">Prénoms</label>
                                   <input type="text" class="form-control" id="editPrenomMagasinier"
-                                  formControlName="editPrenomMagasinier" placeholder="Prénoms du Correspondant"
+                                  autocomplete="off" formControlName="editPrenomMagasinier" placeholder="Prénoms du Correspondant"
                                   [ngModel]="editCorres.magasinier.prenomMagasinier">
                                 </div>
                               </div><!--/.row-->
@@ -219,6 +220,7 @@
                                   <label for="editUtilisateur">Utilisateur</label>
                                     <select id="editUtilisateur" name="editUtilisateur"
                                     formControlName="editUtilisateur" class="form-control">
+                                    <option value="-1"></option>
                                     <option *ngFor = "let user of utilisateurs; let i = index" [value]="i">
                                       {{ user.idUtilisateur }} - {{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}
                                     </option>
@@ -240,7 +242,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
-                          <button type="submit" class="btn btn-warning" [disabled]="editCorresFormsGroup.invalid">Modifier</button>
+                          <button type="submit" class="btn btn-warning" [disabled]="editCorresFormsGroup.invalid || typCorrespondants.length == 0">Modifier</button>
                         </div>
                       </div><!-- /.modal-content -->
                     </form>
@@ -307,7 +309,8 @@
                             </tr>
                             <tr>
                               <th>Utilisateur</th>
-                              <td>{{ infosCorres.utilisateur.idUtilisateur }} - {{ infosCorres.utilisateur.nomUtilisateur }}</td>
+                              <td *ngIf="infosCorres.utilisateur===null || infosCorres.utilisateur===undefined">AUCUN</td>
+                              <td *ngIf="infosCorres.utilisateur!==null && infosCorres.utilisateur!==undefined">{{ infosCorres.utilisateur.idUtilisateur }} - {{ infosCorres.utilisateur.nomUtilisateur }} {{ infosCorres.utilisateur.prenomUtilisateur }}</td>
                             </tr>
 
                           </tbody>
@@ -341,7 +344,7 @@
             <tr>
               <th>Code</th>
               <th>Correspondant</th>
-              <th>Site</th>
+              <th>Site / Arrondissement</th>
               <th>Date de Début d'Affectation</th>
               <th>Date de Fin d'Affectation</th>
               <th>Actions</th>
@@ -351,9 +354,10 @@
             <tr *ngFor="let ertreAffect of etreAffectes; let i = index" >
               <td>{{ ertreAffect.idAffecte }}</td>
               <td>{{ ertreAffect.corres.idCorrespondant }} - {{ ertreAffect.corres.magasinier.prenomMagasinier }}</td>
-              <td>{{ ertreAffect.site.codeSite }} - {{ ertreAffect.site.libSite }}</td>
-              <td>{{ ertreAffect.dateArrivee }}</td>
-              <td>{{ ertreAffect.dateDepart }}</td>
+              <td *ngIf="ertreAffect.site !==null && ertreAffect.site !==undefined">{{ ertreAffect.site.codeSite }} - {{ ertreAffect.site.libSite }}</td>
+              <td *ngIf="ertreAffect.site ===null || ertreAffect.site ===undefined">{{ ertreAffect.arrondissement.codeArrondi }} - {{ ertreAffect.arrondissement.nomArrondi }}</td>
+              <td>{{ ertreAffect.dateArrivee  | date:"dd-MM-yyyy"}}</td>
+              <td>{{ ertreAffect.dateDepart  | date:"dd-MM-yyyy"}}</td>
               <td>
                 <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditEtreAffecte(i)"><span class="fa fa-edit"></span></button>
                 <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteEtreAffecte(i)"><span class="fa fa-trash"></span></button>
@@ -422,10 +426,22 @@
                             </div><!--/.row-->
                             <div class="row">
                               <div class="form-group col-sm-12">
+                                <label for="addArrondi">Arrondissement</label>
+                                  <select id="addArrondi" name="addArrondi" class="form-control"
+                                  formControlName="addArrondi" (change)="onArrondiChanged();">
+                                    <option *ngFor="let arrondi of arrondissements; let i = index" [value]="i">
+                                      {{ arrondi.codeArrondi }} - {{ arrondi.nomArrondi }}
+                                    </option>
+                                  </select>
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
                                 <label for="addSite">Site</label>
                                   <select id="addSite" name="addSite" class="form-control"
                                   formControlName="addSite">
-                                    <option *ngFor="let sit of sites; let i = index" [value]="i">
+                                    <option value="-1"></option>
+                                    <option *ngFor="let sit of sitesByArrondi; let i = index" [value]="i">
                                       {{ sit.codeSite }} - {{ sit.libSite }}
                                     </option>
                                   </select>
@@ -453,7 +469,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-primary" [disabled]="addAffecteSiteFormsGroup.invalid">Enrégistrer</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="addAffecteSiteFormsGroup.invalid || arrondissements.length == 0 || correspondants.length == 0">Enrégistrer</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </form>
@@ -493,10 +509,21 @@
                             </div><!--/.row-->
                             <div class="row">
                               <div class="form-group col-sm-12">
+                                <label for="editArrondi">Arrondissement</label>
+                                  <select id="editArrondi" name="editArrondi" class="form-control"
+                                  formControlName="editArrondi" (change)="onArrondiChanged2();">
+                                    <option *ngFor="let arrondi of arrondissements; let i = index" [value]="i">
+                                      {{ arrondi.codeArrondi }} - {{ arrondi.nomArrondi }}
+                                    </option>
+                                  </select>
+                              </div>
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
                                 <label for="editSite">Site</label>
                                   <select id="editSite" name="editSite" class="form-control"
                                   formControlName="editSite">
-                                  <option *ngFor="let sit of sites; let i = index" [value]="i">
+                                  <option *ngFor="let sit of sitesByArrondi2; let i = index" [value]="i">
                                     {{ sit.codeSite }} - {{ sit.libSite }}
                                   </option>
                                   </select>

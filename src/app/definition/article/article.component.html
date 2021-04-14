@@ -93,12 +93,12 @@
                               <div class="form-group col-sm-3">
                                 <label for="addCodeArticle">Code</label>
                                 <input type="text" class="form-control" id="addCodeArticle" placeholder="Code de l'article"
-                                  formControlName="addCodeArticle">
+                                  formControlName="addCodeArticle" autocomplete="off">
                               </div>
                               <div class="form-group col-sm-9">
                                 <label for="addLibArticle">Libellé</label>
                                 <input type="text" class="form-control" id="addLibArticle" placeholder="Entrer le libellé de l'article"
-                                  formControlName="addLibArticle">
+                                  formControlName="addLibArticle" autocomplete="off">
                               </div>
                             </div><!--/.row-->
                             <div class="row">
@@ -110,7 +110,7 @@
                               <div class="form-group col-sm-6">
                                 <label for="addCouleurArticle">Couleur</label>
                                 <input type="text" class="form-control" id="addCouleurArticle" placeholder="Couleur de l'article"
-                                  formControlName="addCouleurArticle">
+                                  formControlName="addCouleurArticle" autocomplete="off">
                               </div>
                             </div><!--/.row-->
                             <div class="row">
@@ -198,7 +198,7 @@
                               <div class="form-group col-sm-9">
                                 <label for="editLibArticle">Libellé</label>
                                 <input type="text" class="form-control" id="editLibArticle" placeholder="Entrer le libellé de l'article"
-                                  formControlName="editLibArticle" [ngModel]="editArti.libArticle">
+                                  formControlName="editLibArticle" [ngModel]="editArti.libArticle" autocomplete="off">
                               </div>
                             </div><!--/.row-->
                             <div class="row">
@@ -210,7 +210,7 @@
                               <div class="form-group col-sm-6">
                                 <label for="editCouleurArticle">Couleur</label>
                                 <input type="text" class="form-control" id="editCouleurArticle" placeholder="Couleur de l'article"
-                                  formControlName="editCouleurArticle" [ngModel]="editArti.couleurArticle">
+                                  formControlName="editCouleurArticle" [ngModel]="editArti.couleurArticle" autocomplete="off">
                               </div>
                             </div><!--/.row-->
                             <div class="row">
@@ -443,7 +443,7 @@
                               <div class="form-group col-sm-12">
                                 <label for="addCodeFamille">Code</label>
                                 <input type="text" class="form-control" id="addCodeFamille" placeholder="Code de la Famille d'article"
-                                formControlName="addCodeFamille">
+                                autocomplete="off" formControlName="addCodeFamille">
                               </div>
 
                             </div><!--/.row-->
@@ -451,7 +451,7 @@
                               <div class="form-group col-sm-12">
                                 <label for="addLibFamille">Libellé</label>
                                 <input type="texte" class="form-control" id="addLibFamille" placeholder="Libellé de la Famille d'article"
-                                formControlName="addLibFamille">
+                                autocomplete="off" formControlName="addLibFamille">
                               </div>
 
                             </div><!--/.row-->
@@ -501,7 +501,7 @@
                               <div class="form-group col-sm-12">
                                 <label for="editLibFamille">Libellé</label>
                                 <input type="texte" class="form-control" id="editLibFamille"
-                                formControlName="editLibFamille" placeholder="Libellé de la Famille d'article"
+                                autocomplete="off" formControlName="editLibFamille" placeholder="Libellé de la Famille d'article"
                                 [ngModel]="editFamil.libFamille">
                               </div>
 
@@ -647,7 +647,7 @@
                               <div class="form-group col-sm-12">
                                 <label for="addCodeUnit">Code</label>
                                 <input type="text" class="form-control" id="addCodeUnit" placeholder="Code de l'unité"
-                                formControlName="addCodeUnit">
+                                autocomplete="off" formControlName="addCodeUnit">
                               </div>
 
                             </div><!--/.row-->
@@ -655,7 +655,7 @@
                               <div class="form-group col-sm-12">
                                 <label for="addLibUnit">Libellé</label>
                                 <input type="texte" class="form-control" id="addLibUnit" placeholder="Libellé de l'unité"
-                                formControlName="addLibUnit">
+                                autocomplete="off" formControlName="addLibUnit">
                               </div>
 
                             </div><!--/.row-->
@@ -704,7 +704,7 @@
                               <div class="form-group col-sm-12">
                                 <label for="editLibUnit">Libellé</label>
                                 <input type="texte" class="form-control" id="editLibUnit"
-                                placeholder="Libellé de l'unité" formControlName="editLibUnit"
+                                placeholder="Libellé de l'unité" autocomplete="off" formControlName="editLibUnit"
                                 [ngModel]="editUnit.libUniter">
                               </div>
                             </div><!--/.row-->

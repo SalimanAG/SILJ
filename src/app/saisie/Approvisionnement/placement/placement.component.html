@@ -4,7 +4,7 @@
   </div>
   <div class="card-body">
     <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
-      <div class="col align-self-start" style="padding: 0%;"><button [disabled]="carveauxMairie.codeMagasin.length == 0" class="btn btn-primary" data-toggle="modal" (click)="initAddPlacement()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+      <div class="col align-self-start" style="padding: 0%;"><button [disabled]="carveauxMairie.codeMagasin.length == 0 || serviceExercice.exoSelectionner.codeExercice.length == 0" class="btn btn-primary" data-toggle="modal" (click)="initAddPlacement()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
       <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
     </div>
 
@@ -22,7 +22,7 @@
           <tbody>
               <tr *ngFor="let place of placements; let i = index">
                   <td>{{ place.numPlacement }}</td>
-                  <td>{{ place.datePlacement }}</td>
+                  <td>{{ place.datePlacement | date:"dd-MM-yyyy" }}</td>
                   <td>{{ place.correspondant.idCorrespondant }} - {{ place.correspondant.magasinier.nomMagasinier }} {{ place.correspondant.magasinier.prenomMagasinier }}</td>
                   <td>{{ place.regisseur.idRegisseur }} - {{ place.regisseur.magasinier.nomMagasinier }} {{ place.regisseur.magasinier.prenomMagasinier }}</td>
                   <td>
@@ -71,10 +71,10 @@
                 </div>
                 <div class="card-body">
                   <div class="row">
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-4" style="display: none;">
                       <label for="addNumPlacement">Numéro</label>
                       <input type="text" class="form-control" id="addNumPlacement"
-                        formControlName="addNumPlacement" placeholder="Numéro du Placement">
+                        autocomplete="off" formControlName="addNumPlacement" placeholder="Numéro du Placement">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="addDatePlacement">Date</label>
@@ -84,7 +84,7 @@
                     <div class="form-group col-sm-4">
                       <label for="addExoSlected">Exercice</label>
                       <input type="text" class="form-control" id="addExoSlected" readonly
-                      [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                      [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice.valueOf()))" placeholder="Délais en jour"
                        [ngModelOptions]="{standalone: true}">
                     </div>
 
@@ -112,7 +112,7 @@
                     <div class="form-group col-sm-4">
                       <label for="addRegiConcerned">Régisseur</label>
                       <input type="text" class="form-control" id="addRegiConcerned" readonly
-                      [ngModel]="concernedRegisse.idRegisseur.concat(' - '.concat(concernedRegisse.magasinier.nomMagasinier.concat(' '.concat(concernedRegisse.magasinier.prenomMagasinier))))" placeholder="Régisseur Concerné"
+                      [ngModel]="concernedRegisse.idRegisseur.concat(' - '.concat(concernedRegisse.magasinier.nomMagasinier.concat(' '.concat(concernedRegisse.magasinier.prenomMagasinier.valueOf()))))" placeholder="Régisseur Concerné"
                        [ngModelOptions]="{standalone: true}">
                     </div>
                   </div><!--/.row-->
@@ -165,7 +165,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="addPlacementFormGroup.invalid">Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addPlacementFormGroup.invalid || tempAddLignePlacement.length == 0">Enrégistrer</button>
                 </div>
               </div><!-- /.modal-content -->
             </form>
@@ -200,7 +200,7 @@
                   <div class="form-group col-sm-4">
                     <label for="editExoSlected">Exercice</label>
                     <input type="text" class="form-control" id="editExoSlected" readonly
-                    [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                    [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice.valueOf()))" placeholder="Délais en jour"
                      [ngModelOptions]="{standalone: true}">
                   </div>
 
@@ -232,13 +232,13 @@
                   <div class="form-group col-sm-6">
                     <label for="editCorrespondant">Correspondant</label>
                       <input type="text" class="form-control" id="editCorrespondant" readonly
-                      [ngModel]="editPlacement.correspondant.idCorrespondant.concat(' - '.concat(editPlacement.correspondant.magasinier.nomMagasinier.concat(' '.concat(editPlacement.correspondant.magasinier.prenomMagasinier))))" placeholder="Non et Prénoms  du Correspondant"
+                      [ngModel]="editPlacement.correspondant.idCorrespondant.concat(' - '.concat(editPlacement.correspondant.magasinier.nomMagasinier.concat(' '.concat(editPlacement.correspondant.magasinier.prenomMagasinier.valueOf()))))" placeholder="Non et Prénoms  du Correspondant"
                       [ngModelOptions]="{standalone: true}">
                   </div>
                   <div class="form-group col-sm-6">
                     <label for="editRegiConcerned">Régisseur</label>
                     <input type="text" class="form-control" id="editRegiConcerned" readonly
-                    [ngModel]="concernedRegisse.idRegisseur.concat(' - '.concat(concernedRegisse.magasinier.nomMagasinier.concat(' '.concat(concernedRegisse.magasinier.prenomMagasinier))))" placeholder="Régisseur Concerné"
+                    [ngModel]="concernedRegisse.idRegisseur.concat(' - '.concat(concernedRegisse.magasinier.nomMagasinier.concat(' '.concat(concernedRegisse.magasinier.prenomMagasinier.valueOf()))))" placeholder="Régisseur Concerné"
                      [ngModelOptions]="{standalone: true}">
                   </div>
                 </div><!--/.row-->
@@ -292,7 +292,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
-            <button type="submit" class="btn btn-warning" [disabled]="editPlacementFormGroup.invalid">Modifier</button>
+            <button type="submit" class="btn btn-warning" [disabled]="editPlacementFormGroup.invalid || tempEditLignePlacement.length == 0">Modifier</button>
             </div>
           </div><!-- /.modal-content -->
         </form>

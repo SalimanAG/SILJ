@@ -2,14 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PointVente } from '../../models/pointVente.model';
 import { LignePointVente } from '../../models/lignePointVente.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 @Injectable({
   providedIn: 'root'
 })
 export class PointVenteService {
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpcli:HttpClient) { }
+  constructor(private httpcli:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 //Partie réservée pour PointVente
 getAllPointVente(){
   return this.httpcli.get<PointVente[]>(this.host+'/stock/pointvente/list');

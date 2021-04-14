@@ -160,9 +160,9 @@ export class RecollementComponent implements OnInit {
 
    initFormsGroup(){
     this.addRecollementFormGroup = this.formBulder.group({
-      addNumRecoll:['', Validators.required],
-      addDateRecoll:[new Date(), Validators.required], 
-      addDesRecoll:['', Validators.required], 
+      addNumRecoll:['RL-200000005', Validators.required],
+      addDateRecoll:[new Date().toISOString().substring(0, 10), Validators.required], 
+      addDesRecoll:'', 
       addMag:[0, Validators.required],
       addReg:[0, Validators.required]
     });
@@ -170,7 +170,7 @@ export class RecollementComponent implements OnInit {
     this.editRecollementFormGroup = this.formBulder.group({
       editNumRecoll:['', Validators.required],
       editDateRecoll:[new Date(), Validators.required], 
-      editDesRecoll:['', Validators.required], 
+      editDesRecoll:'', 
       editMag:[0, Validators.required],
       editReg:[0, Validators.required]
     });
@@ -359,7 +359,8 @@ onSubmitAddRecollementFormsGroup(){
           }
         );
       });
-
+      this.addRecollementFormGroup.reset();
+      this.initFormsGroup();
       this.addComModal.hide();
       this.getAllRecollement();
       this.getAllLigneRecollement();

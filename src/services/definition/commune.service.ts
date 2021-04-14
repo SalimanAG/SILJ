@@ -7,6 +7,7 @@ import { Arrondissement } from '../../models/arrondissement.model';
 import { Quartier } from '../../models/quartier.model';
 import { Service } from '../../models/service.model';
 import { SiteMarcher } from '../../models/siteMarcher.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 
 @Injectable({
@@ -14,9 +15,9 @@ import { SiteMarcher } from '../../models/siteMarcher.model';
 })
 export class CommuneService {
 
-  private host:String = 'http://localhost:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpClient:HttpClient) { }
+  constructor(private httpClient:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   getAllPays(){
     return this.httpClient.get<Pays[]>(this.host+'/commune/pays/list');

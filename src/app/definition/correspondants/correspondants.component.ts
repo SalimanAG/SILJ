@@ -21,6 +21,8 @@ import { UtilisateurService } from '../../../services/administration/utilisateur
 import { CommuneService } from '../../../services/definition/commune.service';
 import { CorrespondantService } from '../../../services/definition/correspondant.service';
 import * as moment from  'moment';
+import { element } from 'protractor';
+import { exit } from 'process';
 
 @Component({
   selector: 'app-correspondants',
@@ -58,13 +60,15 @@ export class CorrespondantsComponent implements OnInit {
   new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', '')));
 
   //Quelques listes
-  utilisateurs: Utilisateur[];
-  typCorrespondants: TypCorres[];
-  sites: SiteMarcher[];
-  magasins:Magasin[];
-  magasiniers:Magasinier[];
-  gerers:Gerer[];
-
+  utilisateurs: Utilisateur[] = [];
+  typCorrespondants: TypCorres[] = [];
+  sites: SiteMarcher[] = [];
+  magasins:Magasin[] = [];
+  magasiniers:Magasinier[] = [];
+  gerers:Gerer[] = [];
+  arrondissements:Arrondissement[] = [];
+  sitesByArrondi: SiteMarcher[] = [];
+  sitesByArrondi2: SiteMarcher[] = [];
 
   //Onglet Affecter Correspondant
   dtOptions2: DataTables.Settings = {};
@@ -138,7 +142,7 @@ export class CorrespondantsComponent implements OnInit {
         addIdCorrespondant:['', Validators.required],
         addImputableCorres:false,
         addTypCorres:[0, Validators.required],
-        addUtilisateur:[0, Validators.required],
+        addUtilisateur:[-1, Validators.required],
         addNomMagasinier:['', Validators.required],
         addPrenomMagasinier:['', Validators.required],
         addTelMagasinier:''
@@ -148,7 +152,7 @@ export class CorrespondantsComponent implements OnInit {
         editIdCorrespondant:['', Validators.required],
         editImputableCorres:false,
         editTypCorres:[0, Validators.required],
-        editUtilisateur:[0, Validators.required],
+        editUtilisateur:[-1, Validators.required],
         editNomMagasinier:['', Validators.required],
         editPrenomMagasinier:['', Validators.required],
         editTelMagasinier:''
@@ -158,21 +162,21 @@ export class CorrespondantsComponent implements OnInit {
         addDateArrivee:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
         addDateDepart:'',
         addCorres:[0, Validators.required],
-        addSite:[0, Validators.required]
+        addSite:[-1, Validators.required],
+        addArrondi:[0, Validators.required]
       });
 
       this.editAffecteSiteFormsGroup = this.formBulder.group({
         editDateArrivee:[new Date(), Validators.required],
         editDateDepart:'',
         editCorres:[0, Validators.required],
-        editSite:[0, Validators.required]
+        editSite:[0, Validators.required],
+        editArrondi:[0, Validators.required]
       });
 
     }
 
   ngOnInit(): void {
-
-    this.getAllSite();
 
     this.getAllTypCorres();
 
@@ -183,6 +187,32 @@ export class CorrespondantsComponent implements OnInit {
     this.getAllGerer();
 
     this.getAllUsers();
+
+
+    this.serviceCom.getAllSiteMarcher().subscribe(
+      (data) => {
+        this.sites = data;
+
+        this.serviceCom.getAllArrondissement().subscribe(
+          (data2) => {
+            this.arrondissements = data2;
+            this.sitesByArrondi = [];
+            this.sites.forEach(element => {
+              if(data2[0].codeArrondi == element.arrondissement.codeArrondi){
+                this.sitesByArrondi.push(element);
+              }
+            });
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération de la liste des Arrondissement', erreur);
+          }
+        );
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des Sites', erreur);
+      }
+    );
 
     this.serviceCorres.getAllCorres().subscribe(
       (data) => {
@@ -201,6 +231,35 @@ export class CorrespondantsComponent implements OnInit {
       }
     );
 
+  }
+
+  onArrondiChanged(){
+    this.sitesByArrondi = [];
+    this.sites.forEach(element => {
+      if(this.arrondissements[this.addAffecteSiteFormsGroup.value['addArrondi']].codeArrondi == element.arrondissement.codeArrondi){
+        this.sitesByArrondi.push(element);
+      }
+    });
+  }
+
+  onArrondiChanged2(){
+    this.sitesByArrondi2 = [];
+    this.sites.forEach(element => {
+      if(this.arrondissements[this.editAffecteSiteFormsGroup.value['editArrondi']].codeArrondi == element.arrondissement.codeArrondi){
+        this.sitesByArrondi.push(element);
+      }
+    });
+  }
+
+  getAllArrondissement(){
+    this.serviceCom.getAllArrondissement().subscribe(
+      (data) => {
+        this.arrondissements = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des Arrondissement', erreur);
+      }
+    );
   }
 
   getAllSite(){
@@ -345,15 +404,35 @@ export class CorrespondantsComponent implements OnInit {
           (data2) => {
             this.serviceCorres.addAGerer(new Gerer(new Date(), new Date(), data, data2)).subscribe(
               (data3) => {
+
+                let userrr = null;
+                if(this.addCorresFormsGroup.value['addUtilisateur'] != -1){
+                  userrr = this.utilisateurs[this.addCorresFormsGroup.value['addUtilisateur']];
+                }
+
                 const newCorres = new Correspondant(this.addCorresFormsGroup.value['addIdCorrespondant'],
                                   this.addCorresFormsGroup.value['addImputableCorres'],
                                   data,
                                   this.typCorrespondants[this.addCorresFormsGroup.value['addTypCorres']],
-                                  this.utilisateurs[this.addCorresFormsGroup.value['addUtilisateur']]);
+                                  userrr);
                 this.serviceCorres.addACorres(newCorres).subscribe(
                   (data4) => {
-                    this.primaryModal.hide();
+                    //this.primaryModal.hide();
+                    this.addCorresFormsGroup.patchValue({
+                      addIdCorrespondant:'',
+                      addUtilisateur:-1,
+                      addNomMagasinier:'',
+                      addPrenomMagasinier:'',
+                      addTelMagasinier:''
+                    });
+                    this.getAllUsers();
+                    //this.getAllTypCorres();
                     this.getAllCorres();
+                    //this.getAllUsers();
+                    this.getAllMagasinier();
+                    this.getAllMagasin();
+                    this.getAllGerer();
+
                   },
                   (erreur) => {
                     console.log('Erreur lors de la création du correspondant : ', erreur);
@@ -382,7 +461,75 @@ export class CorrespondantsComponent implements OnInit {
 
   onSubmitEditCorresFormsGroup(){
 
-    this.warningModal.hide();
+    const newMagasinier = new Magasinier(this.editCorresFormsGroup.value['editNomMagasinier'],
+    this.editCorresFormsGroup.value['editPrenomMagasinier'],
+    this.editCorresFormsGroup.value['editTelMagasinier']
+    );
+
+    const newMagasin = new Magasin(newMagasinier.telMagasinier,
+      newMagasinier.nomMagasinier.concat(newMagasinier.prenomMagasinier.valueOf()));
+
+    this.serviceCorres.editAMagasinier(this.editCorres.magasinier.numMAgasinier.toString(), newMagasinier).subscribe(
+      (data) => {
+        this.serviceCorres.getAllGerer().subscribe(
+          (data2) => {
+
+            data2.forEach(element2 => {
+              if(element2.magasinier.numMAgasinier == this.editCorres.magasinier.numMAgasinier){
+                newMagasin.codeMagasin = element2.magasin.codeMagasin;
+                this.serviceCorres.editAMagasin(element2.magasin.codeMagasin, newMagasin).subscribe(
+                  (data3) => {
+
+                  },
+                  (erreur) => {
+                    console.log('Erreur lors de la modification du magasin', erreur);
+                  }
+                );
+
+                exit;
+
+              }
+            });
+
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération des gérés', erreur);
+          }
+        );
+
+
+        let userrr = null;
+                if(this.editCorresFormsGroup.value['editUtilisateur'] != -1){
+                  userrr = this.utilisateurs[this.editCorresFormsGroup.value['editUtilisateur']];
+                }
+
+                const newCorres = new Correspondant(this.editCorresFormsGroup.value['editIdCorrespondant'],
+                                  this.editCorresFormsGroup.value['editImputableCorres'],
+                                  data,
+                                  this.typCorrespondants[this.editCorresFormsGroup.value['editTypCorres']],
+                                  userrr);
+
+        this.serviceCorres.editACorres(this.editCorres.idCorrespondant, newCorres).subscribe(
+          (data4) => {
+            this.warningModal.hide();
+            this.getAllCorres();
+          },
+          (erreur) => {
+            console.log('Erreur lors de la modification du correspondant', erreur);
+          }
+        );
+
+
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de lEdition du magasinier', erreur);
+      }
+    );
+
+
+
   }
 
   onConfirmDeleteCorres(){
@@ -421,6 +568,11 @@ export class CorrespondantsComponent implements OnInit {
       (data) => {
 
         this.getAllCorres();
+        this.getAllUsers();
+        this.getAllTypCorres();
+        this.getAllMagasin();
+        this.getAllMagasinier();
+        this.getAllGerer();
 
       },
       (erreur) => {
@@ -467,14 +619,24 @@ export class CorrespondantsComponent implements OnInit {
 
   onSubmitAddEtreAffecte(){
 
+    let site:SiteMarcher = null;
+    let arron:Arrondissement = this.arrondissements[this.addAffecteSiteFormsGroup.value['addArrondi']];
+    if(this.addAffecteSiteFormsGroup.value['addSite'] != -1){
+      site = this.sitesByArrondi[this.addAffecteSiteFormsGroup.value['addSite']];
+      arron = site.arrondissement;
+    }
+
     const newEtreAff = new EtreAffecte(this.addAffecteSiteFormsGroup.value['addDateArrivee'],
     this.addAffecteSiteFormsGroup.value['addDateDepart'],
     this.correspondants[this.addAffecteSiteFormsGroup.value['addCorres']],
-    this.sites[this.addAffecteSiteFormsGroup.value['addSite']]);
+    site, arron);
 
     this.serviceCorres.addAEtreAffecte(newEtreAff).subscribe(
       (data) => {
         this.primaryModal2.hide();
+        this.getAllCorres();
+        this.getAllArrondissement();
+
         this.getAllEtreAffectes();
       },
       (erreur) => {
@@ -486,10 +648,17 @@ export class CorrespondantsComponent implements OnInit {
 
   onSubmitEditEtreAffecte(){
 
+    let site:SiteMarcher = null;
+    let arron:Arrondissement = this.arrondissements[this.editAffecteSiteFormsGroup.value['editArrondi']];
+    if(this.addAffecteSiteFormsGroup.value['editSite'] != -1){
+      site = this.sitesByArrondi2[this.editAffecteSiteFormsGroup.value['editSite']];
+      arron = site.arrondissement;
+    }
+
     const newEtreAff = new EtreAffecte(this.editAffecteSiteFormsGroup.value['editDateArrivee'],
     this.editAffecteSiteFormsGroup.value['editDateDepart'],
     this.correspondants[this.editAffecteSiteFormsGroup.value['editCorres']],
-    this.sites[this.editAffecteSiteFormsGroup.value['editSite']]);
+    site, arron);
 
     this.serviceCorres.editAEtreAffecte(this.editEtreAffecte.idAffecte.toString(), newEtreAff).subscribe(
       (data) => {

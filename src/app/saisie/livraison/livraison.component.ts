@@ -70,7 +70,7 @@ export class LivraisonComponent implements OnInit {
   fin = new FormControl((new Date()).toISOString().substring(0, 10));
   opCaisseLivre = new FormControl('');
 
-  initialised:boolean = false;
+   initialised:boolean = false;
    magasinMagasinierConnected: Magasin = null;
    articleLigneOpcaisseLivre:LigneOpCaisse = null;
   
@@ -105,8 +105,6 @@ export class LivraisonComponent implements OnInit {
 
   ngOnInit(): void {
 
-  
-    //this.updateStockCorrespondant();
     this.servOp.getAllOpLines().subscribe(
       (data) => {
         data.forEach((element,index) => {
@@ -135,8 +133,7 @@ export class LivraisonComponent implements OnInit {
     this.servOp.getAllAffectations()
     .subscribe(
       (data)=>{
-        //console.log("+-+-",this.serviceUser.connectedUser.idUtilisateur);
-        //console.log("+-+-",data); 
+
         data.forEach(element =>{
           if(element.utilisateur.idUtilisateur === this.serviceUser.connectedUser.idUtilisateur)
           this.caisses.push(element);
@@ -155,8 +152,9 @@ export class LivraisonComponent implements OnInit {
     //var magasinMagasinierConnected: Magasin = null;
     this.serviceCorres.getAllCorres().subscribe(
       (data2) => {
+        
         data2.forEach(element2 => {
-          if (element2.utilisateur.idUtilisateur === this.serviceUser.connectedUser.idUtilisateur)
+          if (element2.utilisateur != null && element2.utilisateur.idUtilisateur == this.serviceUser.connectedUser.idUtilisateur)
           {
               console.log("111", this.serviceUser.connectedUser.idUtilisateur);
               this.serviceCorres.getAllGerer().subscribe(
@@ -164,7 +162,7 @@ export class LivraisonComponent implements OnInit {
                   data3.forEach(element3 => {
                     if ( element3.magasinier.numMAgasinier === element2.magasinier.numMAgasinier)
                     {
-                       console.log("222",element3.magasinier.numMAgasinier);
+                       console.log("Mag",element3.magasinier.numMAgasinier);
                        this.magasinMagasinierConnected = element3.magasin;
                        console.log("++++", this.magasinMagasinierConnected);
                        exit;

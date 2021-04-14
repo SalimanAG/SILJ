@@ -2,15 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Commande } from '../../models/commande.model';
 import { LigneCommande } from '../../models/ligneCommande.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommandeService {
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpcli:HttpClient) { }
+  constructor(private httpcli:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   //Partie réservée pour Commande
   getAllCommande(){

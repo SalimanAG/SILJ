@@ -70,8 +70,8 @@
                     <div class="row">
                       <div class="form-group col-sm-4">
                         <label for="addNumRevers">Numéro</label>
-                        <input type="text" class="form-control" id="addNumRevers"
-                          formControlName="addNumRevers" placeholder="Numéro du reversement">
+                        <input type="text" class="form-control" id="addNumRevers"  readonly="true"
+                          formControlName="addNumRevers" placeholder="Numéro du reversement" autocomplete="off">
                       </div>
                       <div class="form-group col-sm-4">
                         <label for="addDateRevers">Date</label>
@@ -159,7 +159,7 @@
                       <label for="editNumRevers">Numéro</label>
                       <input type="text" class="form-control" id="editNumRevers"
                         formControlName="editNumRevers" placeholder="Numéro du point" 
-                        [ngModel]="editReversement.numReversement" readonly>
+                        [ngModel]="editReversement.numReversement" readonly="true" autocomplete="off">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="editDateRevers">Date</label>
@@ -268,7 +268,7 @@
               <div class="card" style="margin: 0;">
                 <div class="card-body">
                   <table class="table table-striped" id="tabListArt"
-                    > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
+                    datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2">
                     <thead>
                       <tr>
                         <th>Code</th>
@@ -316,7 +316,7 @@
   
               <div class="card" style="margin: 0;">
                 <div class="card-body">
-                    <table class="table table-striped" id="tabListArt"
+                    <table class="table table-striped"
                     > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
                     <thead>
                       <tr>

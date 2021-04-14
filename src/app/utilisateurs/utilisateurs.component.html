@@ -27,7 +27,8 @@
           <td>{{ user.nomUtilisateur }}</td>
           <td>{{ user.prenomUtilisateur }}</td>
           <td>{{ user.fonctionUtilisateur }}</td>
-          <td>{{ user.service.libService }}</td>
+          <td *ngIf="user.service!==null && user.service!==undefined">{{ user.service.libService }}</td>
+          <td *ngIf="user.service===null || user.service===undefined">AUCUN</td>
           <td *ngIf="user.activeUtilisateur.valueOf()===true">OUI</td>
           <td *ngIf="user.activeUtilisateur.valueOf()===false">NON</td>
           <td>
@@ -90,24 +91,24 @@
                           <div class="form-group col-sm-6">
                             <label for="addNomUtilisateur">Nom</label>
                             <input type="text" class="form-control" id="addNomUtilisateur"
-                             formControlName="addNomUtilisateur" placeholder="Nom de l'Utilisateur">
+                             autocomplete="off" formControlName="addNomUtilisateur" placeholder="Nom de l'Utilisateur">
                           </div>
                           <div class="form-group col-sm-6">
                             <label for="addPrenomUtilisateur">Prénoms</label>
                             <input type="text" class="form-control" id="addPrenomUtilisateure"
-                             formControlName="addPrenomUtilisateur" placeholder="Prénoms de l'Utilisateur">
+                             autocomplete="off" formControlName="addPrenomUtilisateur" placeholder="Prénoms de l'Utilisateur">
                           </div>
                         </div><!--/.row-->
                         <div class="row">
                           <div class="form-group col-sm-6">
                             <label for="addLogin">Login</label>
                             <input type="text" class="form-control" id="addLogin"
-                             formControlName="addLogin" placeholder="Login de l'Utilisateur">
+                             autocomplete="off" formControlName="addLogin" placeholder="Login de l'Utilisateur">
                           </div>
                           <div class="form-group col-sm-6">
                             <label for="addMotDePass">Mot de Passe</label>
                             <input type="password" class="form-control" id="addMotDePass"
-                             formControlName="addMotDePass" disabled="true" placeholder="Mot de Passe de l'Utilisateur">
+                             autocomplete="off" formControlName="addMotDePass" disabled="true" placeholder="Mot de Passe de l'Utilisateur">
                           </div>
                         </div><!--/.row-->
                         <div class="row">
@@ -120,6 +121,7 @@
                             <label for="addService">Service</label>
                               <select id="addService" name="addService" class="form-control"
                               formControlName="addService">
+                                <option value="-1"></option>
                                 <option *ngFor="let servi of services; let i = index" [value]="i">
                                   {{ servi.codeService }} - {{ servi.libService }}
                                 </option>
@@ -173,24 +175,24 @@
                           <div class="form-group col-sm-6">
                             <label for="editNomUtilisateur">Nom</label>
                             <input type="text" class="form-control" id="editNomUtilisateur"
-                            formControlName="editNomUtilisateur" [ngModel]="editUser.nomUtilisateur" placeholder="Nom de l'Utilisateur">
+                            autocomplete="off" formControlName="editNomUtilisateur" [ngModel]="editUser.nomUtilisateur" placeholder="Nom de l'Utilisateur">
                           </div>
                           <div class="form-group col-sm-6">
                             <label for="editPrenomUtilisateur">Prénoms</label>
                             <input type="text" class="form-control" id="editPrenomUtilisateur"
-                             formControlName="editPrenomUtilisateur" [ngModel]="editUser.prenomUtilisateur" placeholder="Prénoms de l'Utilisateur">
+                             autocomplete="off" formControlName="editPrenomUtilisateur" [ngModel]="editUser.prenomUtilisateur" placeholder="Prénoms de l'Utilisateur">
                           </div>
                         </div><!--/.row-->
                         <div class="row">
                           <div class="form-group col-sm-6">
                             <label for="editLogin">Login</label>
                             <input type="text" class="form-control" id="editLogin"
-                            formControlName="editLogin" [ngModel]="editUser.login" placeholder="Login de l'Utilisateur">
+                            autocomplete="off" formControlName="editLogin" [ngModel]="editUser.login" placeholder="Login de l'Utilisateur">
                           </div>
                           <div class="form-group col-sm-6">
                             <label for="editMotDePass">Mot de Passe</label>
                             <input type="password" class="form-control" id="editMotDePass" readonly
-                            formControlName="editMotDePass" placeholder="Mot de Passe de l'Utilisateur">
+                            autocomplete="off" formControlName="editMotDePass" placeholder="Mot de Passe de l'Utilisateur">
                           </div>
                         </div><!--/.row-->
                         <div class="row">
@@ -203,6 +205,7 @@
                             <label for="editService">Service</label>
                               <select id="editService" name="editService" class="form-control"
                               formControlName="editService">
+                                <option value="-1"></option>
                                 <option *ngFor="let servi of services; let i = index" [value]="i">
                                   {{ servi.codeService }} - {{ servi.libService }}
                                 </option>
@@ -296,7 +299,8 @@
                       </tr>
                       <tr>
                         <th>Service</th>
-                        <td>{{ infosUser.service.libService }}</td>
+                        <td *ngIf="infosUser.service!==null && infosUser.service!==undefined">{{ infosUser.service.libService }}</td>
+                        <td *ngIf="infosUser.service===null || infosUser.service===undefined">AUCUN</td>
                       </tr>
                       <tr>
                         <th>Actif</th>

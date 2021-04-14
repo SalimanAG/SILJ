@@ -1,14 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TresCom } from '../../models/tresorier.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TresorierCommunalService {
-  private host:String = 'http://localhost:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpClient:HttpClient) { }
+  constructor(private httpClient:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   getAllTresCom(){
     return this.httpClient.get<TresCom[]>(this.host+'/stock/rp/list');

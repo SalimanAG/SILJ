@@ -2,20 +2,43 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Affecter } from '../../models/affecter.model';
 import { AffectUserGroup } from '../../models/affectUserGroup.model';
+import { AffectUserToArrondi } from '../../models/affectUserToArrondi.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AssocierUtilisateurService {
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  public adresseIp:string = '192.168.200.3:8080/Perfora';//'127.0.0.1'//'192.168.200.3:8080/Perfora'
+
+  private host:String = 'http://'+this.adresseIp+'/perfora-gpc/v1';
+
+
 
   constructor(private httpCli:HttpClient) {
 
   }
 
   //Partie réservée pour l'association d'un utilisateur à un arrondissement
+  getAllAffectUserToArrondi(){
+    return this.httpCli.get<AffectUserToArrondi[]>(this.host+'/commune/affectUserToArrondi/list');
+  }
 
+  getAAffectUserToArrondiById(code:String){
+    return this.httpCli.get<AffectUserToArrondi>(this.host+'/commune/affectUserToArrondi/byCodAffUseToArr/'+code);
+  }
+
+  addAAffectUserToArrondi(corps:AffectUserToArrondi){
+    return this.httpCli.post<AffectUserToArrondi>(this.host+'/commune/affectUserToArrondi/list', corps);
+  }
+
+  editAAffectUserToArrondi(code:String, corps:AffectUserToArrondi){
+    return this.httpCli.put<AffectUserToArrondi>(this.host+'/commune/affectUserToArrondi/byCodAffUseToArr/'+code, corps);
+  }
+
+  deleteAAffectUserToArrondi(code:String){
+    return this.httpCli.delete<boolean>(this.host+'/commune/affectUserToArrondi/byCodAffUseToArr/'+code);
+  }
 
 
   //Partie réservée pour l'association d'un utilisateur à une Caisse (Affecter)

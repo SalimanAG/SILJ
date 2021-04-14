@@ -175,7 +175,7 @@ export class BonApprovisionnementComponent  implements OnInit {
   initFormsGroup(){
 
     this.addApproFormsGroup = this.formBulder.group({
-      addNumAppro:['', Validators.required],
+      addNumAppro:'',
       addDescriptionAppro:'',
       addDateAppro:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
       addDemandeAppro:[0, Validators.required]
@@ -1348,85 +1348,108 @@ export class BonApprovisionnementComponent  implements OnInit {
     let totalTTC;
     totalTTC = 0;
 
-    this.plageNumArticles.forEach(element => {
-      if(element.ligneAppro != null && element.ligneAppro.appro.numAppro == appro.numAppro){
-        plages.push(element);
-      }
-    });
+    this.serviceBonAppro.getAllLigneAppro().subscribe(
+      (data) => {
+        this.ligneAppros = data;
+        this.serviceBonAppro.getAllPlageNumArticle().subscribe(
+          (data2) => {
+            this.plageNumArticles = data2;
 
 
-    this.ligneAppros.forEach(element => {
-      if(element.appro.numAppro == appro.numAppro){
-        let lig = [];
-        approDemAppro = element.ligneDA.appro;
-        lig.push(element.ligneDA.article.codeArticle);
-        lig.push(element.ligneDA.article.libArticle);
-        lig.push(element.quantiteLigneAppro);
-        lig.push(element.puligneAppro);
-        lig.push(element.puligneAppro*element.quantiteLigneAppro);
-        let pla:String = '';
-        let num:number = 0;
-        plages.forEach((element2, index) => {
+            this.plageNumArticles.forEach(element => {
+              if(element.ligneAppro != null && element.ligneAppro.appro.numAppro == appro.numAppro){
+                plages.push(element);
+              }
+            });
 
-          if(element2.ligneAppro.idLigneAppro == element.idLigneAppro){
 
-            if(num == 0){
-              pla = pla.concat(''+element2.numDebPlage+' à '+element2.numFinPlage+' ');
-              num = index;
-            }
-            else{
-              pla = pla.concat('| '+element2.numDebPlage+' à '+element2.numFinPlage+' ');
+            this.ligneAppros.forEach(element => {
+              if(element.appro.numAppro == appro.numAppro){
+                let lig = [];
+                approDemAppro = element.ligneDA.appro;
+                lig.push(element.ligneDA.article.codeArticle);
+                lig.push(element.ligneDA.article.libArticle);
+                lig.push(element.quantiteLigneAppro);
+                lig.push(element.puligneAppro);
+                lig.push(element.puligneAppro*element.quantiteLigneAppro);
+                let pla:String = '';
+                let num:number = 0;
+                plages.forEach((element2, index) => {
 
-            }
+                  if(element2.ligneAppro.idLigneAppro == element.idLigneAppro){
+
+                    if(num == 0){
+                      pla = pla.concat(''+element2.numDebPlage+' à '+element2.numFinPlage+' ');
+                      num = index;
+                    }
+                    else{
+                      pla = pla.concat('| '+element2.numDebPlage+' à '+element2.numFinPlage+' ');
+
+                    }
+                  }
+                });
+                lig.push(pla);
+                lignes.push(lig);
+                totalTTC += element.puligneAppro*element.quantiteLigneAppro;
+
+              }
+
+            });
+            moment.locale('fr');
+            doc.setDrawColor(0);
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
+            //doc.setFont("Times New Roman");
+            doc.setFontSize(22);
+            doc.text('BON APPROVISIONNEMENT', 57, 30);
+            doc.setFontSize(14);
+            doc.text('Référence : '+appro.numAppro, 15, 45);
+            doc.text('Date : '+moment(appro.dateAppro).format('DD/MM/YYYY'), 152, 45);
+
+            doc.text('Demande d\'Appro N° : '+approDemAppro.numDA+'\tDu\t'+moment(new Date(approDemAppro.dateDA.toString())).format('DD/MM/YYYY'), 15, 55);
+            doc.text('Description : '+appro.descriptionAppro, 15, 65);
+            autoTable(doc, {
+              theme: 'grid',
+              head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant', 'Plage(s)']],
+              headStyles:{
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold' ,
+            },
+              margin: { top: 100 },
+              body: lignes
+              ,
+            });
+
+            autoTable(doc, {
+              theme: 'grid',
+              margin: { top: 100, left:130 },
+              columnStyles: {
+                0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+              },
+              body: [
+                ['Total TTC', totalTTC]
+              ]
+              ,
+            });
+            //doc.autoPrint();
+            this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonAppro.pdf'}));
+            this.viewPdfModal.show();
+
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération des plages de Numérotation', erreur);
           }
-        });
-        lig.push(pla);
-        lignes.push(lig);
-        totalTTC += element.puligneAppro*element.quantiteLigneAppro;
+        );
 
-      }
-
-    });
-    moment.locale('fr');
-    doc.setDrawColor(0);
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
-    //doc.setFont("Times New Roman");
-    doc.setFontSize(22);
-    doc.text('BON APPROVISIONNEMENT', 57, 30);
-    doc.setFontSize(14);
-    doc.text('Référence : '+appro.numAppro, 15, 45);
-    doc.text('Date : '+moment(appro.dateAppro).format('DD/MM/YYYY'), 152, 45);
-
-    doc.text('Demande d\'Appro N° : '+approDemAppro.numDA+'\tDu\t'+moment(new Date(approDemAppro.dateDA.toString())).format('DD/MM/YYYY'), 15, 55);
-    doc.text('Description : '+appro.descriptionAppro, 15, 65);
-    autoTable(doc, {
-      theme: 'grid',
-      head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant', 'Plage(s)']],
-      headStyles:{
-        fillColor: [41, 128, 185],
-        textColor: 255,
-        fontStyle: 'bold' ,
-     },
-      margin: { top: 100 },
-      body: lignes
-      ,
-    });
-
-    autoTable(doc, {
-      theme: 'grid',
-      margin: { top: 100, left:130 },
-      columnStyles: {
-        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
       },
-      body: [
-        ['Total TTC', totalTTC]
-      ]
-      ,
-    });
-    //doc.autoPrint();
-    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonAppro.pdf'}));
-    this.viewPdfModal.show();
+      (erreur) => {
+        console.log('Erreur lors de la récupération des lignes dAppro', erreur);
+      }
+    );
+
+
   }
 
 }

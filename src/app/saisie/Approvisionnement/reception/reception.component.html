@@ -23,7 +23,7 @@
           <tbody>
               <tr *ngFor="let recept of receptions; let i = index">
                   <td>{{ recept.numReception }}</td>
-                  <td>{{ recept.dateReception }}</td>
+                  <td>{{ recept.dateReception | date:"dd-MM-yyyy" }}</td>
                   <td>{{ recept.observation }}</td>
                   <td>{{ getCommandeOfAReception(recept.numReception).numCommande }} du {{ getCommandeOfAReception(recept.numReception).dateCommande }}</td>
                   <td>{{ getCommandeOfAReception(recept.numReception).frs.codeFrs }} - {{ getCommandeOfAReception(recept.numReception).frs.identiteFrs }}</td>
@@ -74,10 +74,10 @@
                 </div>
                 <div class="card-body">
                   <div class="row">
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-4" style="display: none;">
                       <label for="addNumReception">Numéro</label>
                       <input type="text" class="form-control" id="addNumReception"
-                        formControlName="addNumReception" placeholder="Numéro de la Réception">
+                        autocomplete="off" formControlName="addNumReception" placeholder="Numéro de la Réception">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="addDateReception">Date</label>
@@ -87,7 +87,7 @@
                     <div class="form-group col-sm-4">
                       <label for="addObservation">Observation</label>
                       <input type="text" class="form-control" id="addObservation"
-                       formControlName="addObservation" placeholder="Observation...">
+                       autocomplete="off" formControlName="addObservation" placeholder="Observation...">
                     </div>
 
                   </div><!--/.row-->
@@ -162,7 +162,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="addReceptionFormGroup.invalid">Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addReceptionFormGroup.invalid || tempAddLigneReception.length == 0">Enrégistrer</button>
                 </div>
               </div><!-- /.modal-content -->
             </form>
@@ -198,7 +198,7 @@
                   <div class="form-group col-sm-4">
                     <label for="editObservation">Observation</label>
                     <input type="text" class="form-control" id="editObservation"
-                     formControlName="editObservation" placeholder="Observation..."
+                     autocomplete="off" formControlName="editObservation" placeholder="Observation..."
                      value="{{ editReception.observation }}">
                   </div>
 
@@ -275,7 +275,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
-            <button type="submit" class="btn btn-warning" [disabled]="editReceptionFormGroup.invalid">Modifier</button>
+            <button type="submit" class="btn btn-warning" [disabled]="editReceptionFormGroup.invalid || tempEditLigneReception.length == 0">Modifier</button>
             </div>
           </div><!-- /.modal-content -->
         </form>

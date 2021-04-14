@@ -20,7 +20,7 @@
           <tbody>
               <tr *ngFor="let demAppro of demandeAppros; let i = index">
                   <td>{{ demAppro.numDA }}</td>
-                  <td>{{ demAppro.dateDA }}</td>
+                  <td>{{ demAppro.dateDA | date:"dd-MM-yyyy" }}</td>
                   <td>
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
                       <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
@@ -65,10 +65,10 @@
                 </div>
                 <div class="card-body">
                   <div class="row">
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-4" style="display: none;">
                       <label for="addNumDA">Numéro</label>
                       <input type="text" class="form-control" id="addNumDA"
-                        formControlName="addNumDA" placeholder="Numéro de la Demande">
+                        autocomplete="off" formControlName="addNumDA" placeholder="Numéro de la Demande">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="addDateDA">Date</label>
@@ -78,7 +78,7 @@
                     <div class="form-group col-sm-4">
                       <label for="addExoSlected">Exercice</label>
                       <input type="text" class="form-control" id="addExoSlected" readonly
-                      [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Délais en jour"
+                      [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice.valueOf()))" placeholder="Délais en jour"
                        [ngModelOptions]="{standalone: true}">
                     </div>
 
@@ -118,7 +118,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addDemandeApproFormGroup.invalid || tempAddLigneDemandeAppro.length == 0">Enrégistrer</button>
                 </div>
               </div><!-- /.modal-content -->
             </form>
@@ -143,7 +143,7 @@
                   <div class="form-group col-sm-4">
                     <label for="editNumDA">Numéro</label>
                     <input type="text" class="form-control" id="editNumDA"
-                      formControlName="editNumDA" placeholder="Numéro de la Demande"
+                      autocomplete="off" formControlName="editNumDA" placeholder="Numéro de la Demande"
                       [ngModel]="editDemandeAppro.numDA">
                   </div>
                   <div class="form-group col-sm-4">
@@ -154,7 +154,7 @@
                   <div class="form-group col-sm-4">
                     <label for="editExoSlected">Exercice Sélectionné</label>
                     <input type="text" class="form-control" id="editExoSlected" readonly
-                     [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice))" placeholder="Code de l'Exercice Selectionné"
+                     [ngModel]="serviceExercice.exoSelectionner.codeExercice.concat(' - '.concat(serviceExercice.exoSelectionner.libExercice.valueOf()))" placeholder="Code de l'Exercice Selectionné"
                      [ngModelOptions]="{standalone: true}">
                   </div>
 
@@ -195,7 +195,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
-            <button type="submit" class="btn btn-warning">Modifier</button>
+            <button type="submit" class="btn btn-warning" [disabled]="tempEditLigneDemandeAppro.length == 0 || editDemandeApproFormGroup.invalid">Modifier</button>
             </div>
           </div><!-- /.modal-content -->
         </form>

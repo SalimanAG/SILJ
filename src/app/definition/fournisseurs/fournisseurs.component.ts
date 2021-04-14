@@ -126,7 +126,8 @@ export class FournisseursComponent implements OnInit {
     this.addFrsFormsGroup.value['addRaisonSociale'], this.addFrsFormsGroup.value['addNumIfuFrs'], this.addFrsFormsGroup.value['addTelFRS'], this.addFrsFormsGroup.value['addDescription']);
     this.frsService.addAFrs(newFrs).subscribe(
       (data) => {
-        this.primaryModal.hide();
+        //this.primaryModal.hide();
+        this.addFrsFormsGroup.reset();
         this.getAllFrs();
       },
       (erreur) => {

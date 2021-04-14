@@ -1,14 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Fournisseur } from '../../models/fournisseur.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FournisseurService {
 
-  private host:String ='http://127.0.0.1:8080/perfora-gpc/v1'
-  constructor(private httpCli: HttpClient) { }
+  private host:String ='http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1'
+  constructor(private httpCli: HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   getAllFrs(){
     return this.httpCli.get<Fournisseur[]>(this.host+'/commune/fournisseur/list');

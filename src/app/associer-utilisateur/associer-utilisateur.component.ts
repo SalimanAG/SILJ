@@ -18,6 +18,7 @@ import { DroitGroupeService } from '../../services/administration/droit-groupe.s
 import { UtilisateurService } from '../../services/administration/utilisateur.service';
 import { CommuneService } from '../../services/definition/commune.service';
 import * as moment from  'moment';
+import { AffectUserToArrondi } from '../../models/affectUserToArrondi.model';
 
 @Component({
   selector: 'app-associer-utilisateur',
@@ -52,7 +53,11 @@ export class AssocierUtilisateurComponent implements OnInit {
   dtTrigger3: Subject<any> = new Subject<any>();
 
   //Onglet Associer user à Arrondissement
-
+  affectUserToArrondis:AffectUserToArrondi[] = [];
+  editAffectUserToArrondi : AffectUserToArrondi = new AffectUserToArrondi(new Utilisateur('', '', '', '', '', false, new Service('', '')), new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))), new Date(), new Date());
+  suprAffectUserToArrondi:  AffectUserToArrondi = new AffectUserToArrondi(new Utilisateur('', '', '', '', '', false, new Service('', '')), new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))), new Date(), new Date());
+  addAffectUserToArrondiFormsGroup: FormGroup;
+  editAffectUserToArrondiFormsGroup: FormGroup;
 
   //Onglet Associer user à Caisse
   affecters:Affecter[];
@@ -168,12 +173,27 @@ export class AssocierUtilisateurComponent implements OnInit {
       editGroupUser:[0, Validators.required]
     });
 
+    this.addAffectUserToArrondiFormsGroup = this.formBulder.group({
+      addUtilisateur3:[0, Validators.required],
+      addArrondissement2:[0, Validators.required],
+      addDateDebAffectUserToArrondi:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
+      addDateFinAffectUserToArrondi:''
+    });
+
+    this.editAffectUserToArrondiFormsGroup = this.formBulder.group({
+      editUtilisateur3:[0, Validators.required],
+      editArrondissement2:[0, Validators.required],
+      editDateDebAffectUserToArrondi:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required],
+      editDateFinAffectUserToArrondi:''
+    });
+
   }
   constructor(private serviceAssocierUser:AssocierUtilisateurService, private formBulder:FormBuilder,
     private serviceCaisse:CaisseService, private serviceUser:UtilisateurService,
     private serviceCommune:CommuneService, private serviceDroitGroup:DroitGroupeService) {
     this.initDtOptions();
     this.initForms();
+    this.editAffectUserToArrondi.utilisateur.idUtilisateur = -1;
   }
 
   ngOnInit(): void {
@@ -181,6 +201,7 @@ export class AssocierUtilisateurComponent implements OnInit {
     this.getAllUser();
     this.getAllCaisse();
     this.getAllUserGroup();
+
     this.serviceCommune.getAllArrondissement().subscribe(
       (data) => {
         this.arrondissements = data;
@@ -210,6 +231,16 @@ export class AssocierUtilisateurComponent implements OnInit {
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des affectation des utilisateurs au groupes', erreur );
+      }
+    );
+
+    this.serviceAssocierUser.getAllAffectUserToArrondi().subscribe(
+      (data) => {
+        this.affectUserToArrondis = data;
+        this.dtTrigger1.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des associations dUser à Arrondissement', erreur);
       }
     );
 
@@ -421,6 +452,76 @@ export class AssocierUtilisateurComponent implements OnInit {
       }
     );
 
+  }
+
+  //Por l'onglet affectation d'un User à un Arrondissement
+  getAllAffectUserToArrondi(){
+    this.serviceAssocierUser.getAllAffectUserToArrondi().subscribe(
+      (data) => {
+        this.affectUserToArrondis = data;
+        $('#dataTable1').dataTable().api().destroy();
+        this.dtTrigger1.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des associations dUser à Arrondissement', erreur);
+      }
+    );
+  }
+
+  initEditAffectUserToArrondi(inde:number){
+    this.editAffectUserToArrondi = this.affectUserToArrondis[inde];
+    this.warningModal.show();
+  }
+
+  initDeleteAffectUserToArrondi(inde:number){
+    this.suprAffectUserToArrondi = this.affectUserToArrondis[inde];
+    this.dangerModal.show();
+  }
+
+  onSubmitAddAffectUserToArrondiFormsGroup(){
+    const newAff = new AffectUserToArrondi(this.utilisateurs[this.addAffectUserToArrondiFormsGroup.value['addUtilisateur3']],
+    this.arrondissements[this.addAffectUserToArrondiFormsGroup.value['addArrondissement2']],
+    this.addAffectUserToArrondiFormsGroup.value['addDateDebAffectUserToArrondi'], this.addAffectUserToArrondiFormsGroup.value['addDateFinAffectUserToArrondi']);
+
+    this.serviceAssocierUser.addAAffectUserToArrondi(newAff).subscribe(
+      (data) => {
+        this.getAllAffectUserToArrondi();
+        this.primaryModal.hide();
+      },
+      (erreur) => {
+        console.log('Erreur lors de lAjout de lAssociation', erreur);
+      }
+    );
+
+
+  }
+
+  onSubmitEditAffectUserToArrondiFormsGroup(){
+    const newAff = new AffectUserToArrondi(this.editAffectUserToArrondi.utilisateur,this.editAffectUserToArrondi.arrondissement,
+    this.editAffectUserToArrondiFormsGroup.value['editDateDebAffectUserToArrondi'], this.editAffectUserToArrondiFormsGroup.value['editDateFinAffectUserToArrondi']);
+
+    this.serviceAssocierUser.editAAffectUserToArrondi(this.editAffectUserToArrondi.idAffectUserToArrondi.toString(), newAff).subscribe(
+      (data) => {
+        this.warningModal.hide();
+        this.getAllAffectUserToArrondi();
+      },
+      (erreur) => {
+        console.log('Erreur lors de lEdition de la relation Affecter User à un Arrondi', erreur);
+      }
+    );
+    
+  }
+
+  onConfirmDeleteAffectUserToArrondi(){
+    this.serviceAssocierUser.deleteAAffectUserToArrondi(this.suprAffectUserToArrondi.idAffectUserToArrondi.toString()).subscribe(
+      (data) => {
+        this.dangerModal.hide();
+        this.getAllAffectUserToArrondi();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la suppression de lAffection de lUser à lArrondissement', erreur);
+      }
+    );
   }
 
 }

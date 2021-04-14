@@ -122,7 +122,8 @@ export class LocatairesComponent implements OnInit {
     this.addLocataireFormsGroup.value['addPersonneAContacter']);
     this.locataiService.addALocataire(newLocatai).subscribe(
       (data) => {
-        this.primaryModal.hide();
+        //this.primaryModal.hide();
+        this.addLocataireFormsGroup.reset();
         this.getAllLocataire();
       },
       (erreur) => {

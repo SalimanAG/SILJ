@@ -6,14 +6,15 @@ import { PrixImmeuble } from '../../models/prixImmeuble.model';
 import { Arrondissement } from '../../models/arrondissement.model';
 import { Quartier } from '../../models/quartier.model';
 import { SiteMarcher } from '../../models/siteMarcher.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 @Injectable({
   providedIn: 'root'
 })
 export class ValeurLocativeService {
 
-  private host:String = 'http://localhost:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpClient:HttpClient) { }
+  constructor(private httpClient:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   getAllImmeuble(){
     return this.httpClient.get<Immeuble[]>(this.host+'/location/immeuble/list');
@@ -38,7 +39,7 @@ export class ValeurLocativeService {
   }
 
 
-  
+
   //Services type valeur locatives
   getAllTypeImmeuble(){
     return this.httpClient.get<TypeImmeuble[]>(this.host+'/location/typeimmeuble/list');

@@ -170,7 +170,8 @@ export class GestionDroitsGroupesComponent implements OnInit {
     const newGroup = new GroupUser(this.addGroupUserFormsGroup.value['addIdGroupUser'], this.addGroupUserFormsGroup.value['addLibGroupUser']);
     this.serviceDroitUser.addAGroupUser(newGroup).subscribe(
       (data) => {
-        this.primaryModal3.hide();
+        //this.primaryModal3.hide();
+        this.addGroupUserFormsGroup.reset();
         this.getAllGroupUser();
       },
       (erreur) => {

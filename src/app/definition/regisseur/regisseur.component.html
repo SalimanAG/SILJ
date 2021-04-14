@@ -89,26 +89,26 @@
                               <div class="form-group col-sm-6">
                                 <label for="addCodeReg">Code</label>
                                 <input type="text" class="form-control" id="addCodeReg" placeholder="Code"
-                                  formControlName="addCodeReg">
+                                  formControlName="addCodeReg" autocomplete="off">
                               </div>
 
                               <div class="form-group col-sm-6">
                                 <label for="addNomMag">Nom</label>
                                 <input type="text" class="form-control" id="addNomMag" placeholder="Nom "
-                                  formControlName="addNomMag">
+                                  formControlName="addNomMag" autocomplete="off">
                               </div>
                             </div><!--/.row-->
                             <div class="row">
                                 <div class="form-group col-sm-6">
                                     <label for="addPrenomMag">Prénom</label>
                                     <input type="text" class="form-control" id="addPrenomMag" placeholder="Prénom"
-                                      formControlName="addPrenomMag">
+                                      formControlName="addPrenomMag" autocomplete="off">
                                 </div>
 
                                 <div class="form-group col-sm-6">
                                   <label for="addTelMag">Téléphone</label>
                                   <input type="text" class="form-control" id="addTelMag" placeholder="Téléphone"
-                                    formControlName="addTelMag">
+                                    formControlName="addTelMag" autocomplete="off">
                                 </div>
                             </div>
                             <div class="row">
@@ -157,25 +157,25 @@
                               <div class="form-group col-sm-6">
                                 <label for="editCodeReg">Code</label>
                                 <input type="text" class="form-control" id="editCodeReg" placeholder="Code du régisseur"
-                                  formControlName="editCodeReg" readonly="true" [ngModel]="editReg.idRegisseur">
+                                  formControlName="editCodeReg" readonly="true" [ngModel]="editReg.idRegisseur" autocomplete="off">
                               </div>
                               <div class="form-group col-sm-6">
                                 <label for="editNomMag">Nom</label>
                                 <input type="text" class="form-control" id="editNomMag" placeholder="Entrer le nom"
-                                  formControlName="editNomMag" [ngModel]="editReg.magasinier.nomMagasinier">
+                                  formControlName="editNomMag" [ngModel]="editReg.magasinier.nomMagasinier" autocomplete="off">
                               </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-sm-6">
                                     <label for="editPrenomMag">Prénom</label>
                                     <input type="text" class="form-control" id="editPrenomMag" placeholder="Entrer le prénom"
-                                      formControlName="editPrenomMag" [ngModel]="editReg.magasinier.prenomMagasinier">
+                                      formControlName="editPrenomMag" [ngModel]="editReg.magasinier.prenomMagasinier" autocomplete="off">
                                   </div>
 
                                   <div class="form-group col-sm-6">
                                     <label for="editTelMag">Téléphone</label>
                                     <input type="text" class="form-control" id="editTelMag" placeholder="Entrer le téléphone"
-                                      formControlName="editTelMag" [ngModel]="editReg.magasinier.telMagasinier">
+                                      formControlName="editTelMag" [ngModel]="editReg.magasinier.telMagasinier" autocomplete="off">
                                   </div>
                             </div>
                             <div class="row">

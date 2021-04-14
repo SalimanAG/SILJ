@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Contrat } from '../../models/contrat.model';
+import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContratLocationService {
 
-  private host:String = 'http://127.0.0.1:8080/perfora-gpc/v1';
+  private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  constructor(private httpCli:HttpClient) { }
+  constructor(private httpCli:HttpClient, private serviceIp:AssocierUtilisateurService) { }
 
   getAllContrat(){
     return this.httpCli.get<Contrat[]>(this.host+'/location/contrat/list');

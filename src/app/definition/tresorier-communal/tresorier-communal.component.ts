@@ -29,7 +29,7 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
   users : Utilisateur[];
   tresmani:TresCom=new TresCom(null,new Magasinier(null,null,null),new Utilisateur(null,null,null,null,null,null,null,null));
 
-  @ViewChild('addTresCom')public addTresCom:ModalDirective;
+  @ViewChild('addTresCom') public addTresCom:ModalDirective;
   @ViewChild('modTresCom') public modTresCom:ModalDirective;
   @ViewChild('delTresCom') public delTresCom:ModalDirective;
 
@@ -97,7 +97,8 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.servTC.getAllTresCom().subscribe(
       data=>{
-        this.tresoriers=data
+        this.tresoriers=data;
+        this.dTriTres.next();
       },
       (err)=>{
         console.log('Chargement de trésoriers non réussi', err);
@@ -133,10 +134,11 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
           this.servTC.editTresCom(this.tresmani.idRp,newtc).subscribe(
             data=>{
               console.log('Modification éffectuée');
+              this.chargerTresoriers();
               this.modTresCom.hide();
             },
             err=>{
-              console.log('Modification échouée',err);
+              this.chargerTresoriers();
             });
         },
         errm=>{console.log('Modification échouée pour magasinier',errm);}
@@ -148,15 +150,13 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
           console.log(this.tresmani.idRp,newtc);
           this.servTC.editTresCom(this.tresmani.idRp,newtc).subscribe(
             data=>{
-              console.log('Modification éffectuée');
+              this.chargerTresoriers();
               this.modTresCom.hide();
             },
             err=>{
               console.log('Modification échouée',err);
             });
     }
-    this.chargerTresoriers();
-    this.modTresCom.hide();
   }
 
   ajouteTresCom(){
@@ -179,7 +179,7 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
                           this.serviceCorres.addAGerer(new Gerer(new Date(),null,datamaga,new Magasin('CT','Caveau Trésor')))
                           .subscribe(
                             datag=>{
-                              console.log("Ajout réussi de gérer");
+                              this.chargerTresoriers();
                             },
                             errg=>{
                               console.log("Ajout échoué de gérer");
@@ -225,25 +225,16 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
               console.log(ntres);
               this.servTC.addATresCom(ntres).subscribe(
                 datatres=>{
-                  this.servTC.getAllTresCom().subscribe(
-                    datalist=>{
-                      this.serviceCorres.addAGerer(new Gerer(new Date(),null,datamaga,new Magasin('CT','Caveau Trésor')))
-                      .subscribe(
-                        datag=>{
-                          console.log("Ajout réussi de gérer");
-                        },
-                        errg=>{
-                          console.log("Ajout échoué de gérer");
+                    this.serviceCorres.addAGerer(new Gerer(new Date(),null,datamaga,new Magasin('CT','Caveau Trésor')))
+                    .subscribe(
+                      datag=>{
+                        this.chargerTresoriers();
+                      },
+                      errg=>{
+                        console.log("Ajout échoué de gérer");
 
-                        }
-                      );
-                      this.tresoriers=datalist;
-                      this.dTriTres.next();
-                    },
-                    errlist=>{
-                      console.log('impossible de charger la liste des trésoriers communaux',errlist);
-                    }
-                  );
+                      }
+                    );
                 },
                 errtres=>{
                   console.log('Imposible d\'ajouter le trésorier communal',errtres);
@@ -264,7 +255,6 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
         console.log('Action annulée', err);
       }
     );
-    this.chargerTresoriers();
     this.addTresCom.hide();
   }
 

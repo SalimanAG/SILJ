@@ -268,9 +268,17 @@ export class ArticleComponent implements OnInit {
     this.articleService.addArticle(newArti)
     .subscribe(
       (data) => {
-        this.primaryModal.hide();
-        console.log('Réussie : ', data);
+        //this.primaryModal.hide();
+        this.addArticleFormsGroup.patchValue({
+          addCodeArticle:null,
+          addLibArticle:null,
+          addPrixVenteArticle:0,
+          addCouleurArticle:''
+        });
+        //this.getAllFamille();
+        //this.getAllUnites();
         this.getAllArticle();
+
       },
       (erreur) => {
         console.log('Erreur : ', erreur);
@@ -291,6 +299,8 @@ export class ArticleComponent implements OnInit {
       (data) => {
         this.warningModal.hide();
         this.getAllArticle();
+        this.getAllFamille();
+        this.getAllUnites();
       },
       (erreur) => {
         console.log('Erreur lors de l\'édition d\'article : ', erreur);
@@ -305,6 +315,8 @@ export class ArticleComponent implements OnInit {
       (data) => {
         this.dangerModal.hide();
         this.getAllArticle();
+        this.getAllFamille();
+        this.getAllUnites();
       },
       (erreur) => {
         console.log('Erreur lors de la supression : ', erreur);
@@ -348,8 +360,9 @@ export class ArticleComponent implements OnInit {
     this.articleService.addAFamille(newFamil)
     .subscribe(
       (data) => {
-        console.log('Réussie : ', data);
-        this.primaryModal2.hide();
+        //console.log('Réussie : ', data);
+        //this.primaryModal2.hide();
+        this.addFamilleFormsGroup.reset();
         this.getAllFamille();
       },
       (erreur) => {
@@ -414,7 +427,7 @@ export class ArticleComponent implements OnInit {
     this.articleService.editAUniter(this.editUnit.codeUniter, newUnit)
     .subscribe(
       (data) => {
-        console.log('Objet Modifier : ', data);
+        //console.log('Objet Modifier : ', data);
         this.warningModal3.hide();
         this.getAllUnites();
       },
@@ -431,9 +444,10 @@ export class ArticleComponent implements OnInit {
     this.addUnitFormsGroup.value['addLibUnit']);
     this.articleService.addAUniter(newUnit).subscribe(
       (data) => {
-        console.log('Réussie : ', data);
-        this.primaryModal3.hide();
+        //console.log('Réussie : ', data);
+        //this.primaryModal3.hide();
         //this.router.navigate(['/article']);
+        this.addUnitFormsGroup.reset();
         this.getAllUnites();
       },
       (erreur) => {
