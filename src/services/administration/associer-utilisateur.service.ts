@@ -9,7 +9,7 @@ import { AffectUserToArrondi } from '../../models/affectUserToArrondi.model';
 })
 export class AssocierUtilisateurService {
 
-  public adresseIp:string = '192.168.200.3:8080/Perfora';//'127.0.0.1'//'192.168.200.3:8080/Perfora'
+  public adresseIp:string = '127.0.0.7:8080';//'127.0.0.1'//'192.168.200.3:8080/Perfora'
 
   private host:String = 'http://'+this.adresseIp+'/perfora-gpc/v1';
 

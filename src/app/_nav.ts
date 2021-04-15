@@ -150,7 +150,7 @@ export const navItems: INavData[] = [
             },
             {
               name: 'Inventaire',
-              url: '/bilan-incine',
+              url: '/inventaire-stock',
               icon: 'icon-puzzle'
             }
           ]
@@ -237,7 +237,7 @@ export const navItems: INavData[] = [
             url: '/rapport-stock-jourOperat',
             icon: 'icon-puzzle'
           },
-          
+
         ]
       },
       {

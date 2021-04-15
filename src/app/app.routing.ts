@@ -56,6 +56,7 @@ import { ImportationExportationComponent } from './importation-exportation/impor
 import { PlacementComponent } from './saisie/Approvisionnement/placement/placement.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { AuthGuardService } from '../services/administration/auth-guard.service';
+import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/inventaire-stock.component';
 
 export const routes: Routes = [
   {
@@ -218,6 +219,11 @@ export const routes: Routes = [
       {
         path: 'bilan-incine',
         component: IncinerationComponent
+      },
+
+      {
+        path:'inventaire-stock',
+        component: InventaireStockComponent
       },
 
       {

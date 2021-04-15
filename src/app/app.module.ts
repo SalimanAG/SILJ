@@ -96,6 +96,7 @@ import { ImportationExportationComponent } from './importation-exportation/impor
 import { AccueilComponent } from './accueil/accueil.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { AutheComponent } from './authe/authe.component';
+import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/inventaire-stock.component';
 
 @NgModule({
   imports: [
@@ -171,6 +172,7 @@ import { AutheComponent } from './authe/authe.component';
     AccueilComponent,
     ForgotPasswordComponent,
     AutheComponent,
+    InventaireStockComponent,
   ],
   providers: [{
     provide: LocationStrategy,
