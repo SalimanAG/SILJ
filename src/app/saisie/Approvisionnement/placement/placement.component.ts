@@ -341,6 +341,10 @@ export class PlacementComponent  implements OnInit {
     this.serviceArticle.getAllArticle().subscribe(
       (data) => {
         this.articles = data;
+        $('#dataTable2').dataTable().api().destroy();
+        this.dtTrigger2.next();
+        $('#dataTable3').dataTable().api().destroy();
+        this.dtTrigger3.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des articles', erreur);
@@ -699,10 +703,12 @@ export class PlacementComponent  implements OnInit {
 
     this.servicePlacement.addAPlacement(newPlacement).subscribe(
       (data) => {
-        this.tempAddLignePlacement.forEach(element => {
+        this.tempAddLignePlacement.forEach((element, inde) => {
           element.placement = data;
           this.servicePlacement.addALignePlacement(element).subscribe(
             (data2) => {
+
+              this.tempAddLignePlacement.splice(inde);
 
               this.serviceCorres.getAllStocker().subscribe(
                 (data3) => {

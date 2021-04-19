@@ -215,6 +215,10 @@ export class CommandeComponent implements OnInit {
     this.serviceArticle.getAllArticle().subscribe(
       (data) => {
         this.articles = data;
+        $('#dataTable2').dataTable().api().destroy();
+        this.dtTrigger2.next();
+        $('#dataTable3').dataTable().api().destroy();
+        this.dtTrigger3.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des articles', erreur);
@@ -339,11 +343,11 @@ export class CommandeComponent implements OnInit {
     //console.log(this.tempAddLigneCommandes, newComm);
     this.serviceCommande.addACommande(newComm).subscribe(
       (data) => {
-        this.tempAddLigneCommandes.forEach(element => {
+        this.tempAddLigneCommandes.forEach((element, inde) => {
           element.numCommande = data;
           this.serviceCommande.addALigneCommande(element).subscribe(
             (data2) => {
-
+              this.tempAddLigneCommandes.splice(inde);
             },
             (erreur) => {
               console.log('Erreur lors de la création de la ligne de commande',erreur );

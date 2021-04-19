@@ -617,10 +617,11 @@ export class BonApprovisionnementComponent  implements OnInit {
     this.serviceBonAppro.addAAppro(newAppro).subscribe(
       (data) => {
 
-        this.tempAddLigneAppro.forEach(element => {
+        this.tempAddLigneAppro.forEach((element, inde) => {
           element.appro = data;
           this.serviceBonAppro.addALigneAppro(element).subscribe(
             (data2) => {
+              this.tempAddLigneAppro.splice(inde);
 
               //ajustement de stock
               this.serviceCorres.getAllStocker().subscribe(

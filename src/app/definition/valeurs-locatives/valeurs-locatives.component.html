@@ -204,13 +204,10 @@
                                   <strong>Modifier une valeur locative</strong>
       
                                 </div>
-                              <div class="modal-body">
+                              <!--div class="modal-body"-->
                                 <!-- Formulaire pour enrégistrer un article-->
-                                <div class="card">
-                                    <div class="card-header">
-                                      <strong>Modification de valeur locative</strong>
-          
-                                    </div>
+                                <!--div class="card"-->
+                                   
                                   <div class="card-body">
                                         <div class="row">
                                           <div class="form-group col-sm-6">
@@ -305,10 +302,10 @@
                                     </div><!--/.row-->
     
                                   </div>
-
-                                </div>
+ 
+                                <!--/div-->
     
-                          </div>
+                          <!--/div-->
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" (click)="warningModal1.hide()">Annuler</button>
                             <button type="submit" class="btn btn-warning">Modifier</button>
@@ -326,13 +323,13 @@
                     <div class="modal-dialog modal-danger" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h4 class="modal-title">Suprimmer Un Site</h4>
+                          <h4 class="modal-title">Suprimmer une valeur locative</h4>
                           <button type="button" class="close" (click)="dangerModal1.hide()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
                         <div class="modal-body">
-                          <p>Vous êtes sur le point de supprimer le site <mark style="color: red;">{{ suprValLoc.codeIm }}</mark></p>
+                          <p>Vous êtes sur le point de supprimer la valeur locative <mark style="color: red;">{{ suprValLoc.codeIm }}</mark></p>
                           <p>Le confirmez-vous ?</p>
                         </div>
                         <div class="modal-footer">

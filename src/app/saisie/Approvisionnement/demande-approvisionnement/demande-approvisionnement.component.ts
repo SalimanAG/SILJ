@@ -220,6 +220,10 @@ export class DemandeApprovisionnementComponent  implements OnInit {
     this.serviceArticle.getAllArticle().subscribe(
       (data) => {
         this.articles = data;
+        $('#dataTable2').dataTable().api().destroy();
+        this.dtTrigger2.next();
+        $('#dataTable3').dataTable().api().destroy();
+        this.dtTrigger3.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des articles', erreur);
@@ -318,11 +322,11 @@ export class DemandeApprovisionnementComponent  implements OnInit {
 
     this.serviceDemandeAppro.addADemandeAppro(newDemAppro).subscribe(
       (data) => {
-        this.tempAddLigneDemandeAppro.forEach(element => {
+        this.tempAddLigneDemandeAppro.forEach((element, inde) => {
           element.appro = data;
           this.serviceDemandeAppro.addALigneDemandeAppro(element).subscribe(
             (data2) => {
-
+              this.tempAddLigneDemandeAppro.splice(inde);
             },
             (erreur) => {
               console.log('Erreur lors de lAjout dUne Ligne de Demande DAppro', erreur);

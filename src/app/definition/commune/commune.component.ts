@@ -394,7 +394,7 @@ export class CommuneComponent implements OnInit {
           addCodeSite: ['', Validators.required],
           addLibSite: ['', Validators.required],
           addDescriSite: '',
-          addArr: 0,
+          addArr: 0
         }
       );
 
@@ -403,7 +403,7 @@ export class CommuneComponent implements OnInit {
           editCodeSite: ['', Validators.required],
           editLibSite: ['', Validators.required],
           editDescriSite: '',
-          editArr: 0,
+          editArr: 0
         }
       );
 
@@ -1078,9 +1078,8 @@ export class CommuneComponent implements OnInit {
 
   onSubmitEditSiteFormsGroup()
   {
-    const editSiteFormValue = this.editSiteFormsGroup.value;
-    const newSite = new SiteMarcher(editSiteFormValue['editCodeSite'], editSiteFormValue['editLibSite'],
-    editSiteFormValue['editDescriSite'], this.arrondissement[editSiteFormValue.value['editArr']]);
+    const newSite = new SiteMarcher(this.editSiteFormsGroup.value['editCodeSite'], this.editSiteFormsGroup.value['editLibSite'],
+    this.editSiteFormsGroup.value['editDescriSite'], this.arrondissement[this.editSiteFormsGroup.value['editArr']]);
     console.log(newSite);
     this.communeService.editSiteMarcher(this.editSite.codeSite, newSite)
     .subscribe(

@@ -396,7 +396,7 @@ export class CorrespondantsComponent implements OnInit {
 
 
 
-    const newMagasin = new Magasin(newMagasinier.telMagasinier, newMagasinier.nomMagasinier.concat(newMagasinier.prenomMagasinier.valueOf()))
+    const newMagasin = new Magasin(newMagasinier.nomMagasinier.concat(newMagasinier.prenomMagasinier.valueOf())+''+Date.now(), newMagasinier.nomMagasinier.concat(newMagasinier.prenomMagasinier.valueOf()))
 
     this.serviceCorres.addAMagasinier(newMagasinier).subscribe(
       (data) => {

@@ -269,8 +269,32 @@ export class RegisseurComponent implements OnInit {
   }
 
   onSubmitEditRegFormsGroup(){
-
-    this.warningModal.hide();
+ 
+    const newMagasinier = new Magasinier(this.editRegFormsGroup.value['editNomMag'],
+    this.editRegFormsGroup.value['editPrenomMag'],
+    this.editRegFormsGroup.value['editTelMag']);
+    this.serviceCorres.editAMagasinier(this.editReg.magasinier.numMAgasinier.toString(),newMagasinier).subscribe(
+      (data) => {
+        console.log('Objet Modifier : ', data);
+        this.warningModal.hide();
+        this.getAllRegisseur();
+      },
+      (erreur) => {
+        console.log('Erreur : ', erreur);
+      }
+    );
+/*const newRegisseur = new Regisseur(this.editRegFormsGroup["editCodeReg"],newMagasinier,this.utilisateur[this.editRegFormsGroup["editUser"]])
+    this.serviceRegisseur.editRegisseur(this.editReg.idRegisseur.toString(),newRegisseur).subscribe(
+      (data) => {
+        console.log('Objet Modifier : ', data);
+        this.warningModal.hide();
+        this.getAllRegisseur();
+      },
+      (erreur) => {
+        console.log('Erreur : ', erreur);
+      }
+    );*/
+  
   }
 
   onConfirmDeleteReg(){

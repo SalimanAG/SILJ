@@ -227,10 +227,12 @@ export class ReceptionComponent implements OnInit {
   getCarveauTresor(){
     this.serviceTresorier.getAllTresCom().subscribe(
       (data) => {
+        console.log('trsCom', data);
         data.forEach(element => {
           let finded:boolean = false;
           this.serviceCorres.getAllGerer().subscribe(
             (data2) => {
+              console.log('Gerers', data2);
               data2.forEach(element2 => {
                 if(element2.magasinier.numMAgasinier == element.magasinier.numMAgasinier){
                   this.carveauxTresor = element2.magasin;
@@ -524,11 +526,12 @@ export class ReceptionComponent implements OnInit {
     this.serviceReception.addAReception(newRecept).subscribe(
       (data) => {
 
-        this.tempAddLigneReception.forEach(element => {
+        this.tempAddLigneReception.forEach((element, inde) => {
           element.reception = data;
           //console.log('Ligne++++', element);
           this.serviceReception.addALigneReception(element).subscribe(
             (data2) => {
+              this.tempAddLigneReception.splice(inde);
               this.serviceCorres.getAllStocker().subscribe(
                 (data3) => {
                   let exist:boolean = false;

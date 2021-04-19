@@ -10,9 +10,6 @@
                 <div class="col-lg-4">
                     <h5><i class="fa fa-align-justify">Liste des opérations du jours</i></h5>
                 </div>
-                <!--div class="col-lg-2">
-                    <button class="btn btn-success" data-toggle="modal" (click)="initRecherche()" type="button">Rechercher</button>
-                </div-->
                 <div class="col-lg-2">
                     <button class="btn btn-success" data-toggle="modal" (click)="initNewVente()" type="button">Nouvelle prestation</button>
                 </div>
@@ -37,19 +34,16 @@
                 <tbody *ngFor="let oc of opDay; let i=index;">
                     <tr>
                         <td>{{oc.numOpCaisse}}</td>
-                        <td>{{oc.dateOpCaisse}}</td>
+                        <td>{{oc.dateOpCaisse | date:'dd/MM/yyyy hh:mm'}}</td>
                         <td>{{oc.modePaiement.libeModPay}}</td>
                         <td>{{oc.typeRecette.libeTypRec}}</td>
                         <td>{{oc.contribuable}}</td>
                         <td>
-                            <!--*ngIf="{{oc.typeRecette.libeTypRec}}==='P' " aria-hidden="true" else" aria-hidden="false""-->
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Détail de l'opération" (click)="initdetail(oc)"><span class="fa fa-align-justify"></span></button>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération" *ngIf="oc.valideOpCaisse" (click)="initAnnulOp(oc)"><span class="fa fa-undo"></span></button>
                             <button class="btn btn-danger btn-sm" data-toggle="modal tooltip" data-placement="top" title="Supprimer l'opération" *ngIf="!oc.valideOpCaisse" (click)="initSUpOP(oc)"><span class="fa fa-trash"></span></button>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Apperçu du reçu" (click)="afficheFacture(oc)"><span class="fa fa-file-o"></span></button>
-                            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Apperçu du ticket" *ngIf="oc.typeRecette.codeTypRec==='P';else " (click)="imprimeTicket(oc)"><span class="fa fa-dot-circle-o"></span></button>
-                            <!--button class="btn btn-info btn-sm" data-toggle="modal" (click)="initdetail(oc)"><span class="fa fa-dot-circle-o"></span></button-->
-                            <!--button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération" (click)="initdetail(oc)"><span class="fa form-label"></span></button-->
+                            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Apperçu du ticket" *ngIf="oc.typeRecette.codeTypRec.valueOf()==='P'" (click)="imprimeTicket(oc)"><span class="fa fa-dot-circle-o"></span></button>
                         </td>
                     </tr>
                 </tbody>
@@ -133,9 +127,11 @@
                                     <tr *ngFor="let tmpLigne of tempLigneOpCais; let i=index">
                                         <td>{{tmpLigne.article.codeArticle}}</td>
                                         <td>{{tmpLigne.article.libArticle}}</td>
-                                        <td><input type="text" class="form-control" [(ngModel)]="tempLigneOpCais[[i]].commentaireLigneOperCaisse" [ngModelOptions]="{standalone: true} "></td>
-                                        <td><input type="number" class="form-control" aria-valuemin="1" (pointerdown)="recupererTotalVente(i)" (change)="recalculerTotalvente(i)" type="number" [(ngModel)]="tempLigneOpCais[[i]].prixLigneOperCaisse" [ngModelOptions]="{standalone: true} "></td>
-                                        <td><input type="number" class="form-control" aria-valuemin="1" (pointerdown)="recupererTotalVente(i)" (change)="recalculerTotalvente(i)" type="number" [(ngModel)]="tempLigneOpCais[[i]].qteLigneOperCaisse" [ngModelOptions]="{standalone: true}"></td>
+                                        <td><input [(ngModel)]="tempLigneOpCais[[i]].commentaireLigneOperCaisse" type="text" class="form-control" [ngModelOptions]="{standalone: true} "></td>
+                                        <td><input type="number" class="form-control" aria-valuemin="1" (change)="recalculerTotalvente()" (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].prixLigneOperCaisse" [ngModelOptions]="{standalone: true}"></td>
+                                        <td>
+                                            <input type="number" class="form-control" aria-valuemin="0" aria-valuemax="5" (change)="recalculerTotalvente()" (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].qteLigneOperCaisse" [ngModelOptions]="{standalone: true}">
+                                        </td>
                                         <td>{{tempLigneOpCais[i].prixLigneOperCaisse*tempLigneOpCais[i].qteLigneOperCaisse}}</td>
                                         <td>
                                             <button class="btn btn-block btn-sm" data-toggle="modal" style="color: red;" (click)="supTempLigneOpCais(i)"><span class="fa fa-trash"></span></button>
@@ -171,7 +167,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Nouveau loyer</h4>
-                    <button type="button" class="close" (click)="addLoyer.hide()" aria-label="Close">
+                    <button type="button" class="close" (click)="fermerLoyer()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
                 </div>
@@ -189,14 +185,6 @@
                                       </option>
                                   </select>
                                 </div>
-                                <!--div class="col-xl-2">
-                                    <label for="loyMtt">Montant versé</label>
-                                    <input formControlName="loyMtt" id="loyMtt" type="number" [(ngModel)]="montantarepartir" class="form-control">
-                                </div>
-                                <div class="col-xl-1">
-                                    <label for="loyRel">Reliquat</label>
-                                    <input formControlName="loyRel" id="loyRel" type="number" class="form-control">
-                                </div-->
                                 <div class="col-xl-1">
                                     <label for="loyVL">Boutique</label>
                                 </div>
@@ -227,15 +215,15 @@
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let echetmp of echeanceAPayer; let i=index">
-                                                <td *ngIf="echetmp.dateEcheance < today">{{echetmp.moisEcheance}}
-                                                    <span style="font-weight: bold; color: rgb(11, 13, 146);text-align: right;">Consommé</span>
+                                                <td>{{echetmp.moisEcheance}}
+                                                    <span style="font-weight: bold; color: rgb(11, 13, 146);text-align: right;" *ngIf="echetmp.dateEcheance <= today">Consommé</span>
                                                 </td>
-                                                <td *ngIf="echetmp.dateEcheance >= today">{{echetmp.moisEcheance}}</td>
+                                                <!--td *ngIf="echetmp.dateEcheance >= today">{{echetmp.moisEcheance}}</td-->
                                                 <td>{{echetmp.annee}}</td>
                                                 <td>{{echetmp.dateEcheance|date: "dd/MM/yyyy"}}</td>
                                                 <td>{{echetmp.prix}}</td>
                                                 <td>
-                                                    <p style="text-align: center;"><input type="checkbox" formControlName="coche" [(ngModel)]="echetmp.payeEcheance" [(value)]="echetmp.payeEcheance" (click)="considererEcheance(i)"></p>
+                                                    <p style="text-align: center;"><input type="checkbox" formControlName="coche" [(ngModel)]="echetmp.payeEcheance" [(value)]="echetmp.payeEcheance" (change)="considererEcheance(i)"></p>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -272,7 +260,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="addLoyer.hide()">Fermer</button>
+                        <button type="button" class="btn btn-secondary" (click)="fermerLoyer()">Fermer</button>
                         <button type="submit" class="btn btn-primary">Valider</button>
                     </div>
                 </div>
@@ -563,7 +551,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="addArticle.hide()">Continuer</button>
+                <button type="button" class="btn btn-secondary" (click)="addArticle.hide()">OK</button>
             </div>
         </div>
     </div>
