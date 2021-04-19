@@ -47,10 +47,10 @@ export class RegisseurComponent implements OnInit {
   magasins:Magasin[];
   magasiniers:Magasinier[];
   gerers:Gerer[];
-  
+
 
   constructor(private serviceRegisseur:RegisseurService, private serviceCorres:CorrespondantService, private serviceUser:UtilisateurService,
-    private formBulder:FormBuilder) { 
+    private formBulder:FormBuilder) {
       this.initDtOptions();
       this.initFormsGroup();
     }
@@ -218,6 +218,7 @@ export class RegisseurComponent implements OnInit {
   }
 
   onSubmitAddRegFormsGroup(){
+    let magasinExist = false;
 
 
     const newMagasinier = new Magasinier(this.addRegFormsGroup.value['addNomMag'],
@@ -225,15 +226,23 @@ export class RegisseurComponent implements OnInit {
     this.addRegFormsGroup.value['addTelMag']
     )
 
+    this.serviceCorres.getAllMagasin().subscribe(
+      (data) => {
+        data.forEach((element,index) => {
+          if(element.codeMagasin == 'CM')
+          {
+             magasinExist = true;
+          }
 
+        });
 
-    const newMagasin = new Magasin('CM', 'Caveau Mairie')
+        if(magasinExist == true){
+
+          const newMagasin = new Magasin('CM', 'Caveau Mairie')
 
     this.serviceCorres.addAMagasinier(newMagasinier).subscribe(
       (data) => {
-        this.serviceCorres.addAMagasin(newMagasin).subscribe(
-          (data2) => {
-            this.serviceCorres.addAGerer(new Gerer(new Date(), new Date(), data, data2)).subscribe(
+            this.serviceCorres.addAGerer(new Gerer(new Date(), null, data, newMagasin)).subscribe(
               (data3) => {
                 const newReg = new Regisseur(this.addRegFormsGroup.value['addCodeReg'],
                                   data,
@@ -260,16 +269,62 @@ export class RegisseurComponent implements OnInit {
             console.log('Erreur lors de la création du magasin : ', erreur);
           }
         );
+
+        }
+        else {
+          const newMagasin = new Magasin('CM', 'Caveau Mairie')
+
+          this.serviceCorres.addAMagasinier(newMagasinier).subscribe(
+            (data) => {
+              this.serviceCorres.addAMagasin(newMagasin).subscribe(
+                (data2) => {
+                  this.serviceCorres.addAGerer(new Gerer(new Date(), null, data, data2)).subscribe(
+                    (data3) => {
+                      const newReg = new Regisseur(this.addRegFormsGroup.value['addCodeReg'],
+                                        data,
+                                        this.utilisateur[this.addRegFormsGroup.value['addUser']]);
+                      this.serviceRegisseur.addRegisseur(newReg).subscribe(
+                        (data4) => {
+                          this.addRegFormsGroup.reset();
+                          this.initFormsGroup();
+                          this.primaryModal.hide();
+                          this.getAllRegisseur();
+                          this.getAllGerer();
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de la création du regissuer : ', erreur);
+                        }
+                      );
+                    },
+                    (erreur) => {
+                      console.log('Erreur lors de la création de la relation gérer : ', erreur);
+                    }
+                  );
+                },
+                (erreur) => {
+                  console.log('Erreur lors de la création du magasin : ', erreur);
+                }
+              );
+            },
+            (erreur) => {
+              console.log('Erreur lors de la création du magasinier', erreur);
+            }
+          );
+
+        }
+
       },
       (erreur) => {
-        console.log('Erreur lors de la création du magasinier', erreur);
+        console.log('Erreur lors de la liste des Magasin', erreur);
       }
     );
 
+
   }
 
+
   onSubmitEditRegFormsGroup(){
- 
+
     const newMagasinier = new Magasinier(this.editRegFormsGroup.value['editNomMag'],
     this.editRegFormsGroup.value['editPrenomMag'],
     this.editRegFormsGroup.value['editTelMag']);
@@ -294,7 +349,7 @@ export class RegisseurComponent implements OnInit {
         console.log('Erreur : ', erreur);
       }
     );*/
-  
+
   }
 
   onConfirmDeleteReg(){
@@ -304,7 +359,7 @@ export class RegisseurComponent implements OnInit {
     let gerer = this.getGererByCodeMagasinier(this.suprReg.magasinier.numMAgasinier.toString());
 
     this.gerers.forEach(element => {
-       
+
       console.log('gestion ******',element.idGerer);
       if(element.magasinier.numMAgasinier == this.suprReg.magasinier.numMAgasinier)
       {
@@ -312,13 +367,13 @@ export class RegisseurComponent implements OnInit {
       this.serviceCorres.deleteAGerer(element.idGerer.toString()).subscribe(
         (data) => {
 
-          
+
 
           //
          // magasin.forEach(element => {
             this.serviceCorres.deleteAMagasin(element.magasin.codeMagasin).subscribe(
               (data2) => {
-      
+
               },
               (erreur) => {
                 console.log('Erreur lors de la suppression dUn magasin : ', erreur);
@@ -339,10 +394,10 @@ export class RegisseurComponent implements OnInit {
                 processed = false;
               }
             );
-    
+
             this.getAllRegisseur();
             this.getAllGerer();
-    
+
           },
           (erreur) => {
             console.log('Erreur lors de la suppression du correspondant : ', erreur);
