@@ -28,6 +28,7 @@ import { RegisseurService } from '../../../../services/definition/regisseur.serv
 import { Stocker } from '../../../../models/stocker.model';
 import { TresorierCommunalService } from '../../../../services/definition/tresorier-communal.service';
 import { data } from 'jquery';
+import { ToolsService } from '../../../../services/utilities/tools.service';
 
 @Component({
   selector: 'app-reception',
@@ -94,7 +95,8 @@ export class ReceptionComponent implements OnInit {
   constructor(private serviceCommande:CommandeService, private serviceExercice:ExerciceService,
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService, private serviceReception:ReceptionService,
     private formBulder:FormBuilder, private sanitizer:DomSanitizer, private serviceUser:UtilisateurService,
-    private serviceCorres:CorrespondantService, private serviceTresorier:TresorierCommunalService) {
+    private serviceCorres:CorrespondantService, private serviceTresorier:TresorierCommunalService,
+    private serviceTools:ToolsService) {
       this.getAllLigneReception();
       this.initDtOptions();
       this.initFormsGroup();
@@ -220,6 +222,7 @@ export class ReceptionComponent implements OnInit {
 
     this.getAllLigneReception();
 
+    //console.log('Daaaaaate', this.serviceTools.addDayToDate(new Date(), 4));
 
   }
 
@@ -232,7 +235,7 @@ export class ReceptionComponent implements OnInit {
           let finded:boolean = false;
           this.serviceCorres.getAllGerer().subscribe(
             (data2) => {
-              console.log('Gerers', data2);
+              //console.log('Gerers', data2);
               data2.forEach(element2 => {
                 if(element2.magasinier.numMAgasinier == element.magasinier.numMAgasinier){
                   this.carveauxTresor = element2.magasin;
@@ -406,6 +409,10 @@ export class ReceptionComponent implements OnInit {
     if(this.commandes.length!=0){
 
       this.concernedCommande = this.commandes[this.addReceptionFormGroup.value['addCommande']];
+      this.addReceptionFormGroup.patchValue({
+        addDateReception: moment(this.serviceTools.addDayToDate(this.concernedCommande.dateRemise, this.concernedCommande.delaiLivraison)).format('yyyy-MM-DD')
+      });
+      //console.log('daaaaate', this.concernedCommande.dateRemise, this.concernedCommande.delaiLivraison, this.concernedCommande.dateRemise.valueOf(), new Date(this.concernedCommande.dateRemise),this.serviceTools.addDayToDate(this.concernedCommande.dateRemise, 1));
     }
   }
 
@@ -978,8 +985,10 @@ export class ReceptionComponent implements OnInit {
         doc.text('Référence : '+reception.numReception, 15, 45);
         doc.text('Date : '+moment(reception.dateReception).format('DD/MM/YYYY') , 152, 45);
         doc.text('Commande : '+receptComm.numCommande+'\tDu\t'+moment(receptComm.dateCommande).format('DD/MM/YYYY'), 15, 55);
-        doc.text('Fournisseur : '+receptComm.frs.identiteFrs, 15, 65);
-        doc.text('Observation : '+reception.observation, 15, 75);
+        doc.text('Date de Réception prévue: '+moment(this.serviceTools.addDayToDate(receptComm.dateRemise, receptComm.delaiLivraison)).format('DD/MM/YYYY') , 15, 65);
+        doc.text('Fournisseur : '+receptComm.frs.identiteFrs, 15, 75);
+        doc.text('N° IFU Fournisseur : '+receptComm.frs.numIfuFrs, 15, 85);
+        doc.text('Observation : '+reception.observation, 15, 95);
         autoTable(doc, {
           theme: 'grid',
           head: [['Article', 'Désignation', 'Quantité', 'PU', 'TVA(en %)', 'Remise', 'Montant TTC', 'Plage', 'Obs.']],
@@ -1018,7 +1027,7 @@ export class ReceptionComponent implements OnInit {
           body: [
             ['Le Trésorier Communal\n\n\n\n\n',
             '\t\t\t\t\t\t\t\t\t\t\t\t\t',
-             'Le Régisseur\n\n\n\n\n'+this.serviceUser.connectedUser.nomUtilisateur+' '+this.serviceUser.connectedUser.prenomUtilisateur]
+             'Le Fournisseur\n\n\n\n\n'+receptComm.frs.identiteFrs]
           ]
           ,
         });

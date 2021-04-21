@@ -24,9 +24,9 @@
                   <td>
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
                       <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
-                      <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
+                      <!-- <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>-->
                       <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfAnDemAppro(i)"><span class="fa fa-file-o"></span></button>
-                      <!--Le bouton des options-->
+                      <!--Le bouton des options
                       <div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                         <ul *dropdownMenu class="dropdown-menu" role="menu">
@@ -39,7 +39,7 @@
                           <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                           </li>
                         </ul>
-                      </div>
+                      </div>-->
                   </td>
               </tr>
           </tbody>
@@ -118,7 +118,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="addDemandeApproFormGroup.invalid || tempAddLigneDemandeAppro.length == 0">Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addDemandeApproFormGroup.invalid || tempAddLigneDemandeAppro.length == 0">valider</button>
                 </div>
               </div><!-- /.modal-content -->
             </form>
@@ -195,7 +195,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
-            <button type="submit" class="btn btn-warning" [disabled]="tempEditLigneDemandeAppro.length == 0 || editDemandeApproFormGroup.invalid">Modifier</button>
+            <button type="submit" class="btn btn-warning" [disabled]="tempEditLigneDemandeAppro.length == 0 || editDemandeApproFormGroup.invalid">Valider</button>
             </div>
           </div><!-- /.modal-content -->
         </form>
@@ -267,7 +267,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+          <button type="button" class="btn btn-success" (click)="addArticle1.hide()">OK</button>
 
         </div>
       </div><!-- /.modal-content -->
@@ -316,7 +316,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+          <button type="button" class="btn btn-success" (click)="addArticle2.hide()">OK</button>
 
         </div>
       </div><!-- /.modal-content -->

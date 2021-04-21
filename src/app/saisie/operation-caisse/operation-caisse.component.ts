@@ -616,7 +616,7 @@ export class OperationCaisseComponent implements OnInit {
           this.affectations = data;
           this.affectUser = this.affectations.filter(af =>
             af.utilisateur.idUtilisateur === this.user.idUtilisateur &&
-            //new Date(af.dateDebAffecter) <= new Date() && 
+            //new Date(af.dateDebAffecter) <= new Date() &&
             af.dateFinAffecter == null
           );
           this.caissesValides = this.affectUser.map(au => au.caisse);
@@ -970,6 +970,7 @@ export class OperationCaisseComponent implements OnInit {
     $('#dteche').dataTable().api().destroy();
     this.dtTrigEche.next();
     this.totalLoyer = 0;
+    this.echeancetmp.push(this.echeanceAPayer[0]);
   }
 
   chargerEcheancesContrat(con) {
@@ -992,16 +993,39 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   considererEcheance(p: number) {
-    console.log(this.echeanceAPayer[p], this.addLoyerGroup.value['coche'])
-    if (this.addLoyerGroup.value['coche'] === true) {
-      this.totalLoyer += this.echeanceAPayer[p].prix.valueOf();
+    if (this.echeanceAPayer[p].payeEcheance) {
+      if (p > 0) {
+        if (this.echeanceAPayer[p - 1].payeEcheance) {
+          this.totalLoyer += this.echeanceAPayer[p].prix.valueOf();
+          this.echeancetmp.push(this.echeanceAPayer[p+1])
+        }
+        else {
+          $('#dteche').dataTable().api().destroy();
+          console.log('Veuillez cocher le paiement de tous les mois antérieurs');
+          this.echeanceAPayer[p].payeEcheance = false;
+          this.dtTrigEche.next();
+        }
+      }
+      else {
+        this.totalLoyer += this.echeanceAPayer[p].prix.valueOf();
+      }
     }
     else {
-      console.log("suivant: ", this.echeanceAPayer[p + 1]);
-      if (this.totalLoyer > 0) {
+      if (p < this.echeanceAPayer.length - 1) {
+        if (this.echeanceAPayer[p + 1].payeEcheance) {
+          console.log("Vous devez décocher le paiement de toutes les échéances postérieures");
+          this.echeanceAPayer[p].payeEcheance = true;
+        }
+        else {
+          this.totalLoyer -= this.echeanceAPayer[p].prix.valueOf();
+        }
+      }
+      else {
         this.totalLoyer -= this.echeanceAPayer[p].prix.valueOf();
       }
     }
+
+    console.log(this.echeanceAPayer[p]);
 
   }
 
@@ -1261,7 +1285,7 @@ export class OperationCaisseComponent implements OnInit {
           let lig = [];
           lig.push(element.moisEcheance);
           lig.push(element.annee);
-          lig.push(element.prix);
+          lig.push(element.prix).valueOf();
           ligne.push(lig);
           total += lig[3];
         });

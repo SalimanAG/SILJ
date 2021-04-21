@@ -19,6 +19,7 @@ import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToolsService } from '../../../../services/utilities/tools.service';
 
 @Component({
   selector: 'app-commande',
@@ -70,7 +71,7 @@ export class CommandeComponent implements OnInit {
 
   constructor(private serviceCommande:CommandeService, private serviceExercice:ExerciceService,
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService,
-    private formBulder:FormBuilder, private sanitizer:DomSanitizer) {
+    private formBulder:FormBuilder, private sanitizer:DomSanitizer, public serviceTools:ToolsService) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -529,13 +530,13 @@ export class CommandeComponent implements OnInit {
             lig.push(element.puligneCommande);
             lig.push(element.tva);
             lig.push(element.remise);
-            lig.push(element.puligneCommande*element.qteLigneCommande*(1+(element.tva/100))-element.remise);
+            lig.push((element.puligneCommande*element.qteLigneCommande-element.remise)*(1+(element.tva/100)));
             lignes.push(lig);
 
             totalRemise += element.remise;
-            totalTVA += element.puligneCommande*element.qteLigneCommande*(element.tva/100);
+            totalTVA += (element.puligneCommande*element.qteLigneCommande-element.remise)*(element.tva/100);
             totalHT += element.puligneCommande*element.qteLigneCommande;
-            totalTTC += element.puligneCommande*element.qteLigneCommande*(1+(element.tva/100))-element.remise;
+            totalTTC += (element.puligneCommande*element.qteLigneCommande-element.remise)*(1+(element.tva/100));
 
           }
 
@@ -551,8 +552,9 @@ export class CommandeComponent implements OnInit {
         doc.text('Référence : '+commande.numCommande, 15, 45);
         doc.text('Date : '+moment(commande.dateCommande).format('DD/MM/YYYY'), 152, 45);
         doc.text('Fournisseur : '+commande.frs.identiteFrs, 15, 55);
-        doc.text('Délais de Livraison : '+commande.delaiLivraison+'  Jour(s)', 15, 65);
-        doc.text('Description : '+commande.description, 15, 75);
+        doc.text('N° IFU Fournisseur : '+commande.frs.numIfuFrs, 15, 65);
+        doc.text('Délais de Livraison : '+commande.delaiLivraison+'  Jour(s)', 15, 75);
+        doc.text('Description : '+commande.description, 15, 85);
         autoTable(doc, {
           theme: 'grid',
           head: [['Article', 'Désignation', 'Quantité', 'PU', 'TVA(en %)', 'Remise', 'Montant TTC']],

@@ -577,142 +577,173 @@ export class EtatStockComponent implements OnInit {
         this.serviceCorres.getAllGerer().subscribe(
           (data2) => {
 
-            selectedSites.forEach(elementt => {
+            this.serviceCorres.getAllEtreAffecte().subscribe(
+              (data33) => {
 
-              let montantTotalSite:number = 0;
+                selectedSites.forEach(elementt => {
 
-              autoTable(doc, {
-                theme: 'plain',
-                margin: { top: 55 },
-                columnStyles: {
-                  0: { textColor: 0, fontStyle: 'bold', halign: 'right' },
-                  1: { textColor: 0, halign: 'left' },
-                },
-                body: [
-                  ['Site : ', elementt.codeSite+' - '+elementt.libSite],
+                  let montantTotalSite:number = 0;
 
-                ]
-                ,
-              });
+                  autoTable(doc, {
+                    theme: 'plain',
+                    margin: { top: 55 },
+                    columnStyles: {
+                      0: { textColor: 0, fontStyle: 'bold', halign: 'right' },
+                      1: { textColor: 0, halign: 'left' },
+                    },
+                    body: [
+                      ['Site : ', elementt.codeSite+' - '+elementt.libSite],
 
-              let selectedCorres:Correspondant[] = [];
+                    ]
+                    ,
+                  });
 
-              if(this.repport3FormsGroup.value['rep3Corres'] == -1){
-                selectedCorres = this.correspondantsBySite;
-              }
-              else {
-                selectedCorres.push(this.correspondantsBySite[this.repport3FormsGroup.value['rep3Corres']]);
-              }
+                  let selectedCorres:Correspondant[] = [];
 
-              selectedCorres.forEach(element => {
-
-                let lignes = [];
-                let sousTotal:number = 0;
-
-                autoTable(doc, {
-                  theme: 'plain',
-                  margin: { top: 35 },
-                  columnStyles: {
-                    0: { textColor: 0,  halign: 'right' },
-                    1: { textColor: 0, fontStyle: 'bold', halign: 'left' },
-                  },
-                  body: [
-                    ['Magasin du corresponndant ',element.idCorrespondant+' - '+element.magasinier.nomMagasinier+' '+element.magasinier.prenomMagasinier],
-
-                  ]
-                  ,
-                });
-
-                let concernedMagasin:Magasin = null;
-                data2.forEach(element2 => {
-                  if(element2.magasinier.numMAgasinier == element.magasinier.numMAgasinier){
-                    concernedMagasin = element2.magasin;
-                    exit;
+                  if(this.repport3FormsGroup.value['rep3Corres'] == -1){
+                    selectedCorres = this.correspondantsBySite;
                   }
-                });
-
-                if(concernedMagasin != null)
-                data1.forEach(element1 => {
-                  if(element1.magasin.codeMagasin == concernedMagasin.codeMagasin){
-                    let lig = [];
-                    lig.push(element1.article.codeArticle);
-                    lig.push(element1.article.libArticle);
-                    lig.push(element1.article.prixVenteArticle);
-                    lig.push(element1.quantiterStocker);
-                    lig.push(element1.article.prixVenteArticle*element1.quantiterStocker);
-                    lig.push('');
-
-                    lignes.push(lig);
-                    sousTotal+=element1.article.prixVenteArticle*element1.quantiterStocker;
+                  else {
+                    selectedCorres.push(this.correspondantsBySite[this.repport3FormsGroup.value['rep3Corres']]);
                   }
+
+                  selectedCorres.forEach(element22 => {
+
+                    let belong:boolean = false;
+
+                    data33.forEach(element33 => {
+
+                      if( element33.site.codeSite != null && element33.corres.idCorrespondant == element22.idCorrespondant && element33.site.codeSite == elementt.codeSite){
+                        belong = true;
+                        exit;
+                      }
+
+                    });
+
+
+                    if(belong){
+
+
+                      let lignes = [];
+                      let sousTotal:number = 0;
+
+                      autoTable(doc, {
+                        theme: 'plain',
+                        margin: { top: 35 },
+                        columnStyles: {
+                          0: { textColor: 0,  halign: 'right' },
+                          1: { textColor: 0, fontStyle: 'bold', halign: 'left' },
+                        },
+                        body: [
+                          ['Magasin du corresponndant ',element22.idCorrespondant+' - '+element22.magasinier.nomMagasinier+' '+element22.magasinier.prenomMagasinier],
+
+                        ]
+                        ,
+                      });
+
+                      let concernedMagasin:Magasin = null;
+                      data2.forEach(element2 => {
+                        if(element2.magasinier.numMAgasinier == element22.magasinier.numMAgasinier){
+                          concernedMagasin = element2.magasin;
+                          exit;
+                        }
+                      });
+
+                      if(concernedMagasin != null)
+                      data1.forEach(element1 => {
+                        if(element1.magasin.codeMagasin == concernedMagasin.codeMagasin){
+                          let lig = [];
+                          lig.push(element1.article.codeArticle);
+                          lig.push(element1.article.libArticle);
+                          lig.push(element1.article.prixVenteArticle);
+                          lig.push(element1.quantiterStocker);
+                          lig.push(element1.article.prixVenteArticle*element1.quantiterStocker);
+                          lig.push('');
+
+                          lignes.push(lig);
+                          sousTotal+=element1.article.prixVenteArticle*element1.quantiterStocker;
+                        }
+                      });
+                      else console.log('Pas de Magasin trouvé pour un correspondant : ',element22);
+
+                      autoTable(doc, {
+                        theme: 'grid',
+                        head: [['Article', 'Désignation', 'Prix U.', 'Quantité', 'Montant', 'Observation']],
+                        headStyles:{
+                          fillColor: [41, 128, 185],
+                          textColor: 255,
+                          fontStyle: 'bold' ,
+                        },
+                        margin: { top: 80 },
+                        body: lignes
+                        ,
+                      });
+
+                      autoTable(doc, {
+                        theme: 'grid',
+                        margin: { top: 100, left:100 },
+                        columnStyles: {
+                          0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
+                          1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
+                        },
+                        body: [
+                          ['Sous Total Correspondant '+element22.idCorrespondant, sousTotal],
+                        ]
+                        ,
+                      });
+
+                      montantTotalSite += sousTotal;
+
+                    }
+
+
+
+                  });
+
+
+
+                  autoTable(doc, {
+                    theme: 'grid',
+                    margin: { top: 100, left:40 },
+                    columnStyles: {
+                      0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
+                      1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
+                    },
+                    body: [
+                      ['Sous Total Site '+elementt.codeSite, montantTotalSite],
+                    ]
+                    ,
+                  });
+
+                  montantTotal += montantTotalSite;
+
                 });
-                else console.log('Pas de Magasin trouvé pour un correspondant : ',element);
+
 
                 autoTable(doc, {
                   theme: 'grid',
-                  head: [['Article', 'Désignation', 'Prix U.', 'Quantité', 'Montant', 'Observation']],
-                  headStyles:{
-                     fillColor: [41, 128, 185],
-                     textColor: 255,
-                     fontStyle: 'bold' ,
-                  },
-                  margin: { top: 80 },
-                  body: lignes
-                  ,
-                });
-
-                autoTable(doc, {
-                  theme: 'grid',
-                  margin: { top: 100, left:100 },
+                  margin: { top: 100 },
                   columnStyles: {
                     0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
                     1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
                   },
                   body: [
-                    ['Sous Total Correspondant '+element.idCorrespondant, sousTotal],
+                    ['Total Général', montantTotal],
                   ]
                   ,
                 });
 
-                montantTotalSite += sousTotal;
-
-              });
-
+                this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
+                this.viewPdfModal.show();
 
 
-              autoTable(doc, {
-                theme: 'grid',
-                margin: { top: 100, left:40 },
-                columnStyles: {
-                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
-                  1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
-                },
-                body: [
-                  ['Sous Total Site '+elementt.codeSite, montantTotalSite],
-                ]
-                ,
-              });
 
-              montantTotal += montantTotalSite;
-
-            });
-
-
-            autoTable(doc, {
-              theme: 'grid',
-              margin: { top: 100 },
-              columnStyles: {
-                0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'left' },
-                1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign:'right' },
               },
-              body: [
-                ['Total Général', montantTotal],
-              ]
-              ,
-            });
+              (erreur) => {
+                console.log('Erreur lors de la récupération des être affectés', erreur);
+              }
+            );
 
-            this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
-            this.viewPdfModal.show();
 
           },
           (erreur) => {

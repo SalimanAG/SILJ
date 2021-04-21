@@ -32,7 +32,7 @@
                       <button *ngIf="!recept.valideRecep"class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReception(i)"><span class="fa fa-trash"></span></button>
                       <button *ngIf="recept.valideRecep" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerPlacement(i)"><span class="fa fa-undo"></span></button>
                       <button class="btn btn-dark btn-sm" data-toggle="modal" (click)="initPrintPdfOfAnReception(i)" ><span class="fa fa-file-o"></span></button>
-                      <!--Le bouton des options-->
+                      <!--Le bouton des options
                       <div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                         <ul *dropdownMenu class="dropdown-menu" role="menu">
@@ -45,7 +45,7 @@
                           <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                           </li>
                         </ul>
-                      </div>
+                      </div>-->
                   </td>
               </tr>
           </tbody>
@@ -141,7 +141,7 @@
                         <tr *ngFor="let addLignRecept of tempAddLigneReception; let i = index">
                           <td>{{ addLignRecept.ligneCommande.article.codeArticle }}</td>
                           <td>{{ addLignRecept.ligneCommande.article.libArticle }}</td>
-                          <td><input [(ngModel)]="tempAddLigneReception[i].puligneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td><input [(ngModel)]="tempAddLigneReception[i].puligneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" readonly></td>
                           <td><input [(ngModel)]="tempAddLigneReception[i].quantiteLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                           <td><input [(ngModel)]="tempAddLigneReception[i].observationLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
                           <td>
@@ -149,7 +149,7 @@
                             <p class="text-center" style="margin-bottom: 0%;">à</p>
                             <div><input [(ngModel)]="tempAddLigneReception[i].numSerieFinLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
                           </td>
-                          <td>{{ (tempAddLigneReception[i].quantiteLigneReception*tempAddLigneReception[i].puligneReception*(1+(tempAddLigneReception[i].ligneCommande.tva/100)))-tempAddLigneReception[i].ligneCommande.remise }}</td>
+                          <td>{{ ((tempAddLigneReception[i].ligneCommande.qteLigneCommande*tempAddLigneReception[i].puligneReception-tempAddLigneReception[i].ligneCommande.remise)*(1+(tempAddLigneReception[i].ligneCommande.tva/100)))*tempAddLigneReception[i].quantiteLigneReception/tempAddLigneReception[i].ligneCommande.qteLigneCommande }}</td>
                           <td>
                             <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfRecept1(i)"><span class="fa fa-trash"></span></button>
                           </td>
@@ -162,7 +162,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="addReceptionFormGroup.invalid || tempAddLigneReception.length == 0">Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addReceptionFormGroup.invalid || tempAddLigneReception.length == 0">Valider</button>
                 </div>
               </div><!-- /.modal-content -->
             </form>
@@ -253,7 +253,7 @@
                       <tr *ngFor="let editLignRecept of tempEditLigneReception; let i = index">
                         <td>{{ editLignRecept.ligneCommande.article.codeArticle }}</td>
                         <td>{{ editLignRecept.ligneCommande.article.libArticle }}</td>
-                        <td><input [(ngModel)]="tempEditLigneReception[i].puligneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td><input [(ngModel)]="tempEditLigneReception[i].puligneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" readonly></td>
                         <td><input [(ngModel)]="tempEditLigneReception[i].quantiteLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                         <td><input [(ngModel)]="tempEditLigneReception[i].observationLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
                         <td>
@@ -261,7 +261,7 @@
                           <p class="text-center" style="margin-bottom: 0%;">à</p>
                           <div><input [(ngModel)]="tempEditLigneReception[i].numSerieFinLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
                         </td>
-                        <td>{{ (tempEditLigneReception[i].quantiteLigneReception*tempEditLigneReception[i].puligneReception*(1+(tempEditLigneReception[i].ligneCommande.tva/100)))-tempEditLigneReception[i].ligneCommande.remise }}</td>
+                        <td>{{ ((tempEditLigneReception[i].ligneCommande.qteLigneCommande*tempEditLigneReception[i].puligneReception-tempEditLigneReception[i].ligneCommande.remise)*(1+(tempEditLigneReception[i].ligneCommande.tva/100)))*tempEditLigneReception[i].quantiteLigneReception/tempEditLigneReception[i].ligneCommande.qteLigneCommande }}</td>
                         <td>
                           <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfRecept1(i)"><span class="fa fa-trash"></span></button>
                         </td>
@@ -275,7 +275,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
-            <button type="submit" class="btn btn-warning" [disabled]="editReceptionFormGroup.invalid || tempEditLigneReception.length == 0">Modifier</button>
+            <button type="submit" class="btn btn-warning" [disabled]="editReceptionFormGroup.invalid || tempEditLigneReception.length == 0">Valider</button>
             </div>
           </div><!-- /.modal-content -->
         </form>
@@ -323,7 +323,7 @@
           </div>
           <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="annulerReceptModal.hide()">Annuler</button>
-          <button type="button" class="btn btn-danger" (click)="onConfirmAnnulerReception()">Annuler</button>
+          <button type="button" class="btn btn-danger" (click)="onConfirmAnnulerReception()">Valider</button>
           </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -349,7 +349,6 @@
                     <tr>
                       <th>Code</th>
                       <th>Libellé</th>
-                      <th>Prix unitaire</th>
                       <th>Choix?</th>
                     </tr>
                   </thead>
@@ -357,7 +356,6 @@
                     <tr *ngFor="let articl of articlesOfAConcernedCommandeAddingRecept; let i = index">
                       <td>{{ articl.codeArticle }}</td>
                       <td>{{ articl.libArticle }}</td>
-                      <td>{{ articl.prixVenteArticle }}</td>
                       <td>
                         <p style="text-align: center;"><input class="form-check-input" type="checkbox"
                            (click)="addArticleForAddingOfRecept1(i)"></p>
@@ -370,7 +368,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+          <button type="button" class="btn btn-success" (click)="addArticle1.hide()">OK</button>
 
         </div>
       </div><!-- /.modal-content -->
@@ -392,13 +390,12 @@
 
             <div class="card" style="margin: 0;">
               <div class="card-body">
-                <table class="table table-striped" id="tabListArt" datatable [dtOptions]="dtOptions3"
-                 > <!--[dtTrigger]="dtTrigger3"-->
+                <table class="table table-striped" id="tabListArt"
+                 > <!-- datatable [dtOptions]="dtOptions3" [dtTrigger]="dtTrigger3"-->
                   <thead>
                     <tr>
                       <th>Code</th>
                       <th>Libellé</th>
-                      <th>Prix unitaire</th>
                       <th>Choix?</th>
                     </tr>
                   </thead>
@@ -406,7 +403,6 @@
                     <tr *ngFor="let articl of articlesOfAConcernedCommandeEditingRecept; let i = index">
                       <td>{{ articl.codeArticle }}</td>
                       <td>{{ articl.libArticle }}</td>
-                      <td>{{ articl.prixVenteArticle }}</td>
                       <td>
                         <p style="text-align: center;"><input class="form-check-input" type="checkbox"
                           (click)="addArticleForEditingOfRecept1(i)"></p>
@@ -419,7 +415,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+          <button type="button" class="btn btn-success" (click)="addArticle2.hide()">OK</button>
 
         </div>
       </div><!-- /.modal-content -->

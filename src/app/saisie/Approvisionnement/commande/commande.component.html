@@ -25,14 +25,14 @@
                   <td>{{ comm.numCommande }}</td>
                   <td>{{ comm.dateCommande | date:"dd-MM-yyyy" }}</td>
                   <td>{{ comm.description }}</td>
-                  <td>{{ comm.delaiLivraison }} Jour(s)</td>
+                  <td>{{ comm.delaiLivraison }} Jour(s) <br> Soit le {{ serviceTools.addDayToDate(comm.dateRemise, comm.delaiLivraison) | date:"dd-MM-yyyy" }}</td>
                   <td>{{ comm.frs.codeFrs }} - {{ comm.frs.identiteFrs }}</td>
                   <td>
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
                       <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
-                      <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
+                      <!-- <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>-->
                       <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfAnCommande(i)"><span class="fa fa-file-o"></span></button>
-                      <!--Le bouton des options-->
+                      <!--Le bouton des options
                       <div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                         <ul *dropdownMenu class="dropdown-menu" role="menu">
@@ -45,7 +45,7 @@
                           <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                           </li>
                         </ul>
-                      </div>
+                      </div>-->
                   </td>
               </tr>
           </tbody>
@@ -125,8 +125,8 @@
                           <th>Libellé de l'Article</th>
                           <th>Prix Unit.</th>
                           <th>Quantité</th>
-                          <th>TVA(en %)</th>
                           <th>Remise</th>
+                          <th>TVA(en %)</th>
                           <th>Montant TTC(-Remise)</th>
                           <th>Actions</th>
                         </tr>
@@ -137,9 +137,9 @@
                           <td>{{ addLignCom.article.libArticle }}</td>
                           <td><input [(ngModel)]="tempAddLigneCommandes[i].puligneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                           <td><input [(ngModel)]="tempAddLigneCommandes[i].qteLigneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                          <td><input [(ngModel)]="tempAddLigneCommandes[i].tva" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                           <td><input [(ngModel)]="tempAddLigneCommandes[i].remise" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></td>
-                          <td>{{ (tempAddLigneCommandes[i].qteLigneCommande*tempAddLigneCommandes[i].puligneCommande*(1+(tempAddLigneCommandes[i].tva/100)))-tempAddLigneCommandes[i].remise }}</td>
+                          <td><input [(ngModel)]="tempAddLigneCommandes[i].tva" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td>{{ ((tempAddLigneCommandes[i].qteLigneCommande*tempAddLigneCommandes[i].puligneCommande-tempAddLigneCommandes[i].remise)*(1+(tempAddLigneCommandes[i].tva/100))) }}</td>
                           <td>
                             <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfComm1(i)"><span class="fa fa-trash"></span></button>
                           </td>
@@ -152,7 +152,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="addCommandeFormGroup.invalid || tempAddLigneCommandes.length == 0">Enrégistrer</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="addCommandeFormGroup.invalid || tempAddLigneCommandes.length == 0">Valider</button>
                 </div>
               </div><!-- /.modal-content -->
             </form>
@@ -227,8 +227,8 @@
                         <th>Libellé de l'Article</th>
                         <th>Prix Unit.</th>
                         <th>Quantité</th>
-                        <th>TVA(en %)</th>
                         <th>Remise</th>
+                        <th>TVA(en %)</th>
                         <th>Montant TTC(-Remise)</th>
                         <th>Actions</th>
                       </tr>
@@ -239,9 +239,9 @@
                         <td>{{ editLignCom.article.libArticle }}</td>
                         <td><input [(ngModel)]="tempEditLigneCommandes[i].puligneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                         <td><input [(ngModel)]="tempEditLigneCommandes[i].qteLigneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                        <td><input [(ngModel)]="tempEditLigneCommandes[i].tva" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                         <td><input [(ngModel)]="tempEditLigneCommandes[i].remise" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></td>
-                        <td>{{ (tempEditLigneCommandes[i].qteLigneCommande*tempEditLigneCommandes[i].puligneCommande*(1+(tempEditLigneCommandes[i].tva/100)))-tempEditLigneCommandes[i].remise }}</td>
+                        <td><input [(ngModel)]="tempEditLigneCommandes[i].tva" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td>{{ ((tempEditLigneCommandes[i].qteLigneCommande*tempEditLigneCommandes[i].puligneCommande-tempEditLigneCommandes[i].remise)*(1+(tempEditLigneCommandes[i].tva/100))) }}</td>
                         <td>
                           <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfComm1(i)"><span class="fa fa-trash"></span></button>
                         </td>
@@ -255,7 +255,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
-            <button type="submit" class="btn btn-warning" [disabled]="tempEditLigneCommandes.length == 0 || editCommandeFormGroup.invalid">Modifier</button>
+            <button type="submit" class="btn btn-warning" [disabled]="tempEditLigneCommandes.length == 0 || editCommandeFormGroup.invalid">Valider</button>
             </div>
           </div><!-- /.modal-content -->
         </form>
@@ -306,7 +306,6 @@
                     <tr>
                       <th>Code</th>
                       <th>Libellé</th>
-                      <th>Prix unitaire</th>
                       <th>Choix?</th>
                     </tr>
                   </thead>
@@ -314,7 +313,6 @@
                     <tr *ngFor="let articl of articles; let i = index">
                       <td>{{ articl.codeArticle }}</td>
                       <td>{{ articl.libArticle }}</td>
-                      <td>{{ articl.prixVenteArticle }}</td>
                       <td>
                         <p style="text-align: center;"><input class="form-check-input" type="checkbox"
                            (click)="addArticleForAddingOfComm1(i)"></p>
@@ -327,7 +325,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+          <button type="button" class="btn btn-success" (click)="addArticle1.hide()">OK</button>
 
         </div>
       </div><!-- /.modal-content -->
@@ -355,7 +353,6 @@
                     <tr>
                       <th>Code</th>
                       <th>Libellé</th>
-                      <th>Prix unitaire</th>
                       <th>Choix?</th>
                     </tr>
                   </thead>
@@ -363,7 +360,6 @@
                     <tr *ngFor="let articl of articles; let i = index">
                       <td>{{ articl.codeArticle }}</td>
                       <td>{{ articl.libArticle }}</td>
-                      <td>{{ articl.prixVenteArticle }}</td>
                       <td>
                         <p style="text-align: center;"><input class="form-check-input" type="checkbox"
                           (click)="addArticleForEditingOfComm1(i)"></p>
@@ -376,7 +372,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+          <button type="button" class="btn btn-success" (click)="addArticle2.hide()">OK</button>
 
         </div>
       </div><!-- /.modal-content -->

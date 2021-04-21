@@ -206,21 +206,20 @@
                                     <table class="table table-bordered" datatable [dtOptions]="tabEcheance" [dtTrigger]="dtTrigEche" id="dteche">
                                         <thead>
                                             <tr>
-                                                <th>Mois</th>
                                                 <th>Année</th>
                                                 <th>Echéance</th>
+                                                <th>Mois</th>
                                                 <th>Prix</th>
                                                 <th>Payé?</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr *ngFor="let echetmp of echeanceAPayer; let i=index">
+                                                <td>{{echetmp.annee}}</td>
+                                                <td>{{echetmp.dateEcheance|date: "dd/MM/yyyy"}}</td>
                                                 <td>{{echetmp.moisEcheance}}
                                                     <span style="font-weight: bold; color: rgb(11, 13, 146);text-align: right;" *ngIf="echetmp.dateEcheance <= today">Consommé</span>
                                                 </td>
-                                                <!--td *ngIf="echetmp.dateEcheance >= today">{{echetmp.moisEcheance}}</td-->
-                                                <td>{{echetmp.annee}}</td>
-                                                <td>{{echetmp.dateEcheance|date: "dd/MM/yyyy"}}</td>
                                                 <td>{{echetmp.prix}}</td>
                                                 <td>
                                                     <p style="text-align: center;"><input type="checkbox" formControlName="coche" [(ngModel)]="echetmp.payeEcheance" [(value)]="echetmp.payeEcheance" (change)="considererEcheance(i)"></p>

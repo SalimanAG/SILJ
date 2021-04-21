@@ -27,7 +27,8 @@
                   <option value="5">Sites</option>
                   <option value="6">Valeurs Locatives</option>
                   <option value="7">Prix Valeurs Locatives</option>
-                  <option value="8">Contrats de Location</option>
+                  <option value="8">Locataires</option>
+                  <option value="9">Contrats de Location</option>
                 </select>
 
             </div>
@@ -287,7 +288,7 @@
         </table>
 
         </div>
-        <div class="modal-body" *ngIf="repport1FormsGroup.value['rep1Element'] == 5">
+        <div class="modal-body" *ngIf="repport1FormsGroup.value['rep1Element'] == 6">
           <h3 style="text-align: center;">Valeurs Locatives</h3>
           <table class="table table-bordered table-striped table-sm"  id="dataTable1"><!--datatable [dtOptions]="dtOptions1"
             [dtTrigger]="dtTrigger1"-->
@@ -331,6 +332,114 @@
               <th>Code Quartier</th>
               <th>Code Type Immeuble</th>
               <th>Code Site</th>
+            </tr>
+          </tfoot>
+        </table>
+
+        </div>
+        <div class="modal-body" *ngIf="repport1FormsGroup.value['rep1Element'] == 7">
+          <h3 style="text-align: center;">Prix des Valeurs Locatives</h3>
+          <table class="table table-bordered table-striped table-sm"  id="dataTable1"><!--datatable [dtOptions]="dtOptions1"
+            [dtTrigger]="dtTrigger1"-->
+          <thead>
+            <tr>
+              <th>Code Valeur Locative</th>
+              <th>Prix</th>
+              <th>Date de Début du Prix</th>
+              <th>Date de Fin du Prix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let uniter of feuille; let i = index">
+              <td>{{ uniter[0] }}</td>
+              <td>{{ uniter[1] }}</td>
+              <td>{{ uniter[2] }}</td>
+              <td>{{ uniter[3] }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Code Valeur Locative</th>
+              <th>Prix</th>
+              <th>Date de Début du Prix</th>
+              <th>Date de Fin du Prix</th>
+            </tr>
+          </tfoot>
+        </table>
+
+        </div>
+        <div class="modal-body" *ngIf="repport1FormsGroup.value['rep1Element'] == 8">
+          <h3 style="text-align: center;">Locataires</h3>
+          <table class="table table-bordered table-striped table-sm"  id="dataTable1"><!--datatable [dtOptions]="dtOptions1"
+            [dtTrigger]="dtTrigger1"-->
+          <thead>
+            <tr>
+              <th>N° IFU</th>
+              <th>Identité/Nom et Prénoms</th>
+              <th>Téléphone</th>
+              <th>Adresse</th>
+              <th>Personne(s) à Contacter</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let uniter of feuille; let i = index">
+              <td>{{ uniter[0] }}</td>
+              <td>{{ uniter[1] }}</td>
+              <td>{{ uniter[2] }}</td>
+              <td>{{ uniter[3] }}</td>
+              <td>{{ uniter[4] }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>N° IFU</th>
+              <th>Identité/Nom et Prénoms</th>
+              <th>Téléphone</th>
+              <th>Adresse</th>
+              <th>Personne(s) à Contacter</th>
+            </tr>
+          </tfoot>
+        </table>
+
+        </div>
+        <div class="modal-body" *ngIf="repport1FormsGroup.value['rep1Element'] == 9">
+          <h3 style="text-align: center;">Contrats de Location des Valeurs Locatives</h3>
+          <table class="table table-bordered table-striped table-sm"  id="dataTable1"><!--datatable [dtOptions]="dtOptions1"
+            [dtTrigger]="dtTrigger1"-->
+          <thead>
+            <tr>
+              <th>Numéro</th>
+              <th>Code Locataire</th>
+              <th>Code Valeur Locative</th>
+              <th>Avance</th>
+              <th>Caution</th>
+              <th>Date de Signature</th>
+              <th>Date d'Effet</th>
+              <th>Date de Fin</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let uniter of feuille; let i = index">
+              <td>{{ uniter[0] }}</td>
+              <td>{{ uniter[1] }}</td>
+              <td>{{ uniter[2] }}</td>
+              <td>{{ uniter[3] }}</td>
+              <td>{{ uniter[4] }}</td>
+              <td>{{ uniter[5] }}</td>
+              <td>{{ uniter[6] }}</td>
+              <td>{{ uniter[7] }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Numéro</th>
+              <th>Code Locataire</th>
+              <th>Code Valeur Locative</th>
+              <th>Avance</th>
+              <th>Caution</th>
+              <th>Date de Signature</th>
+              <th>Date d'Effet</th>
+              <th>Date de Fin</th>
             </tr>
           </tfoot>
         </table>

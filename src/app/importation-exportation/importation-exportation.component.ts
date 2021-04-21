@@ -18,6 +18,10 @@ import { Quartier } from '../../models/quartier.model';
 import { SiteMarcher } from '../../models/siteMarcher.model';
 import { TypeImmeuble } from '../../models/typeImmeuble.model';
 import { Immeuble } from '../../models/immeuble.model';
+import { PrixImmeuble } from '../../models/prixImmeuble.model';
+import { LocataireService } from '../../services/definition/locataire.service';
+import { Locataire } from '../../models/locataire.model';
+import { Contrat } from '../../models/contrat.model';
 
 @Component({
   selector: 'app-importation-exportation',
@@ -111,7 +115,7 @@ export class ImportationExportationComponent implements OnInit {
 
   constructor(private formBulder:FormBuilder, private serviceArticle:ArticleService,
      private serviceImmeuble:ValeurLocativeService, private serviceContrat:ContratLocationService,
-     private serviceCommune:CommuneService) {
+     private serviceCommune:CommuneService, private serviceLocataire:LocataireService) {
     moment.locale('fr');
 
     this.repport1FormsGroup = this.formBulder.group({
@@ -641,9 +645,213 @@ export class ImportationExportationComponent implements OnInit {
     else if(this.repport1FormsGroup.value['rep1Element'] == 7){
       //Il s'agit des prix de valeurs locative
 
+      this.serviceImmeuble.getAllImmeuble().subscribe(
+        (data1) => {
+
+          this.feuille.forEach((element, inde) => {
+            if(element[0] != undefined && typeof element[1] == 'number' && typeof element[2] == 'object'
+              && typeof element[2].getDate() == 'number'){
+              let imme:Immeuble = null;
+
+              let finded1:boolean = false;
+
+              data1.forEach(element1 => {
+                if(element1.codeIm == element[0]){
+                  imme = element1;
+                  finded1 = true;
+                  exit;
+                }
+              });
+
+              if(!finded1){
+                console.log('Le code de Valeur Locative à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+                return;
+              }
+
+
+
+              let PrixValeurLoca:PrixImmeuble = new PrixImmeuble(-1, element[2], element[3], element[1], imme);
+
+              //valeurLoca = new Immeuble ()
+
+              this.serviceImmeuble.addPrixImmeuble(PrixValeurLoca).subscribe(
+                (data) => {
+                  if(data == null){
+                    console.log('le code de la ligne '+(inde+1)+' existe déjà');
+                  }
+                },
+                (erreur) => {
+                  console.log('Erreur lors de lAjout de la ligne '+(inde+1), erreur);
+                  exit;
+                }
+              );
+            }
+            else {
+              console.log('Erreur à la ligne '+(inde+1)+'. Une Informationn sur le Prix de la Valeur Locative est invalide');
+              exit;
+            }
+
+            if(inde == this.feuille.length-1){
+              console.log('Fin de lImportation, Importation réuissir');
+            }
+
+          });
+
+
+        },
+        (erreur) => {
+          console.log('Erreur lors de la récupération de la liste des valeurs locatives', erreur);
+        }
+      );
+
     }
     else if(this.repport1FormsGroup.value['rep1Element'] == 8){
+      //Il s'agit des Locataires
+
+      this.feuille.forEach((element, inde) => {
+        if(element[0] != undefined && typeof element[1] != 'undefined'){
+
+          let locataire:Locataire = new Locataire (element[1], element[3], element[2], element[0], element[4]);
+
+
+          this.serviceLocataire.addALocataire(locataire).subscribe(
+            (data) => {
+              if(data == null){
+                console.log('le code de la ligne '+(inde+1)+' existe déjà');
+              }
+            },
+            (erreur) => {
+              console.log('Erreur lors de lAjout de la ligne '+(inde+1), erreur);
+              exit;
+            }
+          );
+        }
+        else {
+          console.log('Erreur à la ligne '+(inde+1)+'. Une Informationn sur le Locataire est invalide');
+          exit;
+        }
+
+        if(inde == this.feuille.length-1){
+          console.log('Fin de lImportation, Importation réuissir');
+        }
+
+      });
+
+
+    }
+    else if(this.repport1FormsGroup.value['rep1Element'] == 9){
       //Il s'agit des Contrats de Location
+
+      this.serviceLocataire.getAllLocataire().subscribe(
+        (data2) => {
+
+         this.feuille.forEach((element, inde) => {
+          if(element[0] != undefined && element[1] != undefined && element[2] != undefined
+            && typeof element[3] == 'number' && typeof element[4] == 'number'
+            && typeof element[5] == 'object' && typeof element[6] == 'object'
+            && typeof element[5].getDate() == 'number' && typeof element[6].getDate() == 'number'
+            && (element[7] == undefined || typeof element[7] == 'object')){
+
+            this.serviceImmeuble.getAllImmeuble().subscribe(
+              (data1) => {
+
+                let locataire:Locataire = null;
+                let immeuble:Immeuble = null;
+                let finded1:boolean = false;
+                let finded2:boolean = false;
+
+                data1.forEach(element1 => {
+                  if(element1.codeIm == element[2]){
+                    immeuble = element1;
+                    finded1 = true;
+                    exit;
+                  }
+                });
+
+                if(!finded1 || immeuble.etatIm == true){
+                  console.log('Le code de Valeur Locative à la ligne '+(inde+1)+' nExiste pas Ou cette Valeur est en location. Importation interrompue.');
+                  return;
+                }
+
+                data2.forEach(element2 => {
+                  if(element2.idLocataire == element[1]){
+                    locataire = element2;
+                    finded2 = true;
+                    exit;
+                  }
+                });
+
+                if(!finded2){
+                  console.log('Le code de Locataire à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+                  return;
+                }
+
+                let contrat:Contrat = new Contrat(element[0], element[5], element[6], element[3], element[4], immeuble, locataire);
+
+                this.serviceContrat.addAContrat(contrat).subscribe(
+                  (data) => {
+                    if(data == null){
+                      console.log('le code de la ligne '+(inde+1)+' existe déjà');
+                    }
+                    else{
+                      //Mise au fin du Contrat Effectif
+                      let dt:Date = new Date(Date.now());
+                      let dt2:Date = null;
+                      if(data.dateFinContrat != null) dt2 = new Date(data.dateFinContrat);
+
+                      if(dt2 != null && dt2.getFullYear() <= dt.getFullYear()
+                        && dt2.getMonth() <= dt.getMonth() && dt2.getDate() <= dt.getDate()){
+                        data.immeuble.etatIm = false;
+
+                      }
+                      else{
+                        data.immeuble.etatIm = true;
+                      }
+
+                      this.serviceImmeuble.editImmeuble(data.immeuble.codeIm, data.immeuble).subscribe(
+                        (data22) => {
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de la modification de lEtat de lImmeuble', erreur);
+                        }
+                      );
+
+
+                    }
+                  },
+                  (erreur) => {
+                    console.log('Erreur lors de lAjout de la ligne '+(inde+1), erreur);
+                    exit;
+                  }
+                );
+
+              },
+              (erreur) => {
+                console.log('Erreur lors de la récupération de la liste des valeurs locatives', erreur);
+              }
+            );
+
+
+          }
+          else {
+            console.log('Erreur à la ligne '+(inde+1)+'. Une Informationn du Contrat de Location est invalide');
+            exit;
+          }
+
+          if(inde == this.feuille.length-1){
+            console.log('Fin de lImportation, Importation réuissir');
+          }
+
+        });
+
+
+        },
+        (erreur) => {
+          console.log('Erreur lors de la récupération de la liste des Locataires', erreur);
+        }
+      );
+
 
     }
 
