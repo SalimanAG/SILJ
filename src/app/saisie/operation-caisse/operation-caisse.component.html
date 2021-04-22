@@ -286,70 +286,77 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <label for="addImCor">Correspondant</label>
+                                </div>
+                                <div class="col-sm-3">
                                     <select formControlName="addImCor" class="form-control" #corre (change)="chargerPointNI(coi[addImputGroup.value['addImCor']])">
                     <option *ngFor="let corr of coi; let i=index" [value]="i">{{corr.magasinier.nomMagasinier}} {{corr.magasinier.prenomMagasinier}}</option>
                   </select>
                                 </div>
+                                <div class="col-sm-3">
+                                    <button type="button" class="btn btn-secondary" (click)="chargerPointNI(coi[addImputGroup.value['addImCor']])">
+                                      Afficher
+                                  </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class="form-group row">
-                                <div class="col-lg-9">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Code</th>
-                                                <th>Libellé</th>
-                                                <th>Prix unitaire</th>
-                                                <th>Quantité</th>
-                                                <th>Montant</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr *ngFor="let lpv of ImputLine; let i=index">
-                                                <td>{{lpv.article.codeArticle}}</td>
-                                                <td>{{lpv.article.libArticle}}</td>
-                                                <td>{{lpv.pulignePointVente}}</td>
-                                                <td>{{lpv.quantiteLignePointVente}}</td>
-                                                <td>{{lpv.pulignePointVente*lpv.quantiteLignePointVente}}</td>
-                                            </tr>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td style="text-align: center; font-weight: bold;" colspan="3">Total</td>
-                                                <td style="text-align: center; font-weight: bold;" colspan="2">{{totalImput}}</td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                                <div class="col-lg-3">
-                                    <label for="addImDat">Date de paiement</label>
-                                    <input formControlName="addImDat" id="addImDat" type="datetime" class="form-control">
-                                    <label for="addImCai">Caisse</label>
-                                    <select id="addImCai" formControlName="addImCai" class="form-control" required>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-lg-9">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Libellé</th>
+                                            <th>Prix unitaire</th>
+                                            <th>Quantité</th>
+                                            <th>Montant</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let lpv of ImputLine; let i=index">
+                                            <td>{{lpv.article.codeArticle}}</td>
+                                            <td>{{lpv.article.libArticle}}</td>
+                                            <td>{{lpv.pulignePointVente}}</td>
+                                            <td>{{lpv.quantiteLignePointVente}}</td>
+                                            <td>{{lpv.pulignePointVente*lpv.quantiteLignePointVente}}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td style="text-align: center; font-weight: bold;" colspan="3">Total</td>
+                                            <td style="text-align: center; font-weight: bold;" colspan="2">{{totalImput}}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="col-lg-3">
+                                <label for="addImDat">Date de paiement</label>
+                                <input formControlName="addImDat" id="addImDat" type="datetime" class="form-control">
+                                <label for="addImCai">Caisse</label>
+                                <select id="addImCai" formControlName="addImCai" class="form-control" required>
                                       <option  *ngFor="let afu of affectUser; let i = index" [value]="i">
                                         {{ afu.caisse.libeCaisse }}
                                       </option>
                                     </select>
-                                    <label for="addImMod">Mode</label>
-                                    <select id="addImMod" formControlName="addImMod" class="form-control" required>
+                                <label for="addImMod">Mode</label>
+                                <select id="addImMod" formControlName="addImMod" class="form-control" required>
                                       <option  *ngFor="let mod of modes; let i = index" [value]="i">
                                         {{ mod.libeModPay }}
                                       </option>
                                     </select>
-                                    <label for="addImObs">Date de paiement</label>
-                                    <input formControlName="addImObs" id="addImObs" type="datetime-local" class="form-control" autocomplete="false">
-                                </div>
+                                <label for="addImObs">Observation</label>
+                                <input formControlName="addImObs" id="addImObs" type="text" class="form-control" autocomplete="false">
                             </div>
-                            <div class="card-footer"></div>
                         </div>
+                        <div class="card-footer"></div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="addImput.hide()">Close</button>
-                        <button type="submit" class="btn btn-primary">Valider</button>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="addImput.hide()">Close</button>
+                    <button type="submit" class="btn btn-primary">Valider</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -357,6 +364,7 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
 
 <!-------------------------------------------Détail-------------------------------------------->
 <div bsModal #detailOp="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

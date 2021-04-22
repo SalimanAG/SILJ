@@ -153,6 +153,8 @@ export class OperationCaisseComponent implements OnInit {
     private servOp: OperationCaisseService, private fbuilder: FormBuilder, private router: Router,
     private sanitizer: DomSanitizer, private serPV: PointVenteService) {
 
+    moment.locale("fr");
+
     this.tabDailyOp = {
       pagingType: 'full_numbers',
       pageLength: 5,
@@ -301,7 +303,6 @@ export class OperationCaisseComponent implements OnInit {
       addImCai: new FormControl(0),
       addImMod: new FormControl(0),
       addImObs: new FormControl(),
-      addFinIm: new FormControl()
     });
 
     this.user = this.serU.connectedUser;
@@ -758,16 +759,6 @@ export class OperationCaisseComponent implements OnInit {
     });
   }
 
-  ajusterQte(n: number) {
-    this.tempLigneOpCais[n].qteLigneOperCaisse = this.addVentGroup.value['qte'];
-    this.recalculerTotalvente();
-  }
-
-  ajusterPrix(n: number) {
-    this.tempLigneOpCais[n].prixLigneOperCaisse = this.addVentGroup.value['pri'];
-    this.recalculerTotalvente();
-  }
-
   AjouteVente() {
     let op: OpCaisse;
     var dat: String = this.addVentGroup.value['nVentDat']
@@ -782,11 +773,8 @@ export class OperationCaisseComponent implements OnInit {
     this.servOp.ajouteOp(newOC)
       .subscribe(
         (data) => {
-
           //Chargement des opérations
           //gestion des lignes
-          console.log(data);
-
           this.chargerOperations();
           this.tempLigneOpCais.forEach((element, index) => {
             const newLine = new LigneOpCaisse(element.qteLigneOperCaisse, element.prixLigneOperCaisse,
@@ -932,10 +920,8 @@ export class OperationCaisseComponent implements OnInit {
       );
   }
 
-  genererEcheancier(con: Contrat) {
-    if (con == null) {
+  genererEcheancier(con: Contrat) {if (con == null) {
       this.echeanceAPayer = []
-
     }
     else {
       this.chargerPrixImmeubles(con.immeuble);
@@ -946,16 +932,18 @@ export class OperationCaisseComponent implements OnInit {
         "Août", "Septembre", "Octobre", "Novembre", "Décembre");
       var i = 0, n = 0;
       var fa = new Date(new Date().getFullYear(), 11, 31);
+      this.echeanceContrat = this.echeances.filter(eche => eche.contrat.numContrat === con.numContrat);
       while (dde <= fa && (dde <= new Date(con.dateFinContrat) || con.dateFinContrat === null)) {
         var des = new Date(dde.getFullYear(), dde.getMonth() + 1, dde.getDate());
-        var exist = this.echeanceAPayer.filter(function (eche) {
-          return eche.dateEcheance === des && eche.contrat.numContrat === con.numContrat;
+        var exist = this.echeanceContrat.filter(function (eche) {
+          return eche.moisEcheance === mois[dde.getMonth()] && eche.contrat.numContrat === con.numContrat
+            && eche.payeEcheance===true;
         });
+
         if (exist.length === 0) {
           var prix = this.prixImm.filter(pri =>
             (new Date(pri.dateDebPrixIm) <= new Date(dde) && new Date(pri.dateFinPrixIm) > new Date(dde)) ||
             (new Date(pri.dateDebPrixIm) <= new Date(dde) && new Date(dde) < fa));
-          console.log(prix, dde.toLocaleDateString());
           if (prix !== null) {
             const eche = new Echeance(mois[dde.getMonth()], dde.getFullYear(), des, false,
               prix[prix.length - 1].prixIm, con, null);
@@ -963,14 +951,19 @@ export class OperationCaisseComponent implements OnInit {
             n++;
           }
         }
+        else {
+          console.log("Echéance existente: ", exist);
+
+        }
         dde = des;
       }
       this.echeanceAPayer.sort((a, b) => a.dateEcheance.valueOf() - b.dateEcheance.valueOf());
     }
+    console.log('total: ', this.echeanceAPayer.length);
+
     $('#dteche').dataTable().api().destroy();
     this.dtTrigEche.next();
     this.totalLoyer = 0;
-    this.echeancetmp.push(this.echeanceAPayer[0]);
   }
 
   chargerEcheancesContrat(con) {
@@ -994,39 +987,12 @@ export class OperationCaisseComponent implements OnInit {
 
   considererEcheance(p: number) {
     if (this.echeanceAPayer[p].payeEcheance) {
-      if (p > 0) {
-        if (this.echeanceAPayer[p - 1].payeEcheance) {
           this.totalLoyer += this.echeanceAPayer[p].prix.valueOf();
-          this.echeancetmp.push(this.echeanceAPayer[p+1])
         }
         else {
-          $('#dteche').dataTable().api().destroy();
-          console.log('Veuillez cocher le paiement de tous les mois antérieurs');
-          this.echeanceAPayer[p].payeEcheance = false;
-          this.dtTrigEche.next();
-        }
-      }
-      else {
-        this.totalLoyer += this.echeanceAPayer[p].prix.valueOf();
-      }
-    }
-    else {
-      if (p < this.echeanceAPayer.length - 1) {
-        if (this.echeanceAPayer[p + 1].payeEcheance) {
-          console.log("Vous devez décocher le paiement de toutes les échéances postérieures");
-          this.echeanceAPayer[p].payeEcheance = true;
-        }
-        else {
-          this.totalLoyer -= this.echeanceAPayer[p].prix.valueOf();
-        }
-      }
-      else {
         this.totalLoyer -= this.echeanceAPayer[p].prix.valueOf();
       }
-    }
-
     console.log(this.echeanceAPayer[p]);
-
   }
 
   ///Gestion des imputations
@@ -1036,8 +1002,8 @@ export class OperationCaisseComponent implements OnInit {
     this.totalLoyer = 0;
     this.addImput.show();
     this.addImputGroup.patchValue({
-      addimDat: moment(Date.now()).format("jj/mm/aaaa"),
-      addImCor: 0, addImObs: 0
+      addImDat: moment(Date.now()).format("DD/MM/YYYY hh:mm:ss"),
+      addImCor: 0, addImMod: 0, addImCai: 0
     });
     this.coi = this.pointV.filter(pp => pp.correspondant.imputableCorres === true && pp.payerPoint === false).map(pp => pp.correspondant);
   }
@@ -1046,8 +1012,6 @@ export class OperationCaisseComponent implements OnInit {
     this.pointPayable = this.pointV.filter(pp =>
       pp.correspondant.idCorrespondant === cor.idCorrespondant && pp.payerPoint === false
     );
-    console.log(this.pointPayable);
-
     this.ImputLine = [];
     this.totalImput = 0;
     this.servOp.getAllLPV()
@@ -1056,32 +1020,23 @@ export class OperationCaisseComponent implements OnInit {
           this.lignePV = data;
           this.lineOfPV = this.lignePV.filter(lpv =>
             lpv.pointVente.correspondant.idCorrespondant === cor.idCorrespondant && lpv.pointVente.payerPoint === false);
-          console.log(this.lineOfPV);
-
           this.pv = [];
           this.lineOfPV.forEach(elt => {
             if (this.pv.find(p => p.numPointVente === elt.pointVente.numPointVente)) {
               this.pv.push(elt.pointVente);
-              console.log(this.pv);
             }
             var lpvp = this.ImputLine.find(limp =>
               limp.article.codeArticle === elt.article.codeArticle
             );
             if (lpvp === undefined) {
-              console.log('ajout: ', elt);
               this.ImputLine.push(new LignePointVente(elt.quantiteLignePointVente, elt.pulignePointVente, 0, 0, null,
                 elt.article));
             }
             else {
               lpvp.quantiteLignePointVente += elt.quantiteLignePointVente;
-              console.log('Ajout de quantité');
             }
           });
           this.totalImput = this.ImputLine.reduce((tt, lin) => tt += lin.quantiteLignePointVente * lin.pulignePointVente, 0);
-          console.log('Fin');
-
-          console.log('imputation: ', this.ImputLine);
-          console.log('Points concernés', this.pv);
         },
         (err) => {
           console.log('lpv', err);
@@ -1162,8 +1117,6 @@ export class OperationCaisseComponent implements OnInit {
     //fact.text(,15,40);
     let ligne = [];
     let totalf: number = 0;
-
-
     switch (opc.typeRecette.codeTypRec) {
       default: {
         fact.text("Contribuable : " + opc.contribuable, 15, 50);
@@ -1208,7 +1161,6 @@ export class OperationCaisseComponent implements OnInit {
           margin: { top: 70 },
           body: ligne,
         });
-
         break;
       }
     }
@@ -1222,20 +1174,15 @@ export class OperationCaisseComponent implements OnInit {
       body: [['Total', totalf]
       ],
     });
-
     autoTable(fact, {
       theme: 'plain',
-
       margin: { top: 30, left: 130 },
       columnStyles: {
         0: { textColor: 0, fontStyle: 'bold', fontSize: 12 },
       },
       body: [["Le(La) caissier(ère)" + "\n\n\n" + this.serU.connectedUser.nomUtilisateur + " " +
         this.serU.connectedUser.prenomUtilisateur]]
-
     });
-
-
     //fact.autoPrint();
     this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
     this.appercu.show();
@@ -1249,7 +1196,6 @@ export class OperationCaisseComponent implements OnInit {
     //fact.text(,15,40);
     let ligne = [];
     let total = 0;
-
 
     switch (opc.typeRecette.codeTypRec) {
       default: {
@@ -1285,9 +1231,9 @@ export class OperationCaisseComponent implements OnInit {
           let lig = [];
           lig.push(element.moisEcheance);
           lig.push(element.annee);
-          lig.push(element.prix).valueOf();
+          lig.push(element.prix);
           ligne.push(lig);
-          total += lig[3];
+          total += element.prix.valueOf();
         });
         autoTable(fact, {
           head: [['Mois', 'Année', 'Montant']],
@@ -1328,10 +1274,6 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   imprimeTicket(opc: OpCaisse) {
-
-    var d = opc.dateOpCaisse.toLocaleDateString();
-    console.log(d);
-
     const fact = new jsPDF("p", "mm", [80, 900]);
     autoTable(fact, {
       theme: 'plain',
