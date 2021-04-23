@@ -96,8 +96,9 @@ import { ImportationExportationComponent } from './importation-exportation/impor
 import { AccueilComponent } from './accueil/accueil.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { AutheComponent } from './authe/authe.component';
-import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/inventaire-stock.component';
 import { ToastrModule } from 'ngx-toastr';
+import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/inventaire-stock.component';
+import { InventaireService } from '../services/saisie/inventaire.service';
 
 @NgModule({
   imports: [
@@ -119,7 +120,7 @@ import { ToastrModule } from 'ngx-toastr';
     HttpClientModule,
     ReactiveFormsModule,
     ToastrModule.forRoot(),
-    
+
   ],
   declarations: [
     AppComponent,
@@ -180,7 +181,9 @@ import { ToastrModule } from 'ngx-toastr';
   providers: [{
     provide: LocationStrategy,
     useClass: HashLocationStrategy
-  }],
+  },
+  InventaireService,
+  ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }

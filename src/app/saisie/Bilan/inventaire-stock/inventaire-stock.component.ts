@@ -91,7 +91,7 @@ export class InventaireStockComponent implements OnInit {
     this.serviceInventaire.getAllInventaire().subscribe(
       (data)=>{
         this.inventaire = data;
-        //this.dtTrigger1.next();
+        this.dtTrigger1.next();
         console.log("inventaire list", this.magasinlist);
         
       },
@@ -134,6 +134,7 @@ export class InventaireStockComponent implements OnInit {
     this.serviceInventaire.getAllInventaire().subscribe(
       (data)=>{
         this.inventaire = data;
+        $('#actualiseInv').dataTable().api().destroy();
         this.dtTrigger1.next();
         //console.log("inventaire list", this.magasinlist);
         

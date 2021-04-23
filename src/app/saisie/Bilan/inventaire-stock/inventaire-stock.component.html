@@ -38,21 +38,21 @@
       </div>
     
   
-        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1" id="actualise">
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1" id="actualiseInv">
             <thead>
-                <tr>
+              <tr>
                 <th>Numéro </th>
                 <th>Date</th>
                 <th>Description</th>
                 <th>Magasin</th>
                 <th>Actions</th>
-                </tr>
+              </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let inv of inventaire; let i = index">
                     <td>{{ inv.numInv}}</td>
                     <td>{{ inv.dateInv | date :  "dd/MM/y"  }}</td>
-                    <td>{{ inv.descrInv }}</td>
+                    <td>{{ inv.descrInv }}</td> descrInv
                     <td>{{ inv.magasin.libMagasin }}</td>
                     <td>
                         <button class="btn btn-info btn-sm" data-toggle="modal"  ><span class="fa fa-eye"></span></button>
@@ -77,7 +77,7 @@
               <form [formGroup]="addInventaireFormGroup" (ngSubmit)="onSubmitAddInventaireFormsGroup()">
                 <div class="modal-content">
                   <div class="modal-header">
-                      <h4 class="modal-title">Ajouter un inventaire</h4>
+                      <h4 class="modal-title">Fiche d'inventaire</h4>
                       <button type="button" class="close" (click)="addComModal.hide()" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
