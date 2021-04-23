@@ -97,6 +97,7 @@ import { AccueilComponent } from './accueil/accueil.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { AutheComponent } from './authe/authe.component';
 import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/inventaire-stock.component';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   imports: [
@@ -116,7 +117,9 @@ import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/invent
     ModalModule.forRoot(),
     DataTablesModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ToastrModule.forRoot(),
+    
   ],
   declarations: [
     AppComponent,

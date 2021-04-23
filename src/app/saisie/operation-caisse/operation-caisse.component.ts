@@ -700,11 +700,11 @@ export class OperationCaisseComponent implements OnInit {
 
   initNewVente() {
     this.totalVente = 0;
-    this.tmpOpC = new OpCaisse(new Date().getUTCFullYear + '-000001', new Date(), 'Divers', true, '', new Date(),
+    this.tmpOpC = new OpCaisse('0001', new Date(), 'Divers', true, '', new Date(),
       this.caissesValides[0], this.opTypes[0], this.modes[0], this.exo, this.user);
     this.addVente.show();
     this.addVentGroup.patchValue({
-      nVentDat: moment(new Date()).format("DD/MM/YYYY hh:mm"),
+      nVentDat: moment(new Date()).format("DD/MM/YYYY HH:mm"),
       nVentCont: "", nVentObs: ""
     });
   }
@@ -765,11 +765,10 @@ export class OperationCaisseComponent implements OnInit {
     var datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
       Number.parseInt(dat.substr(0, 2), 10), Number.parseInt(dat.substr(11, 2), 10), Number.parseInt(dat.substr(14, 2), 10));
 
-    const newOC = new OpCaisse(this.addVentGroup.value['nVentNum'], datop, this.addVentGroup.value['nVentCont'],
+    const newOC = new OpCaisse('01', datop, this.addVentGroup.value['nVentCont'],
       true, this.addVentGroup.value['nVentObs'], new Date(), this.caissesValides[this.addVentGroup.value['nVentCais']],
       new TypeRecette('P', 'Prestation'), this.modes[this.addVentGroup.value['nVentMod']], this.serExo.exoSelectionner,
       this.user);
-
     this.servOp.ajouteOp(newOC)
       .subscribe(
         (data) => {
@@ -789,13 +788,13 @@ export class OperationCaisseComponent implements OnInit {
                         (data3) => {
                           this.lignesOp = data3;
                           this.addVentGroup.patchValue({
-                            nVentDat: moment(new Date()).format("DD/MM/YYYY hh:mm"),
+                            nVentDat: moment(new Date()).format("DD/MM/YYYY HH:mm"),
                             nVentCont: "", nVentObs: ""
                           });
-                          $('#tablign').dataTable().api().destroy();
-                          this.dtLigne.next();
                           this.imprimeTicket(data);
                           this.totalVente = 0;
+                          $('#tablign').dataTable().api().destroy();
+                          this.dtLigne.next();
                         },
                         (err) => {
                           console.log('Chargement de lignes: ', err);
@@ -825,7 +824,7 @@ export class OperationCaisseComponent implements OnInit {
       this.caissesValides[0], new TypeRecette('VD', 'Avente Directe'), this.modes[0], this.exo, this.user);
     this.totalLoyer = 0;
     this.addLoyerGroup.patchValue({
-      loyDat: moment(new Date()).format("DD/MM/YYYY hh:mm"),
+      loyDat: moment(new Date()).format("DD/MM/YYYY HH:mm"),
       loyCont: '', loyObs: ''
     });
     this.echeanceAPayer = [];
@@ -870,11 +869,17 @@ export class OperationCaisseComponent implements OnInit {
                                 this.echeances = datalisteop;
                                 this.imprimeFacture(dataop);
                                 this.addLoyerGroup.patchValue({
-                                  loyDat: moment(new Date()).format("DD/MM/YYYY hh:mm"),
+                                  loyDat: moment(new Date()).format("DD/MM/YYYY HH:mm"),
                                   loyLoc: -1, loyVL: -1, loyCont: '', loyObs: ''
                                 });
                                 this.genererEcheancier(null);
                                 this.totalLoyer = 0;
+                                this.opDay = this.listOp.filter(op =>
+                                  op.utilisateur.idUtilisateur === this.serU.connectedUser.idUtilisateur &&
+                                  new Date(op.dateSaisie).toLocaleDateString().substr(0, 10) === new Date().toLocaleDateString().substr(0, 10)
+                                );
+                                $('#tablign').dataTable().api().destroy();
+                                this.dtLigne.next();
                               });
                           });
                       }
@@ -920,7 +925,8 @@ export class OperationCaisseComponent implements OnInit {
       );
   }
 
-  genererEcheancier(con: Contrat) {if (con == null) {
+  genererEcheancier(con: Contrat) {
+    if (con == null) {
       this.echeanceAPayer = []
     }
     else {
@@ -951,15 +957,10 @@ export class OperationCaisseComponent implements OnInit {
             n++;
           }
         }
-        else {
-          console.log("Echéance existente: ", exist);
-
-        }
         dde = des;
       }
       this.echeanceAPayer.sort((a, b) => a.dateEcheance.valueOf() - b.dateEcheance.valueOf());
     }
-    console.log('total: ', this.echeanceAPayer.length);
 
     $('#dteche').dataTable().api().destroy();
     this.dtTrigEche.next();
@@ -1002,7 +1003,7 @@ export class OperationCaisseComponent implements OnInit {
     this.totalLoyer = 0;
     this.addImput.show();
     this.addImputGroup.patchValue({
-      addImDat: moment(Date.now()).format("DD/MM/YYYY hh:mm:ss"),
+      addImDat: moment(Date.now()).format("DD/MM/YYYY HH:mm:ss"),
       addImCor: 0, addImMod: 0, addImCai: 0
     });
     this.coi = this.pointV.filter(pp => pp.correspondant.imputableCorres === true && pp.payerPoint === false).map(pp => pp.correspondant);
@@ -1010,7 +1011,7 @@ export class OperationCaisseComponent implements OnInit {
 
   chargerPointNI(cor: Correspondant) {
     this.pointPayable = this.pointV.filter(pp =>
-      pp.correspondant.idCorrespondant === cor.idCorrespondant && pp.payerPoint === false
+      pp.correspondant.idCorrespondant == cor.idCorrespondant && pp.payerPoint == false
     );
     this.ImputLine = [];
     this.totalImput = 0;
@@ -1046,14 +1047,12 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   ajouteImputation() {
-    console.log(this.pointPayable);
-
-    console.log('numero: ' + this.addImputGroup.value['addImNum'] + '\nMode de paiement: ' + this.addImputGroup.value['addImMod'] +
-      '\nDate: ' + this.addImputGroup.value['addImDat'] + '\nCaisse: ' + this.addImputGroup.value['addImCai']);
-
-    if (this.addImputGroup.value['addImMod'] !== null && this.addImputGroup.value['addImDat'] !== null &&
-      this.addImputGroup.value['addImCai'] !== null) {
-      const newOC = new OpCaisse('000001', this.addImputGroup.value['addImDat'],
+    if (this.addImputGroup.value['addImMod'] != null && this.addImputGroup.value['addImDat'] != null &&
+      this.addImputGroup.value['addImCai'] != null) {
+      var dat = this.addImputGroup.value['addImDat'];
+       var datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
+          Number.parseInt(dat.substr(0, 2), 10), Number.parseInt(dat.substr(11, 2), 10), Number.parseInt(dat.substr(14, 2), 10));
+        const newOC = new OpCaisse('000001', datop,
         this.coi[this.addImputGroup.value['addImCor']].magasinier.nomMagasinier + ' ' +
         this.coi[this.addImputGroup.value['addImCor']].magasinier.prenomMagasinier, true, this.addLoyerGroup.value['addImObs'], new Date(),
         this.caissesValides[this.addImputGroup.value['addImCai']], new TypeRecette('I', 'Imputation Correspondant'),
@@ -1085,11 +1084,12 @@ export class OperationCaisseComponent implements OnInit {
                   i--;
                   if (i === 0) {
                     this.rechargerLigneOpCaisse();
-                    this.afficheFacture(dataOP);
+                    this.imprimeTicket(dataOP);
                     this.totalImput = 0
+                    this.ImputLine = [];
                     this.addImputGroup.patchValue({
-                      addimDat: moment(Date.now()).format("jj/mm/aaaa"),
-                      addImCor: 0, addImObs: 0
+                      addimDat: moment(Date.now()).format("jj/MM/aaaa hh/mm"),
+                      addImCor: -1, addImObs: 0
                     });
                   }
                 });

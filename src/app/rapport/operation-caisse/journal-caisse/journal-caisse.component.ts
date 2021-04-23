@@ -59,7 +59,7 @@ export class JournalCaisseComponent implements OnInit {
           (data2) => {
             this.serviceCaisse.getAllCaisse().subscribe(
               (data3) => {
-                
+
                 data2.forEach(element2 => {
                   if(element2.utilisateur.idUtilisateur == this.serviceUser.connectedUser.idUtilisateur){
                     data3.forEach(element3 => {
@@ -90,27 +90,27 @@ export class JournalCaisseComponent implements OnInit {
                         exist = true;
                       }
                     });
-        
+
                     if(!exist){
                       this.userAssociatedCaisse.push(element.caisse);
                     }
-        
+
                   }
                 });
-        
+
 
               },
               (erreur) => {
                 console.log('Erreur lors de la récupération de la liste des caisses', erreur);
               }
             );
-            
+
           },
           (erreur) => {
             console.log('Erreur lors de la récupération de la liste des affectations aux arrondissements', erreur)
           }
         );
-        
+
       },
       (erreur) => {
         console.log('Erreur lors de la récupération des associations de lUtilisateur à des caisses', erreur);
@@ -208,7 +208,10 @@ export class JournalCaisseComponent implements OnInit {
                       //console.log('opCaisses', data3);
                       data3.forEach(element2 => {
                         //console.log('Location', element2);
-                        if(element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']
+                        console.log('Essaie', element2.dateOpCaisse, 'ed', this.repport1FormsGroup.value['rep1DateDebut'], 'es', element2.dateOpCaisse, 'as', this.repport1FormsGroup.value['rep1DateFin']);
+                        console.log('comp1', element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut']);
+                        console.log('comp2', element2.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']);
+                        if(element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.dateOpCaisse <= new Date(Date.now())
                         && element2.caisse.codeCaisse == element.codeCaisse){
 
 

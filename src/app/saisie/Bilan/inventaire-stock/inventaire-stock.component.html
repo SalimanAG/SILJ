@@ -1,1 +1,131 @@
-<p>inventaire-stock works!</p>
+<div class="card">
+    <div class="card-header">
+        <i class="fa fa-align-justify"></i> Inventaire
+    </div>
+    <div class="card-body">
+      <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;" >
+
+        <!--label >
+            Numéro:
+            <input type="text" [formControl]="numero" name="numero" placeholder="Numéro invintaire" autocomplete="off">
+          </label-->
+
+          <label style="padding-left: 20px;">
+            Date
+            <input type="date" [formControl]="dateInventaire" id="dateInventaire" >
+          </label>
+  
+        
+        <label style="padding-left: 20px;"> 
+          Magasin:
+                  <select  [formControl]="magasinIventaire" name="magasinIventaire">
+                      <option *ngFor="let mag of magasinlist; let i=index" [value]="mag.codeMagasin">{{mag.libMagasin}}</option>
+                  </select>
+        </label>
+  
+        <label style="padding-left: 20px;">
+            Description:
+            <input type="text" [formControl]="description" style="width: 260px; height: 35px;" name="description" placeholder="Description de l'inventaire" autocomplete="off">
+          </label>
+  
+        <label style="padding-left: 20px;">
+  
+          <button  [disabled]="this.magasinIventaire.value=='' " class="btn btn-primary" data-toggle="modal" (click)="afficherInventaireList()">Générer <!--span class="fa fa-plus-circle"></span--></button>
+         
+        </label>
+
+        <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+      </div>
+    
+  
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1" id="actualise">
+            <thead>
+                <tr>
+                <th>Numéro </th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Magasin</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let inv of inventaire; let i = index">
+                    <td>{{ inv.numInv}}</td>
+                    <td>{{ inv.dateInv | date :  "dd/MM/y"  }}</td>
+                    <td>{{ inv.descrInv }}</td>
+                    <td>{{ inv.magasin.libMagasin }}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" data-toggle="modal"  ><span class="fa fa-eye"></span></button>
+                        <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfAnCommande(i)"><span class="fa fa-file-o"></span></button>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Numéro </th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Magasin</th>
+                <th>Actions</th>
+            </tr>
+            </tfoot>
+        </table>
+
+        <!--Modal add-->
+        <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-primary modal-xl" role="document">
+              <form [formGroup]="addInventaireFormGroup" (ngSubmit)="onSubmitAddInventaireFormsGroup()">
+                <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">Ajouter un inventaire</h4>
+                      <button type="button" class="close" (click)="addComModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="card-body">
+  
+                    <div class="row">
+                        <table class="table table-bordered table-striped table-lg">
+                          <thead>
+                            <tr>
+                              <th>Code Article</th>
+                              <th>Libellé de l'Article</th>
+                              <th>Prix Unit.</th>
+                              <th>Stock Théorique</th>
+                              <th>Stock Réel</th>
+                              <th>Ecart(Quantité)</th>
+                              <th>Ecart(Montant)</th>
+                              <th>Observation</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let addLignInv of templateLigneInventaire; let i = index">
+                              <td>{{ addLignInv.article.codeArticle  }}</td>
+                              <td>{{ addLignInv.article.libArticle }}</td>
+                              <td><input [(ngModel)]="templateLigneInventaire[i].pu" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                              <td><input [(ngModel)]="templateLigneInventaire[i].stockTheoriq" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                              <td><input [(ngModel)]="templateLigneInventaire[i].stockreel" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                              <td>{{ (templateLigneInventaire[i].stockTheoriq-templateLigneInventaire[i].stockreel) }}</td>
+                              <td>{{ ((templateLigneInventaire[i].stockTheoriq*templateLigneInventaire[i].pu)-(templateLigneInventaire[i].stockreel*templateLigneInventaire[i].pu)) }}</td>
+                              <td><input [(ngModel)]="templateLigneInventaire[i].Observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                            </tr>
+    
+                          </tbody>
+                        </table>
+                      </div>
+  
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
+                      <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </form>
+  
+            </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  
+  
+    </div>
+  </div>
+  

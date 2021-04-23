@@ -22,6 +22,7 @@ import { PrixImmeuble } from '../../models/prixImmeuble.model';
 import { LocataireService } from '../../services/definition/locataire.service';
 import { Locataire } from '../../models/locataire.model';
 import { Contrat } from '../../models/contrat.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-importation-exportation',
@@ -115,7 +116,8 @@ export class ImportationExportationComponent implements OnInit {
 
   constructor(private formBulder:FormBuilder, private serviceArticle:ArticleService,
      private serviceImmeuble:ValeurLocativeService, private serviceContrat:ContratLocationService,
-     private serviceCommune:CommuneService, private serviceLocataire:LocataireService) {
+     private serviceCommune:CommuneService, private serviceLocataire:LocataireService,
+     private toastr: ToastrService) {
     moment.locale('fr');
 
     this.repport1FormsGroup = this.formBulder.group({
