@@ -6,6 +6,7 @@ import { OpCaisse } from './OpeCaisse.model';
 export class PointVente{
 
   public opCaisse:OpCaisse;
+  public validePoint:boolean;
 
   constructor(public numPointVente:String, public datePointVente:Date,
      public payerPoint:boolean, public exercice:Exercice, 

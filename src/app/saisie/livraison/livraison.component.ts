@@ -110,7 +110,7 @@ export class LivraisonComponent implements OnInit {
         data.forEach((element,index) => {
           if(element.livre===false && element.article.livrableArticle===true && element.opCaisse.typeRecette.codeTypRec==="P"
           && element.opCaisse.caisse.codeCaisse===this.opCaisseLivre.value 
-          && element.opCaisse.dateOpCaisse>=this.debut.value && element.opCaisse.dateOpCaisse<=this.fin.value)
+          &&  new Date(element.opCaisse.dateOpCaisse).valueOf()>= new Date(this.debut.value).valueOf() && new Date(element.opCaisse.dateOpCaisse).valueOf()<= new Date(this.fin.value).valueOf())
           {
             this.ligneopcaisse.push(element);
             
@@ -118,6 +118,7 @@ export class LivraisonComponent implements OnInit {
             
             
           }
+
           
         }); 
         this.dtTrigger1.next();
@@ -203,8 +204,8 @@ export class LivraisonComponent implements OnInit {
       (data) => {
         data.forEach((element,index) => {
           if(element.livre===false && element.article.livrableArticle===true && element.opCaisse.typeRecette.codeTypRec==="P"
-          && element.opCaisse.caisse.codeCaisse===this.opCaisseLivre.value 
-          && element.opCaisse.dateOpCaisse>=this.debut.value && element.opCaisse.dateOpCaisse<=this.fin.value)
+          &&  element.opCaisse.caisse.codeCaisse===this.opCaisseLivre.value 
+          && new Date(element.opCaisse.dateOpCaisse).valueOf()>= new Date(this.debut.value).valueOf() && new Date(element.opCaisse.dateOpCaisse).valueOf()<= new Date(this.fin.value).valueOf())
           {
             this.ligneopcaisse.push(element);
             

@@ -613,7 +613,7 @@ export class EtatStockComponent implements OnInit {
 
                     data33.forEach(element33 => {
 
-                      if( element33.site.codeSite != null && element33.corres.idCorrespondant == element22.idCorrespondant && element33.site.codeSite == elementt.codeSite){
+                      if( element33.site != null && element33.corres.idCorrespondant == element22.idCorrespondant && element33.site.codeSite == elementt.codeSite){
                         belong = true;
                         exit;
                       }

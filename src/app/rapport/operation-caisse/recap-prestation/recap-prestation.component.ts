@@ -43,8 +43,8 @@ export class RecapPrestationComponent implements OnInit {
       this.repport1FormsGroup = this.formBulder.group({
         rep1Caisse:-1,
         rep1FamilleArticle:-1,
-        rep1DateDebut:[moment(Date.now()).format('yyyy-MM-DD') , Validators.required],
-        rep1DateFin:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required]
+        rep1DateDebut:[moment(Date.now()).format('yyyy-MM-DDTHH:mm') , Validators.required],
+        rep1DateFin:[moment(Date.now()).format('yyyy-MM-DDTHH:mm'), Validators.required]
       });
 
   }
@@ -56,7 +56,7 @@ export class RecapPrestationComponent implements OnInit {
           (data2) => {
             this.serviceCaisse.getAllCaisse().subscribe(
               (data3) => {
-                
+
                 data2.forEach(element2 => {
                   if(element2.utilisateur.idUtilisateur == this.serviceUser.connectedUser.idUtilisateur){
                     data3.forEach(element3 => {
@@ -87,27 +87,27 @@ export class RecapPrestationComponent implements OnInit {
                         exist = true;
                       }
                     });
-        
+
                     if(!exist){
                       this.userAssociatedCaisse.push(element.caisse);
                     }
-        
+
                   }
                 });
-        
+
 
               },
               (erreur) => {
                 console.log('Erreur lors de la récupération de la liste des caisses', erreur);
               }
             );
-            
+
           },
           (erreur) => {
             console.log('Erreur lors de la récupération de la liste des affectations aux arrondissements', erreur)
           }
         );
-        
+
       },
       (erreur) => {
         console.log('Erreur lors de la récupération des associations de lUtilisateur à des caisses', erreur);
@@ -165,8 +165,8 @@ export class RecapPrestationComponent implements OnInit {
             doc.setFontSize(14);
             doc.text('Etat : Cumul des Recettes par Prestations', 15, 45);
             doc.setFontSize(12);
-            doc.text('  Période du \t\t'+moment(this.repport1FormsGroup.value['rep1DateDebut']).format('DD/MM/YYYY')+'\t\t\t00 H 00 min', 15, 55);
-            doc.text('\t\tAu\t\t'+moment(this.repport1FormsGroup.value['rep1DateFin']).format('DD/MM/YYYY')+'\t\t\t23 H 59 min', 15, 63);
+            doc.text('  Période du \t\t'+moment(this.repport1FormsGroup.value['rep1DateDebut']).format('DD/MM/YYYY \t\tà\t\t HH:mm'), 15, 55);
+            doc.text('\t\tAu\t\t'+moment(this.repport1FormsGroup.value['rep1DateFin']).format('DD/MM/YYYY \t\tà\t\t HH:mm'), 15, 63);
 
             if(this.repport1FormsGroup.value['rep1Caisse'] != -1){
               let concernedCaisse:Caisse = this.userAssociatedCaisse[this.repport1FormsGroup.value['rep1Caisse']];
@@ -198,7 +198,7 @@ export class RecapPrestationComponent implements OnInit {
 
 
                   data2.forEach(element2 => {
-                    if(element2.opCaisse.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.opCaisse.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']
+                    if(new Date(element2.opCaisse.dateOpCaisse).valueOf() >= new Date(this.repport1FormsGroup.value['rep1DateDebut']).valueOf() && new Date(element2.opCaisse.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
                       && element2.article.famille.codeFamille == element.codeFamille && element2.opCaisse.caisse.codeCaisse == concernedCaisse.codeCaisse){
                       finded = true;
                       let concernedOldLineInde = -1;
@@ -211,7 +211,7 @@ export class RecapPrestationComponent implements OnInit {
                       if(concernedOldLineInde == -1){
                         let lig = [];
                         lig.push(element2.opCaisse.numOpCaisse);
-                        lig.push(element2.opCaisse.dateOpCaisse);
+                        lig.push(moment(element2.opCaisse.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                         lig.push(element2.article.codeArticle);
                         lig.push(element2.article.libArticle);
                         lig.push(element2.prixLigneOperCaisse);
@@ -315,7 +315,7 @@ export class RecapPrestationComponent implements OnInit {
                 let lignes = [];
 
                   data2.forEach(element2 => {
-                    if(element2.opCaisse.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.opCaisse.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']
+                    if(new Date(element2.opCaisse.dateOpCaisse).valueOf() >= new Date(this.repport1FormsGroup.value['rep1DateDebut']).valueOf() && new Date(element2.opCaisse.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
                       && element2.article.famille.codeFamille == concernedFamille.codeFamille && element2.opCaisse.caisse.codeCaisse == concernedCaisse.codeCaisse){
 
                       let concernedOldLineInde = -1;
@@ -328,7 +328,7 @@ export class RecapPrestationComponent implements OnInit {
                       if(concernedOldLineInde == -1){
                         let lig = [];
                         lig.push(element2.opCaisse.numOpCaisse);
-                        lig.push(element2.opCaisse.dateOpCaisse);
+                        lig.push(moment(element2.opCaisse.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                         lig.push(element2.article.codeArticle);
                         lig.push(element2.article.libArticle);
                         lig.push(element2.prixLigneOperCaisse);
@@ -459,7 +459,7 @@ export class RecapPrestationComponent implements OnInit {
 
 
                   data2.forEach(element2 => {
-                    if(element2.opCaisse.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.opCaisse.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']
+                    if(new Date(element2.opCaisse.dateOpCaisse).valueOf() >= new Date(this.repport1FormsGroup.value['rep1DateDebut']).valueOf() && new Date(element2.opCaisse.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
                       && element2.article.famille.codeFamille == element.codeFamille && element2.opCaisse.caisse.codeCaisse == concernedCaisse.codeCaisse){
                       finded = true;
                       let concernedOldLineInde = -1;
@@ -472,7 +472,7 @@ export class RecapPrestationComponent implements OnInit {
                       if(concernedOldLineInde == -1){
                         let lig = [];
                         lig.push(element2.opCaisse.numOpCaisse);
-                        lig.push(element2.opCaisse.dateOpCaisse);
+                        lig.push(moment(element2.opCaisse.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                         lig.push(element2.article.codeArticle);
                         lig.push(element2.article.libArticle);
                         lig.push(element2.prixLigneOperCaisse);
@@ -565,7 +565,7 @@ export class RecapPrestationComponent implements OnInit {
                 let lignes = [];
 
                   data2.forEach(element2 => {
-                    if(element2.opCaisse.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.opCaisse.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']
+                  if(new Date(element2.opCaisse.dateOpCaisse).valueOf() >= new Date(this.repport1FormsGroup.value['rep1DateDebut']).valueOf() && new Date(element2.opCaisse.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
                       && element2.article.famille.codeFamille == concernedFamille.codeFamille && element2.opCaisse.caisse.codeCaisse == concernedCaisse.codeCaisse){
 
                       let concernedOldLineInde = -1;
@@ -578,7 +578,7 @@ export class RecapPrestationComponent implements OnInit {
                       if(concernedOldLineInde == -1){
                         let lig = [];
                         lig.push(element2.opCaisse.numOpCaisse);
-                        lig.push(element2.opCaisse.dateOpCaisse);
+                        lig.push(moment(element2.opCaisse.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                         lig.push(element2.article.codeArticle);
                         lig.push(element2.article.libArticle);
                         lig.push(element2.prixLigneOperCaisse);
@@ -695,6 +695,6 @@ export class RecapPrestationComponent implements OnInit {
 
   }
 
-  
+
 
 }

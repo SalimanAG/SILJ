@@ -17,10 +17,13 @@ import { RegisseurService } from '../../../../services/definition/regisseur.serv
 import { CorrespondantService } from '../../../../services/definition/correspondant.service';
 import { Correspondant } from '../../../../models/Correspondant.model';
 import { Magasinier } from '../../../../models/magasinier.model';
+import { Magasin } from '../../../../models/magasin.model';
 import { TypCorres } from '../../../../models/typCorres.model';
+import { Gerer } from '../../../../models/gerer.model';
 import { Regisseur } from '../../../../models/regisseur.model';
 import { Utilisateur } from '../../../../models/utilisateur.model';
 import { Service } from '../../../../models/service.model';
+import { Stocker } from '../../../../models/stocker.model';
 import { PointVenteService } from '../../../../services/saisie/point-vente.service';
 import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -41,6 +44,7 @@ export class PointVenteComponent implements OnInit {
   @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
+  @ViewChild('annulerPvModal') public annulerPvModal: ModalDirective;
 
   //
   @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
@@ -63,6 +67,10 @@ export class PointVenteComponent implements OnInit {
   new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
   new Utilisateur('','','','','',false, new Service('',''))) );
 
+  anulPointVente:PointVente = new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
+  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','','',false, new Service('',''))) );
+
   tempAddLignePointVente:LignePointVente[] = [];
   tempEditLignePointVente:LignePointVente[] = [];
   tempDeleteLignePointVente:LignePointVente[] = [];
@@ -82,6 +90,9 @@ export class PointVenteComponent implements OnInit {
   regisseur:Regisseur[] = [];
   correspondant:Correspondant[] = [];
   magasinier:Magasinier[] = [];
+  gererlist : Gerer [] = [];
+
+    gererli : Gerer [] = [];
 
   articlesOfAConcernedPointVenteAddingPv:Article[] = [];
   articlesOfAConcernedPointVenteEditingPv:Article[] = [];
@@ -197,7 +208,17 @@ export class PointVenteComponent implements OnInit {
         console.log('Erreur lors de la récupération de la liste des points ventes', erreur);
       }
     );
-    this.getAllArticle();
+    //this.getAllArticle();
+    this.serviceArticle.getAllArticle().subscribe(
+      (data) => {
+        this.articles = data;
+        this.dtTrigger2.next();
+        this.dtTrigger3.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des articles', erreur);
+      }
+    );
     this.getAllLignePointVente();
 
   }
@@ -270,7 +291,11 @@ export class PointVenteComponent implements OnInit {
     this.serviceArticle.getAllArticle().subscribe(
       (data) => {
         this.articles = data;
-      },
+        $('#tabListArt1').dataTable().api().destroy();
+        this.dtTrigger2.next();
+        $('#tabListArt2').dataTable().api().destroy();
+        this.dtTrigger3.next();
+      }, 
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des articles', erreur);
       }
@@ -290,6 +315,12 @@ export class PointVenteComponent implements OnInit {
   initDeletePointVente(inde:number){
     this.suprPointVente = this.pointVente[inde];
     this.deleteComModal.show();
+  }
+
+  initAnnulerPointVente(inde:number){
+
+    this.anulPointVente = this.pointVente[inde];
+    this.annulerPvModal.show();
   }
   
 
@@ -351,11 +382,15 @@ export class PointVenteComponent implements OnInit {
   }
 
   onSubmitAddPointVenteFormsGroup(){
+    var concernedStocker:Stocker = null
+    var magasinStock:Gerer = null ;
+    
 
     const newPointVente= new PointVente(this.addPointVenteFormGroup.value['addNumPv'],
     this.addPointVenteFormGroup.value['addDatePv'],false,
     this.serviceExercice.exoSelectionner, this.correspondant[this.addPointVenteFormGroup.value['addCorres']],
     this.regisseur[this.addPointVenteFormGroup.value['addReg']]);
+    newPointVente.validePoint = true;
     console.log(this.tempAddLignePointVente, newPointVente);
     this.servicePointVente.addPointVente(newPointVente).subscribe(
       (data) => {
@@ -366,12 +401,66 @@ export class PointVenteComponent implements OnInit {
           this.servicePointVente.addLignePointVente(element).subscribe(
             (data2) => {
               console.log('********',data2);
+              
 
             },
             (erreur) => {
               console.log('Erreur lors de la création de la ligne de point vente',erreur );
             }
           );
+
+           //Début reajustement de stock au sein du magasin du correspondant
+              this.serviceCorres.getAllGerer().subscribe(
+                (datagererlist) => {
+                  datagererlist.forEach(gererl =>{
+                    if(gererl.magasinier.numMAgasinier == this.correspondant[this.addPointVenteFormGroup.value['addCorres']].magasinier.numMAgasinier )
+                    {
+                       //this.gererli.push(gererl);
+                       magasinStock = gererl;
+                       exit;
+                    }
+    
+                  });
+
+                  //coding
+                  this.serviceCorres.getAllStocker().subscribe(
+                    (data) => {
+                      console.log('********',data);
+                      data.forEach(quant =>{
+                        if(element.article.codeArticle == quant.article.codeArticle && magasinStock.magasin.codeMagasin == quant.magasin.codeMagasin)
+                        {
+                          concernedStocker = quant;
+                          
+                          //concernedStocker.quantiterStocker = element;
+                          concernedStocker.quantiterStocker = concernedStocker.quantiterStocker+(- element.quantiteLignePointVente);
+                          this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
+                            (dataStock) => {
+                              console.log("QA",dataStock); 
+                              
+                            },
+                            (erreur) => {
+                              console.log('Erreur lors de la modification du Stocker pour réajustement du stock', erreur);
+                            }
+                          );
+        
+                        }
+        
+                      }); 
+                  
+                },
+                (erreur) => {
+                  console.log('Erreur lors de la liste gerer', erreur);
+                }
+    
+              );
+
+            },
+            (erreur) => {
+              console.log('Erreur lors de la liste gerer', erreur);
+            }
+
+          );
+              //Fin réajustement de stock
         });
         this.addPointVenteFormGroup.reset();
         this.initFormsGroup();
@@ -481,6 +570,7 @@ export class PointVenteComponent implements OnInit {
   
   
   }
+  
 
   initEditPointVente(inde:number){
     this.tempEditLignePointVente=[];
@@ -506,6 +596,7 @@ export class PointVenteComponent implements OnInit {
   }
 
   onConfirmDeletePointVente(){
+    
     this.getAllLignePointVente();
     let faled:boolean=false;
     this.lignePointVente.forEach(element => {
@@ -519,17 +610,18 @@ export class PointVenteComponent implements OnInit {
                 this.getAllLignePointVente();
               },
               (erreur) => {
-                console.log('Erreur lors de la suppression de la point vente', erreur);
+                console.log('Erreur lors de la suppression de point de vente', erreur);
               }
             );
           },
           (erreur) => {
-            console.log('Erreur lors de la suppression dUne ligne de point vente', erreur);
+            console.log('Erreur lors de la suppression dUne ligne de point de vente', erreur);
+            //faled=true;
           }
         );
       }
     });
-
+  
     if(faled==false){
       this.servicePointVente.deletePointVente(this.suprPointVente.numPointVente).subscribe(
         (data) => {
@@ -538,10 +630,116 @@ export class PointVenteComponent implements OnInit {
           this.getAllLignePointVente();
         },
         (erreur) => {
-          console.log('Erreur lors de la suppression de la commande', erreur);
+          console.log('Erreur lors de la suppression dU point de vente', erreur);
         }
       );
     }
+    
+
+  }
+
+  onConfirmAnnulerPointVente(){
+
+    this.serviceCorres.getAllGerer().subscribe(
+      (data) => {
+        let finded:boolean = false;
+        let concernedMagOfCorresp:Magasin = null;
+        data.forEach(element => {
+          if(element.magasinier.numMAgasinier == this.anulPointVente.correspondant.magasinier.numMAgasinier){
+            concernedMagOfCorresp = element.magasin;
+            finded = true;
+            exit;
+          }
+        });
+
+        if(finded){
+
+          const pv = new PointVente(this.anulPointVente.numPointVente, this.anulPointVente.datePointVente,false,
+            this.anulPointVente.exercice, this.anulPointVente.correspondant, this.anulPointVente.regisseur);
+          pv.validePoint = false;
+          //console.log('Element modifier',pla);
+          this.servicePointVente.editPointVente(this.anulPointVente.numPointVente, pv).subscribe(
+            (data2) => {
+
+              this.servicePointVente.getAllLignePointVente().subscribe(
+                (data3) => {
+
+                  data3.forEach(element3 => {
+                    if(element3.pointVente.numPointVente == data2.numPointVente){
+                      this.serviceCorres.getAllStocker().subscribe(
+                        (data4) => {
+                          let exist1:boolean = false;
+                          let exist2:boolean = false;
+                         // let concernedStockerCarvMairie:Stocker = null;
+                          let concernedStockerMagCorres:Stocker = null;
+                          data4.forEach(element4 => {
+                            /*if(element4.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
+                              concernedStockerCarvMairie = element4;
+                              exist1 = true;
+                              exit;
+                            }*/
+                            if(element4.magasin.codeMagasin == concernedMagOfCorresp.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
+                              concernedStockerMagCorres = element4;
+                              exist2 = true;
+                              exit;
+                            }
+
+                          });
+
+                          
+                          if(exist2){
+                            concernedStockerMagCorres.quantiterStocker+=element3.quantiteLignePointVente;
+                            this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lEdition dUn stock', erreur);
+                              }
+                            );
+                          }
+                          else{
+                            this.serviceCorres.addAStocker(new Stocker(element3.quantiteLignePointVente*(-1), 0, 0, 0, element3.article, concernedMagOfCorresp)).subscribe(
+                              (data5) => {
+
+                              },
+                              (erreur) => {
+                                console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                              }
+                            );
+                          }
+
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de la récupération des stockers', erreur);
+                        }
+                      );
+                    }
+                  });
+                },
+                (erreur) => {
+                  console.log('Erreur lors de la récupération de la liste des lignes de placement', erreur);
+                }
+              );
+
+              this.annulerPvModal.hide();
+              this.getAllPointVente();
+
+            },
+            (erreur) => {
+              console.log('Erreur lors de la modification du point de vente', erreur);
+            }
+          );
+        }
+        else{
+          console.log('Erreur !! Aucun magasin trouvé pour le correspondant concerné');
+        }
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des gérers', erreur);
+      }
+    );
 
   }
 
