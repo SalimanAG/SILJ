@@ -22,12 +22,12 @@ export const navItems: INavData[] = [
     icon: 'icon-puzzle',
     children: [
       {
-        name: 'Commune',
+        name: 'Espace',
         url: '/commune',
         icon: 'icon-puzzle'
       },
       {
-        name: 'Article',
+        name: 'Famille',
         url: '/article',
         icon: 'icon-puzzle'
       },

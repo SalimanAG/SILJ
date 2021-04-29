@@ -181,6 +181,8 @@ export class ImportationExportationComponent implements OnInit {
         this.dtTrigger1.next();
       }
 
+      this.toastr.success('Fichier Chargé avec Succès', 'Importation');
+
       //console.log('worksheet', worksheet);
       //console.log('sheet en JSON', this.feuille);
 
@@ -219,21 +221,25 @@ export class ImportationExportationComponent implements OnInit {
             (data) => {
               if(data == null){
                 console.log('le code de la ligne '+inde+' existe déjà');
+                //this.toastr.error('le code de la ligne '+inde+' existe déjà', 'Importation d\'unité');
               }
             },
             (erreur) => {
               console.log('Erreur lors de lAjout de la ligne '+inde, erreur);
+              this.toastr.error('Erreur lors de lAjout de la ligne '+inde+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation d\'unité');
               exit;
             }
           );
         }
         else {
           console.log('Erreur à la ligne '+inde+'Code ou libellé de Unité invalide');
+          this.toastr.error('Erreur à la ligne '+inde+'Code ou libellé de Unité invalide', 'Importation d\'unité');
           exit;
         }
 
         if(inde == this.feuille.length-1){
           console.log('Fin de lImportation, Importation réuissir');
+          this.toastr.success('Importation terminée avec Succès', 'Importation d\'unité');
         }
 
       });
@@ -251,17 +257,20 @@ export class ImportationExportationComponent implements OnInit {
             },
             (erreur) => {
               console.log('Erreur lors de lAjout de la ligne '+inde, erreur);
+              this.toastr.error('Erreur lors de lAjout de la ligne '+inde+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Famille');
               exit;
             }
           );
         }
         else {
           console.log('Erreur à la ligne '+inde+'Code ou libellé de Famille invalide');
+          this.toastr.error('Erreur à la ligne '+inde+'Code ou libellé de Famille invalide', 'Importation de Famille');
           exit;
         }
 
         if(inde == this.feuille.length-1){
           console.log('Fin de lImportation, Importation réuissir');
+          this.toastr.success('Importation terminée avec Succès', 'Importation de Famille');
         }
 
       });
@@ -269,18 +278,6 @@ export class ImportationExportationComponent implements OnInit {
     }
     else if(this.repport1FormsGroup.value['rep1Element'] == 2){
       //Il s'agit d'Article
-      /*
-              <th>Code</th>
-              <th>Libellé</th>
-              <th>Prix</th>
-              <th>Couleur</th>
-              <th>Livrable(OUI ou NON)</th>
-              <th>Numéroté(OUI ou NON)</th>
-              <th>Stockable(OUI ou NON)</th>
-              <th>Consommable(OUI ou NON)</th>
-              <th>Code Famille</th>
-              <th>Code Unité</th>
-      */
 
       this.serviceArticle.getAllFamille().subscribe(
         (data1) => {
@@ -308,6 +305,7 @@ export class ImportationExportationComponent implements OnInit {
 
                     if(!finded1){
                       console.log('Le code de Famille à la ligne '+inde+' nExiste pas. Importation interrompu.');
+                      this.toastr.error('Le code de Famille à la ligne '+inde+' n\'Existe pas. Importation interrompu.', 'Importation d\'Article');
                       return;
                     }
 
@@ -322,6 +320,7 @@ export class ImportationExportationComponent implements OnInit {
 
                     if(!finded2){
                       console.log('Le code dUnité à la ligne '+inde+' nExiste pas. Importation interrompu.');
+                      this.toastr.error('Le code dUnité à la ligne '+inde+' n\'Existe pas. Importation interrompu.', 'Importation d\'Article');
                       return;
                     }
 
@@ -337,17 +336,20 @@ export class ImportationExportationComponent implements OnInit {
                     },
                     (erreur) => {
                       console.log('Erreur lors de lAjout de la ligne '+inde, erreur);
+                      this.toastr.error('Erreur lors de l\'Ajout de la ligne '+inde+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation d\'Article');
                       exit;
                     }
                   );
                 }
                 else {
                   console.log('Erreur à la ligne '+inde+'invalidité dUne information');
+                  this.toastr.error('Erreur à la ligne '+inde+'. Invalidité d\'Une information', 'Importation d\'Article');
                   exit;
                 }
 
                 if(inde == this.feuille.length-1){
                   console.log('Fin de lImportation, Importation réuissir');
+                  this.toastr.success('Importation terminée avec Succès', 'Importation d\'Article');
                 }
 
               });
@@ -356,11 +358,13 @@ export class ImportationExportationComponent implements OnInit {
             },
             (erreur) => {
               console.log('Erreur lors de la récupération des Unités', erreur);
+              this.toastr.error('Erreur lors de la récupération des Unités'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation d\'Article');
             }
           );
         },
         (erreur) => {
           console.log('Erreur lors de la récupération des familles', erreur);
+          this.toastr.error('Erreur lors de la récupération des familles'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation d\'Article');
         }
       );
 
@@ -386,6 +390,7 @@ export class ImportationExportationComponent implements OnInit {
 
               if(!finded1){
                 console.log('Le code de Commune à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+                this.toastr.error('Le code de Commune à la ligne '+(inde+1)+' n\'Existe pas. Importation interrompue.', 'Importation d\'Arrondissement');
                 return;
               }
 
@@ -398,17 +403,20 @@ export class ImportationExportationComponent implements OnInit {
                 },
                 (erreur) => {
                   console.log('Erreur lors de lAjout de la ligne '+(inde+1), erreur);
+                  this.toastr.error('Erreur lors de l`\'Ajout de la ligne '+(inde+1)+'. Importation interrompu.', 'Importation d\'Arrondissement');
                   exit;
                 }
               );
             }
             else {
-              console.log('Erreur à la ligne '+inde+'Code ou libellé ou Code Commune de lArrondissement est invalide');
+              console.log('Erreur à la ligne '+(inde+1)+'Code ou libellé ou Code Commune de lArrondissement est invalide');
+              this.toastr.error('Erreur à la ligne '+(inde+1)+'. Code ou libellé ou Code Commune de l\'Arrondissement est invalide'+'. Importation interrompu.', 'Importation d\'Arrondissement');
               exit;
             }
 
             if(inde == this.feuille.length-1){
               console.log('Fin de lImportation, Importation réuissir');
+              this.toastr.success('Importation terminée avec Succès', 'Importation d\'Arrondissement');
             }
 
           });
@@ -417,6 +425,7 @@ export class ImportationExportationComponent implements OnInit {
         },
         (erreur) => {
           console.log('Erreur lors de la récupération des communes', erreur);
+          this.toastr.error('Erreur lors de la récupération des communes'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation d\'Arrondissement');
         }
       );
 
