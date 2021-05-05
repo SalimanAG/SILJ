@@ -214,35 +214,44 @@ export class ImportationExportationComponent implements OnInit {
 
     if(this.repport1FormsGroup.value['rep1Element'] == 0){
       //Il s'agit d'uniter
-      this.feuille.forEach((element, inde) => {
-        if(element[0] != undefined && element[1] != ''){
+      console.log(this.feuille);
+      let inde:number = 0;
+      for(const element of this.feuille) {
+        inde++;
+        if(element[0] != undefined && element[1] != undefined){
           let uniter = new Uniter(element[0], element[1]);
-          this.serviceArticle.addAUniter(uniter).subscribe(
-            (data) => {
-              if(data == null){
-                console.log('le code de la ligne '+inde+' existe déjà');
-                //this.toastr.error('le code de la ligne '+inde+' existe déjà', 'Importation d\'unité');
+          (function(i, serviceArticle, toastr, nbrLigne){
+            serviceArticle.addAUniter(uniter).subscribe(
+              (data) => {
+                if(data == null){
+                  console.log('le code de la ligne '+i+' existe déjà');
+                  //this.toastr.error('le code de la ligne '+inde+' existe déjà', 'Importation d\'unité');
+                }
+
+                if(i == nbrLigne){
+                  console.log('Fin de lImportation, Importation réuissir');
+                  toastr.success('Importation éffectuée avec Succès', 'Importation d\'unité');
+                }
+
+              },
+              (erreur) => {
+                console.log('Erreur lors de lAjout de la ligne '+i, erreur);
+                toastr.error('Erreur lors de l\'Ajout de la ligne '+(i)+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation d\'unité');
+                return 1;
               }
-            },
-            (erreur) => {
-              console.log('Erreur lors de lAjout de la ligne '+inde, erreur);
-              this.toastr.error('Erreur lors de lAjout de la ligne '+inde+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation d\'unité');
-              exit;
-            }
-          );
+            );
+
+          })(inde, this.serviceArticle, this.toastr, this.feuille.length);
+
         }
         else {
           console.log('Erreur à la ligne '+inde+'Code ou libellé de Unité invalide');
-          this.toastr.error('Erreur à la ligne '+inde+'Code ou libellé de Unité invalide', 'Importation d\'unité');
-          exit;
+          this.toastr.error('Erreur à la ligne '+(inde)+' Code ou libellé de Unité invalide', 'Importation d\'unité');
+          return;
         }
 
-        if(inde == this.feuille.length-1){
-          console.log('Fin de lImportation, Importation réuissir');
-          this.toastr.success('Importation terminée avec Succès', 'Importation d\'unité');
-        }
 
-      });
+      }
     }
     else if(this.repport1FormsGroup.value['rep1Element'] == 1){
       //Il s'agit de famille
@@ -270,7 +279,7 @@ export class ImportationExportationComponent implements OnInit {
 
         if(inde == this.feuille.length-1){
           console.log('Fin de lImportation, Importation réuissir');
-          this.toastr.success('Importation terminée avec Succès', 'Importation de Famille');
+          this.toastr.success('Fichier d\'Importation traité avec Succès', 'Importation de Famille');
         }
 
       });

@@ -23,11 +23,13 @@ import { Utilisateur } from '../../../../models/utilisateur.model';
 import { Service } from '../../../../models/service.model';
 import { RecollementService } from '../../../../services/saisie/recollement.service';
 import { Magasin } from '../../../../models/magasin.model';
+import { Stocker } from '../../../../models/stocker.model';
 
 import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-recollement',
@@ -44,6 +46,7 @@ export class RecollementComponent implements OnInit {
   @ViewChild('deleteComModal') public deleteComModal: ModalDirective;
   @ViewChild('addArticle1') public addArticle1: ModalDirective;
   @ViewChild('addArticle2') public addArticle2: ModalDirective;
+  @ViewChild('annulerRecollementModal') public annulerRecollementModal: ModalDirective;
 
   //
   @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
@@ -58,23 +61,24 @@ export class RecollementComponent implements OnInit {
   recollement:Recollement[] = [];
   addRecollementFormGroup:FormGroup;
   editRecollementFormGroup:FormGroup;
-  editRecollement:Recollement = new Recollement('','',new Date(), new Magasin('',''), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))), new Exercice('', '', new Date(), new Date(), '', false));
+  editRecollement:Recollement = new Recollement('','',new Date(), new Magasin('',''),new Magasin('',''), new Exercice('', '', new Date(), new Date(), '', false));
+  annulRecollement:Recollement = new Recollement('','',new Date(), new Magasin('',''),new Magasin('',''), new Exercice('', '', new Date(), new Date(), '', false));
 
-  suprRecollement:Recollement = new Recollement('','',new Date(), new Magasin('',''), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))), new Exercice('', '', new Date(), new Date(), '', false));
+  suprRecollement:Recollement = new Recollement('','',new Date(), new Magasin('',''), new Magasin('',''), new Exercice('', '', new Date(), new Date(), '', false));
+
+  //
+  concernedRegisse:Regisseur = new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','','',false, new Service('','')));
 
   tempAddLigneRecollement:LigneRecollement[] = [];
   tempEditLigneRecollement:LigneRecollement[] = [];
   tempDeleteLigneRecollement:LigneRecollement[] = [];
 
   ligneRecollement:LigneRecollement[] = [];
-  editLigneRecollement :LigneRecollement = new LigneRecollement(0,0,'',new Recollement('','',new Date(), new Magasin('',''), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))), new Exercice('', '', new Date(), new Date(), '', false)),
+  editLigneRecollement :LigneRecollement = new LigneRecollement(0,0,'',new Recollement('','',new Date(), new Magasin('',''), new Magasin('',''), new Exercice('', '', new Date(), new Date(), '', false)),
   new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')));
 
-  suprLigneRecollement :LigneRecollement = new LigneRecollement(0,0,'',new Recollement('','',new Date(), new Magasin('',''), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))), new Exercice('', '', new Date(), new Date(), '', false)),
+  suprLigneRecollement :LigneRecollement = new LigneRecollement(0,0,'',new Recollement('','',new Date(), new Magasin('',''), new Magasin('',''), new Exercice('', '', new Date(), new Date(), '', false)),
   new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')));
 
   exercices:Exercice[] = [];
@@ -83,6 +87,8 @@ export class RecollementComponent implements OnInit {
   correspondant:Correspondant[] = [];
   magasinier:Magasinier[] = [];
   magasin:Magasin[] = [];
+  coresp: Correspondant[] = [];
+  magasinMairieTresor: Magasin[] = [];
 
   articlesOfAConcernedRecollementAddingRecoll:Article[] = [];
   articlesOfAConcernedRecollementEditingRecoll:Article[] = [];
@@ -163,16 +169,16 @@ export class RecollementComponent implements OnInit {
       addNumRecoll:['RL-200000005', Validators.required],
       addDateRecoll:[new Date().toISOString().substring(0, 10), Validators.required], 
       addDesRecoll:'', 
-      addMag:[0, Validators.required],
-      addReg:[0, Validators.required]
+      addMagasinSource:[0, Validators.required],
+      addMagasinDestination:[0, Validators.required]
     });
 
     this.editRecollementFormGroup = this.formBulder.group({
       editNumRecoll:['', Validators.required],
       editDateRecoll:[new Date(), Validators.required], 
       editDesRecoll:'', 
-      editMag:[0, Validators.required],
-      editReg:[0, Validators.required]
+      editMagasinSource:[0, Validators.required],
+      editMagasinDestination:[0, Validators.required]
     });
   }
 
@@ -183,6 +189,53 @@ export class RecollementComponent implements OnInit {
     this.getAllMagasin();
     this.getAllLigneRecollement();
 
+    //
+    this.serviceRegisseur.getAllRegisseur().subscribe(
+      (data) => {
+        this.regisseur = data;
+        this.regisseur.forEach(element => {
+         // console.log(element, this.serviceUtilisateur.connectedUser);
+         // if(this.serviceUtilisateur.connectedUser.idUtilisateur === element.utilisateur.idUtilisateur){
+            
+          //}
+          this.concernedRegisse = element;
+            exit;
+        });
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des régisseurs', erreur);
+      }
+    );
+
+    this.serviceCorrespodant.getAllCorres().subscribe(
+      (data) => {
+        this.coresp = data;  
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des correspondants', erreur);
+      }
+    );
+
+    //Get CM and Carveau Mairie and Caveau Trésor
+    this.serviceCorrespodant.getAllMagasin().subscribe(
+      (data) => {
+        data.forEach(element =>{
+          if(element.codeMagasin == 'CM' || element.codeMagasin == 'CT'){
+
+            this.magasinMairieTresor.push(element);
+
+          }
+
+        });
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des magasin', erreur);
+      }
+    );
+
     this.serviceRecollement.getAllRecollement().subscribe(
       (data) => {
         this.recollement = data;
@@ -192,7 +245,54 @@ export class RecollementComponent implements OnInit {
         console.log('Erreur lors de la récupération de la liste des recollements', erreur);
       }
     );
+
+    this.serviceArticle.getAllArticle().subscribe(
+      (data) => {
+        this.articles = data;
+        this.dtTrigger2.next();
+        this.dtTrigger3.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des articles', erreur);
+      }
+    );
+
+   
   }
+
+
+  // Recuperation du magasin destinataire en fonction du magasin source
+  getMagasinDest(){
+    
+    if(this.magasin[this.addRecollementFormGroup.value['addMagasinSource']].codeMagasin == 'CM'){
+      this.magasinMairieTresor = [];
+      this.serviceCorrespodant.getAMagasinById('CT').subscribe(
+        (data) => {
+          this.magasinMairieTresor.push(data);
+        },
+        (erreur) => {
+          console.log('Erreur lors de la récupération de la liste des magasins', erreur);
+        }
+  
+      );
+    }
+    else
+    {
+      this.magasinMairieTresor = [];
+      this.serviceCorrespodant.getAMagasinById('CM').subscribe(
+        (data) => {
+          this.magasinMairieTresor.push(data);
+        },
+        (erreur) => {
+          console.log('Erreur lors de la récupération de la liste des magasins', erreur);
+        }
+  
+      );
+    }
+   
+    
+  }
+
 
   getAllExercice(){
     this.serviceExercice.getAllExo().subscribe(
@@ -208,7 +308,13 @@ export class RecollementComponent implements OnInit {
   getAllMagasin(){
     this.serviceCorrespodant.getAllMagasin().subscribe(
       (data) => {
-        this.magasin = data;
+        data.forEach( magaRecoll =>{
+          if(magaRecoll.codeMagasin != 'CT'){
+            this.magasin.push(magaRecoll);
+          }
+
+        });
+
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des exercices', erreur);
@@ -232,6 +338,10 @@ export class RecollementComponent implements OnInit {
     this.serviceArticle.getAllArticle().subscribe(
       (data) => {
         this.articles = data;
+        $('#tabListArt1').dataTable().api().destroy();
+        this.dtTrigger2.next();
+        $('#tabListArt2').dataTable().api().destroy();
+        this.dtTrigger3.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des articles', erreur);
@@ -278,6 +388,12 @@ export class RecollementComponent implements OnInit {
     this.deleteComModal.show();
   }
 
+  initAnnulerRecollement(inde:number){
+
+    this.annulRecollement = this.recollement[inde];
+    this.annulerRecollementModal.show();
+  }
+
   onShowAddArticleModalAddingRecollement(){
    
     this.addArticle1.show();
@@ -310,8 +426,7 @@ addArticleForAddingOfRecollement(inde:number){
 
   if(exist===false){
     this.tempAddLigneRecollement.push(new LigneRecollement(0, this.articles[inde].prixVenteArticle, '',
-      new Recollement('','',new Date(), new Magasin('',''), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))), new Exercice('', '', new Date(), new Date(), '', false)),
+      new Recollement('','',new Date(), new Magasin('',''), new Magasin('','') , new Exercice('', '', new Date(), new Date(), '', false)),
       this.articles[inde]));
   }
 
@@ -329,8 +444,7 @@ addArticleForEditingOfRecollement(inde:number){
 
   if(exist===false){
     this.tempEditLigneRecollement.push(new LigneRecollement(0, this.articles[inde].prixVenteArticle, '',
-    new Recollement('','',new Date(), new Magasin('',''), new Regisseur('',new Magasinier('','',''),
-    new Utilisateur('','','','','',false, new Service('',''))), new Exercice('', '', new Date(), new Date(), '', false)),
+    new Recollement('','',new Date(), new Magasin('',''), new Magasin('',''), new Exercice('', '', new Date(), new Date(), '', false)),
       this.articles[inde]));
   }
 
@@ -340,9 +454,9 @@ onSubmitAddRecollementFormsGroup(){
 
   const newRecoll= new Recollement(this.addRecollementFormGroup.value['addNumRecoll'],
   this.addRecollementFormGroup.value['addDesRecoll'],this.addRecollementFormGroup.value['addDateRecoll'],
-   this.magasin[this.addRecollementFormGroup.value['addMag']],
-  this.regisseur[this.addRecollementFormGroup.value['addReg']],this.serviceExercice.exoSelectionner);
-  console.log(this.tempAddLigneRecollement, newRecoll);
+  this.magasin[this.addRecollementFormGroup.value['addMagasinSource']],
+  this.magasinMairieTresor[this.addRecollementFormGroup.value['addMagasinDestination']],this.serviceExercice.exoSelectionner);
+  
   this.serviceRecollement.addRecollement(newRecoll).subscribe(
     (data) => {
       console.log('********',data);
@@ -358,6 +472,79 @@ onSubmitAddRecollementFormsGroup(){
             console.log('Erreur lors de la création de la ligne de recollement',erreur );
           }
         );
+
+        //Modification du stock à l'issue du recollement au sein des deux magasins
+
+        this.serviceCorrespodant.getAllStocker().subscribe(
+          (data3) => {
+            let exist1:boolean = false;
+            let exist2:boolean = false;
+            let concernedStockerMagasinSource:Stocker = null; // magasin source
+            let concernedStockerMagasinDestinataire:Stocker = null; //magasin destinataire
+            data3.forEach(element3 => {
+              if(element3.magasin.codeMagasin == this.magasin[this.addRecollementFormGroup.value['addMagasinSource']].codeMagasin && element3.article.codeArticle == element.article.codeArticle){
+                concernedStockerMagasinSource = element3;
+                exist1 = true;
+                exit;
+              }
+              if(element3.magasin.codeMagasin == this.magasinMairieTresor[this.addRecollementFormGroup.value['addMagasinDestination']].codeMagasin && element3.article.codeArticle == element.article.codeArticle){
+                concernedStockerMagasinDestinataire = element3;
+                exist2 = true;
+                exit;
+              }
+
+            });
+
+            if(exist1){
+              concernedStockerMagasinSource.quantiterStocker-=element.quantiteLigneRecollement;
+              this.serviceCorrespodant.editAStocker(concernedStockerMagasinSource.idStocker.toString(), concernedStockerMagasinSource).subscribe(
+                (data4) => {
+
+                },
+                (erreur) => {
+                  console.log('Erreur lors de lEdition dUn stock', erreur);
+                }
+              );
+            }
+            else{
+              this.serviceCorrespodant.addAStocker(new Stocker(element.quantiteLigneRecollement*(-1), 0, 0, 0, element.article, this.magasin[this.addRecollementFormGroup.value['addMagasinSource']])).subscribe(
+                (data4) => {
+
+                },
+                (erreur) => {
+                  console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                }
+              );
+            }
+
+            if(exist2){
+              concernedStockerMagasinDestinataire.quantiterStocker+=element.quantiteLigneRecollement;
+              this.serviceCorrespodant.editAStocker(concernedStockerMagasinDestinataire.idStocker.toString(), concernedStockerMagasinDestinataire).subscribe(
+                (data4) => {
+
+                },
+                (erreur) => {
+                  console.log('Erreur lors de lEdition dUn stock', erreur);
+                }
+              );
+            }
+            else{
+              this.serviceCorrespodant.addAStocker(new Stocker(element.quantiteLigneRecollement, 0, 0, 0, element.article, this.magasinMairieTresor[this.addRecollementFormGroup.value['addMagasinDestination']])).subscribe(
+                (data4) => {
+
+                },
+                (erreur) => {
+                  console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                }
+              );
+            }
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération de la liste des stockés', erreur);
+          }
+        );
+        //
       });
       this.addRecollementFormGroup.reset();
       this.initFormsGroup();
@@ -375,8 +562,8 @@ onSubmitAddRecollementFormsGroup(){
 onSubmitEditRecollementFormsGroup(){
   const newRecoll= new Recollement(this.editRecollementFormGroup.value['editNumRecoll'],
   this.editRecollementFormGroup.value['editDesRecoll'], this.editRecollementFormGroup.value['editDateRecoll'],
-   this.magasin[this.editRecollementFormGroup.value['editMag']],
-  this.regisseur[this.editRecollementFormGroup.value['editReg']],this.serviceExercice.exoSelectionner);
+   this.magasin[this.editRecollementFormGroup.value['editMagasinSource']],
+  this.magasinMairieTresor[this.editRecollementFormGroup.value['editMagasinDestination']],this.serviceExercice.exoSelectionner);
 
   let oldRecollementLines:LigneRecollement[] = [];
 
@@ -529,6 +716,109 @@ onConfirmDeleteRecollement(){
 
 }
 
+onConfirmAnnulerRecollement(){
+
+        const Recoll = new Recollement(this.annulRecollement.numRecollement, this.annulRecollement.descriptionRecollement,
+          this.annulRecollement.dateRecollement, this.annulRecollement.magasinSource, this.annulRecollement.magasinDestination, this.annulRecollement.exercice);
+          Recoll.valideRecol = false;
+        //console.log('Element modifier',pla);
+        this.serviceRecollement.editRecollement(this.annulRecollement.numRecollement, Recoll).subscribe(
+          (data2) => {
+
+            this.serviceRecollement.getAllLigneRecollement().subscribe(
+              (data3) => {
+
+                data3.forEach(element3 => {
+                  if(element3.recollement.numRecollement == data2.numRecollement){
+                    this.serviceCorrespodant.getAllStocker().subscribe(
+                      (data4) => {
+                        let exist1:boolean = false;
+                        let exist2:boolean = false;
+                        let concernedStockerMagasinSource:Stocker = null;
+                        let concernedStockerMagasinDestinataire:Stocker = null;
+                        data4.forEach(element4 => {
+                          if(element4.magasin.codeMagasin == element3.recollement.magasinSource.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
+                            concernedStockerMagasinSource = element4;
+                            exist1 = true;
+                            exit;
+                          }
+                          if(element4.magasin.codeMagasin == element3.recollement.magasinDestination.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
+                            concernedStockerMagasinDestinataire = element4;
+                            exist2 = true;
+                            exit;
+                          }
+
+                        });
+
+                        if(exist1){
+                          concernedStockerMagasinSource.quantiterStocker+=element3.quantiteLigneRecollement;
+                          this.serviceCorrespodant.editAStocker(concernedStockerMagasinSource.idStocker.toString(), concernedStockerMagasinSource).subscribe(
+                            (data5) => {
+
+                            },
+                            (erreur) => {
+                              console.log('Erreur lors de lEdition dUn stock', erreur);
+                            }
+                          );
+                        }
+                        else{
+                          this.serviceCorrespodant.addAStocker(new Stocker(element3.quantiteLigneRecollement, 0, 0, 0, element3.article, element3.recollement.magasinSource)).subscribe(
+                            (data6) => {
+
+                            },
+                            (erreur) => {
+                              console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                            }
+                          );
+                        }
+
+                        if(exist2){
+                          concernedStockerMagasinDestinataire.quantiterStocker-=element3.quantiteLigneRecollement;
+                          this.serviceCorrespodant.editAStocker(concernedStockerMagasinDestinataire.idStocker.toString(), concernedStockerMagasinDestinataire).subscribe(
+                            (data7) => {
+
+                            },
+                            (erreur) => {
+                              console.log('Erreur lors de lEdition dUn stock', erreur);
+                            }
+                          );
+                        }
+                        else{
+                          this.serviceCorrespodant.addAStocker(new Stocker(element3.quantiteLigneRecollement*(-1), 0, 0, 0, element3.article, element3.recollement.magasinDestination)).subscribe(
+                            (data8) => {
+
+                            },
+                            (erreur) => {
+                              console.log('Erreur lors de lAjout dUn Stocker', erreur);
+                            }
+                          );
+                        }
+
+                      },
+                      (erreur) => {
+                        console.log('Erreur lors de la récupération des stockers', erreur);
+                      }
+                    );
+                  }
+                });
+              },
+              (erreur) => {
+                console.log('Erreur lors de la récupération de la liste des lignes de placement', erreur);
+              }
+            );
+
+            this.annulerRecollementModal.hide();
+            this.getAllRecollement();
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la modification du placement', erreur);
+          }
+        );
+        //this.editRecollement.magasinSource.libMagasin
+     
+}
+
 initPrintPdfOfRecollement(inde:number){
   const commande = this.recollement[inde];
   const doc = new jsPDF();
@@ -565,10 +855,11 @@ initPrintPdfOfRecollement(inde:number){
   doc.text('RECOLLEMENT', 62, 30);
   doc.setFontSize(14);
   doc.text('Référence : '+commande.numRecollement, 15, 45);
-  doc.text('Magasin : '+commande.magasin.libMagasin, 15, 55);
-  doc.text('Description : '+commande.descriptionRecollement, 15, 65);
-  doc.text('Régisseur : '+commande.regisseur.magasinier.nomMagasinier+' '+
-  commande.regisseur.magasinier.prenomMagasinier, 15, 75);
+  doc.text('Magasin Source : '+commande.magasinSource.codeMagasin+' - '+
+  commande.magasinSource.libMagasin, 15, 55);
+  doc.text('Magasin Destinataire : '+commande.magasinDestination.codeMagasin+' - '+
+  commande.magasinDestination.libMagasin, 15, 65);
+  doc.text('Description : '+commande.descriptionRecollement, 15, 75);
   doc.text('Date : '+moment(commande.dateRecollement).format('DD/MM/YYYY'), 145, 45);
   
  

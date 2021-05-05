@@ -425,24 +425,39 @@ export class PointVenteComponent implements OnInit {
                   //coding
                   this.serviceCorres.getAllStocker().subscribe(
                     (data) => {
+                      let exist1:boolean = false;
                       console.log('********',data);
                       data.forEach(quant =>{
                         if(element.article.codeArticle == quant.article.codeArticle && magasinStock.magasin.codeMagasin == quant.magasin.codeMagasin)
                         {
                           concernedStocker = quant;
+                          exist1 = true;
                           
-                          //concernedStocker.quantiterStocker = element;
-                          concernedStocker.quantiterStocker = concernedStocker.quantiterStocker+(- element.quantiteLignePointVente);
-                          this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
-                            (dataStock) => {
-                              console.log("QA",dataStock); 
-                              
+                         
+        
+                        }
+                        if(exist1){
+                           //concernedStocker.quantiterStocker = element;
+                           concernedStocker.quantiterStocker = concernedStocker.quantiterStocker+(- element.quantiteLignePointVente);
+                           this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
+                             (dataStock) => {
+                               console.log("QA",dataStock); 
+                               
+                             },
+                             (erreur) => {
+                               console.log('Erreur lors de la modification du Stocker pour réajustement du stock', erreur);
+                             }
+                           );
+                        }
+                        else{
+                          this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePointVente*(-1), 0, 0, 0, element.article,magasinStock.magasin)).subscribe(
+                            (data4) => {
+            
                             },
                             (erreur) => {
-                              console.log('Erreur lors de la modification du Stocker pour réajustement du stock', erreur);
+                              console.log('Erreur lors de lAjout dUn Stocker', erreur);
                             }
                           );
-        
                         }
         
                       }); 
@@ -699,7 +714,7 @@ export class PointVenteComponent implements OnInit {
                             );
                           }
                           else{
-                            this.serviceCorres.addAStocker(new Stocker(element3.quantiteLignePointVente*(-1), 0, 0, 0, element3.article, concernedMagOfCorresp)).subscribe(
+                            this.serviceCorres.addAStocker(new Stocker(element3.quantiteLignePointVente, 0, 0, 0, element3.article, concernedMagOfCorresp)).subscribe(
                               (data5) => {
 
                               },

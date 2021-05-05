@@ -81,7 +81,7 @@
                       <div class="form-group col-sm-4">
                         <label for="addReg">Régisseur</label>
                         <select id="addReg" name="addReg" class="form-control"
-                        formControlName="addReg">
+                        formControlName="addReg" disabled>
                           <option *ngFor="let reg of regisseur; let i = index" [value]="i">
                             {{ reg.idRegisseur }} - {{ reg.magasinier.nomMagasinier }} {{ reg.magasinier.prenomMagasinier }}
                           </option>
@@ -102,7 +102,7 @@
                               <th>Prix Unit.</th>
                               <th>Quantité</th>
                               <th>Montant</th>
-                              <th>Quittance</th>
+                              <th>N° Quittance</th>
                               <th>Date Quittance</th>
                               <th>Bénéficiaire</th>
                               <th>Observation</th>
@@ -190,7 +190,7 @@
                           <th>Prix Unit.</th>
                           <th>Quantité</th>
                           <th>Montant</th>
-                          <th>Quittance</th>
+                          <th>N° Quittance</th>
                           <th>Date Quittance</th>
                           <th>Bénéficiaire</th>
                           <th>Observation</th>
@@ -267,7 +267,7 @@
   
               <div class="card" style="margin: 0;">
                 <div class="card-body">
-                  <table class="table table-striped" id="tabListArt"
+                  <table class="table table-striped" id="tabListArt1"
                     datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2">
                     <thead>
                       <tr>
@@ -294,7 +294,7 @@
   
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+            <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Ok</button>
   
           </div>
         </div><!-- /.modal-content -->
@@ -316,8 +316,8 @@
   
               <div class="card" style="margin: 0;">
                 <div class="card-body">
-                    <table class="table table-striped"
-                    > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
+                    <table class="table table-striped" id="tabListArt2"
+                    datatable [dtOptions]="dtOptions3" [dtTrigger]="dtTrigger3">
                     <thead>
                       <tr>
                         <th>Code</th>
@@ -343,7 +343,7 @@
   
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+            <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Ok</button>
   
           </div>
         </div><!-- /.modal-content -->

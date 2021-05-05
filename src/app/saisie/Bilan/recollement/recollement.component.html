@@ -15,22 +15,22 @@
                     <th>Numéro</th>
                     <th>Date </th>
                     <th>Description</th>
-                    <th>Magasin</th>
-                    <th>Régisseur</th>
+                    <th>Magasin Source</th>
+                    <th>Magasin Destinataire</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let recoll of recollement; let i = index">
                     <td>{{ recoll.numRecollement }}</td>
-                    <td>{{ recoll.dateRecollement }}</td>
+                    <td>{{ recoll.dateRecollement | date : "dd/MM/y" }}</td>
                     <td>{{ recoll.descriptionRecollement }}</td>
-                    <td>{{ recoll.magasin.libMagasin }}</td>
-                    <td>{{ recoll.regisseur.magasinier.nomMagasinier }}  {{ recoll.regisseur.magasinier.prenomMagasinier }} </td> 
+                    <td>{{ recoll.magasinSource.codeMagasin }} - {{ recoll.magasinSource.libMagasin }} </td>
+                    <td>{{  recoll.magasinDestination.codeMagasin }} - {{ recoll.magasinDestination.libMagasin }} </td> 
                     <td>
                         <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditRecollement(i)"><span class="fa fa-edit"></span></button>
-                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteRecollement(i)"><span class="fa fa-trash"></span></button>
-                        <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
+                        <button *ngIf="!recoll.valideRecol" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteRecollement(i)"><span class="fa fa-trash"></span></button>
+                        <button *ngIf="recoll.valideRecol" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerRecollement(i)"><span class="fa fa-undo"></span></button>
                         <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfRecollement(i)"><span class="fa fa-file-o"></span></button>
                         <!--Le bouton des options-->
                         <div class="btn-group" dropdown>
@@ -54,8 +54,8 @@
                     <th>Numéro</th>
                     <th>Date </th>
                     <th>Description</th>
-                    <th>Magasin</th>
-                    <th>Régisseur</th>
+                    <th>Magasin Source</th>
+                    <th>Magasin Destinataire</th>
                     <th>Actions</th>
                 </tr>
             </tfoot>
@@ -95,22 +95,33 @@
   
                     <div class="row">
                       <div class="form-group col-sm-6">
-                        <label for="addMag">Magasin</label>
-                          <select id="addMag" name="addMag" class="form-control"
-                          formControlName="addMag">
+                        <label for="addMagasinSource">Magasin source</label>
+                          <select id="addMagasinSource" name="addMagasinSource" class="form-control"
+                          formControlName="addMagasinSource" (click)="getMagasinDest()">
                             <option *ngFor="let mag of magasin; let i = index" [value]="i">
                               {{ mag.codeMagasin }} - {{ mag.libMagasin }}
                             </option>
                           </select>
+                          <!--select id="addMag" name="addMag" class="form-control"
+                          formControlName="addMag">
+                            <option *ngFor="let corres of coresp; let i = index" [value]="i">
+                              {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
+                            </option>
+                            <option  [value]="CM"> Carveaux Mairie </option>
+                          </select-->
                       </div>
                       <div class="form-group col-sm-6">
-                        <label for="addReg">Régisseur</label>
-                        <select id="addReg" name="addReg" class="form-control"
-                        formControlName="addReg">
-                          <option *ngFor="let reg of regisseur; let i = index" [value]="i">
-                            {{ reg.idRegisseur }} - {{ reg.magasinier.nomMagasinier }} {{ reg.magasinier.prenomMagasinier }}
+                        <label for="addMagasinDestination">Magasin destinataire</label>
+                        <select id="addMagasinDestination" name="addMagasinDestination" class="form-control"
+                        formControlName="addMagasinDestination" disabled>
+                          <option *ngFor="let regTre of magasinMairieTresor; let i = index" [value]="i">
+                            {{ regTre.codeMagasin }} - {{ regTre.libMagasin }} 
                           </option>
                         </select>
+                        <!--input type="text" class="form-control" id="addRegiConcerned" readonly
+                        [ngModel]="concernedRegisse.idRegisseur.concat(' - '.concat(concernedRegisse.magasinier.nomMagasinier.concat(' '.concat(concernedRegisse.magasinier.prenomMagasinier.valueOf()))))" placeholder="Régisseur Concerné"
+                         [ngModelOptions]="{standalone: true}"-->
+
                       </div>
                     </div><!--/.row-->
                     <div class="row">
@@ -192,22 +203,26 @@
 
                   <div class="row">
                     <div class="form-group col-sm-6">
-                      <label for="editMag">Magasin</label>
-                        <select id="editMag" name="editMag" class="form-control"
-                        formControlName="editMag">
+                      <label for="editMagasinSource">Magasin Source</label>
+                        <!--select id="editMagasinSource" name="editMagasinSource" class="form-control"
+                        formControlName="editMagasinSource">
                           <option *ngFor="let mag of magasin; let i = index" [value]="i">
                             {{ mag.codeMagasin }} - {{ mag.libMagasin }}
                           </option>
-                        </select>
+                        </select-->
+                        <input type="text" class="form-control" id="editMagasinSource" readonly="true"
+                        formControlName="editMagasinSource" [ngModel]="editRecollement.magasinSource.codeMagasin.concat(' - '.concat(editRecollement.magasinSource.libMagasin)) " autocomplete="off">
                     </div>
                     <div class="form-group col-sm-6">
-                      <label for="editReg">Régisseur</label>
-                      <select id="editReg" name="editReg" class="form-control"
-                      formControlName="editReg">
-                        <option *ngFor="let reg of regisseur; let i = index" [value]="i">
-                          {{ reg.idRegisseur }} - {{ reg.magasinier.nomMagasinier }} {{ reg.magasinier.prenomMagasinier }}
+                      <label for="editMagasinDestination">Magasin Destinataire</label>
+                      <!--select id="editMagasinDestination" name="editMagasinDestination" class="form-control"
+                      formControlName="editMagasinDestination">
+                        <option *ngFor="let regTre of magasinMairieTresor; let i = index" [value]="i">
+                          {{ regTre.codeMagasin }} - {{ regTre.libMagasin }} 
                         </option>
-                      </select>
+                      </select-->
+                      <input type="text" class="form-control" id="editMagasinDestination" readonly="true"
+                      formControlName="editMagasinDestination" [ngModel]="editRecollement.magasinDestination.codeMagasin.concat(' - '.concat(editRecollement.magasinDestination.libMagasin)) " autocomplete="off">
                     </div>
                   </div><!--/.row-->
                   <div class="row">
@@ -293,8 +308,8 @@
   
               <div class="card" style="margin: 0;">
                 <div class="card-body">
-                  <table class="table table-striped" id="tabListArt"
-                    > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
+                  <table class="table table-striped" id="tabListArt1"
+                   datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2">
                     <thead>
                       <tr>
                         <th>Code</th>
@@ -320,7 +335,7 @@
   
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Fermer</button>
+            <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Ok</button>
   
           </div>
         </div><!-- /.modal-content -->
@@ -342,8 +357,8 @@
   
               <div class="card" style="margin: 0;">
                 <div class="card-body">
-                  <table class="table table-striped" id="tabListArt"
-                  > <!-- datatable [dtOptions]="dtOptions2" [dtTrigger]="dtTrigger2"-->
+                  <table class="table table-striped" id="tabListArt2"
+                  datatable [dtOptions]="dtOptions3" [dtTrigger]="dtTrigger3">
                   <thead>
                     <tr>
                       <th>Code</th>
@@ -369,7 +384,7 @@
   
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Fermer</button>
+            <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Ok</button>
   
           </div>
         </div><!-- /.modal-content -->
@@ -403,4 +418,29 @@
   
     </div>
   </div>
+
+  <!--Modale annuler Point vente-->
+<div bsModal #annulerRecollementModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-secondary" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h4 class="modal-title text-center">Annuler un recollement</h4>
+        <button type="button" class="close" (click)="annulerRecollementModal.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+          <p>Vous êtes sur le point d'annuler le recollement<mark style="color: red;">{{ annulRecollement.numRecollement }}</mark></p>
+          <p>Le confirmez-vous ?</p>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="annulerRecollementModal.hide()">Annuler</button>
+        <button type="button" class="btn btn-danger" (click)="onConfirmAnnulerRecollement()">Valider</button>
+        </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
   

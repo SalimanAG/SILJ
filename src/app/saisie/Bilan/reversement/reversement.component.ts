@@ -174,6 +174,17 @@ export class ReversementComponent implements OnInit {
     this.getAllExercice();
     this.getAllRegisseur();
 
+    this.serviceArticle.getAllArticle().subscribe(
+      (data) => {
+        this.articles = data;
+        this.dtTrigger2.next();
+        this.dtTrigger3.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des articles', erreur);
+      }
+    );
+
     this.serviceReversement.getAllReversement().subscribe(
       (data) => {
         this.reversement = data;
@@ -183,7 +194,7 @@ export class ReversementComponent implements OnInit {
         console.log('Erreur lors de la récupération de la liste des points ventes', erreur);
       }
     );
-    this.getAllArticle();
+    //this.getAllArticle();
     this.getAllLigneReversement();
   }
 
@@ -238,6 +249,10 @@ export class ReversementComponent implements OnInit {
     this.serviceArticle.getAllArticle().subscribe(
       (data) => {
         this.articles = data;
+        $('#tabListArt1').dataTable().api().destroy();
+        this.dtTrigger2.next();
+        $('#tabListArt2').dataTable().api().destroy();
+        this.dtTrigger3.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des articles', erreur);
