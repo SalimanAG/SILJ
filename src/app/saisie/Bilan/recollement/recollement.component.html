@@ -7,8 +7,8 @@
         <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddRecollement()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
         <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
       </div>
-  
-        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" 
+
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
         [dtTrigger]="dtTrigger1" id="RecollDataTable">
             <thead>
                 <tr>
@@ -26,7 +26,7 @@
                     <td>{{ recoll.dateRecollement | date : "dd/MM/y" }}</td>
                     <td>{{ recoll.descriptionRecollement }}</td>
                     <td>{{ recoll.magasinSource.codeMagasin }} - {{ recoll.magasinSource.libMagasin }} </td>
-                    <td>{{  recoll.magasinDestination.codeMagasin }} - {{ recoll.magasinDestination.libMagasin }} </td> 
+                    <td>{{  recoll.magasinDestination.codeMagasin }} - {{ recoll.magasinDestination.libMagasin }} </td>
                     <td>
                         <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditRecollement(i)"><span class="fa fa-edit"></span></button>
                         <button *ngIf="!recoll.valideRecol" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteRecollement(i)"><span class="fa fa-trash"></span></button>
@@ -60,7 +60,7 @@
                 </tr>
             </tfoot>
         </table>
-  
+
     <!--Modal add-->
         <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-primary modal-xl" role="document">
@@ -90,9 +90,9 @@
                         <input type="text" class="form-control" id="addDesRecoll"
                          formControlName="addDesRecoll" autocomplete="off">
                       </div>
-  
+
                     </div><!--/.row-->
-  
+
                     <div class="row">
                       <div class="form-group col-sm-6">
                         <label for="addMagasinSource">Magasin source</label>
@@ -115,7 +115,7 @@
                         <select id="addMagasinDestination" name="addMagasinDestination" class="form-control"
                         formControlName="addMagasinDestination" disabled>
                           <option *ngFor="let regTre of magasinMairieTresor; let i = index" [value]="i">
-                            {{ regTre.codeMagasin }} - {{ regTre.libMagasin }} 
+                            {{ regTre.codeMagasin }} - {{ regTre.libMagasin }}
                           </option>
                         </select>
                         <!--input type="text" class="form-control" id="addRegiConcerned" readonly
@@ -152,11 +152,11 @@
                                 <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfRecollement(i)"><span class="fa fa-trash"></span></button>
                               </td>
                             </tr>
-    
+
                           </tbody>
                         </table>
                       </div>
-  
+
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
@@ -164,10 +164,10 @@
                   </div>
                 </div><!-- /.modal-content -->
               </form>
-  
+
             </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
+
     <!--Modal edit-->
     <div bsModal #editComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-warning modal-xl" role="document">
@@ -185,7 +185,7 @@
                     <div class="form-group col-sm-4">
                       <label for="editNumRecoll">Numéro</label>
                       <input type="text" class="form-control" id="editNumRecoll"
-                        formControlName="editNumRecoll" placeholder="Numéro de recollement" 
+                        formControlName="editNumRecoll" placeholder="Numéro de recollement"
                         [ngModel]="editRecollement.numRecollement" readonly autocomplete="off">
                     </div>
                     <div class="form-group col-sm-4">
@@ -211,18 +211,18 @@
                           </option>
                         </select-->
                         <input type="text" class="form-control" id="editMagasinSource" readonly="true"
-                        formControlName="editMagasinSource" [ngModel]="editRecollement.magasinSource.codeMagasin.concat(' - '.concat(editRecollement.magasinSource.libMagasin)) " autocomplete="off">
+                        formControlName="editMagasinSource" [ngModel]="editRecollement.magasinSource.codeMagasin.concat(' - '.concat(editRecollement.magasinSource.libMagasin.valueOf())) " autocomplete="off">
                     </div>
                     <div class="form-group col-sm-6">
                       <label for="editMagasinDestination">Magasin Destinataire</label>
                       <!--select id="editMagasinDestination" name="editMagasinDestination" class="form-control"
                       formControlName="editMagasinDestination">
                         <option *ngFor="let regTre of magasinMairieTresor; let i = index" [value]="i">
-                          {{ regTre.codeMagasin }} - {{ regTre.libMagasin }} 
+                          {{ regTre.codeMagasin }} - {{ regTre.libMagasin }}
                         </option>
                       </select-->
                       <input type="text" class="form-control" id="editMagasinDestination" readonly="true"
-                      formControlName="editMagasinDestination" [ngModel]="editRecollement.magasinDestination.codeMagasin.concat(' - '.concat(editRecollement.magasinDestination.libMagasin)) " autocomplete="off">
+                      formControlName="editMagasinDestination" [ngModel]="editRecollement.magasinDestination.codeMagasin.concat(' - '.concat(editRecollement.magasinDestination.libMagasin.valueOf())) " autocomplete="off">
                     </div>
                   </div><!--/.row-->
                   <div class="row">
@@ -253,13 +253,13 @@
                               <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfRecollement(i)"><span class="fa fa-trash"></span></button>
                             </td>
                           </tr>
-  
+
                         </tbody>
                       </table>
                     </div>
 
                 </div>
-               
+
               </div>
               <div class="modal-footer">
               <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
@@ -267,12 +267,12 @@
               </div>
             </div><!-- /.modal-content -->
           </form>
-  
+
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
+
     <!--Modal delete-->
-  
+
     <div bsModal #deleteComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-danger" role="document">
         <div class="modal-content">
@@ -293,7 +293,7 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
+
     <!--Modal de selection d'Article pour ajout de Reception-->
     <div bsModal #addArticle1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-success modal-lg" role="document">
@@ -305,7 +305,7 @@
             </button>
           </div>
           <div class="modal-body">
-  
+
               <div class="card" style="margin: 0;">
                 <div class="card-body">
                   <table class="table table-striped" id="tabListArt1"
@@ -332,17 +332,17 @@
                   </table>
                 </div>
               </div>
-  
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Ok</button>
-  
+
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
-  
+
+
      <!--Modal de selection d'Article pour edition de Reception-->
      <div bsModal #addArticle2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-success modal-lg" role="document">
@@ -354,7 +354,7 @@
             </button>
           </div>
           <div class="modal-body">
-  
+
               <div class="card" style="margin: 0;">
                 <div class="card-body">
                   <table class="table table-striped" id="tabListArt2"
@@ -381,11 +381,11 @@
                 </table>
                 </div>
               </div>
-  
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Ok</button>
-  
+
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -404,7 +404,7 @@
               <div class="row">
                 <iframe class="col" [src]='pdfToShow' frameborder="0" style="height: 400px;"></iframe>
               </div>
-  
+
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="viewPdfModal.hide()">Fermer</button>
@@ -412,10 +412,10 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
-  
-  
-  
+
+
+
+
     </div>
   </div>
 
@@ -443,4 +443,3 @@
 
 
 
-  
