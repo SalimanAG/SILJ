@@ -2,7 +2,7 @@
     <div class="card mb-0">
 
         <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
-            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Valeur Locatives Par Arrondissement et Quartier</a></h5>
+            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Récapitulatif des aleurs locatives Par site</a></h5>
         </div>
         <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" [ngClass]="{
       collapse:true,
@@ -14,38 +14,31 @@
             <div class="card-body">
                 <form [formGroup]="imGroup">
                     <div class="row">
-                        <div class="col-3">
+                        <div class="col-4">
                             <label for="typVlA">type : </label>
                             <select id="typVlA" class="form-control" formControlName="typVlA">
-                    <option [value]="-1"></option>
+                    <option [value]="-1">Tous les types</option>
                     <option *ngFor="let item of typesVL; let i=index" [value]="i">{{item.libTypIm}}</option>
                   </select>
                         </div>
-                        <div class="col-3">
+                        <div class="col-4">
                             <label for="arrond">Arrondissement : </label>
-                            <select id="arrond" class="form-control" formControlName="arrond" (ngModelChange)="filtre(imGroup.value['arrond'])">
-                    <option [value]="-1"></option>
+                            <select id="arrond" class="form-control" formControlName="arrond" (click)="filtre(imGroup.value['arrond'])">
+                    <option [value]="-1">Tous les arrondissements</option>
                     <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.nomArrondi}}</option>
                   </select>
                         </div>
-                        <div class="col-3">
-                            <label for="qtr">Quartier : </label>
-                            <select id="qtr" class="form-control" formControlName="qtr">
-                    <option [value]="-1"></option>
-                    <option *ngFor="let item of aQuartiers; let i=index" [value]="i">{{item.nomQuartier}}</option>
-                  </select>
-                        </div>
-                        <div class="col-3">
+                        <div class="col-4">
                             <label for="sit">Site : </label>
                             <select id="sit" class="form-control" formControlName="sit">
-                    <option [value]="0"></option>
+                    <option [value]="-1">Tous les sites</option>
                     <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
                   </select>
                         </div>
                     </div>
                     <br><br>
                     <div class="row">
-                        <button type="button" class="btn btn-secondary" (click)="vlParArrondissement()">Afficher les valeurs locatives correspondants</button>
+                        <button type="button" class="btn btn-secondary" (click)="vlParSite()">Afficher les valeurs locatives correspondants</button>
                     </div>
                 </form>
             </div>
@@ -53,7 +46,7 @@
     </div>
     <div class="card mb-0">
         <div class="card-header" id="headingTwo" role="tab" (click)="manageCollapses(2)">
-            <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Récapitulatif des valeurs locatives libres </a></h5>
+            <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Récapitulatif des valeurs locatives libres par site </a></h5>
         </div>
         <div id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion" [ngClass]="{
       collapse:true,
@@ -68,90 +61,77 @@
                         <div class="col-3">
                             <label for="typVlAl">type : </label>
                             <select id="typVlAl" class="form-control" formControlName="typVlAl">
-                    <option [value]="-1"></option>
+                    <option [value]="-1">Tous les types</option>
                     <option *ngFor="let item of typesVL; let i=index" [value]="i">{{item.libTypIm}}</option>
                   </select>
                         </div>
                         <div class="col-3">
                             <label for="arrondl">Arrondissement : </label>
                             <select id="arrondl" class="form-control" formControlName="arrondl" (ngModelChange)="filtre(imLibGroup.value['arrondl'])">
-                    <option [value]="-1"></option>
+                    <option [value]="-1">Tous les arrondissements</option>
                     <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.nomArrondi}}</option>
-                  </select>
-                        </div>
-                        <div class="col-3">
-                            <label for="qtrl">Quartier : </label>
-                            <select id="qtrl" class="form-control" formControlName="qtrl">
-                    <option [value]="-1"></option>
-                    <option *ngFor="let item of aQuartiers; let i=index" [value]="i">{{item.nomQuartier}}</option>
                   </select>
                         </div>
                         <div class="col-3">
                             <label for="sitl">Site : </label>
                             <select id="sitl" class="form-control" formControlName="sitl">
-                    <option [value]="0"></option>
+                    <option [value]="-1">Tous les sites</option>
                     <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
                   </select>
                         </div>
                     </div>
                     <br><br>
                     <div class="row">
-                        <button type="button" class="btn btn-secondary" (click)="vlLibresParArrondissement()">Afficher les valeurs locatives correspondants</button>
+                        <button type="button" class="btn btn-secondary" (click)="vlLibresParSite()">Afficher les valeurs locatives correspondants</button>
                     </div>
                 </form>
             </div>
         </div>
-        <div class="card mb-0">
-            <div class="card-header" id="headingThree" role="tab" (click)="manageCollapses(3)">
-                <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseThree">Récapitulatif des valeurs locatives occupées</a></h5>
-            </div>
-            <div id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion" [ngClass]="{
-      collapse:true,
-      show: clicked === 3,
-      collapsing:false,
-      animated:true,
-      fadeIn:true
-    }">
-                <div class="card-body">
-                    <form [formGroup]="imOcGroup">
-                        <div class="row">
-                            <div class="col-3">
-                                <label for="typVlAo">type : </label>
-                                <select id="typVlAo" class="form-control" formControlName="typVlAo">
-                    <option [value]="-1"></option>
-                    <option *ngFor="let item of typesVL; let i=index" [value]="i">{{item.libTypIm}}</option>
-                  </select>
-                            </div>
-                            <div class="col-3">
-                                <label for="arrondo">Arrondissement : </label>
-                                <select id="arrondo" class="form-control" formControlName="arrondo" (ngModelChange)="filtre(imOcGroup.value['arrondo'])">
-                    <option [value]="-1"></option>
-                    <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.nomArrondi}}</option>
-                  </select>
-                            </div>
-                            <div class="col-3">
-                                <label for="qtro">Quartier : </label>
-                                <select id="qtro" class="form-control" formControlName="qtro">
-                    <option [value]="-1"></option>
-                    <option *ngFor="let item of aQuartiers; let i=index" [value]="i">{{item.nomQuartier}}</option>
-                  </select>
-                            </div>
-                            <div class="col-3">
-                                <label for="sito">Site : </label>
-                                <select id="sito" class="form-control" formControlName="sito">
-                    <option [value]="0"></option>
-                    <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
-                  </select>
-                            </div>
-                        </div>
-                        <br><br>
-                        <div class="row">
-                            <button type="button" class="btn btn-secondary" (click)="vlOccupeesParArrondissement()">Afficher les valeurs inactives correspondants</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    </div>
+    <div class="card mb-0">
+        <div class="card-header" id="headingThree" role="tab" (click)="manageCollapses(3)">
+            <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseThree">Récapitulatif des valeurs locatives en contrat par site</a></h5>
         </div>
+        <div id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion" [ngClass]="{
+            collapse:true,
+            show: clicked === 3,
+            collapsing:false,
+            animated:true,
+            fadeIn:true
+        }">
+            <div class="card-body">
+                <form [formGroup]="imOcGroup">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="typVlAo">type : </label>
+                            <select id="typVlAo" class="form-control" formControlName="typVlAo">
+                <option [value]="-1">Tous les types</option>
+                <option *ngFor="let item of typesVL; let i=index" [value]="i">{{item.libTypIm}}</option>
+                </select>
+                        </div>
+                        <div class="col-3">
+                            <label for="arrondo">Arrondissement : </label>
+                            <select id="arrondo" class="form-control" formControlName="arrondo" (ngModelChange)="filtre(imOcGroup.value['arrondo'])">
+                <option [value]="-1">Tous les arrondisements</option>
+                <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.nomArrondi}}</option>
+                </select>
+                        </div>
+                        <div class="col-3">
+                            <label for="sito">Site : </label>
+                            <select id="sito" class="form-control" formControlName="sito">
+                <option [value]="-1">Tous les sites</option>
+                <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
+                </select>
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="row">
+                        <button type="button" class="btn btn-secondary" (click)="vlOccupeesParSite()">Afficher les valeurs inactives correspondants</button>
+                    </div>
+                </form>
+            </div>
+            </div>
+    </div>
 
 
         <!----------------------------------------Apperçu------------------------------------------->

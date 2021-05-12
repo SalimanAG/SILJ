@@ -330,6 +330,12 @@ export class OperationCaisseComponent implements OnInit {
     this.initOpCaisse();
   }
 
+  fermeSup(){
+    $('#dtop').dataTable().api().destroy();
+    this.dtrigDailyOp.next();
+    this.detailOp.hide()
+  }
+
   initRecherche() { }
 
   supprimerOperation() {
@@ -431,6 +437,12 @@ export class OperationCaisseComponent implements OnInit {
     this.supOP.hide();
   }
 
+  fermerAnnulation(){
+    $('#dtop').dataTable().api().destroy();
+    this.dtrigDailyOp.next();
+    this.opAnnul.hide();
+  }
+  
   annulerOperation(opc: OpCaisse) {
     var op = opc;
     op.valideOpCaisse = false;
@@ -697,7 +709,6 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   //Gestion des prestations
-
   initNewVente() {
     this.totalVente = 0;
     this.tmpOpC = new OpCaisse('0001', new Date(), 'Divers', true, '', new Date(),
@@ -709,6 +720,12 @@ export class OperationCaisseComponent implements OnInit {
     });
   }
 
+  fermeVente(){
+    $('#dtop').dataTable().api().destroy();
+    this.dtrigDailyOp.next();
+    this.addVente.hide();
+  }
+  
   ouvreAddArt() {
     this.servOp.getAllArticles()
       .subscribe(
@@ -833,7 +850,8 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   fermerLoyer() {
-    $('#dteche').dataTable().api().destroy();
+    $('#dtop').dataTable().api().destroy();
+    this.dtrigDailyOp.next();
     this.addLoyer.hide();
   }
 
@@ -1007,6 +1025,12 @@ export class OperationCaisseComponent implements OnInit {
       addImCor: 0, addImMod: 0, addImCai: 0
     });
     this.coi = this.pointV.filter(pp => pp.correspondant.imputableCorres === true && pp.payerPoint === false).map(pp => pp.correspondant);
+  }
+
+  fermerImput() {
+    $('#dtop').dataTable().api().destroy();
+    this.dtrigDailyOp.next();
+    this.addImput.hide();
   }
 
   chargerPointNI(cor: Correspondant) {

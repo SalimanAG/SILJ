@@ -1,7 +1,7 @@
 import { Component, OnInit, Sanitizer, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import jsPDF from 'jspdf';
+import {jsPDF} from 'jspdf';
 import * as moment from 'moment';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Arrondissement } from '../../../../models/arrondissement.model';
@@ -53,24 +53,24 @@ export class ListeValeurLocativeComponent implements OnInit {
     public fbuilder: FormBuilder, public sanit: DomSanitizer) {
     moment.locale('fr');
     this.imGroup = fbuilder.group({
-      arrond: new FormControl(),
-      typVlA: new FormControl(),
-      qtr: new FormControl(),
-      sit: new FormControl()
+      arrond: new FormControl(-1),
+      typVlA: new FormControl(-1),
+      qtr: new FormControl(-1),
+      sit: new FormControl(-1)
     });
 
     this.imLibGroup = fbuilder.group({
-      arrondl: new FormControl(),
-      typVlAl: new FormControl(),
-      qtrl: new FormControl(),
-      sitl: new FormControl()
+      arrondl: new FormControl(-1),
+      typVlAl: new FormControl(-1),
+      qtrl: new FormControl(-1),
+      sitl: new FormControl(-1)
     });
 
     this.imOcGroup = fbuilder.group({
-      arrondo: new FormControl(),
-      typVlAo: new FormControl(),
-      qtro: new FormControl(),
-      sito: new FormControl()
+      arrondo: new FormControl(-1),
+      typVlAo: new FormControl(-1),
+      qtro: new FormControl(-1),
+      sito: new FormControl(-1)
     });
   }
 
@@ -133,67 +133,43 @@ export class ListeValeurLocativeComponent implements OnInit {
   }
 
   vlParSite() {
-    console.log("Toutes les Valeurs locatives par site");
-  }
-
-  vlLibresParSite() {
-    console.log("Valeurs locatives Libres par site");
-  }
-
-  vlOccupeesParSite() {
-    console.log("Valeurs locatives occupées par site");
-  }
-
-  vlParArrondissement() {
-    let imm = [];
-    let list = [];
-
     const doc = new jsPDF();
-
+    doc.text(''+doc.getNumberOfPages(),55,5)
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
-    //doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
-    //doc.setFont("Times New Roman");
     doc.setFontSize(18);
+    doc.deletePage(1);
     var val: Number;
-    /*this.vlService.getAllImmeuble().subscribe(
-      data => {
-        this.immeubles = data;*/
-    ///////////////////////////////////////////Type spécifié/////////////////
-    if (this.imGroup.value['typVlA'] != null) {
-      doc.text('\nListe des ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 85, 20);
-
-      //////////////////////////////////Type et Arrondissement spécifiés////////////////////
-      if (this.imGroup.value['arrond'] != null) {
-        doc.text('\nArrondissement : ' + this.arrondissements[this.imGroup.value['arrond']].nomArrondi, 30, 30);
-
-        //////////////////////////////////Type, Arrondissement et quartier spécifiés////////////////////
-        if (this.imGroup.value['qtr'] != null) {
-          //////////////////////////////////Type, Arrondissement, quartier et site spécifiés////////////////////
-          if (this.imGroup.value['sit'] != null) {
-            doc.text('Quartier: ' + this.aQuartiers[this.imGroup.value['qtr']].nomQuartier +
-              '\tSite : ' + this.aSites[this.imGroup.value['sit']].libSite, 15, 40);
-
+    if (this.imGroup.value['typVlA'] != -1) {        //////Type spécifié//////
+      if (this.imGroup.value['arrond'] != -1) {     //////Type et Arrondissement spécifiés//////
+        if (this.imGroup.value['sit'] != -1) {     //////Type, Arrondissement et sit spécifiés//////
             this.immeub = this.immeubles.filter(im =>
               im.typeImmeuble.codeTypIm === this.typesVL[this.imGroup.value['typVlA']].codeTypIm &&
-              im.arrondissement.codeArrondi === this.arrondissements[this.imGroup.value['arrond']].codeArrondi &&
-              im.quartier.codeQuartier === this.aQuartiers[this.imGroup.value['qtr']].codeQuartier &&
               im.siteMarcher.codeSite === this.aSites[this.imGroup.value['sit']].codeSite);
             if (this.immeub.length > 0) {
+              let list = [];
               this.immeub.forEach(elt => {
+                let imm = [];
                 imm.push(elt.codeIm);
                 imm.push(elt.libIm);
                 imm.push(elt.stuctResp);
                 imm.push(elt.superficie);
-                imm.push(elt.valUnit);
-                imm.push(elt.etatIm);
+                if(elt.etatIm)
+                  imm.push("En contrat");
+                else
+                  imm.push("Libre");
                 if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(elt.codeIm);
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
                 list.push(imm);
               });
+              doc.addPage();
+              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('Arrondissement : ' + this.arrondissements[this.imGroup.value['arrond']].nomArrondi, 40, 20);
+              doc.text('Site : ' + this.sites[this.imGroup.value['sit']].libSite, 50, 30);
+              doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 55, 40);
               autotable(doc, {
                 theme: 'grid',
-                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
+                head: [['Code', 'Libellé', 'Structure responsable', 'Surface',  'Etat', 'Prix']],
                 headStyles: {
                   fillColor: [41, 128, 185],
                   textColor: 255,
@@ -202,172 +178,660 @@ export class ListeValeurLocativeComponent implements OnInit {
                 margin: { top: 50 },
                 body: list,
               });
+              console.log(this.immeub.length+' valeurs locatives trouvées');
+              
+              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+              this.appercu.show();
             }
-          }
-          //////////////////////////////////Type, Arrondissement et quartier spécifiés site non spécifié////////////////////
-          else {
-            doc.text('Quartier: ' + this.aQuartiers[this.imGroup.value['qtr']].nomQuartier, 30, 40);
-
-            this.immeub = this.immeubles.filter(im =>
-              im.typeImmeuble.codeTypIm === this.typesVL[this.imGroup.value['typVlA']].codeTypIm &&
-              im.arrondissement.codeArrondi === this.arrondissements[this.imGroup.value['arrond']].codeArrondi &&
-              im.quartier.codeQuartier === this.aQuartiers[this.imGroup.value['qtr']].codeQuartier);
-            if (this.immeub.length > 0) {
-              this.immeub.forEach(elt => {
-                imm.push(elt.codeIm);
-                imm.push(elt.libIm);
-                imm.push(elt.stuctResp);
-                imm.push(elt.siteMarcher.libSite);
-                imm.push(elt.superficie);
-                imm.push(elt.valUnit);
-                imm.push(elt.etatIm);
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(elt.codeIm);
-                list.push(imm);
-              });
-              autotable(doc, {
-                theme: 'grid',
-                head: [['Code', 'Libellé', 'Structure responsable', 'Site', 'Surface', 'Valeur U', 'Etat', 'Prix']],
-                headStyles: {
-                  fillColor: [41, 128, 185],
-                  textColor: 255,
-                  fontStyle: 'bold',
-                },
-                margin: { top: 50 },
-                body: list,
-              });
+            else{
+              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
             }
-          }
         }
-        /////////////////////////////Avec Type, Arrondissement spécifiés site et sans quartier////////////////////
         else {
-          if (this.imGroup.value['sit'] !== null) {
-            doc.text('Site : ' + this.aSites[this.imGroup.value['sit']].libSite, 50, 40);
-
+          this.aSites.forEach(sit=>{
             this.immeub = this.immeubles.filter(im =>
               im.typeImmeuble.codeTypIm === this.typesVL[this.imGroup.value['typVlA']].codeTypIm &&
-              im.arrondissement.codeArrondi === this.arrondissements[this.imGroup.value['arrond']].codeArrondi &&
-              im.siteMarcher.codeSite === this.aSites[this.imGroup.value['sit']].codeSite);
-            if (this.immeubles.length > 0) {
-              this.immeub.forEach(elt => {
-                imm.push(elt.codeIm);
-                imm.push(elt.libIm);
-                imm.push(elt.stuctResp);
-                imm.push(elt.quartier.nomQuartier);
-                imm.push(elt.superficie);
-                imm.push(elt.valUnit);
-                imm.push(elt.etatIm);
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+              im.siteMarcher.codeSite === sit.codeSite);
+              if(this.immeub.length>0){
+                let list=[];
+                this.immeub.forEach(elt=>{
+                  let imm=[];
                   imm.push(elt.codeIm);
-                list.push(imm);
-              });
-              autotable(doc, {
-                theme: 'grid',
-                head: [['Code', 'Libellé', 'Structure responsable', 'Quartier', 'Site', 'Surface', 'Valeur U', 'Etat', 'Prix']],
-                headStyles: {
-                  fillColor: [41, 128, 185],
-                  textColor: 255,
-                  fontStyle: 'bold',
-                },
-                margin: { top: 50 },
-                body: list,
-              });
-            }
-          }
-          else {
-            this.immeub = this.immeubles.filter(im =>
-              im.typeImmeuble.codeTypIm === this.typesVL[this.imGroup.value['typVlA']].codeTypIm &&
-              im.arrondissement.codeArrondi === this.arrondissements[this.imGroup.value['arrond']].codeArrondi);
-            if (this.immeubles.length > 0) {
-              this.immeub.forEach(elt => {
-                imm.push(elt.codeIm);
-                imm.push(elt.libIm);
-                imm.push(elt.stuctResp);
-                imm.push(elt.quartier.nomQuartier);
-                imm.push(elt.siteMarcher.libSite);
-                imm.push(elt.superficie);
-                imm.push(elt.valUnit);
-                imm.push(elt.etatIm);
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(elt.codeIm);
-                list.push(imm);
-              });
-              autotable(doc, {
-                theme: 'grid',
-                head: [['Code', 'Libellé', 'Structure responsable', 'Site', 'Surface', 'Valeur U', 'Etat', 'Prix']],
-                headStyles: {
-                  fillColor: [41, 128, 185],
-                  textColor: 255,
-                  fontStyle: 'bold',
-                },
-                margin: { top: 50 },
-                body: list,
-              });
-            }
-          }
+                  imm.push(elt.libIm);
+                  imm.push(elt.stuctResp);
+                  imm.push(elt.quartier.nomQuartier);
+                  imm.push(elt.superficie);
+                  if(elt.etatIm)
+                    imm.push("En contrat");
+                  else
+                    imm.push("Libre");
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                  list.push(imm);
+                });
+                doc.addPage();
+                doc.text(''+doc.getNumberOfPages(),8,10);
+                doc.text('Arrondissement : ' + this.arrondissements[this.imGroup.value['arrond']].nomArrondi, 40, 20);
+                doc.text('Site : ' + sit.libSite, 45, 3);
+                doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 50, 40);
+                autotable(doc, {
+                  theme: 'grid',
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
+                  headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                  },
+                  margin: { top: 50 },
+                  body: list,
+                });
+                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+                this.appercu.show();
+              }
+              else{
+                console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+              }
+          });
         }
       }
       else {
-        this.immeub = this.immeubles.filter(im =>
-          im.typeImmeuble.codeTypIm === this.typesVL[this.imGroup.value['typVlA']].codeTypIm);
-        if (this.immeubles.length > 0) {
-          this.immeub.forEach(elt => {
-            imm.push(elt.codeIm);
-            imm.push(elt.libIm);
-            imm.push(elt.stuctResp);
-            imm.push(elt.siteMarcher.libSite);
-            imm.push(elt.superficie);
-            imm.push(elt.valUnit);
-            imm.push(elt.etatIm);
-            if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-              imm.push(elt.codeIm);
-            list.push(imm);
+        this.arrondissements.forEach(ar=>{
+          this.aSites=this.sites.filter(s=> s.arrondissement.codeArrondi== ar.codeArrondi);
+          this.aSites.forEach(sit=>{
+            this.immeub = this.immeubles.filter(im =>
+              im.typeImmeuble.codeTypIm == this.typesVL[this.imGroup.value['typVlA']].codeTypIm &&
+              im.siteMarcher.codeSite == sit.codeSite);
+            if(this.immeub.length>0){
+              console.log(sit.libSite+':'+this.immeub.length+' '+this.typesVL[this.imGroup.value['typVlA']].libTypIm+' trouvés');
+              let list=[];
+              this.immeub.forEach(elt=>{
+                let imm=[];
+                imm.push(elt.codeIm);
+                imm.push(elt.libIm);
+                imm.push(elt.stuctResp);
+                imm.push(elt.quartier.nomQuartier);
+                imm.push(elt.superficie);
+                if(elt.etatIm)
+                  imm.push("En contrat");
+                else
+                  imm.push("Libre");
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                list.push(imm);
+              });
+              doc.addPage();
+              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('Arrondissement : ' + sit.arrondissement.nomArrondi, 40, 20);
+              doc.text('Site : ' + sit.libSite, 45, 30);
+              doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 50, 40);
+              autotable(doc, {
+                theme: 'grid',
+                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
+                headStyles: {
+                  fillColor: [41, 128, 185],
+                  textColor: 255,
+                  fontStyle: 'bold',
+                },
+                margin: { top: 50 },
+                body: list,
+              });
+              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+              this.appercu.show();
+            }
+            else{
+              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+            }
           });
-          autotable(doc, {
-            theme: 'grid',
-            head: [['Code', 'Libellé', 'Structure responsable', 'Site', 'Surface', 'Valeur U', 'Etat', 'Prix']],
-            headStyles: {
-              fillColor: [41, 128, 185],
-              textColor: 255,
-              fontStyle: 'bold',
-            },
-            margin: { top: 50 },
-            body: list,
-          });
-        }
+      });
       }
     }
     else {
-      doc.text('\nListe des valeurs locatives', 80, 20);
+      if(this.imGroup.value['arrond']==-1){        
+        this.arrondissements.forEach(ar=>{
+          this.aSites=this.sites.filter(s=>s.arrondissement.codeArrondi == ar.codeArrondi);
+          this.aSites.forEach(sit=>{
+            this.typesVL.forEach(tvl=>{
+              this.immeub=this.immeubles.filter(im=>im.siteMarcher.codeSite==sit.codeSite && 
+                im.typeImmeuble.codeTypIm==tvl.codeTypIm);
+                if (this.immeub.length>0){
+                  let list=[];
+                  this.immeub.forEach(elt=>{
+                    let imm=[];
+                    imm.push(elt.codeIm);
+                    imm.push(elt.libIm);
+                    imm.push(elt.stuctResp);
+                    imm.push(elt.superficie);
+                    if(elt.etatIm)
+                      imm.push("En contrat");
+                    else
+                      imm.push("Libre");
+                    imm.push(elt.valUnit);
+                    if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                      imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                    list.push(imm);
+                  });
+                  doc.addPage();
+                  doc.text(''+sit.arrondissement.nomArrondi,40,20);
+                  doc.text('Site: '+sit.libSite,45,30);
+                  doc.text('Liste des : '+tvl.libTypIm,50,40);
+                  autotable(doc, {
+                    theme: 'grid',
+                    head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
+                    headStyles: {
+                      fillColor: [41, 128, 185],
+                      textColor: 255,
+                      fontStyle: 'bold',
+                    },
+                    margin: { top: 50 },
+                    body: list,
+                  });
+                  this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+                  this.appercu.show();
+                }
+            });
+          });
+        });
+      }
+      else{
+        this.aSites.forEach(sit=>{
+          this.typesVL.forEach(typ=>{
+            this.immeub=this.immeubles.filter(im=>
+              im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == typ.codeTypIm);
+              if (this.immeub.length>0){
+                let list=[];
+                this.immeub.forEach(elt=>{
+                  let imm=[];
+                  imm.push(elt.codeIm);
+                  imm.push(elt.libIm);
+                  imm.push(elt.stuctResp);
+                  imm.push(elt.superficie);
+                  if(elt.etatIm)
+                    imm.push("En contrat");
+                  else
+                    imm.push("Libre");
+                  imm.push(elt.valUnit);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                  list.push(imm);
+                });
+                doc.addPage();
+                doc.text(''+doc.getNumberOfPages(),8,10);
+                doc.text(''+sit.arrondissement.nomArrondi,40,20);
+                doc.text('Site: '+sit.libSite,45,30);
+                doc.text('Liste des : '+typ.libTypIm,50,40);
+                autotable(doc, {
+                  theme: 'grid',
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
+                  headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                  },
+                  margin: { top: 50 },
+                  body: list,
+                });
+                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+                this.appercu.show();
+              }
+          });
+        });
+      }
     }
+  }
 
-    if (this.immeub.length > 0) {
-      this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
-      this.appercu.show();
+  vlLibresParSite() {
+    const doc = new jsPDF();
+    doc.text(''+doc.getNumberOfPages(),55,5)
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.deletePage(1);
+    var val: Number;
+    if (this.imLibGroup.value['typVlAl'] != -1) {        //////Type spécifié//////
+      if (this.imLibGroup.value['arrondl'] != -1) {     //////Type et Arrondissement spécifiés//////
+        if (this.imLibGroup.value['sitl'] != -1) {     //////Type, Arrondissement et sit spécifiés//////
+            this.immeub = this.immeubles.filter(im => im.etatIm==false &&
+              im.typeImmeuble.codeTypIm === this.typesVL[this.imLibGroup.value['typVlAl']].codeTypIm &&
+              im.siteMarcher.codeSite === this.aSites[this.imLibGroup.value['sitl']].codeSite);
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
+                imm.push(elt.codeIm);
+                imm.push(elt.libIm);
+                imm.push(elt.stuctResp);
+                imm.push(elt.superficie);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                list.push(imm);
+              });
+              doc.addPage();
+              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('Arrondissement : ' + this.arrondissements[this.imLibGroup.value['arrondl']].nomArrondi, 40, 20);
+              doc.text('Site : ' + this.sites[this.imLibGroup.value['sitl']].libSite, 50, 30);
+              doc.text('Liste des ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm+' libres', 55, 40);
+              autotable(doc, {
+                theme: 'grid',
+                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuel']],
+                headStyles: {
+                  fillColor: [41, 128, 185],
+                  textColor: 255,
+                  fontStyle: 'bold',
+                },
+                margin: { top: 50 },
+                body: list,
+              });
+              console.log(this.immeub.length+' valeurs locatives trouvées');
+              
+              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+              this.appercu.show();
+            }
+            else{
+              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+            }
+        }
+        else {
+          this.aSites.forEach(sit=>{
+            this.immeub = this.immeubles.filter(im => im.etatIm == false &&
+              im.typeImmeuble.codeTypIm === this.typesVL[this.imLibGroup.value['typVlAl']].codeTypIm &&
+              im.siteMarcher.codeSite === sit.codeSite);
+              if(this.immeub.length>0){
+                let list=[];
+                this.immeub.forEach(elt=>{
+                  let imm=[];
+                  imm.push(elt.codeIm);
+                  imm.push(elt.libIm);
+                  imm.push(elt.stuctResp);
+                  imm.push(elt.quartier.nomQuartier);
+                  imm.push(elt.superficie);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                    imm.push(elt.codeIm);
+                  list.push(imm);
+                });
+                doc.addPage();
+                doc.text(''+doc.getNumberOfPages(),8,10);
+                doc.text('Arrondissement : ' + this.arrondissements[this.imLibGroup.value['arrondl']].nomArrondi, 40, 20);
+                doc.text('Site : ' + sit.libSite, 45, 3);
+                doc.text('Liste des ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm+' libres', 50, 40);
+                autotable(doc, {
+                  theme: 'grid',
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
+                  headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                  },
+                  margin: { top: 50 },
+                  body: list,
+                });
+                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+                this.appercu.show();
+              }
+              else{
+                console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+              }
+          });
+        }
+      }
+      else {
+        this.sites.forEach(sit=>{
+          this.immeub = this.immeubles.filter(im => im.etatIm == false &&
+            im.typeImmeuble.codeTypIm == this.typesVL[this.imLibGroup.value['typVlAl']].codeTypIm &&
+            im.siteMarcher.codeSite == sit.codeSite);
+          if(this.immeub.length>0){
+            let list=[];
+            this.immeub.forEach(elt=>{
+              let imm=[];
+              imm.push(elt.codeIm);
+              imm.push(elt.libIm);
+              imm.push(elt.stuctResp);
+              imm.push(elt.quartier.nomQuartier);
+              imm.push(elt.superficie);
+              if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+              list.push(imm);
+            });
+            doc.addPage();
+            doc.text(''+doc.getNumberOfPages(),8,10);
+            doc.text('Arrondissement : ' + sit.arrondissement.nomArrondi, 40, 20);
+            doc.text('Site : ' + sit.libSite, 45, 30);
+            doc.text('Liste des  : ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm, 50, 40);
+            autotable(doc, {
+              theme: 'grid',
+              head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuel']],
+              headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold',
+              },
+              margin: { top: 50 },
+              body: list,
+            });
+            this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+            this.appercu.show();
+          }
+          else{
+            console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+          }
+        });
+      }
     }
-    else
-      console.log('Aucun immeuble ne répond aux citères énoncés');
-
-    //});
+    else {
+      if(this.imLibGroup.value['arrondl']==-1){        
+        this.sites.forEach(sit=>{
+          this.typesVL.forEach(tvl=>{
+            this.immeub=this.immeubles.filter(im=> im.etatIm == false && 
+              im.siteMarcher.codeSite==sit.codeSite &&  im.typeImmeuble.codeTypIm==tvl.codeTypIm);
+              if (this.immeub.length>0){
+                let list=[];
+                this.immeub.forEach(elt=>{
+                  let imm=[];
+                  imm.push(elt.codeIm);
+                  imm.push(elt.libIm);
+                  imm.push(elt.stuctResp);
+                  imm.push(elt.superficie);
+                  if(elt.etatIm)
+                    imm.push("En contrat");
+                  else
+                    imm.push("Libre");
+                  imm.push(elt.valUnit);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                    imm.push(elt.codeIm);
+                  list.push(imm);
+                });
+                doc.addPage();
+                doc.text(''+sit.arrondissement.nomArrondi,80,20);
+                doc.text('Site: '+sit.libSite,60,30);
+                doc.text('Liste des : '+tvl.libTypIm,50,40);
+                autotable(doc, {
+                  theme: 'grid',
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
+                  headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                  },
+                  margin: { top: 60 },
+                  body: list,
+                });
+                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+                this.appercu.show();
+              }
+          });
+        });
+      }
+      else{
+        this.aSites.forEach(sit=>{
+          this.typesVL.forEach(typ=>{
+            this.immeub=this.immeubles.filter(im=>
+              im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == typ.codeTypIm);
+              if (this.immeub.length>0){
+                let list=[];
+                this.immeub.forEach(elt=>{
+                  let imm=[];
+                  imm.push(elt.codeIm);
+                  imm.push(elt.libIm);
+                  imm.push(elt.stuctResp);
+                  imm.push(elt.superficie);
+                  if(elt.etatIm)
+                    imm.push("En contrat");
+                  else
+                    imm.push("Libre");
+                  imm.push(elt.valUnit);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                    imm.push(elt.codeIm);
+                  list.push(imm);
+                });
+                doc.addPage();
+                doc.text(''+doc.getNumberOfPages(),8,10);
+                doc.text(''+sit.arrondissement.nomArrondi,40,20);
+                doc.text('Site: '+sit.libSite,45,30);
+                doc.text('Liste des : '+typ.libTypIm,50,40);
+                autotable(doc, {
+                  theme: 'grid',
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
+                  headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                  },
+                  margin: { top: 50 },
+                  body: list,
+                });
+                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+                this.appercu.show();
+              }
+          });
+        });
+      }
+    }
   }
 
-  vlLibresParArrondissement() {
-    console.log("Valeurs locative libres par Arrondissement");
-  }
-
-  vlOccupeesParArrondissement() {
-    console.log("Valeurs locatives occupées par Arrondissement");
-  }
-
-  vlParType() {
-    console.log("Valeurs locative par site");
-  }
-
-  vlLibres() {
-    console.log("Valeurs locatives libres");
-  }
-
-  vlOccupees() {
-    console.log("Valeurs locative en location");
+  vlOccupeesParSite() {
+    const doc = new jsPDF();
+    doc.text(''+doc.getNumberOfPages(),55,5)
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.deletePage(1);
+    var val: Number;
+    if (this.imOcGroup.value['typVlAo'] != -1) {        //////Type spécifié//////
+      if (this.imOcGroup.value['arrondo'] != -1) {     //////Type et Arrondissement spécifiés//////
+        if (this.imOcGroup.value['sito'] != -1) {     //////Type, Arrondissement et sit spécifiés//////
+            this.immeub = this.immeubles.filter(im => im.etatIm == true &&
+              im.typeImmeuble.codeTypIm === this.typesVL[this.imOcGroup.value['typVlAo']].codeTypIm &&
+              im.siteMarcher.codeSite === this.aSites[this.imOcGroup.value['sito']].codeSite);
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
+                imm.push(elt.codeIm);
+                imm.push(elt.libIm);
+                imm.push(elt.stuctResp);
+                imm.push(elt.superficie);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                list.push(imm);
+              });
+              doc.addPage();
+              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('Arrondissement : ' + this.arrondissements[this.imOcGroup.value['arrondo']].nomArrondi, 40, 20);
+              doc.text('Site : ' + this.sites[this.imOcGroup.value['sito']].libSite, 50, 30);
+              doc.text('Liste des  : ' + this.typesVL[this.imOcGroup.value['typVlAo']].libTypIm+ ' en contrat', 55, 40);
+              autotable(doc, {
+                theme: 'grid',
+                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuelle ']],
+                headStyles: {
+                  fillColor: [41, 128, 185],
+                  textColor: 255,
+                  fontStyle: 'bold',
+                },
+                margin: { top: 50 },
+                body: list,
+              });
+              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+              this.appercu.show();
+            }
+            else{
+              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+            }
+        }
+        else {
+          this.aSites.forEach(sit=>{
+            this.immeub = this.immeubles.filter(im => im.etatIm == true &&
+              im.typeImmeuble.codeTypIm === this.typesVL[this.imOcGroup.value['typVlAo']].codeTypIm &&
+              im.siteMarcher.codeSite === sit.codeSite);
+              if(this.immeub.length>0){
+                let list=[];
+                this.immeub.forEach(elt=>{
+                  let imm=[];
+                  imm.push(elt.codeIm);
+                  imm.push(elt.libIm);
+                  imm.push(elt.stuctResp);
+                  imm.push(elt.quartier.nomQuartier);
+                  imm.push(elt.superficie);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                  list.push(imm);
+                });
+                doc.addPage();
+                doc.text(''+doc.getNumberOfPages(),8,10);
+                doc.text('Arrondissement : ' + this.arrondissements[this.imOcGroup.value['arrondo']].nomArrondi, 40, 20);
+                doc.text('Site : ' + sit.libSite, 45, 3);
+                doc.text('Liste des  : ' + this.typesVL[this.imOcGroup.value['typVlAo']].libTypIm+' en contrat', 40, 40);
+                autotable(doc, {
+                  theme: 'grid',
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuel']],
+                  headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                  },
+                  margin: { top: 50 },
+                  body: list,
+                });
+                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+                this.appercu.show();
+              }
+              else{
+                console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+              }
+          });
+        }
+      }
+      else {
+        this.arrondissements.forEach(ar=>{
+          this.aSites=this.sites.filter(s=> s.arrondissement.codeArrondi== ar.codeArrondi);
+          this.aSites.forEach(sit=>{
+            this.immeub = this.immeubles.filter(im => im.etatIm == true &&
+              im.typeImmeuble.codeTypIm == this.typesVL[this.imOcGroup.value['typVlAo']].codeTypIm &&
+              im.siteMarcher.codeSite == sit.codeSite);
+            if(this.immeub.length>0){
+              let list=[];
+              this.immeub.forEach(elt=>{
+                let imm=[];
+                imm.push(elt.codeIm);
+                imm.push(elt.libIm);
+                imm.push(elt.stuctResp);
+                imm.push(elt.quartier.nomQuartier);
+                imm.push(elt.superficie);
+                if(elt.etatIm)
+                  imm.push("En contrat");
+                else
+                  imm.push("Libre");
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                list.push(imm);
+              });
+              doc.addPage();
+              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('Arrondissement : ' + sit.arrondissement.nomArrondi, 40, 20);
+              doc.text('Site : ' + sit.libSite, 45, 30);
+              doc.text('Liste des  : ' + this.typesVL[this.imOcGroup.value['typVlAo']].libTypIm, 50, 40);
+              autotable(doc, {
+                theme: 'grid',
+                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuel']],
+                headStyles: {
+                  fillColor: [41, 128, 185],
+                  textColor: 255,
+                  fontStyle: 'bold',
+                },
+                margin: { top: 50 },
+                body: list,
+              });
+              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+              this.appercu.show();
+            }
+            else{
+              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+            }
+          });
+      });
+      }
+    }
+    else {
+      if(this.imOcGroup.value['arrondo']==-1){        
+        this.arrondissements.forEach(ar=>{
+          this.aSites=this.sites.filter(s=>s.arrondissement.codeArrondi == ar.codeArrondi);
+          this.aSites.forEach(sit=>{
+            this.typesVL.forEach(tvl=>{
+              this.immeub=this.immeubles.filter(im=> im.etatIm == true && 
+                im.siteMarcher.codeSite==sit.codeSite &&  im.typeImmeuble.codeTypIm==tvl.codeTypIm);
+                if (this.immeub.length>0){
+                  let list=[];
+                  this.immeub.forEach(elt=>{
+                    let imm=[];
+                    imm.push(elt.codeIm);
+                    imm.push(elt.libIm);
+                    imm.push(elt.stuctResp);
+                    imm.push(elt.superficie);
+                    imm.push(elt.valUnit);
+                    if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                      imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                    list.push(imm);
+                  });
+                  doc.addPage();
+                  doc.text(''+sit.arrondissement.nomArrondi,40,20);
+                  doc.text('Site: '+sit.libSite,45,30);
+                  doc.text('Liste des : '+tvl.libTypIm+' en contrat',50,40);
+                  autotable(doc, {
+                    theme: 'grid',
+                    head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Prix actuel']],
+                    headStyles: {
+                      fillColor: [41, 128, 185],
+                      textColor: 255,
+                      fontStyle: 'bold',
+                    },
+                    margin: { top: 50 },
+                    body: list,
+                  });
+                  this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+                  this.appercu.show();
+                }
+            });
+          });
+        });
+      }
+      else{
+        this.aSites.forEach(sit=>{
+          this.typesVL.forEach(typ=>{
+            this.immeub=this.immeubles.filter(im=> im.etatIm == true &&
+              im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == typ.codeTypIm);
+              if (this.immeub.length>0){
+                let list=[];
+                this.immeub.forEach(elt=>{
+                  let imm=[];
+                  imm.push(elt.codeIm);
+                  imm.push(elt.libIm);
+                  imm.push(elt.stuctResp);
+                  imm.push(elt.superficie);
+                  imm.push(elt.valUnit);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                  list.push(imm);
+                });
+                doc.addPage();
+                doc.text(''+doc.getNumberOfPages(),8,10);
+                doc.text(''+sit.arrondissement.nomArrondi,40,20);
+                doc.text('Site: '+sit.libSite,45,30);
+                doc.text('Liste des : '+typ.libTypIm,50,40);
+                autotable(doc, {
+                  theme: 'grid',
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Prix actuel']],
+                  headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                  },
+                  margin: { top: 50 },
+                  body: list,
+                });
+                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+                this.appercu.show();
+              }
+          });
+        });
+      }
+    }
   }
 }

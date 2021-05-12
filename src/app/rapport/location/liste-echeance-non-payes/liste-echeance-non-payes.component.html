@@ -1,7 +1,7 @@
-<div class="accordion" id="accordion" role="tablist">
+<!--div class="accordion" id="accordion" role="tablist">
   <div class="card mb-0">
     <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
-      <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Collapsible Group Item #1</a></h5>
+      <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Situation d'un contrat</a></h5>
     </div>
     <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion"
     [ngClass]="{
@@ -10,13 +10,43 @@
       collapsing:false,
       animated:true,
       fadeIn:true
-    }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+    }"-->
+    <div class="card-body">
+        <form [formGroup]="locaGroup">
+            <div class="row">
+                <div class="col-6">
+                    <label for="loca">Locataire : </label>
+                    <select id="loca" class="form-control" formControlName="loca" aria-readonly="false" (click)="filtreContrat()">
+                      <option value="-1">Sélectionner le locataire</option>
+                        <option *ngFor="let item of locataires; let i=index" [value]="i">{{item.identiteLocataire}}</option>
+        </select>
+                </div>
+                <div class="col-6">
+                    <label for="cont">Contrat N° : </label>
+                    <select id="cont" class="form-control" formControlName="cont">
+                      <option value="-1">Tous les contrats</option>
+        <option *ngFor="let item of contLoc; let i=index" [value]="i">{{item.numContrat}} - {{item.immeuble.libIm}} </option>
+        </select>
+                </div>
+            </div>
+            <br><br>
+            <div class="row">
+              <div class="col-xl-5">
+                <button type="button" class="btn btn-secondary" (click)="affichePaiement()">Afficher l'historique de paiement</button>
+              </div>
+              <div class="col-xl-2"></div>
+              <div class="col-xl-5">
+                <button type="button" class="btn btn-secondary" (click)="afficheImpayes()">Afficher les impayés</button>
+              </div>
+            </div>
+        </form>
     </div>
+   
+    <!--/div>
   </div>
-  <div class="card mb-0">
+  <!--div class="card mb-0">
     <div class="card-header" id="headingTwo" role="tab" (click)="manageCollapses(2)">
-      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Collapsible Group Item #2</a></h5>
+      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Historique d'une boutique</a></h5>
     </div>
     <div id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion"
     [ngClass]="{
@@ -26,7 +56,37 @@
       animated:true,
       fadeIn:true
     }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+    <div class="card-body">
+        <form [formGroup]="imGroup">
+            <div class="row">
+                <div class="col-4">
+                    <label for="typVlA">type : </label>
+                    <select id="typVlA" class="form-control" formControlName="typVlA">
+            <option [value]="-1">Tous les types</option>
+            <option *ngFor="let item of typesVL; let i=index" [value]="i">{{item.libTypIm}}</option>
+          </select>
+                </div>
+                <div class="col-4">
+                    <label for="arrond">Arrondissement : </label>
+                    <select id="arrond" class="form-control" formControlName="arrond" (click)="filtre(imGroup.value['arrond'])">
+            <option [value]="-1">Tous les arrondissements</option>
+            <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.nomArrondi}}</option>
+          </select>
+                </div>
+                <div class="col-4">
+                    <label for="sit">Site : </label>
+                    <select id="sit" class="form-control" formControlName="sit">
+            <option [value]="-1">Tous les sites</option>
+            <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
+          </select>
+                </div>
+            </div>
+            <br><br>
+            <div class="row">
+                <button type="button" class="btn btn-secondary" (click)="vlParSite()">Afficher les valeurs locatives correspondants</button>
+            </div>
+        </form>
+    </div>
     </div>
   </div>
   <div class="card mb-0">
@@ -44,4 +104,23 @@
       <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
     </div>
   </div>
-</div>
+</div-->
+
+        <!----------------------------------------Apperçu------------------------------------------->
+        <div bsModal #appercu="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-primary" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title text-center">Apperçu</h4>
+                      <button type="button" class="close" (click)="appercu.hide()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="row">
+                          <iframe class="col" [src]="vuePdf" style="height: 400px;" frameborder="0"></iframe>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>

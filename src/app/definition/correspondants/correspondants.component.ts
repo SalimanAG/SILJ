@@ -246,7 +246,7 @@ export class CorrespondantsComponent implements OnInit {
     this.sitesByArrondi2 = [];
     this.sites.forEach(element => {
       if(this.arrondissements[this.editAffecteSiteFormsGroup.value['editArrondi']].codeArrondi == element.arrondissement.codeArrondi){
-        this.sitesByArrondi.push(element);
+        this.sitesByArrondi2.push(element);
       }
     });
   }

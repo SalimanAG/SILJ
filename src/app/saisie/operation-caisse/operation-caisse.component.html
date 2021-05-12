@@ -70,7 +70,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Nouvelle vente</h4>
-                    <button type="button" class="close" (click)="addVente.hide()" aria-label="Close">
+                    <button type="button" class="close" (click)="fermeVente()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
                 </div>
@@ -151,7 +151,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
-                    <button type="button" class="btn btn-secondary" (click)="addVente.hide()">Fermer</button>
+                    <button type="button" class="btn btn-secondary" (click)="fermeVente()">Fermer</button>
                 </div>
                 <!--div class="modal-footer">
         </div-->
@@ -278,7 +278,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Nouvelle imputation</h4>
-                    <button type="button" class="close" (click)="addImput.hide()" aria-label="Close">
+                    <button type="button" class="close" (click)="fermerImput()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
                 </div>
@@ -355,7 +355,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="addImput.hide()">Close</button>
+                    <button type="button" class="btn btn-secondary" (click)="fermerImput()">Close</button>
                     <button type="submit" class="btn btn-primary">Valider</button>
                 </div>
             </div>
@@ -460,7 +460,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Annulation</h4>
-                <button type="button" class="close" (click)="opAnnul.hide()" aria-label="Close">
+                <button type="button" class="close" (click)="fermeAnnulation()" aria-label="Close">
 <span aria-hidden="true">&times;</span>
 </button>
             </div>
@@ -469,7 +469,7 @@
                 <p>Êtes-vous sûre de vouloir l'annuler ?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="opAnnul.hide()">Non</button>
+                <button type="button" class="btn btn-secondary" (click)="fermeAnnulation()">Non</button>
                 <button type="button" class="btn btn-success" (click)="annulerOperation(annulop)">Oui</button>
             </div>
         </div>
@@ -484,7 +484,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Suppression</h4>
-                <button type="button" class="close" (click)="supOP.hide()" aria-label="Close">
+                <button type="button" class="close" (click)="fermeSup()" aria-label="Close">
   <span aria-hidden="true">&times;</span>
   </button>
             </div>
@@ -493,7 +493,7 @@
                 <p>Êtes-vous sûre de vouloir l'annuler ?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="supOP.hide()">Non</button>
+                <button type="button" class="btn btn-secondary" (click)="fermeSup()">Non</button>
                 <button type="button" class="btn btn-success" (click)="supprimerOperation()">Oui</button>
             </div>
         </div>
