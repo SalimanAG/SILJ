@@ -1,4 +1,4 @@
-<!--div class="accordion" id="accordion" role="tablist">
+<div class="accordion" id="accordion" role="tablist">
   <div class="card mb-0">
     <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
       <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Situation d'un contrat</a></h5>
@@ -10,7 +10,7 @@
       collapsing:false,
       animated:true,
       fadeIn:true
-    }"-->
+    }">
     <div class="card-body">
         <form [formGroup]="locaGroup">
             <div class="row">
@@ -42,11 +42,12 @@
         </form>
     </div>
    
-    <!--/div>
+    </div>
   </div>
-  <!--div class="card mb-0">
+
+  <div class="card mb-0">
     <div class="card-header" id="headingTwo" role="tab" (click)="manageCollapses(2)">
-      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Historique d'une boutique</a></h5>
+      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Récapitulatif des impayés par Arrondissement</a></h5>
     </div>
     <div id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion"
     [ngClass]="{
@@ -59,39 +60,47 @@
     <div class="card-body">
         <form [formGroup]="imGroup">
             <div class="row">
-                <div class="col-4">
+                <!--div class="col-4">
                     <label for="typVlA">type : </label>
                     <select id="typVlA" class="form-control" formControlName="typVlA">
             <option [value]="-1">Tous les types</option>
             <option *ngFor="let item of typesVL; let i=index" [value]="i">{{item.libTypIm}}</option>
           </select>
-                </div>
+                </div-->
                 <div class="col-4">
                     <label for="arrond">Arrondissement : </label>
-                    <select id="arrond" class="form-control" formControlName="arrond" (click)="filtre(imGroup.value['arrond'])">
+                    <select id="arrond" class="form-control" formControlName="arrond">
             <option [value]="-1">Tous les arrondissements</option>
             <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.nomArrondi}}</option>
           </select>
                 </div>
-                <div class="col-4">
+                <!--div class="col-4">
                     <label for="sit">Site : </label>
                     <select id="sit" class="form-control" formControlName="sit">
             <option [value]="-1">Tous les sites</option>
             <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
           </select>
                 </div>
+                <div class="col-4">
+                    <label for="val">Site : </label>
+                    <select id="val" class="form-control" formControlName="val">
+            <option [value]="-1">Choisir la valeur locative</option>
+            <option *ngFor="let item of aSites; let i=index" [value]="i">{{item.libSite}}</option>
+          </select>
+                </div-->
             </div>
             <br><br>
             <div class="row">
-                <button type="button" class="btn btn-secondary" (click)="vlParSite()">Afficher les valeurs locatives correspondants</button>
+                <button type="button" class="btn btn-secondary" (click)="Statut()">Afficher les impayés</button>
             </div>
         </form>
     </div>
     </div>
   </div>
+
   <div class="card mb-0">
     <div class="card-header" id="headingThree" role="tab" (click)="manageCollapses(3)">
-      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseThree">Collapsible Group Item #3</a></h5>
+      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseThree">Point des locations par arrondissements</a></h5>
     </div>
     <div id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion"
     [ngClass]="{
@@ -101,10 +110,29 @@
       animated:true,
       fadeIn:true
     }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+      <div class="card-body">
+        <form [formGroup]="locaGroup">
+            <!--div class="row">
+                <div class="col-6">
+                    <label for="arro">Arrondissement N° : </label>
+                    <select id="arro" class="form-control" formControlName="arro">
+                      <option value="-1">Tous les arrondissements</option>
+        <option *ngFor="let item of arrondissements; let i=index" [value]="i">{{item.codeArrondi}} - {{item.libeArrondi}} </option>
+        </select>
+                </div>
+            </div>
+            <br><br>
+            <div class="row">
+              <div class="col-xl-5">
+                <button type="button" class="btn btn-secondary" (click)="afficheimpaye()">Afficher l'historique de paiement</button>
+              </div>
+              <div class="col-xl-2"></div>
+            </div-->
+        </form>
+      </div>
     </div>
   </div>
-</div-->
+</div>
 
         <!----------------------------------------Apperçu------------------------------------------->
         <div bsModal #appercu="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
