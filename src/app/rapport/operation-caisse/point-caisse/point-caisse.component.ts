@@ -16,7 +16,6 @@ import { CommuneService } from '../../../../services/definition/commune.service'
 import { OperationCaisseService } from '../../../../services/saisie/operation-caisse.service';
 import  autoTable  from 'jspdf-autotable'
 import { timeStamp } from 'console';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-point-caisse',
@@ -45,17 +44,24 @@ export class PointCaisseComponent implements OnInit {
   pcGroup : FormGroup;
   constructor(public fBuilder : FormBuilder, public comServ : CommuneService, 
     public caiSer: CaisseService, public opServ : OperationCaisseService, 
-    public sanit: DomSanitizer, public dp: DatePipe) { 
+    public sanit: DomSanitizer) { 
     this.pcGroup=fBuilder.group({
       arrPC: new FormControl(-1),
       caiPC: new FormControl(-1),
-      debPC: new FormControl(dp.transform(new Date(new Date().getFullYear(),
-      new Date().getMonth(),new Date().getDate(),0,0), 'DD/MM/YYYY HH:mm')),
-      finPC: new FormControl(dp.transform(new Date(),"DD/MM/YYYY HH:mm"))
+      debPC: new FormControl(),
+      finPC: new FormControl()
     });
   }
 
   ngOnInit(): void {
+    let deb=new Date();
+    deb.setTime(0);
+    deb.setMinutes(0);
+    console.log(deb);
+    
+    let fin=new Date();
+    this.pcGroup.patchValue({debPC:moment(Date.now()).format('DD/MM/YYYY HH:mm'),
+    finPC:moment(Date.now()).format("DD/MM/YYYY hh:mm")});
     this.comServ.getAllArrondissement().subscribe(
       data=>{
         this.arrondissements=data;
