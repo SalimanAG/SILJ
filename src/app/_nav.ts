@@ -167,7 +167,7 @@ export const navItems: INavData[] = [
     icon: 'icon-puzzle',
     children: [
       {
-        name: 'Opération de caisse',
+        name: 'Trésorerie',
         url: '/base',
         icon: 'icon-puzzle',
         children: [
