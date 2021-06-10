@@ -27,6 +27,9 @@ export class PointCaisseComponent implements OnInit {
   opened:number = 0;
   clicked:number = 0;
 
+  deb=new Date(new Date().getFullYear(), new Date().getMonth(), 
+    new Date().getDate(),0,0);
+
   arrondissements : Arrondissement[];
   caisses : Caisse[];
   caiArr : Caisse[];
@@ -48,20 +51,12 @@ export class PointCaisseComponent implements OnInit {
     this.pcGroup=fBuilder.group({
       arrPC: new FormControl(-1),
       caiPC: new FormControl(-1),
-      debPC: new FormControl(),
-      finPC: new FormControl()
+      debPC: new FormControl(moment(this.deb).format('YYYY-MM-DDTHH:mm')),
+      finPC: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm'))
     });
   }
 
   ngOnInit(): void {
-    let deb=new Date();
-    deb.setTime(0);
-    deb.setMinutes(0);
-    console.log(deb);
-    
-    let fin=new Date();
-    this.pcGroup.patchValue({debPC:moment(Date.now()).format('DD/MM/YYYY HH:mm'),
-    finPC:moment(Date.now()).format("DD/MM/YYYY hh:mm")});
     this.comServ.getAllArrondissement().subscribe(
       data=>{
         this.arrondissements=data;
@@ -128,17 +123,20 @@ export class PointCaisseComponent implements OnInit {
   }
 
   pointUneCaisse(c : Caisse, d1: Date, d2 :Date){
+    
     this.col=[];
     this.ttampon=this.tcaisse
     this.preCai=0;
     this.locCai=0;
     this.impCai=0;
+    console.log(this.opcaisse.length);
     
     var op = this.opcaisse.filter(opc=>opc.caisse.codeCaisse == c.codeCaisse && 
       opc.dateOpCaisse >= d1 && opc.dateOpCaisse <= d2
        );
     op.forEach(elt => {
-
+      console.log(elt);
+      
       switch(elt.typeRecette.codeTypRec){
         case 'P':{
           var lop=this.ligOpc.filter(l=> l.opCaisse.numOpCaisse == 
@@ -160,7 +158,7 @@ export class PointCaisseComponent implements OnInit {
         }
       }
     });
-    this.cais = this.preCai+this.impCai+this.locCai
+    this.cais = this.preCai+this.impCai+this.locCai;
   }
 
   generer(){
@@ -181,7 +179,9 @@ export class PointCaisseComponent implements OnInit {
         console.log('Point de la caisse ',this.caiArr[this.pcGroup.value['caiPC']]);
         this.pointUneCaisse(this.caiArr[this.pcGroup.value['caiPC']], 
           this.pcGroup.value['debPC'], this.pcGroup.value['finPC']  );
-          console.log(this.cais, this.ttampon, this.tcaisse);
+          console.log('Du '+this.pcGroup.value['debPC']+' au '+this.pcGroup.value['finPC']+
+          this.cais, this.ttampon, this.tcaisse, );
+          
           
         if(this.cais>0){
           if(this.ttampon == 0 ){
@@ -191,6 +191,8 @@ export class PointCaisseComponent implements OnInit {
             format('DD/MM/YYYY HH:mm')+'\n'+
             this.caiArr[this.pcGroup.value['caiPC']].libeCaisse,20,20)
           }
+          
+          
           this.col.push(this.preCai);
           this.col.push(this.locCai);
           this.col.push(this.impCai);
@@ -223,6 +225,8 @@ export class PointCaisseComponent implements OnInit {
           });
           this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(
             doc.output('datauristring', { filename: 'paiement.pdf' }));
+            console.log('Avant impression du point d\'une caisse');
+            
           this.appercu.show();
         }
       }
@@ -322,6 +326,8 @@ export class PointCaisseComponent implements OnInit {
               format('DD/MM/YYYY HH:mm')+' au '+moment(this.pcGroup.value['finPC']).
               format('DD/MM/YYYY HH:mm'),20,20)
             }
+            console.log('TC:',this.cais+' TI :',this.tImp+" TP",this.tPrest+' TL',this.tLoc);
+            
             this.tArr+=this.cais;
             this.tcaisse+=this.cais;
             this.tImp+=this.impCai;
@@ -333,7 +339,9 @@ export class PointCaisseComponent implements OnInit {
             locA+=this.locCai;
             }
           });
+              console.log('Total Arrondissement: ',a.nomArrondi, this.tArr);
             if(this.tArr > 0){
+              
               this.col=[];
               this.col.push(a.nomArrondi);
               this.col.push(this.tPrest);

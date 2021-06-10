@@ -135,11 +135,12 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
       doc.deletePage(1);
       if(this.locaGroup.value['cont']==-1){
         //console.log(this.echeCont[]);
-        
+        let total= 0;
         this.contLoc.forEach(element => {
           this.echeCont=this.echeances.filter(
             ec=>ec.contrat.numContrat == element.numContrat);
             if(this.echeCont.length>0){
+              let tCont = 0;
               this.echeCont.sort((a,b)=><any>new Date(a.dateEcheance)-<any>new Date(b.dateEcheance));
               let list=[];
               this.echeCont.forEach(e=>{
@@ -151,9 +152,12 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
                 eche.push(e.opCaisse.numOpCaisse);
                 eche.push(moment(new Date(e.opCaisse.dateOpCaisse)).format('DD/MM/yyyy hh:mm'));
                 eche.push(e.opCaisse.contribuable);
-  
+                tCont+=e.prix.valueOf();
                 list.push(eche);
-              });doc.addPage();
+              });
+              if(tCont>0){
+                total+=tCont;
+              doc.addPage();
               doc.text(''+doc.getNumberOfPages(),8,10);
               var df="";
               if(element.dateFinContrat!=null){
@@ -175,17 +179,49 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
                 margin: { top: 60 },
                 body: list,
               });
-              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'paiement.pdf' }));
-              this.appercu.show();
+              autotable(doc, {
+                theme: 'grid',
+                margin: { top: 0, left: 30, right: 5 },
+                columnStyles: {
+                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+                },
+                body: [
+                  ['Total contrat', tCont]
+                ],
+                bodyStyles: {
+                  fontSize: 8,
+                  cellPadding: 1,
+                },
+              });
+              }
             }
             else{
               console.log('Le locataire '+this.locataires[this.locaGroup.value['loca']].identiteLocataire+
               ' n\'a payé aucune échéance sur le contrat de location N°: '+this.contLoc[this.locaGroup.value['cont']].numContrat);
-              
             }
         });
+        if(total>0){
+          autotable(doc, {
+            theme: 'grid',
+            margin: { top: 0, left: 30, right: 5 },
+            columnStyles: {
+              0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+            },
+            body: [
+              ['Total de tous les contrats', total]
+            ],
+            bodyStyles: {
+              fontSize: 8,
+              cellPadding: 1,
+            },
+          });
+          this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'paiement.pdf' }));
+          this.appercu.show();
+        }
+        
       }
       else{
+        let tcont=0;
         this.echeCont=this.echeances.filter(
           ec=>ec.contrat.numContrat==this.contLoc[this.locaGroup.value['cont']].numContrat);
           if(this.echeCont.length>0){
@@ -200,7 +236,7 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
               eche.push(e.opCaisse.numOpCaisse);
               eche.push(moment(new Date(e.opCaisse.dateOpCaisse)).format('DD/MM/yyyy hh:mm'));
               eche.push(e.opCaisse.contribuable);
-
+              tcont+=e.prix.valueOf();
               list.push(eche);
             });
             doc.addPage();
@@ -226,14 +262,28 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
               margin: { top: 60 },
               body: list,
             });
-            this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'paiement.pdf' }));
-            this.appercu.show();
+            autotable(doc, {
+              theme: 'grid',
+              margin: { top: 0, left: 30, right: 5 },
+              columnStyles: {
+                0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+              },
+              body: [
+                ['Total contrat', tcont]
+              ],
+              bodyStyles: {
+                fontSize: 8,
+                cellPadding: 1,
+              },
+            });
           }
           else{
-            console.log('Le locataire '+this.locataires[this.locaGroup.value['loca']].identiteLocataire+
-            ' est à jour sur le contrat de location N°: '+this.contLoc[this.locaGroup.value['cont']].numContrat);
-            
+            doc.text('Le locataire '+this.locataires[this.locaGroup.value['loca']].identiteLocataire+
+            ' est à jour sur le contrat de location N°: '+this.contLoc[this.locaGroup.value['cont']].numContrat,
+            40,20);  
           }
+            this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'paiement.pdf' }));
+            this.appercu.show();
       }
     }
   }
@@ -340,7 +390,7 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
             0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
           },
           body: [
-            ['Total', total]
+            ['Total', totCont]
           ],
           bodyStyles: {
             fontSize: 8,

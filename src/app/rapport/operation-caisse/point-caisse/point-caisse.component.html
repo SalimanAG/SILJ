@@ -1,7 +1,7 @@
 <div class="accordion" id="accordion" role="tablist">
   <div class="card mb-0">
     <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
-      <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Collapsible Group Item #1</a></h5>
+      <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Point de caisse</a></h5>
     </div>
     <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion"
     [ngClass]="{
@@ -38,13 +38,13 @@
 
           <div class="form-group col-sm-3">
             <label for="debPC">Date de début</label>
-            <input type="datetime" class="form-control" id="debPC"
-             formControlName="debPC" placeholder="Date de Début">
+            <input type="datetime-local" class="form-control" id="debPC"
+             formControlName="debPC" placeholder="new Date()">
           </div>
 
           <div class="form-group col-sm-3">
             <label for="finPC">Date de Fin</label>
-            <input type="datetime" class="form-control" id="finPC"
+            <input type="datetime-local" class="form-control" id="finPC"
             formControlName="finPC" placeholder="Date de fin">
           </div>
 

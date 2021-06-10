@@ -1,7 +1,7 @@
 <div class="accordion" id="accordion" role="tablist">
   <div class="card mb-0">
     <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
-      <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Situation d'un contrat</a></h5>
+      <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Situation de contrat par locataire</a></h5>
     </div>
     <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion"
     [ngClass]="{
@@ -32,7 +32,7 @@
             <br><br>
             <div class="row">
               <div class="col-xl-5">
-                <button type="button" class="btn btn-secondary" (click)="affichePaiement()">Afficher l'historique de paiement</button>
+                <button type="button" class="btn btn-secondary" (click)="affichePaiement()">Afficher les paiements</button>
               </div>
               <div class="col-xl-2"></div>
               <div class="col-xl-5">
