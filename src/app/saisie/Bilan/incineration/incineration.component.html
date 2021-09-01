@@ -3,18 +3,18 @@
         <i class="fa fa-align-justify"></i> Inventaire
     </div>
     <div class="card-body">
-      <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;" >
+      <!--<div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;" >
 
-        <!--label >
+        label >
             Numéro:
             <input type="text" [formControl]="numero" name="numero" placeholder="Numéro invintaire" autocomplete="off">
-          </label-->
+          </label
 
           <label style="padding-left: 20px;">
             Date
             <input type="date" [formControl]="dateInventaire" id="dateInventaire" >
           </label>
-  
+    -->
         
         <!--label style="padding-left: 20px;"> 
           Magasin:
@@ -26,11 +26,11 @@
         <label style="padding-left: 20px;">
             Description:
             <input type="text" [formControl]="description" style="width: 260px; height: 35px;" name="description" placeholder="Description de l'inventaire" autocomplete="off">
-          </label-->
+          </label
   
         <label style="padding-left: 20px;">
   
-          <button  [disabled]="this.magasinIventaire.value=='' " class="btn btn-primary" data-toggle="modal" (click)="afficherIncinerationPrevue()">Générer <!--span class="fa fa-plus-circle"></span--></button>
+          <button  [disabled]="this.magasinIventaire.value=='' " class="btn btn-primary" data-toggle="modal" (click)="afficherIncinerationPrevue()">Générer <!--span class="fa fa-plus-circle"></span></button>
          
         </label>
 
@@ -43,8 +43,8 @@
               <tr>
                 <th>Numéro </th>
                 <th>Date</th>
-                <th>Description</th>
-                <!--th></th-->
+                <th>Description</th>-->
+                <!--th></th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -69,9 +69,9 @@
                 <th>Actions</th>
             </tr>
             </tfoot>
-        </table>
+        </table-->
 
-        <!--Modal add-->
+        <!--Modal add
         <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-primary modal-xl" role="document">
               <form [formGroup]="addInventaireFormGroup" (ngSubmit)="onSubmitAddInventaireFormsGroup()">
@@ -118,12 +118,12 @@
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
                       <button type="submit" class="btn btn-primary">Enrégistrer</button>
-                  </div>
-                </div><!-- /.modal-content -->
+                  </div>--><!--
+                </div> /.modal-content 
               </form>
   
-            </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            </div>--><!-- /.modal-dialog -->
+    <!--</div> /.modal -->
   
   
     </div>
