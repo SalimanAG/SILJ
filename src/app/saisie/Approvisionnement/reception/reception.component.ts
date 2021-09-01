@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {ModalDirective} from 'ngx-bootstrap/modal';
 import { exit } from 'process';
@@ -29,11 +29,16 @@ import { Stocker } from '../../../../models/stocker.model';
 import { TresorierCommunalService } from '../../../../services/definition/tresorier-communal.service';
 import { data } from 'jquery';
 import { ToolsService } from '../../../../services/utilities/tools.service';
+import { PlageNumDispo } from '../../../../models/PlageNumDispo';
+import { PlageNumDispoService } from '../../../../services/saisie/PlageNumDispo.service';
 
 @Component({
   selector: 'app-reception',
   templateUrl: './reception.component.html',
   styleUrls: ['./reception.component.css']
+})
+@Injectable({
+  providedIn: 'root'
 })
 export class ReceptionComponent implements OnInit {
 
@@ -72,6 +77,7 @@ export class ReceptionComponent implements OnInit {
   editCommande:Commande = new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false));
   suprCommande:Commande = new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false));
 
+  plaeDispo : PlageNumDispo = new PlageNumDispo(null,null,null,null,null,null,null,null,null,null,null);
   ligneCommandes:LigneCommande[] = [];
   editLigneCommande:LigneCommande = new LigneCommande(0, 0, 0, 0,
     new Commande('', new Date(), '', 0, new Fournisseur('', '', '', '', '', '', ''), new Exercice('', '', new Date(), new Date(), '', false)),
@@ -96,11 +102,10 @@ export class ReceptionComponent implements OnInit {
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService, private serviceReception:ReceptionService,
     private formBulder:FormBuilder, private sanitizer:DomSanitizer, private serviceUser:UtilisateurService,
     private serviceCorres:CorrespondantService, private serviceTresorier:TresorierCommunalService,
-    private serviceTools:ToolsService) {
+    private serviceTools:ToolsService, public disPlaNum : PlageNumDispoService, public pnds : PlageNumDispoService) {
       this.getAllLigneReception();
       this.initDtOptions();
-      this.initFormsGroup();
-
+    this.initFormsGroup();
     }
 
     initDtOptions(){
@@ -467,6 +472,15 @@ export class ReceptionComponent implements OnInit {
     this.tempAddLigneReception.splice(inde, 1);
   }
 
+  definirNumFin(n: number){
+    if(this.tempAddLigneReception[n].quantiteLigneReception>0 &&
+      this.tempAddLigneReception[n].numSerieDebLigneReception>0){
+        this.tempAddLigneReception[n].numSerieFinLigneReception=
+        this.tempAddLigneReception[n].numSerieDebLigneReception+
+        this.tempAddLigneReception[n].quantiteLigneReception-1;
+    }
+  }
+
   popArticleEditingOfRecept1(inde:number){
     this.tempEditLigneReception.splice(inde, 1);
   }
@@ -555,7 +569,21 @@ export class ReceptionComponent implements OnInit {
                     concernedStocker.quantiterStocker+=data2.quantiteLigneReception;
                     this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
                       (data4) => {
+                        if(element.ligneCommande.article.numSerieArticle == true){
+                          let pnd = new PlageNumDispo(element.numSerieDebLigneReception,element.numSerieDebLigneReception,
+                            element.numSerieFinLigneReception, element.numSerieFinLigneReception, element.reception.exercice,
+                            element.ligneCommande.article,new Magasin('CT', 'Caveau trésor'), data, null,null, null);
+                            console.log(pnd);
 
+                          this.disPlaNum.addPND(pnd).subscribe(
+                            data=>{
+                              console.log('Ajout réussi');
+                            },
+                            errlr=>{
+                              console.log("Ajout de numéro de série échoué");
+                            }
+                          );
+                        }
                       },
                       (erreur) => {
                         console.log('Erreur lors de la modification dUn stock', erreur);

@@ -617,7 +617,7 @@ export class ImportationExportationComponent implements OnInit {
                   for(const element of this.feuille){
                     inde++;
                     if(element[0] != undefined && element[1] != undefined && element[2] != undefined
-                      && typeof element[3] == 'number' && typeof element[4] == 'number'
+                      && typeof element[3] == 'number' && typeof element[4] == 'boolean'
                       && element[7] != undefined && element[8] != undefined && element[9] != undefined){
                       let quartier:Quartier = null;
                       let site:SiteMarcher = null;

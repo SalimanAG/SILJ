@@ -35,6 +35,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
 import { Magasin } from '../../../../models/magasin.model';
 import { Stocker } from '../../../../models/stocker.model';
+import { PlageNumDispo } from '../../../../models/PlageNumDispo';
+import { PlageNumDispoService } from '../../../../services/saisie/PlageNumDispo.service';
 
 @Component({
   selector: 'app-placement',
@@ -98,6 +100,9 @@ export class PlacementComponent  implements OnInit {
   tempDeletePlageNumArticle:PlageNumArticle[] = [];
   oldPlageNumArtLines:PlageNumArticle[] = [];
 
+  plagesDispo: PlageNumDispo[];
+  plageDispoArti: PlageNumDispo[];
+
   pdfToShow = null;
 
   carveauxMairie:Magasin = new Magasin('', '');
@@ -108,7 +113,8 @@ export class PlacementComponent  implements OnInit {
     private formBulder:FormBuilder, private servicePlacement:PlacementService,
     private servicePlageNumArticle:BonApproService, private serviceCorres:CorrespondantService,
     private serviceCommune:CommuneService, private serviceRegisseur:RegisseurService,
-    private serviceUtilisateur:UtilisateurService, private sanitizer:DomSanitizer) {
+    private serviceUtilisateur: UtilisateurService, private sanitizer: DomSanitizer,
+  public pds: PlageNumDispoService) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -207,6 +213,7 @@ export class PlacementComponent  implements OnInit {
     this.getAllExercice();
     this.getAllUtilisateur();
     this.getCarveauMairie();
+    this.getAllPlageDispo();
     this.serviceRegisseur.getAllRegisseur().subscribe(
       (data) => {
         this.regisseurs = data;
@@ -352,7 +359,13 @@ export class PlacementComponent  implements OnInit {
     );
   }
 
-
+  getAllPlageDispo() {
+    this.pds.getAllPND().subscribe(
+      data => {
+        this.plagesDispo = data;
+      }
+    );
+  }
 
   getAllPlacement(){
     this.servicePlacement.getAllPlacement().subscribe(
@@ -499,7 +512,7 @@ export class PlacementComponent  implements OnInit {
       new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), this.serviceExercice.exoSelectionner),
       this.articles[inde]));
 
-      this.tempAddPlageNumArticle.push(new PlageNumArticle('0', '0', null, this.tempAddLignePlacement[this.tempAddLignePlacement.length-1], null));
+      //this.tempAddPlageNumArticle.push(new PlageNumArticle(0, 0, null, this.tempAddLignePlacement[this.tempAddLignePlacement.length-1], null));
     }
 
 
@@ -520,7 +533,7 @@ export class PlacementComponent  implements OnInit {
       new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), this.serviceExercice.exoSelectionner),
       this.articles[inde]));
 
-      this.tempEditPlageNumArticle.push(new PlageNumArticle('0', '0', null, this.tempEditLignePlacement[this.tempEditLignePlacement.length-1], null));
+      //this.tempEditPlageNumArticle.push(new PlageNumArticle(0, 0, null, this.tempEditLignePlacement[this.tempEditLignePlacement.length-1], null));
     }
 
 
@@ -546,11 +559,11 @@ export class PlacementComponent  implements OnInit {
   }
 
   onAddAPlageNumArticleClicked1(inde:number){
-    this.tempAddPlageNumArticle.push(new PlageNumArticle('0', '0', null, this.tempAddLignePlacement[inde], null));
+    //this.tempAddPlageNumArticle.push(new PlageNumArticle(0, 0, null, this.tempAddLignePlacement[inde], null));
   }
 
   onAddAPlageNumArticleClicked2(inde:number){
-    this.tempEditPlageNumArticle.push(new PlageNumArticle('0', '0', null, this.tempEditLignePlacement[inde], null));
+    //this.tempEditPlageNumArticle.push(new PlageNumArticle(0, 0, null, this.tempEditLignePlacement[inde], null));
   }
 
   popALigneOfPlageNumArticle1(inde:number){
@@ -563,10 +576,52 @@ export class PlacementComponent  implements OnInit {
     this.tempEditPlageNumArticle.splice(inde, 1);
   }
 
+  numero() {
+    console.log(this.plageNumArticles);
+
+  }
+
+  numerotation(inde: number) {
+    /*console.log(inde);
+    if (this.lignePlacements[inde].article.numSerieArticle == true) {
+      let qte = this.lignePlacements[inde].quantiteLignePlacement;
+      if (qte > 0) {
+
+      this.plageDispoArti = this.plagesDispo.filter(pd => pd.article.codeArticle ==
+        this.tempAddLignePlacement[inde].article.codeArticle);
+      this.plageDispoArti.sort((a, b) => a.numDebPlage - b.numFinPlageDispo);
+      if ((this.plageDispoArti[0].numFinPlage - this.plageDispoArti[0].numDebPlageDispo + 1) <=
+        this.lignePlacements[inde].quantiteLignePlacement) {
+        let i = 0;
+        while (qte > 0) {
+          if (qte >= (this.plageDispoArti[i].numFinPlageDispo
+            - this.plageDispoArti[i].numDebPlageDispo + 1)) {
+            this.plageNumArticles.push(new PlageNumArticle(this.plageDispoArti[i].numDebPlageDispo,
+              this.plageDispoArti[i].numFinPlageDispo, null, this.lignePlacements[inde], null));
+            qte-=this.plageDispoArti[i].numFinPlageDispo-this.plageDispoArti[i].numDebPlageDispo
+          } else {
+            this.plageNumArticles.push(new PlageNumArticle(this.plageDispoArti[i].numDebPlageDispo,
+              this.plageDispoArti[i].numDebPlageDispo + qte, null, this.lignePlacements[inde], null));
+            qte = 0;
+          }
+        }
+      } else {
+        this.plageNumArticles.push(new PlageNumArticle(this.plageDispoArti[0].numDebPlageDispo,
+          this.plageDispoArti[0].numDebPlageDispo + this.lignePlacements[inde].quantiteLignePlacement,
+          null, this.lignePlacements[inde], null));
+      }
+      }
+    }
+    console.log(this.tempAddPlageNumArticle);*/
+
+  }
 
   initAddPlacement(){
     this.addComModal.show();
-    if(this.correspondantsByArrondi.length != 0) this.getMagasinOfTheCorres1();
+    if (this.correspondantsByArrondi.length != 0) {
+      this.getMagasinOfTheCorres1();
+      this.getAllPlageDispo();
+    }
   }
 
   initEditCommande(inde:number){

@@ -44,6 +44,15 @@
                         </td>
                     </tr>
                 </tbody>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Nom</th>
+                        <th>Prénoms</th>
+                        <th>Téléphone</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
             </table>
         </div>
     </div>
@@ -116,7 +125,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Modifier trésorier(ère) communal(e)</h4>
-                    <button type="button" class="close" (click)="modTresCom.hide()" aria-label="Close">
+                    <button type="button" class="close" (click)="fermeMod()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
                 </div>
@@ -154,7 +163,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="modTresCom.hide()">Abandonner</button>
+                    <button type="button" class="btn btn-secondary" (click)="fermeMod()">Abandonner</button>
                     <button type="submit" class="btn btn-primary">Valider</button>
                 </div>
             </div>
@@ -177,7 +186,7 @@
         </button>
             </div>
             <div class="modal-body">
-                <p>Vous êtes sur le point de supprimer le communal <mark style="color: red;">  {{ tresmani.idRp }}  </mark></p>
+                <p>Vous êtes sur le point de supprimer le communal <mark style="color: red;"> {{ tresmani.idRp }} </mark></p>
                 <p>Confirmez-vous votre action ?</p>
             </div>
             <div class="modal-footer">

@@ -1,7 +1,7 @@
 import { Component, OnInit, Sanitizer, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import {jsPDF} from 'jspdf';
+import { jsPDF } from 'jspdf';
 import * as moment from 'moment';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Arrondissement } from '../../../../models/arrondissement.model';
@@ -134,7 +134,7 @@ export class ListeValeurLocativeComponent implements OnInit {
 
   vlParSite() {
     const doc = new jsPDF();
-    doc.text(''+doc.getNumberOfPages(),55,5)
+    doc.text('' + doc.getNumberOfPages(), 55, 5)
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.setFontSize(18);
@@ -154,7 +154,54 @@ export class ListeValeurLocativeComponent implements OnInit {
                 imm.push(elt.libIm);
                 imm.push(elt.stuctResp);
                 imm.push(elt.superficie);
-                if(elt.etatIm)
+                if (elt.etatIm)
+                  imm.push("En contrat");
+                else
+                  imm.push("Libre");
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                list.push(imm);
+              });
+            doc.addPage();
+            doc.text('' + doc.getNumberOfPages(), 8, 10);
+            doc.text('Arrondissement : ' + this.arrondissements[this.imGroup.value['arrond']].nomArrondi, 40, 20);
+            doc.text('Site : ' + this.sites[this.imGroup.value['sit']].libSite, 50, 30);
+            doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 55, 40);
+            autotable(doc, {
+              theme: 'grid',
+              head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
+              headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold',
+              },
+              margin: { top: 50 },
+              body: list,
+            });
+            alert(this.immeub.length + ' valeurs locatives trouvées');
+
+            this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+            this.appercu.show();
+          }
+          else {
+            alert('Aucune valeur inactive ne répond aux critères spécifiés');
+          }
+        }
+        else {
+          this.aSites.forEach(sit => {
+            this.immeub = this.immeubles.filter(im =>
+              im.typeImmeuble.codeTypIm === this.typesVL[this.imGroup.value['typVlA']].codeTypIm &&
+              im.siteMarcher.codeSite === sit.codeSite);
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
+                imm.push(elt.codeIm);
+                imm.push(elt.libIm);
+                imm.push(elt.stuctResp);
+                imm.push(elt.quartier.nomQuartier);
+                imm.push(elt.superficie);
+                if (elt.etatIm)
                   imm.push("En contrat");
                 else
                   imm.push("Libre");
@@ -163,13 +210,13 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('' + doc.getNumberOfPages(), 8, 10);
               doc.text('Arrondissement : ' + this.arrondissements[this.imGroup.value['arrond']].nomArrondi, 40, 20);
-              doc.text('Site : ' + this.sites[this.imGroup.value['sit']].libSite, 50, 30);
-              doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 55, 40);
+              doc.text('Site : ' + sit.libSite, 45, 3);
+              doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 50, 40);
               autotable(doc, {
                 theme: 'grid',
-                head: [['Code', 'Libellé', 'Structure responsable', 'Surface',  'Etat', 'Prix']],
+                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
                 headStyles: {
                   fillColor: [41, 128, 185],
                   textColor: 255,
@@ -178,80 +225,32 @@ export class ListeValeurLocativeComponent implements OnInit {
                 margin: { top: 50 },
                 body: list,
               });
-              console.log(this.immeub.length+' valeurs locatives trouvées');
-              
               this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
               this.appercu.show();
             }
-            else{
-              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+            else {
+              alert('Aucune valeur inactive ne répond aux critères spécifiés');
             }
-        }
-        else {
-          this.aSites.forEach(sit=>{
-            this.immeub = this.immeubles.filter(im =>
-              im.typeImmeuble.codeTypIm === this.typesVL[this.imGroup.value['typVlA']].codeTypIm &&
-              im.siteMarcher.codeSite === sit.codeSite);
-              if(this.immeub.length>0){
-                let list=[];
-                this.immeub.forEach(elt=>{
-                  let imm=[];
-                  imm.push(elt.codeIm);
-                  imm.push(elt.libIm);
-                  imm.push(elt.stuctResp);
-                  imm.push(elt.quartier.nomQuartier);
-                  imm.push(elt.superficie);
-                  if(elt.etatIm)
-                    imm.push("En contrat");
-                  else
-                    imm.push("Libre");
-                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
-                  list.push(imm);
-                });
-                doc.addPage();
-                doc.text(''+doc.getNumberOfPages(),8,10);
-                doc.text('Arrondissement : ' + this.arrondissements[this.imGroup.value['arrond']].nomArrondi, 40, 20);
-                doc.text('Site : ' + sit.libSite, 45, 3);
-                doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 50, 40);
-                autotable(doc, {
-                  theme: 'grid',
-                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
-                  headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                  },
-                  margin: { top: 50 },
-                  body: list,
-                });
-                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
-                this.appercu.show();
-              }
-              else{
-                console.log('Aucune valeur inactive ne répond aux critères spécifiés');
-              }
           });
         }
       }
       else {
-        this.arrondissements.forEach(ar=>{
-          this.aSites=this.sites.filter(s=> s.arrondissement.codeArrondi== ar.codeArrondi);
-          this.aSites.forEach(sit=>{
+        this.arrondissements.forEach(ar => {
+          this.aSites = this.sites.filter(s => s.arrondissement.codeArrondi == ar.codeArrondi);
+          this.aSites.forEach(sit => {
             this.immeub = this.immeubles.filter(im =>
               im.typeImmeuble.codeTypIm == this.typesVL[this.imGroup.value['typVlA']].codeTypIm &&
               im.siteMarcher.codeSite == sit.codeSite);
-            if(this.immeub.length>0){
-              console.log(sit.libSite+':'+this.immeub.length+' '+this.typesVL[this.imGroup.value['typVlA']].libTypIm+' trouvés');
-              let list=[];
-              this.immeub.forEach(elt=>{
-                let imm=[];
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
                 imm.push(elt.codeIm);
                 imm.push(elt.libIm);
                 imm.push(elt.stuctResp);
                 imm.push(elt.quartier.nomQuartier);
                 imm.push(elt.superficie);
-                if(elt.etatIm)
+                if (elt.etatIm)
                   imm.push("En contrat");
                 else
                   imm.push("Libre");
@@ -260,7 +259,7 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('' + doc.getNumberOfPages(), 8, 10);
               doc.text('Arrondissement : ' + sit.arrondissement.nomArrondi, 40, 20);
               doc.text('Site : ' + sit.libSite, 45, 30);
               doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 50, 40);
@@ -278,87 +277,42 @@ export class ListeValeurLocativeComponent implements OnInit {
               this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
               this.appercu.show();
             }
-            else{
-              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+            else {
+              alert('Aucune valeur inactive ne répond aux critères spécifiés');
             }
           });
-      });
+        });
       }
     }
     else {
-      if(this.imGroup.value['arrond']==-1){        
-        this.arrondissements.forEach(ar=>{
-          this.aSites=this.sites.filter(s=>s.arrondissement.codeArrondi == ar.codeArrondi);
-          this.aSites.forEach(sit=>{
-            this.typesVL.forEach(tvl=>{
-              this.immeub=this.immeubles.filter(im=>im.siteMarcher.codeSite==sit.codeSite && 
-                im.typeImmeuble.codeTypIm==tvl.codeTypIm);
-                if (this.immeub.length>0){
-                  let list=[];
-                  this.immeub.forEach(elt=>{
-                    let imm=[];
-                    imm.push(elt.codeIm);
-                    imm.push(elt.libIm);
-                    imm.push(elt.stuctResp);
-                    imm.push(elt.superficie);
-                    if(elt.etatIm)
-                      imm.push("En contrat");
-                    else
-                      imm.push("Libre");
+      if (this.imGroup.value['arrond'] == -1) {
+        this.arrondissements.forEach(ar => {
+          this.aSites = this.sites.filter(s => s.arrondissement.codeArrondi == ar.codeArrondi);
+          this.aSites.forEach(sit => {
+            this.typesVL.forEach(tvl => {
+              this.immeub = this.immeubles.filter(im => im.siteMarcher.codeSite == sit.codeSite &&
+                im.typeImmeuble.codeTypIm == tvl.codeTypIm);
+              if (this.immeub.length > 0) {
+                let list = [];
+                this.immeub.forEach(elt => {
+                  let imm = [];
+                  imm.push(elt.codeIm);
+                  imm.push(elt.libIm);
+                  imm.push(elt.stuctResp);
+                  imm.push(elt.superficie);
+                  if (elt.etatIm)
+                    imm.push("En contrat");
+                  else
+                    imm.push("Libre");
                     imm.push(elt.valUnit);
                     if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
                       imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
                     list.push(imm);
                   });
-                  doc.addPage();
-                  doc.text(''+sit.arrondissement.nomArrondi,40,20);
-                  doc.text('Site: '+sit.libSite,45,30);
-                  doc.text('Liste des : '+tvl.libTypIm,50,40);
-                  autotable(doc, {
-                    theme: 'grid',
-                    head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
-                    headStyles: {
-                      fillColor: [41, 128, 185],
-                      textColor: 255,
-                      fontStyle: 'bold',
-                    },
-                    margin: { top: 50 },
-                    body: list,
-                  });
-                  this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
-                  this.appercu.show();
-                }
-            });
-          });
-        });
-      }
-      else{
-        this.aSites.forEach(sit=>{
-          this.typesVL.forEach(typ=>{
-            this.immeub=this.immeubles.filter(im=>
-              im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == typ.codeTypIm);
-              if (this.immeub.length>0){
-                let list=[];
-                this.immeub.forEach(elt=>{
-                  let imm=[];
-                  imm.push(elt.codeIm);
-                  imm.push(elt.libIm);
-                  imm.push(elt.stuctResp);
-                  imm.push(elt.superficie);
-                  if(elt.etatIm)
-                    imm.push("En contrat");
-                  else
-                    imm.push("Libre");
-                  imm.push(elt.valUnit);
-                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
-                  list.push(imm);
-                });
                 doc.addPage();
-                doc.text(''+doc.getNumberOfPages(),8,10);
-                doc.text(''+sit.arrondissement.nomArrondi,40,20);
-                doc.text('Site: '+sit.libSite,45,30);
-                doc.text('Liste des : '+typ.libTypIm,50,40);
+                doc.text('' + sit.arrondissement.nomArrondi, 40, 20);
+                doc.text('Site: ' + sit.libSite, 45, 30);
+                doc.text('Liste des : ' + tvl.libTypIm, 50, 40);
                 autotable(doc, {
                   theme: 'grid',
                   head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
@@ -373,6 +327,51 @@ export class ListeValeurLocativeComponent implements OnInit {
                 this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
                 this.appercu.show();
               }
+            });
+          });
+        });
+      }
+      else {
+        this.aSites.forEach(sit => {
+          this.typesVL.forEach(typ => {
+            this.immeub = this.immeubles.filter(im =>
+              im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == typ.codeTypIm);
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
+                  imm.push(elt.codeIm);
+                  imm.push(elt.libIm);
+                  imm.push(elt.stuctResp);
+                  imm.push(elt.superficie);
+                  if (elt.etatIm)
+                    imm.push("En contrat");
+                  else
+                    imm.push("Libre");
+                  imm.push(elt.valUnit);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                  list.push(imm);
+                });
+                doc.addPage();
+                doc.text('' + doc.getNumberOfPages(), 8, 10);
+                doc.text('' + sit.arrondissement.nomArrondi, 40, 20);
+                doc.text('Site: ' + sit.libSite, 45, 30);
+                doc.text('Liste des : ' + typ.libTypIm, 50, 40);
+                autotable(doc, {
+                  theme: 'grid',
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
+                  headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold',
+                  },
+                  margin: { top: 50 },
+                  body: list,
+                });
+              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+              this.appercu.show();
+            }
           });
         });
       }
@@ -381,7 +380,7 @@ export class ListeValeurLocativeComponent implements OnInit {
 
   vlLibresParSite() {
     const doc = new jsPDF();
-    doc.text(''+doc.getNumberOfPages(),55,5)
+    doc.text('' + doc.getNumberOfPages(), 55, 5)
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.setFontSize(18);
@@ -390,9 +389,9 @@ export class ListeValeurLocativeComponent implements OnInit {
     if (this.imLibGroup.value['typVlAl'] != -1) {        //////Type spécifié//////
       if (this.imLibGroup.value['arrondl'] != -1) {     //////Type et Arrondissement spécifiés//////
         if (this.imLibGroup.value['sitl'] != -1) {     //////Type, Arrondissement et sit spécifiés//////
-            this.immeub = this.immeubles.filter(im => im.etatIm==false &&
-              im.typeImmeuble.codeTypIm === this.typesVL[this.imLibGroup.value['typVlAl']].codeTypIm &&
-              im.siteMarcher.codeSite === this.aSites[this.imLibGroup.value['sitl']].codeSite);
+          this.immeub = this.immeubles.filter(im => im.etatIm == false &&
+            im.typeImmeuble.codeTypIm === this.typesVL[this.imLibGroup.value['typVlAl']].codeTypIm &&
+            im.siteMarcher.codeSite === this.aSites[this.imLibGroup.value['sitl']].codeSite);
             if (this.immeub.length > 0) {
               let list = [];
               this.immeub.forEach(elt => {
@@ -406,10 +405,10 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('' + doc.getNumberOfPages(), 8, 10);
               doc.text('Arrondissement : ' + this.arrondissements[this.imLibGroup.value['arrondl']].nomArrondi, 40, 20);
               doc.text('Site : ' + this.sites[this.imLibGroup.value['sitl']].libSite, 50, 30);
-              doc.text('Liste des ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm+' libres', 55, 40);
+              doc.text('Liste des ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm + ' libres', 55, 40);
               autotable(doc, {
                 theme: 'grid',
                 head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuel']],
@@ -421,38 +420,36 @@ export class ListeValeurLocativeComponent implements OnInit {
                 margin: { top: 50 },
                 body: list,
               });
-              console.log(this.immeub.length+' valeurs locatives trouvées');
-              
               this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
               this.appercu.show();
             }
-            else{
-              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+            else {
+              alert('Aucune valeur inactive ne répond aux critères spécifiés');
             }
         }
         else {
-          this.aSites.forEach(sit=>{
+          this.aSites.forEach(sit => {
             this.immeub = this.immeubles.filter(im => im.etatIm == false &&
               im.typeImmeuble.codeTypIm === this.typesVL[this.imLibGroup.value['typVlAl']].codeTypIm &&
               im.siteMarcher.codeSite === sit.codeSite);
-              if(this.immeub.length>0){
-                let list=[];
-                this.immeub.forEach(elt=>{
-                  let imm=[];
-                  imm.push(elt.codeIm);
-                  imm.push(elt.libIm);
-                  imm.push(elt.stuctResp);
-                  imm.push(elt.quartier.nomQuartier);
-                  imm.push(elt.superficie);
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
+                imm.push(elt.codeIm);
+                imm.push(elt.libIm);
+                imm.push(elt.stuctResp);
+                imm.push(elt.quartier.nomQuartier);
+                imm.push(elt.superficie);
                   if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
                     imm.push(elt.codeIm);
                   list.push(imm);
                 });
                 doc.addPage();
-                doc.text(''+doc.getNumberOfPages(),8,10);
+                doc.text('' + doc.getNumberOfPages(), 8, 10);
                 doc.text('Arrondissement : ' + this.arrondissements[this.imLibGroup.value['arrondl']].nomArrondi, 40, 20);
                 doc.text('Site : ' + sit.libSite, 45, 3);
-                doc.text('Liste des ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm+' libres', 50, 40);
+                doc.text('Liste des ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm + ' libres', 50, 40);
                 autotable(doc, {
                   theme: 'grid',
                   head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
@@ -464,24 +461,24 @@ export class ListeValeurLocativeComponent implements OnInit {
                   margin: { top: 50 },
                   body: list,
                 });
-                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
-                this.appercu.show();
-              }
-              else{
-                console.log('Aucune valeur inactive ne répond aux critères spécifiés');
-              }
+              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+              this.appercu.show();
+            }
+            else {
+              alert('Aucune valeur inactive ne répond aux critères spécifiés');
+            }
           });
         }
       }
       else {
-        this.sites.forEach(sit=>{
+        this.sites.forEach(sit => {
           this.immeub = this.immeubles.filter(im => im.etatIm == false &&
             im.typeImmeuble.codeTypIm == this.typesVL[this.imLibGroup.value['typVlAl']].codeTypIm &&
             im.siteMarcher.codeSite == sit.codeSite);
-          if(this.immeub.length>0){
-            let list=[];
-            this.immeub.forEach(elt=>{
-              let imm=[];
+          if (this.immeub.length > 0) {
+            let list = [];
+            this.immeub.forEach(elt => {
+              let imm = [];
               imm.push(elt.codeIm);
               imm.push(elt.libIm);
               imm.push(elt.stuctResp);
@@ -492,7 +489,7 @@ export class ListeValeurLocativeComponent implements OnInit {
               list.push(imm);
             });
             doc.addPage();
-            doc.text(''+doc.getNumberOfPages(),8,10);
+            doc.text('' + doc.getNumberOfPages(), 8, 10);
             doc.text('Arrondissement : ' + sit.arrondissement.nomArrondi, 40, 20);
             doc.text('Site : ' + sit.libSite, 45, 30);
             doc.text('Liste des  : ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm, 50, 40);
@@ -510,70 +507,70 @@ export class ListeValeurLocativeComponent implements OnInit {
             this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
             this.appercu.show();
           }
-          else{
-            console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+          else {
+            alert('Aucune valeur inactive ne répond aux critères spécifiés');
           }
         });
       }
     }
     else {
-      if(this.imLibGroup.value['arrondl']==-1){        
-        this.sites.forEach(sit=>{
-          this.typesVL.forEach(tvl=>{
-            this.immeub=this.immeubles.filter(im=> im.etatIm == false && 
-              im.siteMarcher.codeSite==sit.codeSite &&  im.typeImmeuble.codeTypIm==tvl.codeTypIm);
-              if (this.immeub.length>0){
-                let list=[];
-                this.immeub.forEach(elt=>{
-                  let imm=[];
+      if (this.imLibGroup.value['arrondl'] == -1) {
+        this.sites.forEach(sit => {
+          this.typesVL.forEach(tvl => {
+            this.immeub = this.immeubles.filter(im => im.etatIm == false &&
+              im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == tvl.codeTypIm);
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
+                imm.push(elt.codeIm);
+                imm.push(elt.libIm);
+                imm.push(elt.stuctResp);
+                imm.push(elt.superficie);
+                if (elt.etatIm)
+                  imm.push("En contrat");
+                else
+                  imm.push("Libre");
+                imm.push(elt.valUnit);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
                   imm.push(elt.codeIm);
-                  imm.push(elt.libIm);
-                  imm.push(elt.stuctResp);
-                  imm.push(elt.superficie);
-                  if(elt.etatIm)
-                    imm.push("En contrat");
-                  else
-                    imm.push("Libre");
-                  imm.push(elt.valUnit);
-                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                    imm.push(elt.codeIm);
-                  list.push(imm);
-                });
-                doc.addPage();
-                doc.text(''+sit.arrondissement.nomArrondi,80,20);
-                doc.text('Site: '+sit.libSite,60,30);
-                doc.text('Liste des : '+tvl.libTypIm,50,40);
-                autotable(doc, {
-                  theme: 'grid',
-                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
-                  headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                  },
-                  margin: { top: 60 },
-                  body: list,
-                });
-                this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
-                this.appercu.show();
-              }
+                list.push(imm);
+              });
+              doc.addPage();
+              doc.text('' + sit.arrondissement.nomArrondi, 80, 20);
+              doc.text('Site: ' + sit.libSite, 60, 30);
+              doc.text('Liste des : ' + tvl.libTypIm, 50, 40);
+              autotable(doc, {
+                theme: 'grid',
+                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
+                headStyles: {
+                  fillColor: [41, 128, 185],
+                  textColor: 255,
+                  fontStyle: 'bold',
+                },
+                margin: { top: 60 },
+                body: list,
+              });
+              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+              this.appercu.show();
+            }
           });
         });
       }
-      else{
-        this.aSites.forEach(sit=>{
-          this.typesVL.forEach(typ=>{
-            this.immeub=this.immeubles.filter(im=>
+      else {
+        this.aSites.forEach(sit => {
+          this.typesVL.forEach(typ => {
+            this.immeub = this.immeubles.filter(im =>
               im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == typ.codeTypIm);
-              if (this.immeub.length>0){
-                let list=[];
-                this.immeub.forEach(elt=>{
-                  let imm=[];
-                  imm.push(elt.codeIm);
-                  imm.push(elt.libIm);
-                  imm.push(elt.stuctResp);
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
+                imm.push(elt.codeIm);
+                imm.push(elt.libIm);
+                imm.push(elt.stuctResp);
                   imm.push(elt.superficie);
-                  if(elt.etatIm)
+                  if (elt.etatIm)
                     imm.push("En contrat");
                   else
                     imm.push("Libre");
@@ -583,10 +580,10 @@ export class ListeValeurLocativeComponent implements OnInit {
                   list.push(imm);
                 });
                 doc.addPage();
-                doc.text(''+doc.getNumberOfPages(),8,10);
-                doc.text(''+sit.arrondissement.nomArrondi,40,20);
-                doc.text('Site: '+sit.libSite,45,30);
-                doc.text('Liste des : '+typ.libTypIm,50,40);
+                doc.text('' + doc.getNumberOfPages(), 8, 10);
+                doc.text('' + sit.arrondissement.nomArrondi, 40, 20);
+                doc.text('Site: ' + sit.libSite, 45, 30);
+                doc.text('Liste des : ' + typ.libTypIm, 50, 40);
                 autotable(doc, {
                   theme: 'grid',
                   head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
@@ -609,7 +606,7 @@ export class ListeValeurLocativeComponent implements OnInit {
 
   vlOccupeesParSite() {
     const doc = new jsPDF();
-    doc.text(''+doc.getNumberOfPages(),55,5)
+    doc.text('' + doc.getNumberOfPages(), 55, 5)
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.setFontSize(18);
@@ -618,9 +615,49 @@ export class ListeValeurLocativeComponent implements OnInit {
     if (this.imOcGroup.value['typVlAo'] != -1) {        //////Type spécifié//////
       if (this.imOcGroup.value['arrondo'] != -1) {     //////Type et Arrondissement spécifiés//////
         if (this.imOcGroup.value['sito'] != -1) {     //////Type, Arrondissement et sit spécifiés//////
+          this.immeub = this.immeubles.filter(im => im.etatIm == true &&
+            im.typeImmeuble.codeTypIm === this.typesVL[this.imOcGroup.value['typVlAo']].codeTypIm &&
+            im.siteMarcher.codeSite === this.aSites[this.imOcGroup.value['sito']].codeSite);
+          if (this.immeub.length > 0) {
+            let list = [];
+            this.immeub.forEach(elt => {
+              let imm = [];
+              imm.push(elt.codeIm);
+              imm.push(elt.libIm);
+              imm.push(elt.stuctResp);
+              imm.push(elt.superficie);
+              if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+              list.push(imm);
+            });
+            doc.addPage();
+            doc.text('' + doc.getNumberOfPages(), 8, 10);
+            doc.text('Arrondissement : ' + this.arrondissements[this.imOcGroup.value['arrondo']].nomArrondi, 40, 20);
+            doc.text('Site : ' + this.sites[this.imOcGroup.value['sito']].libSite, 50, 30);
+            doc.text('Liste des  : ' + this.typesVL[this.imOcGroup.value['typVlAo']].libTypIm + ' en contrat', 55, 40);
+            autotable(doc, {
+              theme: 'grid',
+              head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuelle ']],
+              headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold',
+              },
+              margin: { top: 50 },
+              body: list,
+            });
+            this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+            this.appercu.show();
+          }
+          else {
+            alert('Aucune valeur inactive ne répond aux critères spécifiés');
+          }
+        }
+        else {
+          this.aSites.forEach(sit => {
             this.immeub = this.immeubles.filter(im => im.etatIm == true &&
               im.typeImmeuble.codeTypIm === this.typesVL[this.imOcGroup.value['typVlAo']].codeTypIm &&
-              im.siteMarcher.codeSite === this.aSites[this.imOcGroup.value['sito']].codeSite);
+              im.siteMarcher.codeSite === sit.codeSite);
             if (this.immeub.length > 0) {
               let list = [];
               this.immeub.forEach(elt => {
@@ -628,19 +665,20 @@ export class ListeValeurLocativeComponent implements OnInit {
                 imm.push(elt.codeIm);
                 imm.push(elt.libIm);
                 imm.push(elt.stuctResp);
+                imm.push(elt.quartier.nomQuartier);
                 imm.push(elt.superficie);
                 if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
                   imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
                 list.push(imm);
               });
               doc.addPage();
-              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('' + doc.getNumberOfPages(), 8, 10);
               doc.text('Arrondissement : ' + this.arrondissements[this.imOcGroup.value['arrondo']].nomArrondi, 40, 20);
-              doc.text('Site : ' + this.sites[this.imOcGroup.value['sito']].libSite, 50, 30);
-              doc.text('Liste des  : ' + this.typesVL[this.imOcGroup.value['typVlAo']].libTypIm+ ' en contrat', 55, 40);
+              doc.text('Site : ' + sit.libSite, 45, 3);
+              doc.text('Liste des  : ' + this.typesVL[this.imOcGroup.value['typVlAo']].libTypIm + ' en contrat', 40, 40);
               autotable(doc, {
                 theme: 'grid',
-                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuelle ']],
+                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuel']],
                 headStyles: {
                   fillColor: [41, 128, 185],
                   textColor: 255,
@@ -649,73 +687,32 @@ export class ListeValeurLocativeComponent implements OnInit {
                 margin: { top: 50 },
                 body: list,
               });
-              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
-              this.appercu.show();
-            }
-            else{
-              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
-            }
-        }
-        else {
-          this.aSites.forEach(sit=>{
-            this.immeub = this.immeubles.filter(im => im.etatIm == true &&
-              im.typeImmeuble.codeTypIm === this.typesVL[this.imOcGroup.value['typVlAo']].codeTypIm &&
-              im.siteMarcher.codeSite === sit.codeSite);
-              if(this.immeub.length>0){
-                let list=[];
-                this.immeub.forEach(elt=>{
-                  let imm=[];
-                  imm.push(elt.codeIm);
-                  imm.push(elt.libIm);
-                  imm.push(elt.stuctResp);
-                  imm.push(elt.quartier.nomQuartier);
-                  imm.push(elt.superficie);
-                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
-                  list.push(imm);
-                });
-                doc.addPage();
-                doc.text(''+doc.getNumberOfPages(),8,10);
-                doc.text('Arrondissement : ' + this.arrondissements[this.imOcGroup.value['arrondo']].nomArrondi, 40, 20);
-                doc.text('Site : ' + sit.libSite, 45, 3);
-                doc.text('Liste des  : ' + this.typesVL[this.imOcGroup.value['typVlAo']].libTypIm+' en contrat', 40, 40);
-                autotable(doc, {
-                  theme: 'grid',
-                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuel']],
-                  headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                  },
-                  margin: { top: 50 },
-                  body: list,
-                });
                 this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
                 this.appercu.show();
               }
-              else{
-                console.log('Aucune valeur inactive ne répond aux critères spécifiés');
-              }
+            else {
+              alert('Aucune valeur inactive ne répond aux critères spécifiés');
+            }
           });
         }
       }
       else {
-        this.arrondissements.forEach(ar=>{
-          this.aSites=this.sites.filter(s=> s.arrondissement.codeArrondi== ar.codeArrondi);
-          this.aSites.forEach(sit=>{
+        this.arrondissements.forEach(ar => {
+          this.aSites = this.sites.filter(s => s.arrondissement.codeArrondi == ar.codeArrondi);
+          this.aSites.forEach(sit => {
             this.immeub = this.immeubles.filter(im => im.etatIm == true &&
               im.typeImmeuble.codeTypIm == this.typesVL[this.imOcGroup.value['typVlAo']].codeTypIm &&
               im.siteMarcher.codeSite == sit.codeSite);
-            if(this.immeub.length>0){
-              let list=[];
-              this.immeub.forEach(elt=>{
-                let imm=[];
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
                 imm.push(elt.codeIm);
                 imm.push(elt.libIm);
                 imm.push(elt.stuctResp);
                 imm.push(elt.quartier.nomQuartier);
                 imm.push(elt.superficie);
-                if(elt.etatIm)
+                if (elt.etatIm)
                   imm.push("En contrat");
                 else
                   imm.push("Libre");
@@ -724,7 +721,7 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.text(''+doc.getNumberOfPages(),8,10);
+              doc.text('' + doc.getNumberOfPages(), 8, 10);
               doc.text('Arrondissement : ' + sit.arrondissement.nomArrondi, 40, 20);
               doc.text('Site : ' + sit.libSite, 45, 30);
               doc.text('Liste des  : ' + this.typesVL[this.imOcGroup.value['typVlAo']].libTypIm, 50, 40);
@@ -742,65 +739,25 @@ export class ListeValeurLocativeComponent implements OnInit {
               this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
               this.appercu.show();
             }
-            else{
-              console.log('Aucune valeur inactive ne répond aux critères spécifiés');
+            else {
+              alert('Aucune valeur inactive ne répond aux critères spécifiés');
             }
-          });
-      });
-      }
-    }
-    else {
-      if(this.imOcGroup.value['arrondo']==-1){        
-        this.arrondissements.forEach(ar=>{
-          this.aSites=this.sites.filter(s=>s.arrondissement.codeArrondi == ar.codeArrondi);
-          this.aSites.forEach(sit=>{
-            this.typesVL.forEach(tvl=>{
-              this.immeub=this.immeubles.filter(im=> im.etatIm == true && 
-                im.siteMarcher.codeSite==sit.codeSite &&  im.typeImmeuble.codeTypIm==tvl.codeTypIm);
-                if (this.immeub.length>0){
-                  let list=[];
-                  this.immeub.forEach(elt=>{
-                    let imm=[];
-                    imm.push(elt.codeIm);
-                    imm.push(elt.libIm);
-                    imm.push(elt.stuctResp);
-                    imm.push(elt.superficie);
-                    imm.push(elt.valUnit);
-                    if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                      imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
-                    list.push(imm);
-                  });
-                  doc.addPage();
-                  doc.text(''+sit.arrondissement.nomArrondi,40,20);
-                  doc.text('Site: '+sit.libSite,45,30);
-                  doc.text('Liste des : '+tvl.libTypIm+' en contrat',50,40);
-                  autotable(doc, {
-                    theme: 'grid',
-                    head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Prix actuel']],
-                    headStyles: {
-                      fillColor: [41, 128, 185],
-                      textColor: 255,
-                      fontStyle: 'bold',
-                    },
-                    margin: { top: 50 },
-                    body: list,
-                  });
-                  this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
-                  this.appercu.show();
-                }
-            });
           });
         });
       }
-      else{
-        this.aSites.forEach(sit=>{
-          this.typesVL.forEach(typ=>{
-            this.immeub=this.immeubles.filter(im=> im.etatIm == true &&
-              im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == typ.codeTypIm);
-              if (this.immeub.length>0){
-                let list=[];
-                this.immeub.forEach(elt=>{
-                  let imm=[];
+    }
+    else {
+      if (this.imOcGroup.value['arrondo'] == -1) {
+        this.arrondissements.forEach(ar => {
+          this.aSites = this.sites.filter(s => s.arrondissement.codeArrondi == ar.codeArrondi);
+          this.aSites.forEach(sit => {
+            this.typesVL.forEach(tvl => {
+              this.immeub = this.immeubles.filter(im => im.etatIm == true &&
+                im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == tvl.codeTypIm);
+              if (this.immeub.length > 0) {
+                let list = [];
+                this.immeub.forEach(elt => {
+                  let imm = [];
                   imm.push(elt.codeIm);
                   imm.push(elt.libIm);
                   imm.push(elt.stuctResp);
@@ -811,10 +768,9 @@ export class ListeValeurLocativeComponent implements OnInit {
                   list.push(imm);
                 });
                 doc.addPage();
-                doc.text(''+doc.getNumberOfPages(),8,10);
-                doc.text(''+sit.arrondissement.nomArrondi,40,20);
-                doc.text('Site: '+sit.libSite,45,30);
-                doc.text('Liste des : '+typ.libTypIm,50,40);
+                doc.text('' + sit.arrondissement.nomArrondi, 40, 20);
+                doc.text('Site: ' + sit.libSite, 45, 30);
+                doc.text('Liste des : ' + tvl.libTypIm + ' en contrat', 50, 40);
                 autotable(doc, {
                   theme: 'grid',
                   head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Prix actuel']],
@@ -829,6 +785,47 @@ export class ListeValeurLocativeComponent implements OnInit {
                 this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
                 this.appercu.show();
               }
+            });
+          });
+        });
+      }
+      else {
+        this.aSites.forEach(sit => {
+          this.typesVL.forEach(typ => {
+            this.immeub = this.immeubles.filter(im => im.etatIm == true &&
+              im.siteMarcher.codeSite == sit.codeSite && im.typeImmeuble.codeTypIm == typ.codeTypIm);
+            if (this.immeub.length > 0) {
+              let list = [];
+              this.immeub.forEach(elt => {
+                let imm = [];
+                imm.push(elt.codeIm);
+                imm.push(elt.libIm);
+                imm.push(elt.stuctResp);
+                imm.push(elt.superficie);
+                imm.push(elt.valUnit);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                list.push(imm);
+              });
+              doc.addPage();
+              doc.text('' + doc.getNumberOfPages(), 8, 10);
+              doc.text('' + sit.arrondissement.nomArrondi, 40, 20);
+              doc.text('Site: ' + sit.libSite, 45, 30);
+              doc.text('Liste des : ' + typ.libTypIm, 50, 40);
+              autotable(doc, {
+                theme: 'grid',
+                head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Prix actuel']],
+                headStyles: {
+                  fillColor: [41, 128, 185],
+                  textColor: 255,
+                  fontStyle: 'bold',
+                },
+                margin: { top: 50 },
+                body: list,
+              });
+              this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
+              this.appercu.show();
+            }
           });
         });
       }

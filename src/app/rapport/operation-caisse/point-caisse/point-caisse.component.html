@@ -11,45 +11,41 @@
       animated:true,
       fadeIn:true
     }">
-    
     <div class="card-body">
-      <form [formGroup] = "pcGroup" (ngSubmit)="generer()">
+      <form [formGroup]="pcGroup" (ngSubmit)="generer()">
         <div class="row">
           <div class="form-group col-sm-3">
             <label for="arrPC">Arrondissement</label>
-              <select id="arrPC" name="arrPC" class="form-control" formControlName="arrPC" (click)="filtre()">
-                <option value="-1">Tous les arrondissements</option>
-                <option *ngFor="let item of arrondissements; let i = index" [value]="i">
-                  {{ item.codeArrondi }} - {{ item.nomArrondi }}</option>
-              </select>
+            <select id="arrPC" name="arrPC" class="form-control" formControlName="arrPC" (ngModelChange)="filtre()">
+              <option value="-1">Tous les arrondissements</option>
+              <option *ngFor="let item of arrondissements; let i = index" [value]="i">
+                {{ item.codeArrondi }} - {{ item.nomArrondi }}</option>
+            </select>
           </div>
 
           <div class="form-group col-sm-3">
             <label for="caiPC">Caisse</label>
-              <select id="caiPC" name="caiPC" formControlName="caiPC"
-              class="form-control"
-              >
-                <option value="-1">Toutes les caisses</option>
-                <option *ngFor="let caisse of caiArr; let i = index" [value]="i">
-                  {{ caisse.codeCaisse }} - {{ caisse.libeCaisse }}</option>
-              </select>
+            <select id="caiPC" name="caiPC" formControlName="caiPC" class="form-control">
+              <option value="-1">Toutes les caisses</option>
+              <option *ngFor="let caisse of caiArr; let i = index" [value]="i">
+                {{ caisse.codeCaisse }} - {{ caisse.libeCaisse }}</option>
+            </select>
 
           </div>
 
           <div class="form-group col-sm-3">
             <label for="debPC">Date de début</label>
-            <input type="datetime-local" class="form-control" id="debPC"
-             formControlName="debPC" placeholder="new Date()">
+            <input type="datetime-local" class="form-control" id="debPC" formControlName="debPC" placeholder="new Date()">
           </div>
 
           <div class="form-group col-sm-3">
             <label for="finPC">Date de Fin</label>
-            <input type="datetime-local" class="form-control" id="finPC"
-            formControlName="finPC" placeholder="Date de fin">
+            <input type="datetime-local" class="form-control" id="finPC" formControlName="finPC" placeholder="Date de fin">
           </div>
 
         </div>
         <button type="submit" class="btn btn-primary">Générer</button>
+        <!--button type="button" class="btn btn-primary" (click)="arrond()">arrondissement</button-->
       </form>
     </div>
 
@@ -87,22 +83,22 @@
   </div>
 </div>
 
-
-        <!----------------------------------------Apperçu------------------------------------------->
-        <div bsModal #appercu="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
-          <div class="modal-dialog modal-xl modal-primary" role="document">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <h4 class="modal-title text-center">Apperçu</h4>
-                      <button type="button" class="close" (click)="appercu.hide()" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-                  </div>
-                  <div class="modal-body">
-                      <div class="row">
-                          <iframe class="col" [src]="vuePdf" style="height: 400px;" frameborder="0"></iframe>
-                      </div>
-                  </div>
-              </div>
-          </div>
+<!----------------------------------------Apperçu------------------------------------------->
+<div bsModal #appercu="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-primary" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-center">Apperçu</h4>
+        <button type="button" class="close" (click)="appercu.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
+      <div class="modal-body">
+        <div class="row">
+          <iframe class="col" [src]="vuePdf" style="height: 400px;" frameborder="0"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

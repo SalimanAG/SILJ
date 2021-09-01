@@ -23,9 +23,10 @@
           <tbody>
               <tr *ngFor="let recept of receptions; let i = index">
                   <td>{{ recept.numReception }}</td>
-                  <td>{{ recept.dateReception | date:"dd-MM-yyyy" }}</td>
+                  <td>{{recept.dateReception | date:'dd/MM/yyyy hh:mm'}}</td>
                   <td>{{ recept.observation }}</td>
-                  <td>{{ getCommandeOfAReception(recept.numReception).numCommande }} du {{ getCommandeOfAReception(recept.numReception).dateCommande }}</td>
+                  <td>{{ getCommandeOfAReception(recept.numReception).numCommande }} du {{
+                    getCommandeOfAReception(recept.numReception).dateCommande |date:'dd/MM/yyyy' }}</td>
                   <td>{{ getCommandeOfAReception(recept.numReception).frs.codeFrs }} - {{ getCommandeOfAReception(recept.numReception).frs.identiteFrs }}</td>
                   <td>
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditReception(i)"><span class="fa fa-edit"></span></button>
@@ -142,12 +143,18 @@
                           <td>{{ addLignRecept.ligneCommande.article.codeArticle }}</td>
                           <td>{{ addLignRecept.ligneCommande.article.libArticle }}</td>
                           <td><input [(ngModel)]="tempAddLigneReception[i].puligneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" readonly></td>
-                          <td><input [(ngModel)]="tempAddLigneReception[i].quantiteLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td><input [(ngModel)]="tempAddLigneReception[i].quantiteLigneReception" [ngModelOptions]="{standalone: true}"
+                              class="form-control" type="number" (keyup)="definirNumFin(i)"></td>
                           <td><input [(ngModel)]="tempAddLigneReception[i].observationLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
                           <td>
-                            <div><input [(ngModel)]="tempAddLigneReception[i].numSerieDebLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
-                            <p class="text-center" style="margin-bottom: 0%;">à</p>
-                            <div><input [(ngModel)]="tempAddLigneReception[i].numSerieFinLigneReception" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
+                            <div><input *ngIf="tempAddLigneReception[i].ligneCommande.article.numSerieArticle"
+                                [(ngModel)]="tempAddLigneReception[i].numSerieDebLigneReception" [ngModelOptions]="{standalone: true}"
+                                class="form-control" type="number" (keyup)="definirNumFin(i)"></div>
+                            <p *ngIf="tempAddLigneReception[i].ligneCommande.article.numSerieArticle" class="text-center"
+                              style="margin-bottom: 0%;">à</p>
+                            <div><input *ngIf="tempAddLigneReception[i].ligneCommande.article.numSerieArticle"
+                                [(ngModel)]="tempAddLigneReception[i].numSerieFinLigneReception" [ngModelOptions]="{standalone: true}"
+                                class="form-control" type="number" readonly></div>
                           </td>
                           <td>{{ ((tempAddLigneReception[i].ligneCommande.qteLigneCommande*tempAddLigneReception[i].puligneReception-tempAddLigneReception[i].ligneCommande.remise)*(1+(tempAddLigneReception[i].ligneCommande.tva/100)))*tempAddLigneReception[i].quantiteLigneReception/tempAddLigneReception[i].ligneCommande.qteLigneCommande }}</td>
                           <td>

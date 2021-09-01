@@ -616,15 +616,17 @@ export class CommuneComponent implements OnInit {
   onSubmitAddDepFormsGroup()
   {
     const newDep = new Departement(this.addDepFormsGroup.value['addCodeDepartement'], this.addDepFormsGroup.value['addNomDepartement'],
-   this.pays[this.addDepFormsGroup.value['addPays']]);
+      this.pays[this.addDepFormsGroup.value['addPays']]);
+    console.log(newDep, "Avant enregistrement");
+
 
     this.communeService.addDepartement(newDep)
     .subscribe(
       (data) => {
-        this.primaryModal.hide();
-       this.addDepFormsGroup.reset();
-        this.initForms();
         console.log('Réussie : ', data);
+        this.primaryModal.hide();
+        this.addDepFormsGroup.reset();
+        this.initForms();
         this.getAllDepartement();
       },
       (erreur) => {

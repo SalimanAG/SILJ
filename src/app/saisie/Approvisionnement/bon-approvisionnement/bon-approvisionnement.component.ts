@@ -27,6 +27,8 @@ import { CorrespondantService } from '../../../../services/definition/correspond
 import { RegisseurService } from '../../../../services/definition/regisseur.service';
 import { TresorierCommunalService } from '../../../../services/definition/tresorier-communal.service';
 import { Stocker } from '../../../../models/stocker.model';
+import { PlageNumDispoService } from '../../../../services/saisie/PlageNumDispo.service';
+import { PlageNumDispo } from '../../../../models/PlageNumDispo';
 
 @Component({
   selector: 'app-bon-approvisionnement',
@@ -79,6 +81,7 @@ export class BonApprovisionnementComponent  implements OnInit {
   annulAppro:Approvisionnement = new Approvisionnement('', '', new Date(), new Exercice('', '', new Date(), new Date(), '', false));
   addApproFormsGroup:FormGroup;
   editApproFormsGroup:FormGroup;
+  plagesDispo: PlageNumDispo[];
   concernedDemandeAppro:DemandeApprovisionnement = new DemandeApprovisionnement('', '', new Exercice('', '', new Date(), new Date(), '', false));
 
   ligneAppros:LigneAppro[] = [];
@@ -102,8 +105,9 @@ export class BonApprovisionnementComponent  implements OnInit {
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
     private formBulder:FormBuilder, private serviceBonAppro:BonApproService, private sanitizer:DomSanitizer,
     private serviceCorres:CorrespondantService, private serviceRegiss:RegisseurService,
-    private serviceTresorier:TresorierCommunalService) {
+    private serviceTresorier: TresorierCommunalService, private pnd: PlageNumDispoService) {
 
+    this.pdfToShow=sanitizer.bypassSecurityTrustResourceUrl('/');
       this.initDtOptions();
       this.initFormsGroup();
 
@@ -274,6 +278,13 @@ export class BonApprovisionnementComponent  implements OnInit {
     );
   }
 
+  getAllPlageDispo(){
+    this.pnd.getAllPND().subscribe(
+      data=>{
+        this.plagesDispo=data;
+      }
+    );
+  }
 
   //Récuperer le carveau Trésor
   getCarveauTresor(){
@@ -308,9 +319,6 @@ export class BonApprovisionnementComponent  implements OnInit {
     );
   }
 
-
-
-
   getAllAppro(){
     this.serviceBonAppro.getAllAppro().subscribe(
       (data) => {
@@ -341,7 +349,6 @@ export class BonApprovisionnementComponent  implements OnInit {
     this.serviceBonAppro.getAllPlageNumArticle().subscribe(
       (data) => {
         this.plageNumArticles = data;
-
       },
       (erreur) => {
         console.log('Erreur lors de la récupération des plages de Numérotation', erreur);
@@ -470,7 +477,7 @@ export class BonApprovisionnementComponent  implements OnInit {
         this.tempAddLigneDemandeAppro[inde])
         );
 
-      this.tempAddPlageNumArticle.push(new PlageNumArticle('0', '0', null, null, this.tempAddLigneAppro[this.tempAddLigneAppro.length-1]));
+      this.tempAddPlageNumArticle.push(new PlageNumArticle(0, 0, null, null, this.tempAddLigneAppro[this.tempAddLigneAppro.length-1]));
 
     }
 
@@ -494,7 +501,7 @@ export class BonApprovisionnementComponent  implements OnInit {
 
       console.log('Element',this.tempEditLigneAppro[this.tempEditLigneAppro.length-1]);
 
-      this.tempEditPlageNumArticle.push(new PlageNumArticle('0', '0', null, null, this.tempEditLigneAppro[this.tempEditLigneAppro.length-1]));
+      this.tempEditPlageNumArticle.push(new PlageNumArticle(0, 0, null, null, this.tempEditLigneAppro[this.tempEditLigneAppro.length-1]));
 
       console.log('Element2', this.tempEditPlageNumArticle[this.tempEditPlageNumArticle.length-1]);
 
@@ -589,11 +596,11 @@ export class BonApprovisionnementComponent  implements OnInit {
   }
 
   onAddAPlageNumArticleClicked1(inde:number){
-    this.tempAddPlageNumArticle.push(new PlageNumArticle('0', '0', null, null, this.tempAddLigneAppro[inde]));
+    this.tempAddPlageNumArticle.push(new PlageNumArticle(0, 0, null, null, this.tempAddLigneAppro[inde]));
   }
 
   onAddAPlageNumArticleClicked2(inde:number){
-    this.tempEditPlageNumArticle.push(new PlageNumArticle('0', '0', null, null, this.tempEditLigneAppro[inde]));
+    this.tempEditPlageNumArticle.push(new PlageNumArticle(0, 0, null, null, this.tempEditLigneAppro[inde]));
   }
 
   initDeleteCommande(inde:number){
@@ -682,7 +689,7 @@ export class BonApprovisionnementComponent  implements OnInit {
                   else{
                     this.serviceCorres.addAStocker(new Stocker(data2.quantiteLigneAppro*(-1), 0, 0, 0, data2.ligneDA.article, this.carveauxTresor)).subscribe(
                       (data4) => {
-
+                        this.plagesDispo.sort((a,b)=>a.numDebPlageDispo-b.numDebPlageDispo);
                       },
                       (erreur) => {
                         console.log('Erreur lors de la création dUn Stocker', erreur);

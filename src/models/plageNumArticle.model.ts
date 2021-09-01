@@ -5,7 +5,7 @@ export class PlageNumArticle {
 
   public idPlage:number;
 
-  constructor(public numDebPlage:String, public numFinPlage:String, public ligneRecollement?:String,
+  constructor(public numDebPlage:number, public numFinPlage:number, public ligneRecollement?:String,
     public lignePlacement?:LignePlacement, public ligneAppro?:LigneAppro){
 
   }

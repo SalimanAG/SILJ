@@ -39,17 +39,17 @@ export class ContratLocationComponent implements OnInit {
   addContratFormsGroup: FormGroup;
   editContratFormsGroup: FormGroup;
   contrats:Contrat[];
-  editContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', false, 0, 0, '', '',
+  editContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', false, 0, false, '', '',
   new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))),
   new Quartier('','','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
   new TypeImmeuble('',''),new SiteMarcher('','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))))),
   new Locataire('','','','',''));
-  suprContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', false, 0, 0, '', '',
+  suprContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', false, 0, false, '', '',
   new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))),
   new Quartier('','','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
   new TypeImmeuble('',''),new SiteMarcher('','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))))),
   new Locataire('','','','',''));;
-  infosContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', false, 0, 0, '', '',
+  infosContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', false, 0, false, '', '',
   new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))),
   new Quartier('','','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
   new TypeImmeuble('',''),new SiteMarcher('','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))))),

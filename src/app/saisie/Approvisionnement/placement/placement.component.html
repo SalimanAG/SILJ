@@ -137,7 +137,8 @@
                           <td>{{ addLignPlace.article.codeArticle }}</td>
                           <td>{{ addLignPlace.article.libArticle }}</td>
                           <td><input [(ngModel)]="tempAddLignePlacement[i].pulignePlacement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                          <td><input [(ngModel)]="tempAddLignePlacement[i].quantiteLignePlacement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td><input [(ngModel)]="tempAddLignePlacement[i].quantiteLignePlacement" [ngModelOptions]="{standalone: true}"
+                              class="form-control" type="number" (change)="nummerotation(i)"></td>
                           <td>{{ tempAddLignePlacement[i].quantiteLignePlacement*tempAddLignePlacement[i].pulignePlacement }}</td>
                           <td>
                             <div class="row">
@@ -164,8 +165,10 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="addPlacementFormGroup.invalid || tempAddLignePlacement.length == 0">Valider</button>
+                  <button type="button" class="btn btn-secondary" (click)="numero()">numéro</button>
+                  <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
+                  <button type="submit" class="btn btn-primary"
+                    [disabled]="addPlacementFormGroup.invalid || tempAddLignePlacement.length == 0">Valider</button>
                 </div>
               </div><!-- /.modal-content -->
             </form>

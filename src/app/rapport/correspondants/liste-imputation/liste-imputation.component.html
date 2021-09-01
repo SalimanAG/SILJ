@@ -1,47 +1,128 @@
 <div class="accordion" id="accordion" role="tablist">
   <div class="card mb-0">
     <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
-      <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Collapsible Group Item #1</a></h5>
+    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Placements par
+        correspondants</a></h5>
     </div>
-    <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion"
-    [ngClass]="{
+  <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" [ngClass]="{
       collapse:true,
       show: clicked === 1,
       collapsing:false,
       animated:true,
       fadeIn:true
     }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+    <div class="card-body">
+      <form [formGroup]="bilanGroup">
+        <div class="row">
+          <div class="col-4">
+            <label for="corresp">Correspondant</label>
+            <select id="corArr" class="form-control" formControlName="corresp">
+              <!--option [value]="-1">Tous les correspondants</option-->
+              <option *ngFor="let item of correspondants; let i=index" [value]="item">
+                {{item.magasinier.nomMagasinier}} {{item.magasinier.prenomMagasinier}}
+              </option>
+            </select>
+          </div>
+          <div class="col-4">
+            <label for="dateDeb">Période du:</label>
+            <input type="datetime-local" class="form-control" formControlName="dateDeb">
+          </div>
+          <div class="col-4">
+            <label for="datFin">au</label>
+            <input type="datetime-local" class="form-control" formControlName="dateDeb">
+          </div>
+        </div>
+        <br><br>
+        <div class="row">
+          <div class="col-md-3">
+            <button type="button" class="btn btn-secondary" (click)="imprimePlacement()">Placements</button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-secondary" (click)="imprimeVente()">Ventes</button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-secondary" (click)="imprimeImput()">Imputations</button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-secondary" (click)="imprimeImputAV()">Ventes non imputées</button>
+          </div>
+        </div>
+      </form>
     </div>
-  </div>
-  <div class="card mb-0">
-    <div class="card-header" id="headingTwo" role="tab" (click)="manageCollapses(2)">
-      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Collapsible Group Item #2</a></h5>
     </div>
-    <div id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion"
-    [ngClass]="{
+    </div>
+    <div class="card mb-0">
+          <div class="card-header" id="headingOne" role="tab" (click)="manageCollapses(1)">
+            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">
+                Journal des opérations
+              </a></h5>
+          </div>
+          <div id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion" [ngClass]="{
       collapse:true,
-      show: clicked === 2,
+      show: clicked === 1,
       collapsing:false,
       animated:true,
       fadeIn:true
     }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+    <div class="card-body">
+      <form [formGroup]="journalGroup">
+        <div class="row">
+          <div class="col-3">
+            <label for="corresp">Correspondant</label>
+            <select id="corArr" class="form-control" formControlName="cor">
+              <!--option [value]="-1">Tous les correspondants</option-->
+              <option *ngFor="let item of correspondants; let i=index" [value]="item">
+                {{item.magasinier.nomMagasinier}} {{item.magasinier.prenomMagasinier}}
+              </option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="art">Article</label>
+            <select id="art" class="form-control" formControlName="art">
+              <!--option [value]="-1">Tous les correspondants</option-->
+              <option *ngFor="let item of articles; let i=index" [value]="item">
+                {{item.libArticle}}
+              </option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="dateDeb">Période du:</label>
+            <input type="datetime-local" class="form-control" formControlName="dateDeb">
+          </div>
+          <div class="col-3">
+            <label for="datFin">au</label>
+            <input type="datetime-local" class="form-control" formControlName="dateDeb">
+          </div>
+        </div>
+        <br><br>
+        <div class="row">
+          <div class="col-md-9">
+
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-secondary" (click)="imprimeJournal()">Imprimer non imputées</button>
+          </div>
+        </div>
+      </form>
     </div>
-  </div>
-  <div class="card mb-0">
-    <div class="card-header" id="headingThree" role="tab" (click)="manageCollapses(3)">
-      <h5 class="mb-0"><a class="collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="collapseThree">Collapsible Group Item #3</a></h5>
     </div>
-    <div id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion"
-    [ngClass]="{
-      collapse:true,
-      show: clicked === 3,
-      collapsing:false,
-      animated:true,
-      fadeIn:true
-    }">
-      <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+    </div>
+    <!----------------------------------------Apperçu------------------------------------------->
+    <div bsModal #appercu="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money"
+      aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-primary" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title text-center">Apperçu</h4>
+            <button type="button" class="close" (click)="appercu.hide()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+      <div class="modal-body">
+        <div class="row">
+          <iframe class="col" [src]="vuePdf" style="height: 400px;" frameborder="0"></iframe>
+        </div>
+      </div>
     </div>
   </div>
 </div>

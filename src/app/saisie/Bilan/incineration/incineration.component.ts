@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PlageNumDispo } from '../../../../models/PlageNumDispo'
 
 @Component({
   selector: 'app-incineration',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class IncinerationComponent implements OnInit {
 
-  constructor() { }
+  constructor(public pld : PlageNumDispo ) { }
 
   ngOnInit(): void {
   }
+
+  afficherIncinerationPrevue(){}
 
 }

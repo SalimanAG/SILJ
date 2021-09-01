@@ -25,131 +25,147 @@ import { AssocierUtilisateurService } from '../administration/associer-utilisate
 })
 export class OperationCaisseService {
 
-  private host:string='http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1/'
+  private host: string = 'http://' + this.serviceIp.adresseIp + '/perfora-gpc/v1/';
 
-  constructor(private lien:HttpClient, private serviceIp:AssocierUtilisateurService) {
+  constructor(private lien: HttpClient, private serviceIp: AssocierUtilisateurService) {
 
   }
 
-  getAllOp(){
-    return this.lien.get<OpCaisse[]>(this.host+'facturation/opcaisse/list');
+  getAllOp() {
+    return this.lien.get<OpCaisse[]>(this.host + 'facturation/opcaisse/list');
   }
 
-  getAOpCaissById(code:String){
-    return this.lien.get<OpCaisse>(this.host+'facturation/opcaisse/byCodOpCai/'+code);
+  getAOpCaissById(code: String) {
+    return this.lien.get<OpCaisse>(this.host + 'facturation/opcaisse/byCodOpCai/' + code);
   }
 
-  ajouteOp(corps:OpCaisse){
-    return this.lien.post<OpCaisse>(this.host+'facturation/opcaisse/list',corps);
+  addOp(corps: OpCaisse) {
+    return this.lien.post<OpCaisse>(this.host + 'facturation/opcaisse/list', corps);
   }
 
-  editAOpCaiss(code:String, corps:OpCaisse){
-    return this.lien.put<OpCaisse>(this.host+'facturation/opcaisse/byCodOpCai/'+code, corps);
+  editAOpCaiss(code: String, corps: OpCaisse) {
+    return this.lien.put<OpCaisse>(this.host + 'facturation/opcaisse/byCodOpCai/' + code, corps);
   }
 
-  deleteAOpCaiss(code:String){
-    return this.lien.delete<boolean>(this.host+'facturation/opcaisse/byCodOpCai/'+code);
+  deleteAOpCaiss(code: String) {
+    return this.lien.delete<boolean>(this.host + 'facturation/opcaisse/byCodOpCai/' + code);
   }
 
-  getAllModes(){
-    return this.lien.get<ModePaiement[]>(this.host+'facturation/modePaiement/list');
+  getAllModes() {
+    return this.lien.get<ModePaiement[]>(this.host + 'facturation/modePaiement/list');
   }
 
-  getAllAffectations(){
-    return this.lien.get<Affecter[]>(this.host+'facturation/affecter/list');
+  addAMode(mod: ModePaiement) {
+    return this.lien.post<ModePaiement[]>(this.host + 'facturation/modePaiement/list', mod);
   }
 
-  getAllCaisses(){
-    return this.lien.get<Affecter[]>(this.host+'facturation/caisse/list');
+  editAMode(id: String, corp: ModePaiement) {
+    return this.lien.put<ModePaiement>(this.host + 'facturation/modePaiement/byCodModPai/' + id, corp);
   }
 
-  getAllTypes(){
-    return this.lien.get<TypeRecette[]>(this.host+'facturation/typeRecette/list');
+  deleteAMode(id: String) {
+    return this.lien.delete<boolean>(this.host + 'facturation/modePaiement/byCodModPai/' + id);
   }
 
-  getAllUsers(){
-    return this.lien.get<Utilisateur[]>(this.host+'commune/user/list');
+  getAllAffectations() {
+    return this.lien.get<Affecter[]>(this.host + 'facturation/affecter/list');
   }
 
-  getAllExos(){
-    return this.lien.get<Exercice[]>(this.host+'commune/exercice/list');
+  getAllCaisses() {
+    return this.lien.get<Affecter[]>(this.host + 'facturation/caisse/list');
   }
 
-  getAllArticles(){
-    return this.lien.get<Article[]>(this.host+'stock/article/list');
+  getAllTypes() {
+    return this.lien.get<TypeRecette[]>(this.host + 'facturation/typeRecette/list');
   }
 
-  getAllLocataires(){
-    return this.lien.get<Locataire[]>(this.host+'location/locataire/list')
+  addATypes(typ: TypeRecette) {
+    return this.lien.post<TypeRecette[]>(this.host + 'facturation/typeRecette/list', typ);
+  }
+/*
+  getAllUsers() {
+    return this.lien.get<Utilisateur[]>(this.host + 'commune/user/list');
   }
 
-  getAllOpLines(){
-    return this.lien.get<LigneOpCaisse[]>(this.host+'facturation/ligneOpCaisse/list');
+  getAllExos() {
+    return this.lien.get<Exercice[]>(this.host + 'commune/exercice/list');
+  }
+*/
+  getAllArticles() {
+    return this.lien.get<Article[]>(this.host + 'stock/article/list');
   }
 
-  getAllContrats(){
-    return this.lien.get<Contrat[]>(this.host+'location/contrat/list');
+  getAllOpLines() {
+    return this.lien.get<LigneOpCaisse[]>(this.host + 'facturation/ligneOpCaisse/list');
   }
 
-  getAllEcheances(){
-    return this.lien.get<Echeance[]>(this.host+'location/echeance/list');
+  addOpLine(op: OpCaisse, corps: LigneOpCaisse) {
+    return this.lien.post<LigneOpCaisse>(this.host + 'facturation/ligneOpCaisse/byNumOp/' + op.numOpCaisse, corps);
   }
 
-  addEcheance(e:Echeance){
-    console.log(this.host+'location/echeance/list');
-    return this.lien.post<Echeance>(this.host+'location/echeance/list',e);
+  editOpLine(id: number, corps: LigneOpCaisse) {
+    return this.lien.put<LigneOpCaisse>(this.host + 'facturation/ligneOpCaisse/byCodLigOpCai/' + (id), corps);
   }
 
-  editEcheance(id : number, e : Echeance){
-    return this.lien.put<Echeance>(this.host+'location/echeance/byCodEch/'+id,e);
+  getOpLineById(id: number) {
+    return this.lien.get<LigneOpCaisse>(this.host + 'facturation/ligneOpCaisse/byCodLigOpCai/' + (id));
   }
 
-  delEcheance(id : number){
-    return this.lien.delete<Echeance>(this.host+'location/echeance/byCodEch/'+id);
+  deleteAOpLine(id: number) {
+    return this.lien.delete<LigneOpCaisse>(this.host + 'facturation/ligneOpCaisse/byCodLigOpCai/' + (id));
   }
 
-  getAllImmeubles(){
-    return this.lien.get<Immeuble[]>(this.host+'location/immeuble/list');
+  getAllLocataires() {
+    return this.lien.get<Locataire[]>(this.host + 'location/locataire/list');
   }
 
-  getOpLineById(id:number){
-    return this.lien.get<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byCodLigOpCai/'+(id));
+  getAllContrats() {
+    return this.lien.get<Contrat[]>(this.host + 'location/contrat/list');
   }
 
-  addOpLine(op:OpCaisse, corps:LigneOpCaisse){
-    return this.lien.post<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byNumOp/'+op.numOpCaisse,corps);
+  getAllEcheances() {
+    return this.lien.get<Echeance[]>(this.host + 'location/echeance/list');
   }
 
-  editOpLine(id:number,corps:LigneOpCaisse){
-    return this.lien.put<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byCodLigOpCai/'+(id),corps);
+  addEcheance(e: Echeance) {
+    console.log(this.host + 'location/echeance/list');
+    return this.lien.post<Echeance>(this.host + 'location/echeance/list', e);
   }
 
-  deleteAOpLine(id:number){
-    return this.lien.delete<LigneOpCaisse>(this.host+'facturation/ligneOpCaisse/byCodLigOpCai/'+(id));
+  editEcheance(id: number, e: Echeance) {
+    return this.lien.put<Echeance>(this.host + 'location/echeance/byCodEch/' + id, e);
   }
 
-  getContratByLocataire(id:number){
-    return this.lien.get<Contrat[]>(this.host+'location/contrat/byIdLoc/'+(id));
+  delEcheance(id: number) {
+    return this.lien.delete<Echeance>(this.host + 'location/echeance/byCodEch/' + id);
   }
 
-  getAllPrixImmeuble(){
-    return this.lien.get<PrixImmeuble[]>(this.host+'location/priximmeuble/list');
+  getAllImmeubles() {
+    return this.lien.get<Immeuble[]>(this.host + 'location/immeuble/list');
   }
 
-  getCorres(){
-    return this.lien.get<Correspondant[]>(this.host+'/stock/correspondant/list');
+  getContratByLocataire(id: number) {
+    return this.lien.get<Contrat[]>(this.host + 'location/contrat/byIdLoc/' + (id));
   }
 
-  getAllCor(){
-    return this.lien.get<Correspondant[]>(this.host+'stock/correspondant/list');
+  getAllPrixImmeuble() {
+    return this.lien.get<PrixImmeuble[]>(this.host + 'location/priximmeuble/list');
   }
 
-  getAllPV(){
-    return this.lien.get<PointVente[]>(this.host+'stock/pointvente/list');
+  getCorres() {
+    return this.lien.get<Correspondant[]>(this.host + '/stock/correspondant/list');
   }
 
-  getAllLPV(){
-    return this.lien.get<LignePointVente[]>(this.host+'stock/lignepointvente/list');
+  getAllCor() {
+    return this.lien.get<Correspondant[]>(this.host + 'stock/correspondant/list');
+  }
+
+  getAllPV() {
+    return this.lien.get<PointVente[]>(this.host + 'stock/pointvente/list');
+  }
+
+  getAllLPV() {
+    return this.lien.get<LignePointVente[]>(this.host + 'stock/lignepointvente/list');
   }
 
 }

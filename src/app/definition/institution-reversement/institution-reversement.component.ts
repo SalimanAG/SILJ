@@ -45,14 +45,14 @@ export class InstitutionReversementComponent implements OnInit {
   @ViewChild('delPerce') public delPerce:ModalDirective;
   articles : Article[];
 
-  constructor(private instServ: InstitutionReversementService, private fbuilder:FormBuilder, private router:Router,
-    private serArt : ArticleService) {
+  constructor(private instServ: InstitutionReversementService, private fbuilder: FormBuilder, private router: Router,
+    private serArt: ArticleService) {
     this.initialiseTableau();
   }
 
   ngOnInit(): void {
     this.serArt.getAllArticle().subscribe(
-      data=>{
+      data => {
         this.articles=data;
       }
     );
@@ -130,7 +130,7 @@ export class InstitutionReversementComponent implements OnInit {
 
     this.tabPeRev = {
 
-      responsive:true,
+      responsive: true,
       pagingType: 'full_numbers',
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
@@ -163,17 +163,17 @@ export class InstitutionReversementComponent implements OnInit {
         this.dtrigInst.next();
       },
       err=>{
-        console.log('Chargement echouée',err);
+        console.log('Chargement echouée', err);
       }
     );
   }
 
-  initAddInst(){
+  initAddInst() {
     this.addInstGrou.reset();
     this.addInst.show();
   }
 
-  ajouteInst(){
+  ajouteInst() {
     this.instServ.addAnInstitute(new InstituReverse(this.addInstGrou.value['addInstCod'],
     this.addInstGrou.value['addInstLib'])).subscribe(
       data=>{

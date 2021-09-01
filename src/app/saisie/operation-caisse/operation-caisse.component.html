@@ -88,7 +88,7 @@
                                 </div>
                                 <div class="col-sm-2.5">
                                     <label class="form-label" for="nVentDat">Date</label>
-                                    <input type="datetime" id="nVentDat" formControlName="nVentDat" class="form-control" value="new Date()" required>
+                                    <input type="datetime-local" id="nVentDat" formControlName="nVentDat" class="form-control" value="new Date()" required>
                                 </div>
                                 <div class="col-xl-2">
                                     <label for="nVentMod">Mode</label>
@@ -145,6 +145,9 @@
                                     </tr>
                                 </tfoot>
                             </table>
+                            <div class="row">
+                              matlab
+                            </div>
                         </div>
                         <div class="card-footer"></div>
                     </div>
@@ -237,6 +240,7 @@
                                 <div class="col-sm-3">
                                     <label for="loyCai">Caisse</label>
                                     <select id="loyCai" formControlName="loyCai" class="form-control">
+                                        <option value="-1">Choisir le locataire</option>
                                     <option  *ngFor="let afu of affectUser; let i = index" [value]="i">
                                       {{ afu.caisse.libeCaisse }}</option>
                                     </select>
@@ -244,6 +248,7 @@
                                     <input formControlName="loyDat" id="loyDat" type="datetime" class="form-control">
                                     <label for="loyCai">Mode de paiement</label>
                                     <select formControlName="loyMod" class="form-control">
+                                        <option value="-1">Choisir le contrat</option>
                                       <option *ngFor="let m of modes; let i=index" [value]="i">
                                         {{m.libeModPay}}
                                       </option>
@@ -334,7 +339,7 @@
                             </div>
                             <div class="col-lg-3">
                                 <label for="addImDat">Date de paiement</label>
-                                <input formControlName="addImDat" id="addImDat" type="datetime" class="form-control">
+                                <input formControlName="addImDat" id="addImDat" type="datetime-local" class="form-control">
                                 <label for="addImCai">Caisse</label>
                                 <select id="addImCai" formControlName="addImCai" class="form-control" required>
                                       <option  *ngFor="let afu of affectUser; let i = index" [value]="i">
@@ -493,8 +498,8 @@
                 <p>Êtes-vous sûre de vouloir l'annuler ?</p>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" (click)="fermeSup()">Non</button>
-              <button type="button" class="btn btn-success" (click)="supprimerOperation()">Oui</button>
+                <button type="button" class="btn btn-secondary" (click)="fermeSup()">Non</button>
+                <button type="button" class="btn btn-success" (click)="supprimerOperation()">Oui</button>
             </div>
         </div>
         <!-- /.modal-content -->

@@ -2,7 +2,7 @@ import { Component, ViewChild, OnInit, ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { data, valHooks } from 'jquery';
+import { data, error, valHooks } from 'jquery';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { from, pipe, Subject } from 'rxjs';
 import { Article } from '../../../models/article.model';
@@ -42,6 +42,7 @@ import { Stocker } from '../../../models/stocker.model';
 import { Magasin } from '../../../models/magasin.model';
 import { ExerciceService } from '../../../services/administration/exercice.service';
 import * as moment from 'moment';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-operation-caisse',
@@ -50,7 +51,7 @@ import * as moment from 'moment';
 })
 export class OperationCaisseComponent implements OnInit {
 
-  //Les fenêtres
+  // Les fenêtres
   @ViewChild('addVente') public addVente: ModalDirective;
   @ViewChild('addArticle') public addArticle: ModalDirective;
   @ViewChild('addLoyer') public addLoyer: ModalDirective;
@@ -62,7 +63,7 @@ export class OperationCaisseComponent implements OnInit {
   @ViewChild('supOP') public supOP: ModalDirective;
 
   pdfToShow: any;
-  ////Accueil
+  //// Accueil
   timp: String[] = ['Ticket', 'Reçu'];
   stk: Stocker[];
   annulop = new OpCaisse(null, null, null, null, '', null, null, null, null, null, null);
@@ -82,10 +83,10 @@ export class OperationCaisseComponent implements OnInit {
   exercices: Exercice[];
   users: Utilisateur[];
   user: Utilisateur;
-  //tabLigne:DataTables.Settings={};
+  // tabLigne:DataTables.Settings={};
   dtLigne: Subject<any> = new Subject<any>();
 
-  ///////Vente
+  /////// Vente
   tabArtV: DataTables.Settings = {};
   dtArt: Subject<Article> = new Subject<Article>();
   addVentGroup: FormGroup;
@@ -94,9 +95,9 @@ export class OperationCaisseComponent implements OnInit {
   totaltmp: number;
   tligne: number;
   lignesOp: LigneOpCaisse[];
-  ////////Ajout d'article
+  //////// Ajout d'article
   tabArt: DataTables.Settings = {};
-  //dtArtV: Subject<any> = new Subject<any>();
+  // dtArtV: Subject<any> = new Subject<any>();
   addArtGroup: FormGroup;
   tempLigneOpCais: LigneOpCaisse[] = [];
   lignesOfOp: LigneOpCaisse[];
@@ -104,16 +105,16 @@ export class OperationCaisseComponent implements OnInit {
   serVal: ValeurLocativeService;
 
   today: Date = new Date();
-  ////////Détail opération de caise
+  //////// Détail opération de caise
   vnum: String; vdat: String; vcai: String; vcon: String; vtyp: String;
   vmod: String; vobs: String; vexo: String; vuse: String; dats: Date;
   eta: String; vtotal: number;
   detailGroup: FormGroup;
   tabDetail: DataTables.Settings = {};
-  //dtrigDetail:Subject<any>=new Subject<any>();
+  // dtrigDetail:Subject<any>=new Subject<any>();
   dtElt: DataTableDirective;
 
-  ///////Location
+  /////// Location
   montantarepartir: number = 0;
   addLoyerGroup: FormGroup;
   locataires: Locataire[];
@@ -130,14 +131,14 @@ export class OperationCaisseComponent implements OnInit {
   echeancetmp: Echeance[] = [];
   prixIm: PrixImmeuble[];
   prixImm: PrixImmeuble[];
-  totalLoyer: number
+  totalLoyer: number;
 
-  ///////Imputation
+  /////// Imputation
   addImputGroup: FormGroup;
   co: Correspondant[] = [];
   coi: Correspondant[] = [];
   tabLignePoint: DataTables.Settings = {};
-  //dtPV:Subject<any>=new Subject<any>()
+  // dtPV:Subject<any>=new Subject<any>()
   ind: number = 0;
   pointV: PointVente[];
   pointPayable: PointVente[];
@@ -145,33 +146,34 @@ export class OperationCaisseComponent implements OnInit {
   pv: PointVente[];
   ImputLine: LignePointVente[] = [];
   lineOfPV: LignePointVente[];
-  totalImput: number
+  totalImput: number;
   total: number;
 
   constructor(private serCor: CorrespondantService, private serU: UtilisateurService, private serExo: ExerciceService,
     private servPV: PointVenteService,
     private servOp: OperationCaisseService, private fbuilder: FormBuilder, private router: Router,
-    private sanitizer: DomSanitizer, private serPV: PointVenteService) {
+    private sanitizer: DomSanitizer, private tst: ToastrService) {
 
-    moment.locale("fr");
+
+    moment.locale('fr');
 
     this.tabDailyOp = {
       pagingType: 'full_numbers',
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
       language: {
-        lengthMenu: "Affichage de _MENU_ lignes par page",
-        zeroRecords: "Aucune ligne trouvée - Desolé",
-        info: "Affichage de la page _PAGE_ sur _PAGES_",
-        infoEmpty: "Pas de ligne trouvée",
-        infoFiltered: "(Filtré à partie de _MAX_ lignes)",
-        search: "Rechercher",
-        loadingRecords: "Chargement en cours...",
+        lengthMenu: 'Affichage de _MENU_ lignes par page',
+        zeroRecords: 'Aucune ligne trouvée - Desolé',
+        info: 'Affichage de la page _PAGE_ sur _PAGES_',
+        infoEmpty: 'Pas de ligne trouvée',
+        infoFiltered: '(Filtré à partie de _MAX_ lignes)',
+        search: 'Rechercher',
+        loadingRecords: 'Chargement en cours...',
         paginate: {
-          first: "Début",
-          last: "Fin",
-          next: "Suivant",
-          previous: "Précédent"
+          first: 'Début',
+          last: 'Fin',
+          next: 'Suivant',
+          previous: 'Précédent'
         }
       }
     };
@@ -181,18 +183,18 @@ export class OperationCaisseComponent implements OnInit {
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
       language: {
-        lengthMenu: "Affichage de _MENU_ lignes par page",
-        zeroRecords: "Aucune ligne trouvée - Desolé",
-        info: "Affichage de la page _PAGE_ sur _PAGES_",
-        infoEmpty: "Pas de ligne trouvée",
-        infoFiltered: "(Filtré à partie de _MAX_ lignes)",
-        search: "Rechercher",
-        loadingRecords: "Chargement en cours...",
+        lengthMenu: 'Affichage de _MENU_ lignes par page',
+        zeroRecords: 'Aucune ligne trouvée - Desolé',
+        info: 'Affichage de la page _PAGE_ sur _PAGES_',
+        infoEmpty: 'Pas de ligne trouvée',
+        infoFiltered: '(Filtré à partie de _MAX_ lignes)',
+        search: 'Rechercher',
+        loadingRecords: 'Chargement en cours...',
         paginate: {
-          first: "Début",
-          last: "Fin",
-          next: "Suivant",
-          previous: "Précédent"
+          first: 'Début',
+          last: 'Fin',
+          next: 'Suivant',
+          previous: 'Précédent'
         }
       }
     };
@@ -202,18 +204,18 @@ export class OperationCaisseComponent implements OnInit {
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
       language: {
-        lengthMenu: "Affichage de _MENU_ lignes par page",
-        zeroRecords: "Aucune ligne trouvée - Desolé",
-        info: "Affichage de la page _PAGE_ sur _PAGES_",
-        infoEmpty: "Pas de ligne trouvée",
-        infoFiltered: "(Filtré à partie de _MAX_ lignes)",
-        search: "Rechercher",
-        loadingRecords: "Chargement en cours...",
+        lengthMenu: 'Affichage de _MENU_ lignes par page',
+        zeroRecords: 'Aucune ligne trouvée - Desolé',
+        info: 'Affichage de la page _PAGE_ sur _PAGES_',
+        infoEmpty: 'Pas de ligne trouvée',
+        infoFiltered: '(Filtré à partie de _MAX_ lignes)',
+        search: 'Rechercher',
+        loadingRecords: 'Chargement en cours...',
         paginate: {
-          first: "Début",
-          last: "Fin",
-          next: "Suivant",
-          previous: "Précédent"
+          first: 'Début',
+          last: 'Fin',
+          next: 'Suivant',
+          previous: 'Précédent'
         }
       }
     };
@@ -223,18 +225,18 @@ export class OperationCaisseComponent implements OnInit {
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
       language: {
-        lengthMenu: "Affichage de _MENU_ lignes par page",
-        zeroRecords: "Aucune ligne trouvée - Desolé",
-        info: "Affichage de la page _PAGE_ sur _PAGES_",
-        infoEmpty: "Pas de ligne trouvée",
-        infoFiltered: "(Filtré à partie de _MAX_ lignes)",
-        search: "Rechercher",
-        loadingRecords: "Chargement en cours...",
+        lengthMenu: 'Affichage de _MENU_ lignes par page',
+        zeroRecords: 'Aucune ligne trouvée - Desolé',
+        info: 'Affichage de la page _PAGE_ sur _PAGES_',
+        infoEmpty: 'Pas de ligne trouvée',
+        infoFiltered: '(Filtré à partie de _MAX_ lignes)',
+        search: 'Rechercher',
+        loadingRecords: 'Chargement en cours...',
         paginate: {
-          first: "Début",
-          last: "Fin",
-          next: "Suivant",
-          previous: "Précédent"
+          first: 'Début',
+          last: 'Fin',
+          next: 'Suivant',
+          previous: 'Précédent'
         }
       }
     };
@@ -244,18 +246,18 @@ export class OperationCaisseComponent implements OnInit {
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
       language: {
-        lengthMenu: "Affichage de _MENU_ lignes par page",
-        zeroRecords: "Aucune ligne trouvée - Desolé",
-        info: "Affichage de la page _PAGE_ sur _PAGES_",
-        infoEmpty: "Pas de ligne trouvée",
-        infoFiltered: "(Filtré à partie de _MAX_ lignes)",
-        search: "Rechercher",
-        loadingRecords: "Chargement en cours...",
+        lengthMenu: 'Affichage de _MENU_ lignes par page',
+        zeroRecords: 'Aucune ligne trouvée - Desolé',
+        info: 'Affichage de la page _PAGE_ sur _PAGES_',
+        infoEmpty: 'Pas de ligne trouvée',
+        infoFiltered: '(Filtré à partie de _MAX_ lignes)',
+        search: 'Rechercher',
+        loadingRecords: 'Chargement en cours...',
         paginate: {
-          first: "Début",
-          last: "Fin",
-          next: "Suivant",
-          previous: "Précédent"
+          first: 'Début',
+          last: 'Fin',
+          next: 'Suivant',
+          previous: 'Précédent'
         }
       }
     };
@@ -265,7 +267,7 @@ export class OperationCaisseComponent implements OnInit {
   initOpCaisse() {
     this.addVentGroup = this.fbuilder.group({
       nVentNum: new FormControl('C2021-00001'),
-      nVentDat: new FormControl(moment(Date.now()).format("DD-MM-yyyy hh:mm")),
+      nVentDat: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm')),
       nVentCais: new FormControl(0),
       nVentMod: new FormControl(0),
       nVentCont: new FormControl(),
@@ -285,13 +287,13 @@ export class OperationCaisseComponent implements OnInit {
     });
 
     this.addLoyerGroup = new FormGroup({
-      loyLoc: new FormControl(),
-      loyVL: new FormControl(),
+      loyLoc: new FormControl(-1),
+      loyVL: new FormControl(-1),
       loyCai: new FormControl(0),
       loyCon: new FormControl(),
       loyMod: new FormControl(0),
       loyObs: new FormControl(),
-      loyDat: new FormControl(moment(Date.now()).format("DD/MM/YYYY hh:mm:ss")),
+      loyDat: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm')),
       loyMtt: new FormControl(''),
       loyRel: new FormControl(''),
       coche: new FormControl()
@@ -299,7 +301,7 @@ export class OperationCaisseComponent implements OnInit {
 
     this.addImputGroup = new FormGroup({
       addImCor: new FormControl(0),
-      addImDat: new FormControl(moment(Date.now()).format("DD/MM/YYYY hh:mm:ss")),
+      addImDat: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm')),
       addImCai: new FormControl(0),
       addImMod: new FormControl(0),
       addImObs: new FormControl(),
@@ -328,12 +330,68 @@ export class OperationCaisseComponent implements OnInit {
         }
       );
     this.initOpCaisse();
+
+    let typs: TypeRecette[];
+    this.servOp.getAllTypes().subscribe(
+      data => {
+        typs = data;
+        if (typs.length == 0) {
+          this.servOp.addATypes(new TypeRecette('P', 'Prestation')).subscribe(
+            data => {
+              this.servOp.addATypes(new TypeRecette('L', 'Prestation')).subscribe(
+                data => {
+                  this.servOp.addATypes(new TypeRecette('I', 'Prestation')).subscribe();
+                }
+              );
+            },
+            erre => {
+              console.error('Erreur ajout de type: ', erre);
+
+            }
+          );
+        }
+      }
+    );
+
+    let mod: ModePaiement[];
+    this.servOp.getAllModes().subscribe(
+      data => {
+        mod = data;
+        if (mod.length == 0) {
+          this.servOp.addAMode(new ModePaiement('E', 'Espèces')).subscribe(
+            data => {
+              this.servOp.addAMode(new ModePaiement('C', 'Chèque')).subscribe(
+                data => {
+                  this.servOp.addAMode(new ModePaiement('M', 'Monnaie mobile')).subscribe();
+                }
+              );
+            },
+            err => {
+              console.error('Erreut ajout de mode : ', err);
+
+            }
+          );
+        }
+      }
+    );
+
   }
 
-  fermeSup(){
+  fermeSup() {
     $('#dtop').dataTable().api().destroy();
     this.dtrigDailyOp.next();
-    this.detailOp.hide()
+    this.detailOp.hide();
+  }
+
+  chargerModes() {
+    this.servOp.getAllModes().subscribe(
+      data => {
+        this.modes = data;
+      },
+      err => {
+        console.error('Erreure de chargement : ', err);
+
+      });
   }
 
   initRecherche() { }
@@ -343,7 +401,7 @@ export class OperationCaisseComponent implements OnInit {
       case 'P': {
         this.rechargerLigneOpCaisse();
         this.lignesOfOp = this.lignesOp.filter(lop => lop.opCaisse.numOpCaisse === this.annulop.numOpCaisse);
-        var i: number = this.lignesOfOp.length;
+        let i: number = this.lignesOfOp.length;
         this.lignesOfOp.forEach(elt => {
           this.servOp.deleteAOpLine(elt.idLigneOperCaisse).subscribe(
             datalop => {
@@ -353,10 +411,10 @@ export class OperationCaisseComponent implements OnInit {
                 this.servOp.deleteAOpCaiss(this.annulop.numOpCaisse).subscribe(
                   data => {
                     this.chargerOperations();
-                    console.log("Suppression éffectuée avec succès");
+                    console.log('Suppression éffectuée avec succès');
                   },
                   err => {
-                    console.log("La suppression a échoué");
+                    console.log('La suppression a échoué');
                   }
                 );
               }
@@ -366,8 +424,8 @@ export class OperationCaisseComponent implements OnInit {
         break;
       }
       case 'L': {
-        var echConc = this.echeances.filter(ec => ec.opCaisse.numOpCaisse === this.annulop.numOpCaisse);
-        var i = echConc.length;
+        const echConc = this.echeances.filter(ec => ec.opCaisse.numOpCaisse === this.annulop.numOpCaisse);
+        let i = echConc.length;
         echConc.forEach(elt => {
           this.servOp.delEcheance(elt.idEcheance).subscribe(
             datde => {
@@ -377,10 +435,10 @@ export class OperationCaisseComponent implements OnInit {
                 this.servOp.deleteAOpCaiss(this.annulop.numOpCaisse).subscribe(
                   data => {
                     this.chargerOperations();
-                    console.log("Suppression éffectuée avec succès");
+                    console.log('Suppression éffectuée avec succès');
                   },
                   err => {
-                    console.log("La suppression a échoué");
+                    console.log('La suppression a échoué');
                   }
                 );
               }
@@ -394,10 +452,10 @@ export class OperationCaisseComponent implements OnInit {
           .subscribe(
             (data) => {
               this.pointV = data;
-              var pv = this.pointV.filter(pt => pt.opCaisse.numOpCaisse === this.annulop.numOpCaisse);
-              var i = pv.length;
+              const pv = this.pointV.filter(pt => pt.opCaisse.numOpCaisse === this.annulop.numOpCaisse);
+              let i = pv.length;
               pv.forEach(elt => {
-                var ptv = elt;
+                const ptv = elt;
                 ptv.payerPoint = false;
                 this.servPV.editPointVente(elt.numPointVente, ptv).subscribe(
                   data => {
@@ -405,7 +463,7 @@ export class OperationCaisseComponent implements OnInit {
                     i--;
                     if (i === 0) {
                       this.lignesOfOp = this.lignesOp.filter(lop => lop.opCaisse.numOpCaisse === this.annulop.numOpCaisse);
-                      var j = this.lignesOfOp.length;
+                      let j = this.lignesOfOp.length;
                       this.lignesOfOp.forEach(ele => {
                         this.servOp.deleteAOpLine(ele.idLigneOperCaisse).subscribe(
                           datalop => {
@@ -415,10 +473,10 @@ export class OperationCaisseComponent implements OnInit {
                               this.servOp.deleteAOpCaiss(this.annulop.numOpCaisse).subscribe(
                                 data => {
                                   this.chargerOperations();
-                                  console.log("Suppression éffectuée avec succès");
+                                  console.log('Suppression éffectuée avec succès');
                                 },
                                 err => {
-                                  console.log("La suppression a échoué");
+                                  console.log('La suppression a échoué');
                                 }
                               );
                             }
@@ -437,27 +495,27 @@ export class OperationCaisseComponent implements OnInit {
     this.supOP.hide();
   }
 
-  fermerAnnulation(){
+  fermerAnnulation() {
     $('#dtop').dataTable().api().destroy();
     this.dtrigDailyOp.next();
     this.opAnnul.hide();
   }
-  
+
   annulerOperation(opc: OpCaisse) {
-    var op = opc;
+    const op = opc;
     op.valideOpCaisse = false;
     switch (opc.typeRecette.codeTypRec) {
       case 'P': {
-        var lop = this.lignesOp.filter(lop => lop.opCaisse.numOpCaisse === opc.numOpCaisse);
-        var n: number = 0;
+        const lop = this.lignesOp.filter(lop => lop.opCaisse.numOpCaisse === opc.numOpCaisse);
+        let n: number = 0;
         lop.forEach(elt => {
           if (elt.livre === true) {
             this.serCor.getAllStocker().subscribe(
               (data) => {
                 this.stk = data;
-                var st = this.stk.find(stc => stc.article.codeArticle === elt.article.codeArticle &&
+                const st = this.stk.find(stc => stc.article.codeArticle === elt.article.codeArticle &&
                   stc.magasin.codeMagasin === elt.magasin.codeMagasin);
-                var stc = new Stocker(st.quantiterStocker + elt.qteLigneOperCaisse, st.stockDeSecuriter, st.stockMinimal,
+                const stc = new Stocker(st.quantiterStocker + elt.qteLigneOperCaisse, st.stockDeSecuriter, st.stockMinimal,
                   st.cmup, st.article, st.magasin);
                 st.quantiterStocker += elt.qteLigneOperCaisse;
                 this.serCor.editAStocker(st.idStocker.toString(), stc).subscribe(
@@ -494,7 +552,7 @@ export class OperationCaisseComponent implements OnInit {
             (data) => {
               this.echeances = data;
               this.echeances.filter(ec => ec.opCaisse.numOpCaisse === opc.numOpCaisse).forEach(elt => {
-                var ech = elt;
+                const ech = elt;
                 ech.payeEcheance = false;
                 this.servOp.editEcheance(elt.idEcheance, ech).subscribe(
                   data => {
@@ -505,7 +563,7 @@ export class OperationCaisseComponent implements OnInit {
                             dataop => {
                               console.log('Annulation effectuée avec succès');
                               this.listOp = dataop;
-                              $("#dtop").dataTable().api().destroy();
+                              $('#dtop').dataTable().api().destroy();
                               this.dtrigAllOp.next();
                             }
                           );
@@ -528,7 +586,7 @@ export class OperationCaisseComponent implements OnInit {
             (data) => {
               this.pointV = data;
               this.pointV.filter(pt => pt.opCaisse.numOpCaisse === opc.numOpCaisse).forEach(elt => {
-                var ptv = elt;
+                const ptv = elt;
                 ptv.payerPoint = false;
                 this.servPV.editPointVente(elt.numPointVente, ptv).subscribe(
                   data => {
@@ -611,7 +669,7 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   ChargerAccessoires() {
-    //Modes de paiement
+    // Modes de paiement
     this.servOp.getAllModes()
       .subscribe(
         (data) => {
@@ -622,14 +680,14 @@ export class OperationCaisseComponent implements OnInit {
         }
       );
 
-    //Affectations aux caisses
+    // Affectations aux caisses
     this.servOp.getAllAffectations()
       .subscribe(
         (data) => {
           this.affectations = data;
           this.affectUser = this.affectations.filter(af =>
             af.utilisateur.idUtilisateur === this.user.idUtilisateur &&
-            //new Date(af.dateDebAffecter) <= new Date() &&
+            // new Date(af.dateDebAffecter) <= new Date() &&
             af.dateFinAffecter == null
           );
           this.caissesValides = this.affectUser.map(au => au.caisse);
@@ -640,7 +698,7 @@ export class OperationCaisseComponent implements OnInit {
         }
       );
 
-    ///Types
+    /// Types
     this.servOp.getAllTypes()
       .subscribe(
         (data) => {
@@ -651,7 +709,7 @@ export class OperationCaisseComponent implements OnInit {
         }
       );
 
-    /////Contrats
+    ///// Contrats
     this.servOp.getAllContrats()
       .subscribe(
         (data) => {
@@ -662,7 +720,7 @@ export class OperationCaisseComponent implements OnInit {
         }
       );
 
-    /////Prix
+    ///// Prix
     this.servOp.getAllPrixImmeuble()
       .subscribe(
         (data) => {
@@ -673,7 +731,7 @@ export class OperationCaisseComponent implements OnInit {
         }
       );
 
-    /////Point vente
+    ///// Point vente
     this.servOp.getAllPV()
       .subscribe(
         (data) => {
@@ -708,24 +766,25 @@ export class OperationCaisseComponent implements OnInit {
     this.supOP.show();
   }
 
-  //Gestion des prestations
+  // Gestion des prestations
   initNewVente() {
+    this.chargerModes();
     this.totalVente = 0;
     this.tmpOpC = new OpCaisse('0001', new Date(), 'Divers', true, '', new Date(),
       this.caissesValides[0], this.opTypes[0], this.modes[0], this.exo, this.user);
     this.addVente.show();
     this.addVentGroup.patchValue({
-      nVentDat: moment(new Date()).format("DD/MM/YYYY HH:mm"),
-      nVentCont: "", nVentObs: ""
+      nVentDat: moment(new Date()).format('DD/MM/YYYY HH:mm'),
+      nVentCont: '', nVentObs: ''
     });
   }
 
-  fermeVente(){
+  fermeVente() {
     $('#dtop').dataTable().api().destroy();
     this.dtrigDailyOp.next();
     this.addVente.hide();
   }
-  
+
   ouvreAddArt() {
     this.servOp.getAllArticles()
       .subscribe(
@@ -778,25 +837,25 @@ export class OperationCaisseComponent implements OnInit {
 
   AjouteVente() {
     let op: OpCaisse;
-    var dat: String = this.addVentGroup.value['nVentDat']
-    var datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
+    const dat: String = this.addVentGroup.value['nVentDat'];
+    const datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
       Number.parseInt(dat.substr(0, 2), 10), Number.parseInt(dat.substr(11, 2), 10), Number.parseInt(dat.substr(14, 2), 10));
 
-    const newOC = new OpCaisse('01', datop, this.addVentGroup.value['nVentCont'],
+    const newOC = new OpCaisse('01', new Date(this.addVentGroup.value['nVentDat']), this.addVentGroup.value['nVentCont'],
       true, this.addVentGroup.value['nVentObs'], new Date(), this.caissesValides[this.addVentGroup.value['nVentCais']],
       new TypeRecette('P', 'Prestation'), this.modes[this.addVentGroup.value['nVentMod']], this.serExo.exoSelectionner,
       this.user);
-    this.servOp.ajouteOp(newOC)
+    this.servOp.addOp(newOC)
       .subscribe(
         (data) => {
-          //Chargement des opérations
-          //gestion des lignes
+          // Chargement des opérations
+          // gestion des lignes
           this.chargerOperations();
           this.tempLigneOpCais.forEach((element, index) => {
             const newLine = new LigneOpCaisse(element.qteLigneOperCaisse, element.prixLigneOperCaisse,
               element.commentaireLigneOperCaisse, data, element.article);
             this.servOp.addOpLine(data, newLine)
-              .subscribe(//ajout de ligne
+              .subscribe(// ajout de ligne
                 (data2) => {
                   this.supTempLigneOpCais(this.tempLigneOpCais.indexOf(newLine));
                   if (this.tempLigneOpCais.length === 0) {
@@ -805,8 +864,8 @@ export class OperationCaisseComponent implements OnInit {
                         (data3) => {
                           this.lignesOp = data3;
                           this.addVentGroup.patchValue({
-                            nVentDat: moment(new Date()).format("DD/MM/YYYY HH:mm"),
-                            nVentCont: "", nVentObs: ""
+                            nVentDat: moment(new Date()).format('DD/MM/YYYY HH:mm'),
+                            nVentCont: '', nVentObs: ''
                           });
                           this.imprimeTicket(data);
                           this.totalVente = 0;
@@ -832,16 +891,16 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   initLoyer() {
-    this.ChargerAccessoires
+    this.ChargerAccessoires;
     this.chargerEcheances();
     this.chargerLocataire();
     this.totalVente = 0;
     this.addLoyer.show();
-    this.tmpOpC = new OpCaisse(new Date().getUTCFullYear + '-000001', new Date(), 'Divers', true, '', new Date(),
-      this.caissesValides[0], new TypeRecette('VD', 'Avente Directe'), this.modes[0], this.exo, this.user);
+    this.tmpOpC = new OpCaisse(new Date().getUTCFullYear() + '-000001', new Date(), 'Divers', true, '', new Date(),
+      this.caissesValides[0], new TypeRecette('VD', 'Prestation'), this.modes[0], this.exo, this.user);
     this.totalLoyer = 0;
     this.addLoyerGroup.patchValue({
-      loyDat: moment(new Date()).format("DD/MM/YYYY HH:mm"),
+      loyDat: moment(new Date()).format('DD/MM/YYYY HH:mm'),
       loyCont: '', loyObs: ''
     });
     this.echeanceAPayer = [];
@@ -851,29 +910,32 @@ export class OperationCaisseComponent implements OnInit {
 
   fermerLoyer() {
     $('#dtop').dataTable().api().destroy();
+    $('#dteche').dataTable().api().destroy();
     this.dtrigDailyOp.next();
     this.addLoyer.hide();
   }
 
   ajoutePaiement() {
     if (this.echeanceAPayer.some(ech => ech.payeEcheance)) {
-      var echeancepaye = this.echeanceAPayer.filter(e => e.payeEcheance === true);
-      var j = this.echeanceAPayer.filter(e => e.payeEcheance === true).length;
+      const echeancepaye = this.echeanceAPayer.filter(e => e.payeEcheance === true);
+      let j = this.echeanceAPayer.filter(e => e.payeEcheance === true).length;
 
       if (this.addLoyerGroup.value['loyCai'] !== null && this.addLoyerGroup.value['loyMod'] !== null &&
         this.addLoyerGroup.value['loyDat'] !== null) {
-        var dat: String = this.addLoyerGroup.value['loyDat']
-        var datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
+        const dat: String = this.addLoyerGroup.value['loyDat'];
+        const datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
           Number.parseInt(dat.substr(0, 2), 10), Number.parseInt(dat.substr(11, 2), 10), Number.parseInt(dat.substr(14, 2), 10));
-        const newOC = new OpCaisse('0001', datop, this.addLoyerGroup.value['loyCon'], true,
+        const newOC = new OpCaisse('0001', new Date(this.addLoyerGroup.value['loyDat']), this.addLoyerGroup.value['loyCon'], true,
           this.addLoyerGroup.value['loyObs'], new Date(), this.caissesValides[this.addLoyerGroup.value['loyCai']],
           new TypeRecette('L', 'Location'), this.modes[this.addLoyerGroup.value['loyMod']], this.serExo.exoSelectionner,
           this.user);
-        this.servOp.ajouteOp(newOC)
+        this.servOp.addOp(newOC)
           .subscribe(
             (dataop) => {
               echeancepaye.forEach(elt => {
                 if (elt.payeEcheance) {
+                  if (this.echeances.find(e => e.contrat.numContrat == elt.contrat.numContrat &&
+                    e.dateEcheance == elt.dateEcheance) == null) {
                   elt.opCaisse = dataop;
                   this.servOp.addEcheance(elt).subscribe(
                     dataech => {
@@ -887,7 +949,7 @@ export class OperationCaisseComponent implements OnInit {
                                 this.echeances = datalisteop;
                                 this.imprimeFacture(dataop);
                                 this.addLoyerGroup.patchValue({
-                                  loyDat: moment(new Date()).format("DD/MM/YYYY HH:mm"),
+                                  loyDat: moment(new Date()).format('DD/MM/YYYY HH:mm'),
                                   loyLoc: -1, loyVL: -1, loyCont: '', loyObs: ''
                                 });
                                 this.genererEcheancier(null);
@@ -902,18 +964,16 @@ export class OperationCaisseComponent implements OnInit {
                           });
                       }
                     });
-                }
+                }}
               });
             },
             (err) => {
               console.log('Nouvelle opération ', err);
             });
-      }
-      else {
+      } else {
         console.log('Vérifier que la caisse, la date, le mode et numéro du paiement sont renseignés');
       }
-    }
-    else {
+    } else {
       console.log('Veuillez cocher au moins une échéance à payer');
     }
     this.chargerOperations();
@@ -945,41 +1005,56 @@ export class OperationCaisseComponent implements OnInit {
 
   genererEcheancier(con: Contrat) {
     if (con == null) {
-      this.echeanceAPayer = []
-    }
-    else {
+      this.echeanceAPayer = [];
+    } else {
       this.chargerPrixImmeubles(con.immeuble);
+      let fa : Date;
+      if (con.dateFinContrat == null) {
+        fa = new Date(new Date().getFullYear(), 11, 31);
+      } else {
+        fa = new Date(con.dateFinContrat);
+      }
+
       this.echeanceAPayer = [];
       this.totalLoyer = 0;
-      var dde: Date = new Date(con.dateEffetContrat);
-      var mois = new Array("Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet",
-        "Août", "Septembre", "Octobre", "Novembre", "Décembre");
-      var i = 0, n = 0;
-      var fa = new Date(new Date().getFullYear(), 11, 31);
+      let dde: Date = new Date(con.dateEffetContrat);
+      const mois = new Array('Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+        'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre');
+      const i = 0;
+      // var fa = new Date();
+        const des = new Date(dde.getFullYear(), dde.getMonth() + 1, dde.getDate());
+        let n = 0;
       this.echeanceContrat = this.echeances.filter(eche => eche.contrat.numContrat === con.numContrat);
-      while (dde <= fa && (dde <= new Date(con.dateFinContrat) || con.dateFinContrat === null)) {
-        var des = new Date(dde.getFullYear(), dde.getMonth() + 1, dde.getDate());
-        var exist = this.echeanceContrat.filter(function (eche) {
-          return eche.moisEcheance === mois[dde.getMonth()] && eche.contrat.numContrat === con.numContrat
-            && eche.payeEcheance===true;
+      while (des <= fa ) {
+        n++;
+        const exist = this.echeanceContrat.filter(function (eche) {
+          return eche.contrat.numContrat === con.numContrat && eche.moisEcheance === mois[dde.getMonth()]
+            && eche.annee === dde.getFullYear();
         });
-
         if (exist.length === 0) {
-          var prix = this.prixImm.filter(pri =>
-            (new Date(pri.dateDebPrixIm) <= new Date(dde) && new Date(pri.dateFinPrixIm) > new Date(dde)) ||
-            (new Date(pri.dateDebPrixIm) <= new Date(dde) && new Date(dde) < fa));
-          if (prix !== null) {
-            const eche = new Echeance(mois[dde.getMonth()], dde.getFullYear(), des, false,
-              prix[prix.length - 1].prixIm, con, null);
+          const prix = this.prixImm.find(pri => pri.immeuble.codeIm === con.immeuble.codeIm &&
+            // pri.dateFinPrixIm==null
+            ((new Date(dde) >= new Date(pri.dateDebPrixIm)  &&  new Date(dde) < new Date(pri.dateFinPrixIm)) ||
+            (new Date(dde) >= new Date(pri.dateDebPrixIm)  && pri.dateFinPrixIm === null ))
+          );
+          let p = prix.prixIm;
+          if (con.immeuble.valUnit === true) {
+            p=p*con.immeuble.superficie
+          }
+          const eche = new Echeance(mois[des.getMonth()-1], dde.getFullYear(), new Date(des), false,
+          p, con, null);
+
+          if (prix != null) {
             this.echeanceAPayer.push(eche);
             n++;
           }
         }
         dde = des;
+        des.setMonth(des.getMonth() + 1);
       }
-      this.echeanceAPayer.sort((a, b) => a.dateEcheance.valueOf() - b.dateEcheance.valueOf());
     }
 
+    this.echeanceAPayer.sort((a, b) => a.dateEcheance.valueOf() - b.dateEcheance.valueOf());
     $('#dteche').dataTable().api().destroy();
     this.dtTrigEche.next();
     this.totalLoyer = 0;
@@ -987,9 +1062,9 @@ export class OperationCaisseComponent implements OnInit {
 
   chargerEcheancesContrat(con) {
     this.echeancetmp = this.echeances.filter(function (echeance) {
-      return (echeance.contrat.numContrat === con.numContrat && echeance.payeEcheance === false);
+      return (echeance.contrat.numContrat == con.numContrat && echeance.payeEcheance == false);
     });
-    this.totalLoyer = 0
+    this.totalLoyer = 0;
   }
 
   chargerLocataire() {
@@ -1007,21 +1082,20 @@ export class OperationCaisseComponent implements OnInit {
   considererEcheance(p: number) {
     if (this.echeanceAPayer[p].payeEcheance) {
           this.totalLoyer += this.echeanceAPayer[p].prix.valueOf();
-        }
-        else {
+        } else {
         this.totalLoyer -= this.echeanceAPayer[p].prix.valueOf();
       }
     console.log(this.echeanceAPayer[p]);
   }
 
-  ///Gestion des imputations
+  /// Gestion des imputations
   initNewImput() {
     this.addImputGroup.reset();
     this.pointPayable = [];
     this.totalLoyer = 0;
     this.addImput.show();
     this.addImputGroup.patchValue({
-      addImDat: moment(Date.now()).format("DD/MM/YYYY HH:mm:ss"),
+      addImDat: moment(Date.now()).format('DD/MM/YYYY HH:mm:ss'),
       addImCor: 0, addImMod: 0, addImCai: 0
     });
     this.coi = this.pointV.filter(pp => pp.correspondant.imputableCorres === true && pp.payerPoint === false).map(pp => pp.correspondant);
@@ -1047,17 +1121,16 @@ export class OperationCaisseComponent implements OnInit {
             lpv.pointVente.correspondant.idCorrespondant === cor.idCorrespondant && lpv.pointVente.payerPoint === false);
           this.pv = [];
           this.lineOfPV.forEach(elt => {
-            if (this.pv.find(p => p.numPointVente === elt.pointVente.numPointVente)) {
+            if (this.pv.find(p => p.numPointVente == elt.pointVente.numPointVente)) {
               this.pv.push(elt.pointVente);
             }
-            var lpvp = this.ImputLine.find(limp =>
-              limp.article.codeArticle === elt.article.codeArticle
+            const lpvp = this.ImputLine.find(limp =>
+              limp.article.codeArticle == elt.article.codeArticle
             );
             if (lpvp === undefined) {
               this.ImputLine.push(new LignePointVente(elt.quantiteLignePointVente, elt.pulignePointVente, 0, 0, null,
                 elt.article));
-            }
-            else {
+            } else {
               lpvp.quantiteLignePointVente += elt.quantiteLignePointVente;
             }
           });
@@ -1065,23 +1138,21 @@ export class OperationCaisseComponent implements OnInit {
         },
         (err) => {
           console.log('lpv', err);
-        }
-      );
-
+        });
   }
 
   ajouteImputation() {
     if (this.addImputGroup.value['addImMod'] != null && this.addImputGroup.value['addImDat'] != null &&
       this.addImputGroup.value['addImCai'] != null) {
-      var dat = this.addImputGroup.value['addImDat'];
-       var datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
+      const dat = this.addImputGroup.value['addImDat'];
+       const datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
           Number.parseInt(dat.substr(0, 2), 10), Number.parseInt(dat.substr(11, 2), 10), Number.parseInt(dat.substr(14, 2), 10));
-        const newOC = new OpCaisse('000001', datop,
+        const newOC = new OpCaisse('000001', new Date(this.addImputGroup.value['addimDat']),
         this.coi[this.addImputGroup.value['addImCor']].magasinier.nomMagasinier + ' ' +
         this.coi[this.addImputGroup.value['addImCor']].magasinier.prenomMagasinier, true, this.addLoyerGroup.value['addImObs'], new Date(),
         this.caissesValides[this.addImputGroup.value['addImCai']], new TypeRecette('I', 'Imputation Correspondant'),
         this.modes[this.addImputGroup.value['addImMod']], this.serExo.exoSelectionner, this.user);
-      this.servOp.ajouteOp(newOC)
+      this.servOp.addOp(newOC)
         .subscribe(
           (dataOP) => {
             this.pointPayable.forEach(elt => {
@@ -1097,22 +1168,22 @@ export class OperationCaisseComponent implements OnInit {
                   }
                 );
             });
-            var i: number = this.ImputLine.length;
+            let i: number = this.ImputLine.length;
             this.ImputLine.forEach(elt => {
-              var newline = new LigneOpCaisse(elt.quantiteLignePointVente, elt.pulignePointVente, null, dataOP,
+              const newline = new LigneOpCaisse(elt.quantiteLignePointVente, elt.pulignePointVente, null, dataOP,
                 elt.article);
               newline.livre = true;
-              //newline.magasin=n
+              // newline.magasin=n
               this.servOp.addOpLine(dataOP, newline).subscribe(
                 datalip => {
                   i--;
                   if (i === 0) {
                     this.rechargerLigneOpCaisse();
                     this.imprimeTicket(dataOP);
-                    this.totalImput = 0
+                    this.totalImput = 0;
                     this.ImputLine = [];
                     this.addImputGroup.patchValue({
-                      addimDat: moment(Date.now()).format("jj/MM/aaaa hh/mm"),
+                      addimDat: moment(Date.now()).format('jj/MM/aaaa hh/mm'),
                       addImCor: -1, addImObs: 0
                     });
                   }
@@ -1123,12 +1194,11 @@ export class OperationCaisseComponent implements OnInit {
           (err) => {
             (err) => {
               console.log('Imputation: ', err);
-            }
+            };
           }
         );
 
-    }
-    else {
+    } else {
       console.log('pas enregistrement');
     }
     this.chargerOperations();
@@ -1136,20 +1206,20 @@ export class OperationCaisseComponent implements OnInit {
 
   afficheFacture(opc: OpCaisse) {
     const fact = new jsPDF();
-    fact.text("Arrondissement : " + opc.caisse.arrondissement.nomArrondi + "\tCaisse : " + opc.caisse.libeCaisse +
-      "\nReçu N° : " + opc.numOpCaisse + "\t\t du : " + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm'), 15, 30);
-    //fact.text(,15,40);
-    let ligne = [];
+    fact.text('Arrondissement : ' + opc.caisse.arrondissement.nomArrondi + '\tCaisse : ' + opc.caisse.libeCaisse +
+      '\nReçu N° : ' + opc.numOpCaisse + '\t\t du : ' + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm'), 15, 30);
+    // fact.text(,15,40);
+    const ligne = [];
     let totalf: number = 0;
     switch (opc.typeRecette.codeTypRec) {
       default: {
-        fact.text("Contribuable : " + opc.contribuable, 15, 50);
+        fact.text('Contribuable : ' + opc.contribuable, 15, 50);
         this.rechargerLigneOpCaisse();
-        var loptmp = this.lignesOp.filter(function (lop) {
+        const loptmp = this.lignesOp.filter(function (lop) {
           return lop.opCaisse.numOpCaisse === opc.numOpCaisse;
         });
         loptmp.forEach(element => {
-          let lig = [];
+          const lig = [];
           lig.push(element.article.codeArticle);
           lig.push(element.article.libArticle);
           lig.push(element.qteLigneOperCaisse);
@@ -1168,12 +1238,12 @@ export class OperationCaisseComponent implements OnInit {
       }
 
       case 'L': {
-        var eche = this.echeances.filter(e => e.opCaisse.numOpCaisse === opc.numOpCaisse);
-        fact.text("Contrat : " + eche[0].contrat.numContrat + "\t\tBoutique :" + eche[0].contrat.immeuble.libIm +
-          "\nLocataire : " + eche[0].contrat.locataire.identiteLocataire + "\t\tDéposant : " + opc.contribuable, 15, 50);
+        const eche = this.echeances.filter(e => e.opCaisse.numOpCaisse === opc.numOpCaisse);
+        fact.text('Contrat : ' + eche[0].contrat.numContrat + '\t\tBoutique :' + eche[0].contrat.immeuble.libIm +
+          '\nLocataire : ' + eche[0].contrat.locataire.identiteLocataire + '\t\tDéposant : ' + opc.contribuable, 15, 50);
 
         eche.forEach(element => {
-          let lig = [];
+          const lig = [];
           lig.push(element.moisEcheance);
           lig.push(element.annee);
           lig.push(element.prix);
@@ -1204,10 +1274,10 @@ export class OperationCaisseComponent implements OnInit {
       columnStyles: {
         0: { textColor: 0, fontStyle: 'bold', fontSize: 12 },
       },
-      body: [["Le(La) caissier(ère)" + "\n\n\n" + this.serU.connectedUser.nomUtilisateur + " " +
+      body: [['Le(La) caissier(ère)' + '\n\n\n' + this.serU.connectedUser.nomUtilisateur + ' ' +
         this.serU.connectedUser.prenomUtilisateur]]
     });
-    //fact.autoPrint();
+    // fact.autoPrint();
     this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
     this.appercu.show();
   }
@@ -1215,21 +1285,21 @@ export class OperationCaisseComponent implements OnInit {
   imprimeFacture(opc: OpCaisse) {
 
     const fact = new jsPDF();
-    fact.text("Arrondissement : " + opc.caisse.arrondissement.nomArrondi + "\tCaisse : " + opc.caisse.libeCaisse +
-      "\nReçu N° : " + opc.numOpCaisse + "\t\t du : " + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm'), 15, 30);
-    //fact.text(,15,40);
-    let ligne = [];
+    fact.text('Arrondissement : ' + opc.caisse.arrondissement.nomArrondi + '\tCaisse : ' + opc.caisse.libeCaisse +
+      '\nReçu N° : ' + opc.numOpCaisse + '\t\t du : ' + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm'), 15, 30);
+    // fact.text(,15,40);
+    const ligne = [];
     let total = 0;
 
     switch (opc.typeRecette.codeTypRec) {
       default: {
-        fact.text("Contribuable : " + opc.contribuable, 15, 50);
+        fact.text('Contribuable : ' + opc.contribuable, 15, 50);
         this.rechargerLigneOpCaisse();
-        var loptmp = this.lignesOp.filter(function (lop) {
+        const loptmp = this.lignesOp.filter(function (lop) {
           return lop.opCaisse.numOpCaisse === opc.numOpCaisse;
         });
         loptmp.forEach(element => {
-          let lig = [];
+          const lig = [];
           lig.push(element.article.codeArticle);
           lig.push(element.article.libArticle);
           lig.push(element.qteLigneOperCaisse);
@@ -1248,11 +1318,11 @@ export class OperationCaisseComponent implements OnInit {
       }
 
       case 'L': {
-        var eche = this.echeances.filter(e => e.opCaisse.numOpCaisse === opc.numOpCaisse);
-        fact.text("Contrat : " + eche[0].contrat.numContrat + "\t\tBoutique :" + eche[0].contrat.immeuble.libIm +
-          "\nLocataire : " + eche[0].contrat.locataire.identiteLocataire + "\t\tDéposant : " + opc.contribuable, 15, 50);
+        const eche = this.echeances.filter(e => e.opCaisse.numOpCaisse === opc.numOpCaisse);
+        fact.text('Contrat : ' + eche[0].contrat.numContrat + '\t\tBoutique :' + eche[0].contrat.immeuble.libIm +
+          '\nLocataire : ' + eche[0].contrat.locataire.identiteLocataire + '\t\tDéposant : ' + opc.contribuable, 15, 50);
         eche.forEach(element => {
-          let lig = [];
+          const lig = [];
           lig.push(element.moisEcheance);
           lig.push(element.annee);
           lig.push(element.prix);
@@ -1286,7 +1356,7 @@ export class OperationCaisseComponent implements OnInit {
       columnStyles: {
         0: { textColor: 0, fontStyle: 'bold', fontSize: 12 },
       },
-      body: [["Le(La) caissier(ère)" + "\n\n\n" + this.serU.connectedUser.nomUtilisateur + " " +
+      body: [['Le(La) caissier(ère)' + '\n\n\n' + this.serU.connectedUser.nomUtilisateur + ' ' +
         this.serU.connectedUser.prenomUtilisateur]]
 
     });
@@ -1294,19 +1364,19 @@ export class OperationCaisseComponent implements OnInit {
 
     fact.autoPrint();
     this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
-    //this.appercu.show();
+    // this.appercu.show();
   }
 
   imprimeTicket(opc: OpCaisse) {
-    const fact = new jsPDF("p", "mm", [80, 900]);
+    const fact = new jsPDF('p', 'mm', [80, 900]);
     autoTable(fact, {
       theme: 'plain',
       margin: { left: -0.1, top: -1, right: 0, bottom: 1 },
       body: [
-        ["Arrondissement : " + opc.caisse.arrondissement.nomArrondi],
-        ["Caisse : " + opc.caisse.libeCaisse],
-        ["Reçu N° : " + opc.numOpCaisse + "\tDate : " + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm')],
-        ["Contribuable : " + opc.contribuable]
+        ['Arrondissement : ' + opc.caisse.arrondissement.nomArrondi],
+        ['Caisse : ' + opc.caisse.libeCaisse],
+        ['Reçu N° : ' + opc.numOpCaisse + '\tDate : ' + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm')],
+        ['Contribuable : ' + opc.contribuable]
       ],
       bodyStyles: {
         fontSize: 8,
@@ -1314,18 +1384,18 @@ export class OperationCaisseComponent implements OnInit {
         halign: 'center',
       }
     });
-    let ligne = [];
+    const ligne = [];
     let total = 0;
 
     this.servOp.getAllOpLines()
       .subscribe(
         (data3) => {
           this.lignesOp = data3;
-          var loptmp = this.lignesOp.filter(function (lop) {
+          const loptmp = this.lignesOp.filter(function (lop) {
             return lop.opCaisse.numOpCaisse === opc.numOpCaisse;
           });
           loptmp.forEach(element => {
-            let lig = [];
+            const lig = [];
             lig.push(element.article.codeArticle);
             lig.push(element.article.libArticle);
             lig.push(element.qteLigneOperCaisse);
@@ -1369,7 +1439,7 @@ export class OperationCaisseComponent implements OnInit {
             theme: 'plain',
             margin: { left: -0.1, top: 5, right: 0 },
             body: [
-              ["Le(La) caissier(ère)" + "\n\n\n" + this.serU.connectedUser.nomUtilisateur + " " +
+              ['Le(La) caissier(ère)' + '\n\n\n' + this.serU.connectedUser.nomUtilisateur + ' ' +
                 this.serU.connectedUser.prenomUtilisateur]
             ],
             bodyStyles: {

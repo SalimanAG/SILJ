@@ -94,6 +94,36 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
     this.addTresCom.show();
    }
 
+   fermeAdd(){
+    $('#dtTres').dataTable().api().destroy();
+    this.dTriTres.next();
+    this.addTresCom.hide();
+  }
+
+  fermeMod(){
+    $('#dtTres').dataTable().api().destroy();
+    this.dTriTres.next();
+    this.modTresCom.hide();
+  }
+
+  fermeSup(){
+    $('#dtTres').dataTable().api().destroy();
+    this.dTriTres.next();
+    this.delTresCom.hide();
+  }
+
+   chargerUtilisateur(){
+
+    this.servUser.getAllUsers().subscribe(
+      data=>{
+        this.users=data;
+      },
+      (err)=>{
+        console.log('Chargement de trésoriers non réussi', err);
+      }
+    );
+  }
+   
   ngOnInit(): void {
     this.servTC.getAllTresCom().subscribe(
       data=>{
@@ -133,8 +163,9 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
           console.log(this.tresmani.idRp,newtc);
           this.servTC.editTresCom(this.tresmani.idRp,newtc).subscribe(
             data=>{
-              console.log('Modification éffectuée');
               this.chargerTresoriers();
+              $('#dtTres').dataTable().api().destroy();
+              this.dTriTres.next();
               this.modTresCom.hide();
             },
             err=>{
@@ -151,6 +182,8 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
           this.servTC.editTresCom(this.tresmani.idRp,newtc).subscribe(
             data=>{
               this.chargerTresoriers();
+              $('#dtTres').dataTable().api().destroy();
+              this.dTriTres.next();
               this.modTresCom.hide();
             },
             err=>{
@@ -187,6 +220,7 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
                             }
                           );
                           this.tresoriers=datalist;
+                          $('#dtTres').dataTable().api().destroy();
                           this.dTriTres.next();
                         },
                         errlist=>{
@@ -278,6 +312,8 @@ export class TresorierCommunalComponent implements OnInit, OnDestroy {
                     datam=>{
                     console.log('Suppression réussie');
                     this.chargerTresoriers();
+                    $('#dtTres').dataTable().api().destroy();
+                    this.dTriTres.next();
                   },
                   errmg=>{
                     console.log('Suppression échouée du magasinier', errmg );

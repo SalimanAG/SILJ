@@ -6,7 +6,6 @@
             <i class="fa fa-align-justify"></i> Liste des Valeurs Locatives
           </div>
           <div class="card-body">
-            <!--Les enfants s'amusent-->
             <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
               <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal1.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
               <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
@@ -16,20 +15,20 @@
               <thead>
                 <tr>
                   <th>Code</th>
-                  <th>Libellé</th>
-                  <th>Superficie</th>
+                  <th classe="lib">Libellé</th>
+                  <!--th>Superficie</th-->
                   <th>Valeur unitaire</th>
-                  <th>Structure Responsable</th>
-                  <th>Actions</th>
+                  <!--th>Structure Responsable</th-->
+                  <th class="act">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let immeuble of immeuble; let i = index">
                   <td>{{ immeuble.codeIm }}</td>
                   <td>{{ immeuble.libIm }}</td>
-                  <td>{{ immeuble.superficie }}</td> 
+                  <!--td>{{ immeuble.superficie }}</td-->
                   <td>{{ immeuble.valUnit }}</td>
-                  <td>{{ immeuble.stuctResp }}</td>
+                  <!--td>{{ immeuble.stuctResp }}</td-->
                   <td>
                     <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditValLoc(i)"><span class="fa fa-edit"></span></button>
                     <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteValLoc(i)"><span class="fa fa-trash"></span></button>
@@ -51,20 +50,20 @@
                     </div>
                   </td>
                 </tr>
-    
+
               </tbody>
               <tfoot>
-                <tr>
+                    <tr>
                   <th>Code</th>
                   <th>Libellé</th>
-                  <th>Superficie</th>
+                  <!--th>Superficie</th-->
                   <th>Valeur unitaire</th>
-                  <th>Structure Responsable</th>
+                  <!--th>Structure Responsable</th-->
                   <th>Actions</th>
                 </tr>
               </tfoot>
             </table>
-    
+
             <!-- Les modales-->
                   <!--Modale 1-->
                   <div bsModal #primaryModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -82,7 +81,7 @@
                             <div class="card">
                               <div class="card-header">
                                 <strong>Nouvelle valeur locative</strong>
-    
+
                               </div>
                               <div class="card-body">
                                 <div class="row">
@@ -103,15 +102,15 @@
                                             <textarea class="form-control" id="addLocalisationIm" rows="1" placeholder="Localisation de la valeur locative"
                                               formControlName="addLocalisationIm" autocomplete="off"></textarea>
                                         </div>
-                                  
+
                                         <!--div class="form-group col-sm-6">
-                                          <label for="addEtataIm">Etat</label>
+                                                                            <label for="addEtataIm">Etat</label>
                                             <select id="addEtataIm" name="addEtataIm" class="form-control"
                                             formControlName = "addEtataIm">
                                               <option value="true">true </option>
                                             </select>
                                           </div-->
-                                      
+
                                 </div>
                                 <div class="row">
                                   <div class="form-group col-sm-4">
@@ -120,9 +119,12 @@
                                       formControlName="addSuperficieIm" autocomplete="off">
                                   </div>
                                   <div class="form-group col-sm-4">
-                                    <label for="addValUnitIm">Valeur Unitaire</label>
-                                    <input type="text" class="form-control" id="addValUnitIm" placeholder="Valeur unitaire "
+                                    <label for="addValUnitIm">Type de tarification</label>
+                                    <select type="text" class="form-control" id="addValUnitIm" placeholder="Valeur unitaire "
                                       formControlName="addValUnitIm" autocomplete="off">
+                                      <option value="true">Tarification à l'unité de mesure m²</option>
+                                      <option value="false">Tarification globale</option>
+                                      </select>
                                   </div>
                                   <div class="form-group col-sm-4">
                                     <label for="addStuctRespIm">Structure Responsable</label>
@@ -175,7 +177,7 @@
 
                               </div>
                             </div>
-    
+
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" (click)="primaryModal1.hide()">Annuler</button>
@@ -185,10 +187,10 @@
                       </form>
                     </div><!-- /.modal-dialog -->
                   </div><!-- /.modal 1 -->
-    
+
                   <!--Modale 2-->
                   <div bsModal #warningModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-warning modal-lg" role="document">
+                        <div class="modal-dialog modal-warning modal-lg" role="document">
                       <form [formGroup]="editValLocFormsGroup" (ngSubmit)="onSubmitEditValLocFormsGroup()">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -202,59 +204,62 @@
                             <div class="card">
                                 <div class="card-header">
                                   <strong>Modifier une valeur locative</strong>
-      
+
                                 </div>
                               <!--div class="modal-body"-->
                                 <!-- Formulaire pour enrégistrer un article-->
-                                <!--div class="card"-->
-                                   
+                                      <!--div class="card"-->
+
                                   <div class="card-body">
                                         <div class="row">
                                           <div class="form-group col-sm-6">
-                                            <label for="editCodeIm">Code</label>
+                                                                              <label for="editCodeIm">Code</label>
                                             <input type="text" class="form-control" id="editCodeIm" placeholder="Code "
                                               formControlName="editCodeIm" [ngModel]="editValLoc.codeIm" readonly="true" autocomplete="off">
                                           </div>
                                           <div class="form-group col-sm-6">
                                             <label for="editLibIm">Libellé</label>
                                             <input type="text" class="form-control" id="editLibIm" placeholder="Libellé "
-                                              formControlName="editLibIm" [ngModel]="editValLoc.libIm" autocomplete="off"> 
+                                              formControlName="editLibIm" [ngModel]="editValLoc.libIm" autocomplete="off">
                                           </div>
                                         </div><!--/.row-->
                                           <div class="row">
-                                              <div class="form-group col-sm-12">
+                                              <div class=" form-group col-sm-12">
                                                   <label for="editLocalisationIm">Localisation</label>
                                                   <textarea class="form-control" id="editLocalisationIm" rows="1" placeholder="Localisation"
                                                     formControlName="editLocalisationIm" [ngModel]="editValLoc.localisationIm" autocomplete="off"></textarea>
                                               </div>
-                                        
+
                                               <!--div class="form-group col-sm-6">
                                                 <label for="editEtatIm">Etat</label>
-                                                  <select id="editEtatIm" name="addArr" class="form-control"
+                                                  <select id="editE                                        tatIm" name="addArr" class="form-control"
                                                   formControlName = "editEtatIm">
                                                     <option *ngFor="let arrondissement of arrondissement; let i = index"
                                                     [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
                                                   </select>
                                               </div-->
-                                            
+
                                           </div>
                                     <div class="row">
                                         <div class="form-group col-sm-6">
-                                          <label for="editSuperficieIm">Superficie</label>
+                                          <label for="editSuperfici                                            eIm">Superficie</label>
                                           <input type="text" class="form-control" id="editSuperficieIm" placeholder="Superficie"
                                             formControlName="editSuperficieIm" [ngModel]="editValLoc.superficie" autocomplete="off">
                                         </div>
                                         <div class="form-group col-sm-6">
                                           <label for="editValUnitIm">Valeur Unitaire</label>
-                                          <input type="text" class="form-control" id="editValUnitIm" placeholder=" valeur unitaire "
+                                          <select type="text" class="form-control" id="editValUnitIm" placeholder=" valeur unitaire "
                                             formControlName="editValUnitIm" [ngModel]="editValLoc.valUnit" autocomplete="off">
+                                            <option value="true">Tarification à l'unité de mesure m²</option>
+                                            <option value="false">Tarification globale</option>
+                                            </select>
                                         </div>
                                     </div><!--/.row-->
-    
+
                                     <div class="row">
                                       <div class="form-group col-sm-6">
                                         <label for="editStuctRespIm">Structure Responsable</label>
-                                        <input type="text" class="form-control" id="editStuctRespIm" placeholder="Structure responsable "
+                                            <input type="text" class="form-control" id="editStuctRespIm" placeholder="Structure responsable "
                                           formControlName="editStuctRespIm" [ngModel]="editValLoc.stuctResp" autocomplete="off">
                                       </div>
                                       <div class="form-group col-sm-6">
@@ -263,11 +268,11 @@
                                           formControlName="editAutreIm"  [ngModel]="editValLoc.autre" autocomplete="off">
                                       </div>
                                     </div><!--/.row-->
-    
+
                                     <div class="row">
                                       <div class="form-group col-sm-6">
                                         <label for="editArr">Arrondissement</label>
-                                          <select id="editArr" name="editArr" class="form-control"
+                                          <select id="editArr" n ame="editArr" class="form-control"
                                           formControlName = "editArr" (click)="getAllQuartierByFormsArrondi2()">
                                             <option *ngFor="let arrondissement of arrondissement; let i = index"
                                             [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
@@ -298,31 +303,31 @@
                                             <option *ngFor="let typeImmeuble of typeImmeuble; let i = index"
                                             [value]="i">{{ typeImmeuble.codeTypIm }} - {{ typeImmeuble.libTypIm }}</option>
                                           </select>
-                                      </div> 
+                                      </div>
                                     </div><!--/.row-->
-    
+
                                   </div>
- 
+
                                 <!--/div-->
-    
+
                           <!--/div-->
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" (click)="warningModal1.hide()">Annuler</button>
-                            <button type="submit" class="btn btn-warning">Modifier</button>
-                          </div>
+                            <button type="submit" cla ss="btn btn-warning">Modifier</button>
+                            </div>
                         </div> <!-- /.modal-content -->
                         </div> <!-- /.modal-content -->
                         </div> <!-- /.modal-content -->
                       </form>
-    
+
                     </div> <!-- /.modal-dialog -->
                   </div> <!-- /.modal 2 -->
-    
+
                   <!--Modale 3-->
                   <div bsModal #dangerModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-danger" role="document">
+                    <div class="modal-dia    log modal-danger" role="document">
                       <div class="modal-content">
-                        <div class="modal-header">
+                            <div class="modal-header">
                           <h4 class="modal-title">Suprimmer une valeur locative</h4>
                           <button type="button" class="close" (click)="dangerModal1.hide()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -339,12 +344,12 @@
                       </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                   </div><!-- /.modal 3 -->
-    
+
                   <!--Modale 4-->
                   <div bsModal #infoModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-info modal-lg" role="document">
                       <div class="modal-content">
-                        <div class="modal-header">
+                        <div cl ass="modal-header">
                           <h4 class="modal-title">Détail Sur Valeur Locative</h4>
                           <button type="button" class="close" (click)="infoModal1.hide()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -352,7 +357,7 @@
                         </div>
                         <div class="modal-body">
                           <table class="table table-striped">
-    
+
                             <tbody>
                               <tr>
                                 <th>Code</th>
@@ -404,7 +409,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" (click)="infoModal1.hide()">Fermer</button>
-    
+
                         </div>
                       </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
@@ -416,7 +421,7 @@
       <tab>
         <ng-template tabHeading><i class="icon-basket-loaded"></i> Type de valeur locative</ng-template>
         <div class="card">
-          <div class="card-header">
+              <div class="card-header">
             <i class="fa fa-align-justify"></i> Liste des Type de valeur locative
           </div>
           <div class="card-body">
@@ -440,7 +445,7 @@
                   <td>
                     <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditTypeIm(i)"><span class="fa fa-edit"></span></button>
                     <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteTypeIm(i)"><span class="fa fa-trash"></span></button>
-                   
+
                   </td>
                 </tr>
               </tbody>
@@ -452,14 +457,15 @@
                 </tr>
               </tfoot>
             </table>
-    
+
             <!-- Les modales-->
                   <!--Modale 1-->
-                  <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                    aria-hidden="true">
                     <div class="modal-dialog modal-primary" role="document">
                       <form [formGroup]="addTypeImFormsGroup" (ngSubmit)="onSubmitAddTypeImForm()">
                         <div class="modal-content">
-                          <div class="modal-header">
+                              <div class="modal-header">
                             <h4 class="modal-title">Enrégistrer un Type de valeur locative</h4>
                             <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
@@ -470,47 +476,47 @@
                             <div class="card">
                                 <div class="card-header">
                                   <strong>Nouveau type de valeur locative</strong>
-      
+
                                 </div>
                                 <div class="card-body">
                                   <div class="row">
                                     <div class="form-group col-sm-12">
                                       <label for="addCodeTypIm">Code</label>
                                       <input type="text" class="form-control" id="addCodeTypIm" placeholder="Code "
-                                      formControlName="addCodeTypIm" autocomplete="off">
+                                      formControlName="addCodeTypIm" a      utocomplete="off">
                                     </div>
-      
+
                                   </div><!--/.row-->
                                   <div class="row">
                                     <div class="form-group col-sm-12">
                                       <label for="addLibTypIm">Libellé</label>
                                       <input type="texte" class="form-control" id="addLibTypIm" placeholder="Libellé"
                                       formControlName="addLibTypIm" autocomplete="off">
-                                    </div>
-      
+                                          </div>
+
                                   </div><!--/.row-->
 
-      
+
                                 </div>
                             </div>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
                             <button type="submit" class="btn btn-primary" [disabled]="addTypeImFormsGroup.invalid">Sauvégarder</button>
-                          </div>
-                        </div><!-- /.modal-content -->
+                                </div>
+                        </div><!-- /.modal-conte      nt -->
                       </form>
-    
+
                     </div><!-- /.modal-dialog -->
                   </div><!-- /.modal 1 -->
-    
+
                   <!--Modale 2-->
                   <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-warning" role="document">
                       <form [formGroup]="editTypeImFormsGroup" (ngSubmit)="onSubmitEditTypeImForm()">
-                        <div class="modal-content">
+                        <div class="modal-content    ">
                           <div class="modal-header">
-                            <h4 class="modal-title">Modifier un type de valeur locative</h4>
+                            <h4 class="mo    dal-title">Modifier un type de valeur locative</h4>
                             <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
@@ -520,7 +526,7 @@
                             <div class="card">
                               <div class="card-header">
                                 <strong>Modifier un type de valeur locative</strong>
-    
+
                               </div>
                               <div class="card-body">
                                 <div class="row">
@@ -528,9 +534,9 @@
                                     <label for="editCodeTypIm">Code</label>
                                     <input type="text" class="form-control" id="editCodeTypIm" readonly="true"
                                     formControlName="editCodeTypIm" placeholder="Code"
-                                    [ngModel]="editTypeIm.codeTypIm" autocomplete="off">
+                                    [ngModel]="    editTypeIm.codeTypIm" autocomplete="off">
                                   </div>
-    
+
                                 </div><!--/.row-->
                                 <div class="row">
                                   <div class="form-group col-sm-12">
@@ -538,10 +544,10 @@
                                     <input type="texte" class="form-control" id="editLibTypIm"
                                     formControlName="editLibTypIm" placeholder="Libellé "
                                     [ngModel]="editTypeIm.libTypIm" autocomplete="off">
-                                  </div>
-    
+                                      </div>
+
                                 </div><!--/.row-->
-    
+
                               </div>
                             </div>
                           </div>
@@ -549,19 +555,18 @@
                             <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
                             <button type="submit" class="btn btn-warning" [disabled]="editTypeImFormsGroup.invalid">Modifier</button>
                           </div>
-                        </div><!-- /.modal-content -->
+                        </div><!-- /.modal-conten    t -->
                       </form>
-    
-                    </div><!-- /.modal-dialog -->
+</div><!-- /.modal-dialog -->
                   </div><!-- /.modal 2 -->
-    
+
                   <!--Modale 3-->
                   <div bsModal #dangerModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-danger" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
                           <h4 class="modal-title">Suprimmer un type de valeur locative</h4>
-                          <button type="button" class="close" (click)="dangerModal2.hide()" aria-label="Close">
+                              <button type="button" class="close" (click)="dangerModal2.hide()" aria-label="Clos    e">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
@@ -576,8 +581,8 @@
                       </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                   </div><!-- /.modal 3 -->
-    
-    
+
+
           </div>
         </div>
       </tab>
@@ -587,11 +592,12 @@
         <ng-template tabHeading><i class="icon-basket-loaded"></i> Prix des valeurs locatives</ng-template>
         <div class="card">
           <div class="card-header">
-            <i class="fa fa-align-justify"></i> Liste des prix des valeur locative 
+            <i class="fa fa-align-justify"></i> Liste des prix des valeur locative
           </div>
           <div class="card-body">
             <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
-              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data- to ggle="modal"
+                  (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
               <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions3"
@@ -616,7 +622,7 @@
                   <td>
                     <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditPrixIm(i)"><span class="fa fa-edit"></span></button>
                     <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeletePrixIm(i)"><span class="fa fa-trash"></span></button>
-                   
+
                   </td>
                 </tr>
               </tbody>
@@ -631,16 +637,16 @@
                 </tr>
               </tfoot>
             </table>
-    
+
             <!-- Les modales-->
                   <!--Modale 1-->
                   <div bsModal #primaryModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-primary" role="document">
+                                      <div class="modal-dialog modal-primary" role="document">
                       <form [formGroup]="addPrixImFormsGroup" (ngSubmit)="onSubmitAddPrixImForm()">
                         <div class="modal-content">
                           <div class="modal-header">
                             <h4 class="modal-title">Enrégistrer un Prix de valeur locative</h4>
-                            <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                            <button type="b    utton" class="close" (click)="primaryModal2.hide()" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
                           </div>
@@ -649,7 +655,7 @@
                             <div class="card">
                                 <div class="card-header">
                                   <strong>Nouveau prix de valeur locative</strong>
-      
+
                                 </div>
                                 <div class="card-body">
                                   <div class="row">
@@ -658,7 +664,7 @@
                                         <select id="addVal" name="addVal" class="form-control"
                                         formControlName = "addVal">
                                           <option *ngFor="let immeuble of immeuble; let i = index"
-                                          [value]="i">{{ immeuble.codeIm }} - {{ immeuble.libIm }}</option>
+                                          [value]="i">{{ immeuble.codeIm }} - {{ immeuble.libIm }}      </option>
                                         </select>
                                     </div>
                                   </div>
@@ -668,7 +674,7 @@
                                       <input type="text" class="form-control" id="addPrixIm" placeholder="Prix"
                                       formControlName="addPrixIm" autocomplete="off">
                                     </div>
-      
+
                                   </div><!--/.row-->
                                   <div class="row">
                                     <div class="form-group col-sm-12">
@@ -676,39 +682,41 @@
                                       <input type="date" class="form-control" id="addDateDebutPrixIm" placeholder="Date Début"
                                       formControlName="addDateDebutPrixIm">
                                     </div>
-      
+
                                   </div><!--/.row-->
                                   <div class="row">
-                                    <div class="form-group col-sm-12">
+                                    <div class="form-group col      -sm-12">
                                       <label for="addDateFinPrixIm">Date Fin</label>
                                       <input type="date" class="form-control" id="addDateFinPrixIm" placeholder="Date Fin"
                                       formControlName="addDateFinPrixIm">
                                     </div>
-      
+
                                   </div><!--/.row-->
 
-      
+
                                 </div>
                             </div>
                           </div>
-                          <div class="modal-footer">
+                                <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
                             <button type="submit" class="btn btn-primary" [disabled]="addPrixImFormsGroup.invalid || immeuble?.length == 0 ">Sauvégarder</button>
                           </div>
                         </div><!-- /.modal-content -->
                       </form>
-    
+
                     </div><!-- /.modal-dialog -->
-                  </div><!-- /.modal 1 -->
-    
+                  </div>
+                  < !-- /.modal 1 -->
+
                   <!--Modale 2-->
-                  <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                          aria-hidden="true">
                     <div class="modal-dialog modal-warning" role="document">
                       <form [formGroup]="editPrixImFormsGroup" (ngSubmit)="onSubmitEditPrixImForm()">
                         <div class="modal-content">
                           <div class="modal-header">
                             <h4 class="modal-title">Modifier un prix de valeur locative</h4>
-                            <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
+                            <button type="button    " class="close" (click)="warningModal3.hide()" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
                           </div>
@@ -717,7 +725,7 @@
                             <div class="card">
                               <div class="card-header">
                                 <strong>Modifier un prix de valeur locative</strong>
-    
+
                               </div>
                               <div class="card-body">
                                 <div class="row">
@@ -738,7 +746,7 @@
                                   </div>
                                 </div>
                                 <div class="row">
-                             
+
                                     <div class="form-group col-sm-12">
                                       <label for="editPrixIm">Prix valeur locative</label>
                                       <input type="text" class="form-control" id="editPrixIm" placeholder="Prix"
@@ -748,10 +756,10 @@
                                 <div class="row">
                                   <div class="form-group col-sm-12">
                                     <label for="editDateDebutPrixIm">Date Début</label>
-                                    <input type="date" class="form-control" id="editDateDebutPrixIm" placeholder="Date Début"
+                                    <input type="d                             ate" class="form-control" id="editDateDebutPrixIm" placeholder="Date Début"
                                     formControlName="editDateDebutPrixIm" [ngModel]="editPrixImmeuble.dateDebPrixIm">
                                   </div>
-    
+
                                 </div><!--/.row-->
 
                                 <div class="row">
@@ -760,24 +768,25 @@
                                     <input type="date" class="form-control" id="editDateFinPrixIm" placeholder="Date Fin"
                                     formControlName="editDateFinPrixIm" [ngModel]="editPrixImmeuble.dateFinPrixIm">
                                   </div>
-    
+
                                 </div><!--/.row-->
-    
+
                               </div>
                             </div>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
+                                <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
                             <button type="submit" class="btn btn-warning" [disabled]="editPrixImFormsGroup.invalid">Modifier</button>
                           </div>
                         </div><!-- /.modal-content -->
                       </form>
-    
+
                     </div><!-- /.modal-dialog -->
                   </div><!-- /.modal 2 -->
-    
+
                   <!--Modale 3-->
-                  <div bsModal #dangerModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div bsModal #dangerModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-la belledby="myModalLabel"
+                    aria-hidden="true">
                     <div class="modal-dialog modal-danger" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -785,9 +794,10 @@
                           <button type="button" class="close" (click)="dangerModal3.hide()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
-                        </div>
+                            </div>
                         <div class="modal-body">
-                          <p>Voulez-vous supprimez le prix de valeur locative <mark style="color: red;">{{ suprPrixImmeuble.idPrixIm }}</mark></p>
+                          <p>Voul ez-vous supprimez le prix de valeur locative <mark style="color: red;">{{ suprPrixImmeuble.idPrixIm }}</mark>
+                          </p>
                           <p>Le confirmez-vous ?</p>
                         </div>
                         <div class="modal-footer">
@@ -797,8 +807,8 @@
                       </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                   </div><!-- /.modal 3 -->
-    
-    
+
+
           </div>
         </div>
       </tab>

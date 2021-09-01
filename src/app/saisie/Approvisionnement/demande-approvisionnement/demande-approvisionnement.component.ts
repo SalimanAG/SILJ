@@ -66,6 +66,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
     private formBulder:FormBuilder, private sanitizer: DomSanitizer, private serviceUser: UtilisateurService) {
 
+    this.pdfToShow=sanitizer.bypassSecurityTrustResourceUrl('/');
       this.initDtOptions();
       this.initFormsGroup();
 
