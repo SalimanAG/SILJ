@@ -15,14 +15,14 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="icon-user"></i></span>
                       </div>
-                      <input type="text" id="login" class="form-control" placeholder="Nom D'Utilisateur" autocomplete="username"
+                      <input type="text" id="login" class="form-control" placeholder="Nom D'Utilisateur" autocomplete="off"
                       formControlName="login" (change)="showConfirmation()">
                     </div>
                     <div class="input-group mb-4">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="icon-lock"></i></span>
                       </div>
-                      <input type="password" id="mdp" class="form-control" placeholder="Mot de passe" autocomplete="current-password"
+                      <input type="password" id="mdp" class="form-control" placeholder="Mot de passe" autocomplete="off"
                       formControlName="mdp">
                     </div>
                     <div class="input-group mb-4" *ngIf="confirmation == true">
