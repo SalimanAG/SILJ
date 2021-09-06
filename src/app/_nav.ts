@@ -111,7 +111,7 @@ export const navItems: INavData[] = [
             icon: 'icon-puzzle'
           },
           {
-            name: 'Bon appro ',
+            name: 'Bon Servir ',
             url: '/appro-bon-appro',
             icon: 'icon-puzzle'
           },
