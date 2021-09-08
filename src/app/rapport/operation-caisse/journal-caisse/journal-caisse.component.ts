@@ -18,6 +18,7 @@ import { TypeRecette } from '../../../../models/type.model';
 import { LigneOpCaisse } from '../../../../models/ligneopcaisse.model';
 import { Immeuble } from '../../../../models/immeuble.model';
 import { exit } from 'process';
+import { ToolsService } from '../../../../services/utilities/tools.service';
 
 @Component({
   selector: 'app-journal-caisse',
@@ -46,8 +47,8 @@ export class JournalCaisseComponent implements OnInit {
       this.repport1FormsGroup = this.formBulder.group({
         rep1Caisse:-1,
         rep1ModePaiement:-1,
-        rep1DateDebut:[moment(Date.now()).format('yyyy-MM-DD') , Validators.required],
-        rep1DateFin:[moment(Date.now()).format('yyyy-MM-DD'), Validators.required]
+        rep1DateDebut:[moment(Date.now()).format('yyyy-MM-DDTHH:mm') , Validators.required],
+        rep1DateFin:[moment(Date.now()).format('yyyy-MM-DDTHH:mm'), Validators.required]
       });
 
     }
@@ -155,15 +156,17 @@ export class JournalCaisseComponent implements OnInit {
 
     const doc = new jsPDF();
 
+    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+    doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
     //doc.setFont("Times New Roman");
-    doc.setFontSize(25);
-    doc.text('JOURNAL DE CAISSE', 59, 30);
-    doc.setFontSize(14);
-    doc.text('  Période du \t\t'+moment(this.repport1FormsGroup.value['rep1DateDebut']).format('DD/MM/YYYY')+'\t\t\t00 H 00 min', 15, 45);
-    doc.text('\t\tAu\t\t'+moment(this.repport1FormsGroup.value['rep1DateFin']).format('DD/MM/YYYY')+'\t\t\t23 H 59 min', 15, 55);
+    doc.setFontSize(15);
+    doc.text('JOURNAL DE CAISSE', 75, 35);
+    doc.setFontSize(12);
+    doc.text('  Période du \t\t'+moment(this.repport1FormsGroup.value['rep1DateDebut']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 45);
+    doc.text('\t\tAu\t\t'+moment(this.repport1FormsGroup.value['rep1DateFin']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 55);
 
     this.serviceOpCaisse.getAllOpLines().subscribe(
       (data) => {
@@ -208,17 +211,17 @@ export class JournalCaisseComponent implements OnInit {
                       //console.log('opCaisses', data3);
                       data3.forEach(element2 => {
                         //console.log('Location', element2);
-                        console.log('Essaie', element2.dateOpCaisse, 'ed', this.repport1FormsGroup.value['rep1DateDebut'], 'es', element2.dateOpCaisse, 'as', this.repport1FormsGroup.value['rep1DateFin']);
-                        console.log('comp1', element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut']);
-                        console.log('comp2', element2.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']);
-                        if(element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.dateOpCaisse <= new Date(Date.now())
+                        //console.log('Essaie', new Date(element2.dateOpCaisse).valueOf(), 'ed', new Date(this.repport1FormsGroup.value['rep1DateDebut']));
+                        //console.log('comp1', element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut']);
+                        //console.log('comp2', element2.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']);
+                        if(new Date(element2.dateOpCaisse).valueOf() >= new Date(this.repport1FormsGroup.value['rep1DateDebut']).valueOf() && new Date(element2.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
                         && element2.caisse.codeCaisse == element.codeCaisse){
 
 
                           if(element2.typeRecette.codeTypRec == 'L'){
                             let lig = [];
                             lig.push(element2.numOpCaisse);
-                            lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY'));
+                            lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                             lig.push(element2.typeRecette.libeTypRec);
                             let qte:number = 0;
                             let montan:number = 0;
@@ -246,7 +249,7 @@ export class JournalCaisseComponent implements OnInit {
                               if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
 
                                 lig.push(element2.numOpCaisse);
-                                lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY'));
+                                lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                                 lig.push(element3.article.codeArticle);
                                 lig.push(element3.article.libArticle);
                                 lig.push(element3.prixLigneOperCaisse);
@@ -266,14 +269,14 @@ export class JournalCaisseComponent implements OnInit {
 
                       data3.forEach(element2 => {
                         //console.log('Location', element2);
-                        if(element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']
+                        if(new Date(element2.dateOpCaisse).valueOf() >= new Date(this.repport1FormsGroup.value['rep1DateDebut']).valueOf() && new Date(element2.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
                         && element2.caisse.codeCaisse == element.codeCaisse && element2.modePaiement.codeModPay == this.modePayements[this.repport1FormsGroup.value['rep1ModePaiement']].codeModPay){
 
 
                           if(element2.typeRecette.codeTypRec == 'L'){
                             let lig = [];
                             lig.push(element2.numOpCaisse);
-                            lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY'));
+                            lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                             lig.push(element2.typeRecette.libeTypRec);
                             let qte:number = 0;
                             let montan:number = 0;
@@ -300,7 +303,7 @@ export class JournalCaisseComponent implements OnInit {
                               if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
 
                                 lig.push(element2.numOpCaisse);
-                                lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY'));
+                                lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                                 lig.push(element3.article.codeArticle);
                                 lig.push(element3.article.libArticle);
                                 lig.push(element3.prixLigneOperCaisse);
@@ -381,14 +384,14 @@ export class JournalCaisseComponent implements OnInit {
                     //console.log('opCaisses', data3);
                     data3.forEach(element2 => {
                       //console.log('Location', element2);
-                      if(element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']
+                      if(new Date(element2.dateOpCaisse).valueOf() >= new Date(this.repport1FormsGroup.value['rep1DateDebut']).valueOf() && new Date(element2.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
                       && element2.caisse.codeCaisse == element.codeCaisse){
 
 
                         if(element2.typeRecette.codeTypRec == 'L'){
                           let lig = [];
                           lig.push(element2.numOpCaisse);
-                          lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY'));
+                          lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                           lig.push(element2.typeRecette.libeTypRec);
                           let qte:number = 0;
                           let montan:number = 0;
@@ -415,7 +418,7 @@ export class JournalCaisseComponent implements OnInit {
                             if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
 
                               lig.push(element2.numOpCaisse);
-                              lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY'));
+                              lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                               lig.push(element3.article.codeArticle);
                               lig.push(element3.article.libArticle);
                               lig.push(element3.prixLigneOperCaisse);
@@ -435,14 +438,14 @@ export class JournalCaisseComponent implements OnInit {
 
                     data3.forEach(element2 => {
                       //console.log('Location', element2);
-                      if(element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut'] && element2.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']
+                      if(new Date(element2.dateOpCaisse).valueOf() >= new Date(this.repport1FormsGroup.value['rep1DateDebut']).valueOf() && new Date(element2.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
                       && element2.caisse.codeCaisse == element.codeCaisse && element2.modePaiement.codeModPay == this.modePayements[this.repport1FormsGroup.value['rep1ModePaiement']].codeModPay){
 
 
                         if(element2.typeRecette.codeTypRec == 'L'){
                           let lig = [];
                           lig.push(element2.numOpCaisse);
-                          lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY'));
+                          lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                           lig.push(element2.typeRecette.libeTypRec);
                           let qte:number = 0;
                           let montan:number = 0;
@@ -469,7 +472,7 @@ export class JournalCaisseComponent implements OnInit {
                             if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
 
                               lig.push(element2.numOpCaisse);
-                              lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY'));
+                              lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
                               lig.push(element3.article.codeArticle);
                               lig.push(element3.article.libArticle);
                               lig.push(element3.prixLigneOperCaisse);

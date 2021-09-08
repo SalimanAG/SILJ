@@ -30,6 +30,7 @@ import autoTable from 'jspdf-autotable';
 import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { element } from 'protractor';
+import { ToolsService } from '../../../../services/utilities/tools.service';
 
 @Component({
   selector: 'app-recollement',
@@ -93,9 +94,9 @@ export class RecollementComponent implements OnInit {
   articlesOfAConcernedRecollementAddingRecoll:Article[] = [];
   articlesOfAConcernedRecollementEditingRecoll:Article[] = [];
 
-  constructor(private serviceRecollement:RecollementService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService, 
+  constructor(private serviceRecollement:RecollementService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService,
     private serviceArticle:ArticleService, private serviceCorrespodant:CorrespondantService, private formBulder:FormBuilder,
-    private sanitizer:DomSanitizer) { 
+    private sanitizer:DomSanitizer, public outil: ToolsService) {
     this.initDtOptions();
     this.initFormsGroup();
     moment.locale('fr');
@@ -167,16 +168,16 @@ export class RecollementComponent implements OnInit {
    initFormsGroup(){
     this.addRecollementFormGroup = this.formBulder.group({
       addNumRecoll:['RL-200000005', Validators.required],
-      addDateRecoll:[new Date().toISOString().substring(0, 10), Validators.required], 
-      addDesRecoll:'', 
+      addDateRecoll:[new Date().toISOString().substring(0, 10), Validators.required],
+      addDesRecoll:'',
       addMagasinSource:[0, Validators.required],
       addMagasinDestination:[0, Validators.required]
     });
 
     this.editRecollementFormGroup = this.formBulder.group({
       editNumRecoll:['', Validators.required],
-      editDateRecoll:[new Date(), Validators.required], 
-      editDesRecoll:'', 
+      editDateRecoll:[new Date(), Validators.required],
+      editDesRecoll:'',
       editMagasinSource:[0, Validators.required],
       editMagasinDestination:[0, Validators.required]
     });
@@ -196,7 +197,7 @@ export class RecollementComponent implements OnInit {
         this.regisseur.forEach(element => {
          // console.log(element, this.serviceUtilisateur.connectedUser);
          // if(this.serviceUtilisateur.connectedUser.idUtilisateur === element.utilisateur.idUtilisateur){
-            
+
           //}
           this.concernedRegisse = element;
             exit;
@@ -210,7 +211,7 @@ export class RecollementComponent implements OnInit {
 
     this.serviceCorrespodant.getAllCorres().subscribe(
       (data) => {
-        this.coresp = data;  
+        this.coresp = data;
 
       },
       (erreur) => {
@@ -257,13 +258,13 @@ export class RecollementComponent implements OnInit {
       }
     );
 
-   
+
   }
 
 
   // Recuperation du magasin destinataire en fonction du magasin source
   getMagasinDest(){
-    
+
     if(this.magasin[this.addRecollementFormGroup.value['addMagasinSource']].codeMagasin == 'CM'){
       this.magasinMairieTresor = [];
       this.serviceCorrespodant.getAMagasinById('CT').subscribe(
@@ -273,7 +274,7 @@ export class RecollementComponent implements OnInit {
         (erreur) => {
           console.log('Erreur lors de la récupération de la liste des magasins', erreur);
         }
-  
+
       );
     }
     else
@@ -286,11 +287,11 @@ export class RecollementComponent implements OnInit {
         (erreur) => {
           console.log('Erreur lors de la récupération de la liste des magasins', erreur);
         }
-  
+
       );
     }
-   
-    
+
+
   }
 
 
@@ -395,7 +396,7 @@ export class RecollementComponent implements OnInit {
   }
 
   onShowAddArticleModalAddingRecollement(){
-   
+
     this.addArticle1.show();
     this.getAllArticle();
 
@@ -456,11 +457,12 @@ onSubmitAddRecollementFormsGroup(){
   this.addRecollementFormGroup.value['addDesRecoll'],this.addRecollementFormGroup.value['addDateRecoll'],
   this.magasin[this.addRecollementFormGroup.value['addMagasinSource']],
   this.magasinMairieTresor[this.addRecollementFormGroup.value['addMagasinDestination']],this.serviceExercice.exoSelectionner);
-  
+console.log(newRecoll);
+
   this.serviceRecollement.addRecollement(newRecoll).subscribe(
     (data) => {
       console.log('********',data);
-      
+
       this.tempAddLigneRecollement.forEach(element => {
         element.recollement = data;
         this.serviceRecollement.addLigneRecollement(element).subscribe(
@@ -656,7 +658,7 @@ initEditRecollement(inde:number){
   this.tempEditLigneRecollement=[];
   this.editRecollement = this.recollement[inde];
   console.log(this.editRecollement);
-  
+
   this.serviceRecollement.getAllLigneRecollement().subscribe(
     (data) => {
       this.ligneRecollement = data;
@@ -816,7 +818,7 @@ onConfirmAnnulerRecollement(){
           }
         );
         //this.editRecollement.magasinSource.libMagasin
-     
+
 }
 
 initPrintPdfOfRecollement(inde:number){
@@ -835,44 +837,53 @@ initPrintPdfOfRecollement(inde:number){
       lig.push(element.article.libArticle);
       lig.push(element.quantiteLigneRecollement);
       lig.push(element.puligneRecollement);
-      
+
       lig.push(element.puligneRecollement*element.quantiteLigneRecollement);
       lig.push(element.observationLigneRecollement);
       lignes.push(lig);
 
       totalHT += element.puligneRecollement*element.quantiteLigneRecollement;
-    
+
 
     }
 
   });
   doc.setDrawColor(0);
   doc.setFillColor(255, 255, 255);
-  doc.roundedRect(50, 20, 100, 15, 3, 3, 'FD');
+  //doc.roundedRect(50, 20, 100, 15, 3, 3, 'FD');
   //doc.setFont("Times New Roman");
-  
-  doc.setFontSize(25);
-  doc.text('RECOLLEMENT', 62, 30);
+  doc.addImage(this.outil.entete, 5, 5, 190, 20);autoTable(doc, {
+    theme: 'plain',
+    margin: { top: 35},
+
+    body: [['RECOLLEMENT N°: ' + commande.numRecollement + ' du ' +
+      moment(commande.dateRecollement).format('DD/MM/YYYY')+'\n'+commande.magasinSource.codeMagasin+' - '+
+  commande.magasinSource.libMagasin+' vers '+commande.magasinDestination.codeMagasin+' - '+
+  commande.magasinDestination.libMagasin+'\n'+commande.descriptionRecollement]],
+    bodyStyles: {
+      fontSize:20,halign: 'center'
+    }
+  });
+  //doc.setFontSize(25);
+  /*doc.text('', 62, 30);
   doc.setFontSize(14);
-  doc.text('Référence : '+commande.numRecollement, 15, 45);
-  doc.text('Magasin Source : '+commande.magasinSource.codeMagasin+' - '+
-  commande.magasinSource.libMagasin, 15, 55);
-  doc.text('Magasin Destinataire : '+commande.magasinDestination.codeMagasin+' - '+
-  commande.magasinDestination.libMagasin, 15, 65);
-  doc.text('Description : '+commande.descriptionRecollement, 15, 75);
+  doc.text('Référence : '+, 15, 45);
+  doc.text('Magasin Source : '+, 15, 55);
+  doc.text('Magasin Destinataire : ', 15, 65);
+  doc.text('Description : ', 15, 75);
   doc.text('Date : '+moment(commande.dateRecollement).format('DD/MM/YYYY'), 145, 45);
-  
- 
+*/
+
   autoTable(doc, {
     theme: 'grid',
     head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant','Observation']],
     headStyles: {
        fillColor: [41, 128, 185],
-        textColor: 255, 
+        textColor: 255,
         fontStyle: 'bold' ,
     },
     margin: { top: 100 },
-    
+
     body: lignes
     ,
   });
@@ -885,9 +896,9 @@ initPrintPdfOfRecollement(inde:number){
     },
     body: [
       ['Montant Total', totalHT]
-      
+
     ]
-  
+
   });
   doc.text('Powered by Guichet Unique', 130, 230);
   //doc.autoPrint();

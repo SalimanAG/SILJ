@@ -57,6 +57,7 @@ import { PlacementComponent } from './saisie/Approvisionnement/placement/placeme
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { AuthGuardService } from '../services/administration/auth-guard.service';
 import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/inventaire-stock.component';
+import { TypeModeComponent } from './type-mode/type-mode.component';
 
 export const routes: Routes = [
   {
@@ -339,6 +340,11 @@ export const routes: Routes = [
       {
         path: 'import-Export',
         component: ImportationExportationComponent
+      },
+
+      {
+        path: 'mod-pay',
+        component: TypeModeComponent
       },
 
       {

@@ -43,6 +43,7 @@ import { Magasin } from '../../../models/magasin.model';
 import { ExerciceService } from '../../../services/administration/exercice.service';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
+import { ToolsService } from '../../../services/utilities/tools.service';
 
 @Component({
   selector: 'app-operation-caisse',
@@ -83,7 +84,7 @@ export class OperationCaisseComponent implements OnInit {
   exercices: Exercice[];
   users: Utilisateur[];
   user: Utilisateur;
-  // tabLigne:DataTables.Settings={};
+  annulGroup: FormGroup;
   dtLigne: Subject<any> = new Subject<any>();
 
   /////// Vente
@@ -149,10 +150,11 @@ export class OperationCaisseComponent implements OnInit {
   totalImput: number;
   total: number;
 
-  constructor(private serCor: CorrespondantService, private serU: UtilisateurService, private serExo: ExerciceService,
+  constructor(private serCor: CorrespondantService, private serU: UtilisateurService,
+    private serExo: ExerciceService,
     private servPV: PointVenteService,
     private servOp: OperationCaisseService, private fbuilder: FormBuilder, private router: Router,
-    private sanitizer: DomSanitizer, private tst: ToastrService) {
+    private sanitizer: DomSanitizer, private tst: ToastrService, public outil: ToolsService) {
 
 
     moment.locale('fr');
@@ -305,6 +307,10 @@ export class OperationCaisseComponent implements OnInit {
       addImCai: new FormControl(0),
       addImMod: new FormControl(0),
       addImObs: new FormControl(),
+    });
+
+    this.annulGroup = new FormGroup({
+      motif: new FormControl(),
     });
 
     this.user = this.serU.connectedUser;
@@ -501,12 +507,13 @@ export class OperationCaisseComponent implements OnInit {
     this.opAnnul.hide();
   }
 
-  annulerOperation(opc: OpCaisse) {
-    const op = opc;
-    op.valideOpCaisse = false;
-    switch (opc.typeRecette.codeTypRec) {
+  annulerOperation() {
+    this.annulop.valideOpCaisse = false;
+    this.annulop.annulMotif = this.annulGroup.value['motif'];
+    this.annulop.auteurAnnul= this.user;
+    switch (this.annulop.typeRecette.codeTypRec) {
       case 'P': {
-        const lop = this.lignesOp.filter(lop => lop.opCaisse.numOpCaisse === opc.numOpCaisse);
+        const lop = this.lignesOp.filter(lop => lop.opCaisse.numOpCaisse === this.annulop.numOpCaisse);
         let n: number = 0;
         lop.forEach(elt => {
           if (elt.livre === true) {
@@ -527,7 +534,7 @@ export class OperationCaisseComponent implements OnInit {
                         n++;
                         if (n === lop.length) {
                           this.rechargerLigneOpCaisse();
-                          this.servOp.editAOpCaiss(opc.numOpCaisse, op).subscribe(
+                          this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
                             data => {
                               this.chargerOperations();
                             },
@@ -551,13 +558,13 @@ export class OperationCaisseComponent implements OnInit {
           .subscribe(
             (data) => {
               this.echeances = data;
-              this.echeances.filter(ec => ec.opCaisse.numOpCaisse === opc.numOpCaisse).forEach(elt => {
+              this.echeances.filter(ec => ec.opCaisse.numOpCaisse === this.annulop.numOpCaisse).forEach(elt => {
                 const ech = elt;
                 ech.payeEcheance = false;
                 this.servOp.editEcheance(elt.idEcheance, ech).subscribe(
                   data => {
-                    if (this.echeances.filter(ec => ec.opCaisse.numOpCaisse === opc.numOpCaisse).length === 0) {
-                      this.servOp.editAOpCaiss(opc.numOpCaisse, op).subscribe(
+                    if (this.echeances.filter(ec => ec.opCaisse.numOpCaisse === this.annulop.numOpCaisse).length === 0) {
+                      this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
                         data => {
                           this.servOp.getAllOp().subscribe(
                             dataop => {
@@ -585,13 +592,13 @@ export class OperationCaisseComponent implements OnInit {
           .subscribe(
             (data) => {
               this.pointV = data;
-              this.pointV.filter(pt => pt.opCaisse.numOpCaisse === opc.numOpCaisse).forEach(elt => {
+              this.pointV.filter(pt => pt.opCaisse.numOpCaisse === this.annulop.numOpCaisse).forEach(elt => {
                 const ptv = elt;
                 ptv.payerPoint = false;
                 this.servPV.editPointVente(elt.numPointVente, ptv).subscribe(
                   data => {
-                    if (this.pointV.filter(pt => pt.opCaisse.numOpCaisse === opc.numOpCaisse).length === 0) {
-                      this.servOp.editAOpCaiss(opc.numOpCaisse, op).subscribe(
+                    if (this.pointV.filter(pt => pt.opCaisse.numOpCaisse === this.annulop.numOpCaisse).length === 0) {
+                      this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
                         data => {
                           console.log('Annulation effectuée avec succès');
                           this.chargerOperations();
@@ -770,6 +777,7 @@ export class OperationCaisseComponent implements OnInit {
   initNewVente() {
     this.chargerModes();
     this.totalVente = 0;
+    this.tempLigneOpCais = [];
     this.tmpOpC = new OpCaisse('0001', new Date(), 'Divers', true, '', new Date(),
       this.caissesValides[0], this.opTypes[0], this.modes[0], this.exo, this.user);
     this.addVente.show();
@@ -845,6 +853,7 @@ export class OperationCaisseComponent implements OnInit {
       true, this.addVentGroup.value['nVentObs'], new Date(), this.caissesValides[this.addVentGroup.value['nVentCais']],
       new TypeRecette('P', 'Prestation'), this.modes[this.addVentGroup.value['nVentMod']], this.serExo.exoSelectionner,
       this.user);
+    newOC.annulMotif = null;
     this.servOp.addOp(newOC)
       .subscribe(
         (data) => {
@@ -929,6 +938,7 @@ export class OperationCaisseComponent implements OnInit {
           this.addLoyerGroup.value['loyObs'], new Date(), this.caissesValides[this.addLoyerGroup.value['loyCai']],
           new TypeRecette('L', 'Location'), this.modes[this.addLoyerGroup.value['loyMod']], this.serExo.exoSelectionner,
           this.user);
+        newOC.annulMotif = null;
         this.servOp.addOp(newOC)
           .subscribe(
             (dataop) => {
@@ -1034,19 +1044,25 @@ export class OperationCaisseComponent implements OnInit {
         if (exist.length === 0) {
           const prix = this.prixImm.find(pri => pri.immeuble.codeIm === con.immeuble.codeIm &&
             // pri.dateFinPrixIm==null
-            ((new Date(dde) >= new Date(pri.dateDebPrixIm)  &&  new Date(dde) < new Date(pri.dateFinPrixIm)) ||
-            (new Date(dde) >= new Date(pri.dateDebPrixIm)  && pri.dateFinPrixIm === null ))
+            ((new Date(dde) >= new Date(pri.dateDebPrixIm)  &&  new Date(dde) < new Date(pri.dateFinPrixIm))
+            || (new Date(dde) >= new Date(pri.dateDebPrixIm)  && pri.dateFinPrixIm === null ))
           );
-          let p = prix.prixIm;
-          if (con.immeuble.valUnit === true) {
-            p=p*con.immeuble.superficie
-          }
-          const eche = new Echeance(mois[des.getMonth()-1], dde.getFullYear(), new Date(des), false,
-          p, con, null);
 
           if (prix != null) {
+            console.log(con.immeuble);
+            let p = prix.prixIm;
+            if (con.immeuble.valUnit === true) {
+              p=p*con.immeuble.superficie
+            } else {
+              p = prix.prixIm;
+            }
+            const eche = new Echeance(mois[des.getMonth()-1], dde.getFullYear(), new Date(des), false,
+            p, con, null);
             this.echeanceAPayer.push(eche);
             n++;
+          } else {
+             this.tst.info('Il n\'y a pa de prix pour l\'échéance du ' + mois[des.getMonth() - 1] + ' ' +
+             dde.getFullYear());
           }
         }
         dde = des;
@@ -1151,7 +1167,8 @@ export class OperationCaisseComponent implements OnInit {
         this.coi[this.addImputGroup.value['addImCor']].magasinier.nomMagasinier + ' ' +
         this.coi[this.addImputGroup.value['addImCor']].magasinier.prenomMagasinier, true, this.addLoyerGroup.value['addImObs'], new Date(),
         this.caissesValides[this.addImputGroup.value['addImCai']], new TypeRecette('I', 'Imputation Correspondant'),
-        this.modes[this.addImputGroup.value['addImMod']], this.serExo.exoSelectionner, this.user);
+          this.modes[this.addImputGroup.value['addImMod']], this.serExo.exoSelectionner, this.user);
+      newOC.annulMotif = null;
       this.servOp.addOp(newOC)
         .subscribe(
           (dataOP) => {
@@ -1206,94 +1223,27 @@ export class OperationCaisseComponent implements OnInit {
 
   afficheFacture(opc: OpCaisse) {
     const fact = new jsPDF();
-    fact.text('Arrondissement : ' + opc.caisse.arrondissement.nomArrondi + '\tCaisse : ' + opc.caisse.libeCaisse +
-      '\nReçu N° : ' + opc.numOpCaisse + '\t\t du : ' + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm'), 15, 30);
-    // fact.text(,15,40);
-    const ligne = [];
-    let totalf: number = 0;
-    switch (opc.typeRecette.codeTypRec) {
-      default: {
-        fact.text('Contribuable : ' + opc.contribuable, 15, 50);
-        this.rechargerLigneOpCaisse();
-        const loptmp = this.lignesOp.filter(function (lop) {
-          return lop.opCaisse.numOpCaisse === opc.numOpCaisse;
-        });
-        loptmp.forEach(element => {
-          const lig = [];
-          lig.push(element.article.codeArticle);
-          lig.push(element.article.libArticle);
-          lig.push(element.qteLigneOperCaisse);
-          lig.push(element.prixLigneOperCaisse);
-          lig.push(element.prixLigneOperCaisse * element.qteLigneOperCaisse);
-          lig.push(element.commentaireLigneOperCaisse);
-          totalf += element.prixLigneOperCaisse * element.qteLigneOperCaisse;
-          ligne.push(lig);
-        });
-        autoTable(fact, {
-          head: [['Article', 'Désignation', 'Qte', 'PU', 'Montant', 'Obs']],
-          margin: { top: 60 },
-          body: ligne,
-        });
-        break;
-      }
-
-      case 'L': {
-        const eche = this.echeances.filter(e => e.opCaisse.numOpCaisse === opc.numOpCaisse);
-        fact.text('Contrat : ' + eche[0].contrat.numContrat + '\t\tBoutique :' + eche[0].contrat.immeuble.libIm +
-          '\nLocataire : ' + eche[0].contrat.locataire.identiteLocataire + '\t\tDéposant : ' + opc.contribuable, 15, 50);
-
-        eche.forEach(element => {
-          const lig = [];
-          lig.push(element.moisEcheance);
-          lig.push(element.annee);
-          lig.push(element.prix);
-          ligne.push(lig);
-          totalf += element.prix.valueOf();
-        });
-        autoTable(fact, {
-          head: [['Mois', 'Année', 'Montant']],
-          margin: { top: 70 },
-          body: ligne,
-        });
-        break;
-      }
-    }
-
-    autoTable(fact, {
-      theme: 'grid',
-      margin: { top: 30, left: 130 },
-      columnStyles: {
-        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
-      },
-      body: [['Total', totalf]
-      ],
-    });
-    autoTable(fact, {
-      theme: 'plain',
-      margin: { top: 30, left: 130 },
-      columnStyles: {
-        0: { textColor: 0, fontStyle: 'bold', fontSize: 12 },
-      },
-      body: [['Le(La) caissier(ère)' + '\n\n\n' + this.serU.connectedUser.nomUtilisateur + ' ' +
-        this.serU.connectedUser.prenomUtilisateur]]
-    });
-    // fact.autoPrint();
-    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
-    this.appercu.show();
-  }
-
-  imprimeFacture(opc: OpCaisse) {
-
-    const fact = new jsPDF();
-    fact.text('Arrondissement : ' + opc.caisse.arrondissement.nomArrondi + '\tCaisse : ' + opc.caisse.libeCaisse +
-      '\nReçu N° : ' + opc.numOpCaisse + '\t\t du : ' + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm'), 15, 30);
-    // fact.text(,15,40);
+    fact.addImage(this.outil.entete, 5, 5, 190, 25);
+    let titre: String;
     const ligne = [];
     let total = 0;
 
     switch (opc.typeRecette.codeTypRec) {
       default: {
-        fact.text('Contribuable : ' + opc.contribuable, 15, 50);
+        titre = 'Facture de caisse N° : ' + opc.numOpCaisse +
+          ' du : ' + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nContribuable : ' + opc.contribuable;
+        autoTable(fact, {
+          theme: 'plain',
+          margin: { left: 5, top: 30, right: 5, bottom: 1 },
+          body: [
+            [titre.toString()]
+          ],
+          bodyStyles: {
+            fontSize: 15,
+            cellPadding: 1,
+            halign: 'center',
+          }
+        });
         this.rechargerLigneOpCaisse();
         const loptmp = this.lignesOp.filter(function (lop) {
           return lop.opCaisse.numOpCaisse === opc.numOpCaisse;
@@ -1319,8 +1269,25 @@ export class OperationCaisseComponent implements OnInit {
 
       case 'L': {
         const eche = this.echeances.filter(e => e.opCaisse.numOpCaisse === opc.numOpCaisse);
-        fact.text('Contrat : ' + eche[0].contrat.numContrat + '\t\tBoutique :' + eche[0].contrat.immeuble.libIm +
-          '\nLocataire : ' + eche[0].contrat.locataire.identiteLocataire + '\t\tDéposant : ' + opc.contribuable, 15, 50);
+        titre = '\nContrat de location N° : ' + eche[0].contrat.numContrat +
+          '\nBoutique :' + eche[0].contrat.immeuble.libIm +
+
+          '\nFacture de loyer N° : ' + opc.numOpCaisse + ' du ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') +
+          '\nLocataire : ' + eche[0].contrat.locataire.identiteLocataire +
+          '\nDéposant : ' + opc.contribuable;
+        autoTable(fact, {
+          theme: 'plain',
+          margin: { left: 5, top: 30, right: 5, bottom: 1 },
+          body: [
+            [titre.toString()]
+          ],
+          bodyStyles: {
+            fontSize: 15,
+            cellPadding: 1,
+            halign: 'center',
+          }
+        });
         eche.forEach(element => {
           const lig = [];
           lig.push(element.moisEcheance);
@@ -1348,20 +1315,123 @@ export class OperationCaisseComponent implements OnInit {
       body: [['Total', total]
       ],
     });
-
     autoTable(fact, {
       theme: 'plain',
-
       margin: { top: 30, left: 130 },
       columnStyles: {
-        0: { textColor: 0, fontStyle: 'bold', fontSize: 12 },
+        0: { textColor: 0, fontStyle: 'bold', fontSize: 12, halign:'justify' },
       },
-      body: [['Le(La) caissier(ère)' + '\n\n\n' + this.serU.connectedUser.nomUtilisateur + ' ' +
+      body: [['Le(La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
         this.serU.connectedUser.prenomUtilisateur]]
-
     });
+    // fact.autoPrint();
+    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
+    this.appercu.show();
+  }
 
+  imprimeFacture(opc: OpCaisse) {
 
+    const fact = new jsPDF();fact.addImage(this.outil.entete, 5, 5, 190, 25);
+    let titre: String;
+    const ligne = [];
+    let total = 0;
+
+    switch (opc.typeRecette.codeTypRec) {
+      default: {
+        titre = 'Facture de caisse N° : ' + opc.numOpCaisse +
+          ' du : ' + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nContribuable : ' + opc.contribuable;
+        autoTable(fact, {
+          theme: 'plain',
+          margin: { left: 5, top: 30, right: 5, bottom: 1 },
+          body: [
+            [titre.toString()]
+          ],
+          bodyStyles: {
+            fontSize: 15,
+            cellPadding: 1,
+            halign: 'center',
+          }
+        });
+        this.rechargerLigneOpCaisse();
+        const loptmp = this.lignesOp.filter(function (lop) {
+          return lop.opCaisse.numOpCaisse === opc.numOpCaisse;
+        });
+        loptmp.forEach(element => {
+          const lig = [];
+          lig.push(element.article.codeArticle);
+          lig.push(element.article.libArticle);
+          lig.push(element.qteLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse);
+          lig.push(element.prixLigneOperCaisse * element.qteLigneOperCaisse);
+          lig.push(element.commentaireLigneOperCaisse);
+          total += element.prixLigneOperCaisse * element.qteLigneOperCaisse;
+          ligne.push(lig);
+        });
+        autoTable(fact, {
+          head: [['Article', 'Désignation', 'Qte', 'PU', 'Montant', 'Obs']],
+          margin: { top: 60 },
+          body: ligne,
+        });
+        break;
+      }
+
+      case 'L': {
+        const eche = this.echeances.filter(e => e.opCaisse.numOpCaisse === opc.numOpCaisse);
+        titre = '\nContrat de location N° : ' + eche[0].contrat.numContrat +
+          '\nBoutique :' + eche[0].contrat.immeuble.libIm +
+
+          '\nFacture de loyer N° : ' + opc.numOpCaisse + ' du ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') +
+          '\nLocataire : ' + eche[0].contrat.locataire.identiteLocataire +
+          '\nDéposant : ' + opc.contribuable;
+        autoTable(fact, {
+          theme: 'plain',
+          margin: { left: 5, top: 30, right: 5, bottom: 1 },
+          body: [
+            [titre.toString()]
+          ],
+          bodyStyles: {
+            fontSize: 15,
+            cellPadding: 1,
+            halign: 'center',
+          }
+        });
+        eche.forEach(element => {
+          const lig = [];
+          lig.push(element.moisEcheance);
+          lig.push(element.annee);
+          lig.push(element.prix);
+          ligne.push(lig);
+          total += element.prix.valueOf();
+        });
+        autoTable(fact, {
+          head: [['Mois', 'Année', 'Montant']],
+          margin: { top: 70 },
+          body: ligne,
+        });
+
+        break;
+      }
+    }
+
+    autoTable(fact, {
+      theme: 'grid',
+      margin: { top: 30, left: 130 },
+      columnStyles: {
+        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+      },
+      body: [['Total', total]
+      ],
+    });
+    autoTable(fact, {
+      theme: 'plain',
+      margin: { top: 30, left: 130 },
+      columnStyles: {
+        0: { textColor: 0, fontStyle: 'bold', fontSize: 12, halign:'justify' },
+      },
+      body: [['Le(La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
+        this.serU.connectedUser.prenomUtilisateur]]
+    });
     fact.autoPrint();
     this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
     // this.appercu.show();
@@ -1369,17 +1439,17 @@ export class OperationCaisseComponent implements OnInit {
 
   imprimeTicket(opc: OpCaisse) {
     const fact = new jsPDF('p', 'mm', [80, 900]);
+    fact.addImage(this.outil.entete, 0, 0, 80, 13);
     autoTable(fact, {
       theme: 'plain',
-      margin: { left: -0.1, top: -1, right: 0, bottom: 1 },
+      margin: { left: -0.1, top: 15, right: 0, bottom: 1 },
       body: [
-        ['Arrondissement : ' + opc.caisse.arrondissement.nomArrondi],
-        ['Caisse : ' + opc.caisse.libeCaisse],
-        ['Reçu N° : ' + opc.numOpCaisse + '\tDate : ' + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm')],
-        ['Contribuable : ' + opc.contribuable]
+        ['Ticket N° : ' + opc.numOpCaisse + ' du : ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nContribuable : '
+          + opc.contribuable]
       ],
       bodyStyles: {
-        fontSize: 8,
+        fontSize: 12,
         cellPadding: 1,
         halign: 'center',
       }

@@ -1,0 +1,333 @@
+<tabset>
+  <!--Onglet 1-->
+  <tab>
+    <ng-template tabHeading><i class="icon-calculator"></i> Type de correspondant</ng-template>
+    <div class="animated fadeIn">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Liste des type de correspondants
+        </div>
+        <div class="card-body">
+          <button type="button" class="btn btn-success mr-1" data-toggle="modal" (click)="addTyp.show()">
+            Ajouter type correspondant
+          </button>
+          <br><br>
+          <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabTyp"
+            [dtTrigger]="dtrigTyp" id="dtTyp">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of typeCorres; let i=index" value="i">
+                <td>{{item.codeTypCorres}}</td>
+                <td>{{item.libTypeCorres}}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initModTyp(i)"><span
+                      class="fa fa-edit"></span></button>
+                  <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDelTyp(i)"><span
+                      class="fa fa-trash"></span></button>
+                  <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                  <!--Le bouton des options-->
+                  <div class="btn-group" dropdown>
+                    <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                        class="icon-options"></span></button>
+                    <ul *dropdownMenu class="dropdown-menu" role="menu">
+                      <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                      <li role="menuitem"><a class="dropdown-item">Another action</a>
+                      </li>
+                      <li role="menuitem"><a class="dropdown-item">Something else
+                          here</a></li>
+                      <li class="divider dropdown-divider"></li>
+                      <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Actions</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <!--/.col-->
+    </div>
+  </tab>
+  <tab>
+    <ng-template tabHeading><i class="icon-calculator"></i> Mode de paiement</ng-template>
+    <div class="animated fadeIn">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Liste des modes de paiement
+        </div>
+        <div class="card-body">
+          <button type="button" class="btn btn-success mr-1" data-toggle="modal" (click)="addMod.show()">
+            Ajouter pourcentage de reversement
+          </button>
+          <br><br>
+          <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabMod"
+            [dtTrigger]="dtrigMod" id="dtMod">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of modes; let i=index" value="i">
+                <td>{{item.codeModPay}} </td>
+                <td>{{item.libeModPay}} </td>
+                <td>
+                  <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initModMod(item)"><span
+                      class="fa fa-edit"></span></button>
+                  <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDelMod(i)"><span
+                      class="fa fa-trash"></span></button>
+                  <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                  <!--Le bouton des options-->
+                  <div class="btn-group" dropdown>
+                    <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                        class="icon-options"></span></button>
+                    <ul *dropdownMenu class="dropdown-menu" role="menu">
+                      <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                      <li role="menuitem"><a class="dropdown-item">Another action</a>
+                      </li>
+                      <li role="menuitem"><a class="dropdown-item">Something else here</a></li>
+                      <li class="divider dropdown-divider"></li>
+                      <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Actions</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <!--/.col-->
+    </div>
+  </tab>
+</tabset>
+
+<!-----------------------------Ajoute Type-->
+<div bsModal #addTyp="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-primary modal-lg" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="addTypGrou" (ngSubmit)="ajouteType()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Ajout de type de cprrespondant </h4>
+          <button type="button" class="close" (click)="addTyp.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row">
+            <label class="col-form-label" for="addInstCod">Code</label>
+            <input type="text" class="form-control" placeholder="du type de correspondant" formControlName="cod">
+          </div>
+          <div class="form-group row">
+            <label class="col-form-label" for="lib">Libellé</label>
+            <input type="text" class="form-control" placeholder="du type de correspondant" formControlName="lib">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="addTyp.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!--fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<!---------------------------Modifie institution----------------- -->
+<div bsModal #modTyp="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md modal-primary" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="modTypGrou" (ngSubmit)="modifieType()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Modification du type</h4>
+          <button type="button" class="close" (click)="modTyp.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group row">
+            <label class="col-form-label" for="cod">Code</label>
+            <input type="text" class="form-control" formControlName="cod" aria-readonly="true"
+              value="{{tcor.codeTypCorres}}">
+          </div>
+          <div class="form-group row">
+            <label class="col-form-label" for="lib">Libellé</label>
+            <input type="text" class="form-control" formControlName="lib" value="{{tcor.libTypeCorres}}">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modTyp.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Continuer</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!----Fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<!-----------------------------------------------Suppression de type-------------------------------------------->
+<div bsModal #delTyp="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-danger" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Suppression d'une institution </h4>
+        <button type="button" class="close" (click)="delTyp.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <!-----Nom-->
+          <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{tcor.libTypeCorres}} </mark>des institution
+            de reversement
+          </p>
+          <p>Le confirmez-vous ?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="delTyp.hide()">Abandonner</button>
+        <button type="submit" class="btn btn-primary" (click)="deleteType()">Continuer</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+<!-- Les modaux de pourcentage de reversement-->
+<!--------------------------------Ajout de pourcentage----------------------->
+<div bsModal #addMod="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-primary modal-md" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="addModGrou" (ngSubmit)="ajouteMod()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Ajout de Mode de paiement</h4>
+          <button type="button" class="close" (click)="addMod.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col-md-"> <label class="col-form-label" for="cod">Code</label> </div>
+          <div class="col-md-3">
+            <input type="text" name="cod" class="form-control" formControlName="cod">
+          </div>
+          <div class="col-md-2"> <label class="col-form-label" for="lib">Libellé</label> </div>
+          <div class="col-md-4">
+            <input type="text" name="lib" class="form-control" formControlName="lib">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="addMod.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!--fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div bsModal #modMod="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-primary" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="modModGrou" (ngSubmit)="modifieMod()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Modification de mode de paiement</h4>
+          <button type="button" class="close" (click)="modMod.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col-md-3"> <label class="col-form-label" for="cod">code</label> </div>
+          <div class="col-md-3">
+            <input type="text" name="cod" class="form-control" formControlName="cod">
+          </div>
+          <div class="col-md-3"> <label class="col-form-label" for="lib">Article</label> </div>
+          <div class="col-md-4">
+            <input type="text" name="lib" class="form-control" formControlName="lib">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="modMod.hide()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Modifier</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!----Fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+<div bsModal #delMod="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-danger" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Supprimer Mode de paiement</h4>
+        <button type="button" class="close" (click)="delMod.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <!-----Nom-->
+          <p>Vous êtes sur le point de supprimer <mark style="color: red;">mod</mark></p>
+          <p>Le confirmez-vous ?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="delMod.hide()">Abandonner</button>
+        <button type="submit" class="btn btn-primary" (click)="deleteMod()">Continuer</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

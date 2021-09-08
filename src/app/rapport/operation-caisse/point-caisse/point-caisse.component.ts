@@ -19,6 +19,8 @@ import { timeStamp } from 'console';
 import { ModePaiement } from '../../../../models/mode.model';
 import { LignePointVente } from '../../../../models/lignePointVente.model';
 import { ToastrService } from 'ngx-toastr';
+import { ToolsService } from '../../../../services/utilities/tools.service';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-point-caisse',
@@ -53,7 +55,7 @@ export class PointCaisseComponent implements OnInit {
   pcGroup : FormGroup;
   constructor(public fBuilder : FormBuilder, public comServ : CommuneService,
     public caiSer: CaisseService, public opServ : OperationCaisseService,
-    public sanit: DomSanitizer, public tst: ToastrService) {
+    public sanit: DomSanitizer, public tst: ToastrService, public outils: ToolsService) {
     this.vuePdf=sanit.bypassSecurityTrustResourceUrl('/');
     this.pcGroup=fBuilder.group({
       arrPC: new FormControl(-1),
@@ -202,43 +204,21 @@ export class PointCaisseComponent implements OnInit {
           this.pcGroup.value['debPC'], this.pcGroup.value['finPC']  );
       if(this.tcaisse>0){
           doc.addPage();
+            doc.addImage(this.outils.entete,'jpeg',5,5,180,20);
             autoTable(doc, {
-            theme: 'plain',
-            margin: { top: 5, left: 30, right: 25,},
-            body: [
-              ['REPUBLIQUE DU BENIN\nDEPARTEMENT DU LITTORAL\n'+
-              'MAIRIE DE COTONOU  ']
-            ],
-            bodyStyles: {
-              fontSize: 17,
-              cellPadding: 1,
-              halign:'center'
-            },
-            });
-            autoTable(doc, {
-            theme: 'plain',
-            margin: { top: 5, left: 30, right: 25,},
-            body: [
-              [this.caiArr[this.pcGroup.value['caiPC']].libeCaisse.toString()]
-            ],
-            bodyStyles: {
-              fontSize: 14,
-              cellPadding: 1,
-              halign:'center'
-            },
-            });
-            autoTable(doc, {
-            theme: 'plain',
-            margin: { top: 5, left: 30, right: 25,},
-            body: [
-              ['Point de caisse du ' + this.pcGroup.value['debPC'] + ' au ' +
-                this.pcGroup.value['finPC']]
-            ],
-            bodyStyles: {
-              fontSize: 14,
-              cellPadding: 1,
-              halign:'center'
-            },
+              theme: 'plain',
+              margin: { top: 25, left: 30, right: 25,},
+              body: [
+                [
+                  this.caiArr[this.pcGroup.value['caiPC']].libeCaisse.toString() +
+                  '\nPoint de caisse du ' + moment(new Date(this.pcGroup.value['debPC'])).format('DD/MM/YYYY HH:mm') +
+                  ' au '+ moment(new Date(this.pcGroup.value['finPC'])).format('DD/MM/YYYY HH:mm')]
+                ],
+                bodyStyles: {
+                  fontSize: 14,
+                  cellPadding: 1,
+                  halign:'center'
+              },
             });
 
         for (let m = 0; m <= this.modes.length; m++){
@@ -271,8 +251,9 @@ export class PointCaisseComponent implements OnInit {
                   this.col.push(this.ligOpc.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
                     l.opCaisse.dateOpCaisse <= this.pcGroup.value['finPC'] && l.opCaisse.typeRecette.codeTypRec == t.codeTypRec &&
                     l.opCaisse.caisse.codeCaisse == this.caiArr[this.pcGroup.value['caiPC']].codeCaisse).reduce((s, l) =>
-                    s+=l.prixLigneOperCaisse*l.qteLigneOperCaisse,0));
-                } break;
+                      s += l.prixLigneOperCaisse * l.qteLigneOperCaisse, 0));
+                  break;
+                }
               }
             });
               this.col.push(this.tcaisse);
@@ -301,8 +282,6 @@ export class PointCaisseComponent implements OnInit {
               cellPadding: 1,
             },
           });
-
-
           this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(
             doc.output('datauristring', { filename: 'paiement.pdf' }));
           this.appercu.show();
@@ -324,37 +303,14 @@ export class PointCaisseComponent implements OnInit {
             if (this.tcaisse > 0) {
               if(this.tArr == 0){
                 doc.addPage();
+                doc.addImage(this.outils.entete, 'jpeg', 10, 5, 190, 25);
                 autoTable(doc, {
                 theme: 'plain',
-                margin: { top: 5, left: 30, right: 25,},
+                margin: { top: 30, left: 0, right: 0,},
                 body: [
-                  ['REPUBLIQUE DU BENIN\nDEPARTEMENT DU LITTORAL\n'+
-                  'MAIRIE DE COTONOU  ']
-                ],
-                bodyStyles: {
-                  fontSize: 17,
-                  cellPadding: 1,
-                  halign:'center'
-                },
-                });
-                autoTable(doc, {
-                theme: 'plain',
-                margin: { top: 0, left: 30, right: 25,},
-                body: [
-                  [this.arrondissements[this.pcGroup.value['arrPC']].nomArrondi.toString()]
-                ],
-                bodyStyles: {
-                  fontSize: 14,
-                  cellPadding: 1,
-                  halign:'center'
-                },
-                });
-                autoTable(doc, {
-                theme: 'plain',
-                margin: { top: 0, left: 30, right: 25,},
-                body: [
-                  ['Point de caisse du ' + this.pcGroup.value['debPC'] + ' au ' +
-                    this.pcGroup.value['finPC']]
+                  ['Point de caisse du ' + moment(new Date(this.pcGroup.value['debPC'])).format('DD/MM/YYY HH:mm') + ' au ' +
+                    moment(new Date(this.pcGroup.value['finPC'])).format('DD/MM/YYY HH:mm')
+                  ]
                 ],
                 bodyStyles: {
                   fontSize: 14,
@@ -407,8 +363,9 @@ export class PointCaisseComponent implements OnInit {
                       this.col.push(this.ligOpc.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
                         l.opCaisse.dateOpCaisse <= this.pcGroup.value['finPC'] && l.opCaisse.typeRecette.codeTypRec == t.codeTypRec &&
                         l.opCaisse.caisse.arrondissement.codeArrondi == this.arrondissements[this.pcGroup.value['arrPC']].codeArrondi).reduce((s, l) =>
-                        s+=l.prixLigneOperCaisse*l.qteLigneOperCaisse,0));
-                    } break;
+                          s += l.prixLigneOperCaisse * l.qteLigneOperCaisse, 0));
+                      break;
+                    }
                   }
                 });
                   this.col.push(this.tcaisse);
@@ -417,7 +374,7 @@ export class PointCaisseComponent implements OnInit {
             }
              autoTable(doc, {
             theme: 'grid',
-            head: [['Caisse','Prestation', 'Location', 'Imputation']],
+            head: [['Caisse', 'Imputation', 'Location','Prestation']],
             headStyles: {
               fillColor: [41, 128, 185],
               textColor: 255,
@@ -440,7 +397,7 @@ export class PointCaisseComponent implements OnInit {
 
           autoTable(doc, {
             theme: 'grid',
-            margin: { top: 0, left: 30, right: 25},
+            margin: { top: 0, left: 50, right: 50},
             columnStyles: {
               0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
             },
@@ -462,14 +419,25 @@ export class PointCaisseComponent implements OnInit {
         }
       }
     }
-    else{
+    else {
+      doc.addPage();
+      doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 25);
       var presA=0;
       var presA=0;
       var impA=0;
       var locA=0;
-      this.tcaisse=0
+      this.tcaisse = 0
+      if (this.arrondissements.length > 0) {
+        this.arrondissements.forEach(A => {
+          this.tArr = 0;
+          this.caiArr = this.caisses.filter(c => c.arrondissement.codeArrondi == A.codeArrondi);
+          if (this.caiArr.length > 0) {
+
+          }
+        });
+      }
       this.arrondissements.forEach(a => {
-        this.tArr=0;
+
         this.tPrest=0;
         this.tImp=0;
         this.tLoc=0;
@@ -529,7 +497,7 @@ export class PointCaisseComponent implements OnInit {
 
         autoTable(doc, {
           theme: 'grid',
-          head: [['Arrondissement','Prestation', 'Location', 'Imputation', 'total']],
+          head: [['Arrondissement', 'Imputation', 'Location','Prestation', 'total']],
           headStyles: {
             fillColor: [41, 128, 185],
             textColor: 255,
@@ -552,11 +520,23 @@ export class PointCaisseComponent implements OnInit {
             cellPadding: 1,
           },
         });
+      }
         this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(
           doc.output('datauristring', { filename: 'paiement.pdf' }));
         this.appercu.show();
-      }
+      this.tst.info('Toutes les caisses')
     }
+  }
+
+  pointEche() {
+
+    this.opServ.getCaisseMode(this.caiArr[this.pcGroup.value['caiPC']].codeCaisse.toString(),
+      'E', new Date(this.pcGroup.value['debPC']), new Date(this.pcGroup.value['finPC'])).subscribe(
+        data => {
+          let l = data;
+        console.log('Total Location perçue: ');
+        }
+      )
   }
 
   manageCollapses(inde:number){

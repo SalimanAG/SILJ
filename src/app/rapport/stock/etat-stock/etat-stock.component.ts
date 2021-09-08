@@ -17,6 +17,7 @@ import { CommuneService } from '../../../../services/definition/commune.service'
 import { AssocierUtilisateurService } from '../../../../services/administration/associer-utilisateur.service';
 import { UtilisateurService } from '../../../../services/administration/utilisateur.service';
 import { SiteMarcher } from '../../../../models/siteMarcher.model';
+import { ToolsService } from '../../../../services/utilities/tools.service';
 
 @Component({
   selector: 'app-etat-stock',
@@ -324,12 +325,23 @@ export class EtatStockComponent implements OnInit {
     }
 
     const doc = new jsPDF();
-    doc.setDrawColor(0);
+    /*doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
     doc.setFontSize(25);
     doc.text('ETAT DE STOCK', 75, 30);
-    doc.setFontSize(14);
+    doc.setFontSize(14);*/
+
+    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(15);
+    doc.text('ETAT DE STOCK', 75, 35);
+    doc.setFontSize(12);
+
     doc.text('Magasin :   '+magasinName, 15, 45);
     doc.text('Date : \t'+moment( Date.now()).format('DD/MM/YYYY \tà\t HH : mm '), 15, 55);
 
@@ -380,8 +392,9 @@ export class EtatStockComponent implements OnInit {
           ,
         });
 
-        this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonAppro.pdf'}));
-        this.viewPdfModal.show();
+        doc.save();
+        //this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonAppro.pdf'}));
+        //this.viewPdfModal.show();
 
       },
       (erreur) => {
@@ -395,12 +408,23 @@ export class EtatStockComponent implements OnInit {
 
   onRep2GenerateClicked(){
     const doc = new jsPDF();
-    doc.setDrawColor(0);
+    /*doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
     doc.setFontSize(25);
     doc.text('ETAT DE STOCK', 75, 30);
-    doc.setFontSize(14);
+    doc.setFontSize(14);*/
+
+    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(15);
+    doc.text('ETAT DE STOCK', 75, 35);
+    doc.setFontSize(12);
+
     doc.text('Date : \t'+moment( Date.now()).format('DD/MM/YYYY \tà\t HH : mm '), 15, 45);
     autoTable(doc, {
       theme: 'plain',
@@ -519,8 +543,9 @@ export class EtatStockComponent implements OnInit {
               ,
             });
 
-            this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
-            this.viewPdfModal.show();
+            doc.save();
+            //this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
+            //this.viewPdfModal.show();
 
 
 
@@ -540,12 +565,24 @@ export class EtatStockComponent implements OnInit {
 
   onRep3GenerateClicked(){
     const doc = new jsPDF();
+    /*
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
     doc.setFontSize(25);
     doc.text('ETAT DE STOCK', 75, 30);
-    doc.setFontSize(14);
+    doc.setFontSize(14);*/
+
+    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(15);
+    doc.text('ETAT DE STOCK', 75, 35);
+    doc.setFontSize(12);
+
     doc.text('Date : \t'+moment( Date.now()).format('DD/MM/YYYY \tà\t HH : mm '), 15, 45);
 
     autoTable(doc, {
@@ -733,8 +770,10 @@ export class EtatStockComponent implements OnInit {
                   ,
                 });
 
-                this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
-                this.viewPdfModal.show();
+                doc.save('sal.pdf');
+
+                //this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
+                //this.viewPdfModal.show();
 
 
 
@@ -868,8 +907,10 @@ export class EtatStockComponent implements OnInit {
               ,
             });
 
-            this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
-            this.viewPdfModal.show();
+            doc.save();
+
+            //this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'etatStock.pdf'}));
+            //this.viewPdfModal.show();
 
 
 

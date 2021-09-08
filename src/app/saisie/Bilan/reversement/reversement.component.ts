@@ -24,6 +24,7 @@ import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToolsService } from '../../../../services/utilities/tools.service';
 @Component({
   selector: 'app-reversement',
   templateUrl: './reversement.component.html',
@@ -42,7 +43,7 @@ export class ReversementComponent implements OnInit {
 
    //
   @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
- 
+
    dtOptions1: DataTables.Settings = {};
    dtOptions2: DataTables.Settings = {};
    dtOptions3: DataTables.Settings = {};
@@ -81,11 +82,11 @@ export class ReversementComponent implements OnInit {
 
     articlesOfAConcernedReversementAddingRevers:Article[] = [];
     articlesOfAConcernedReversementEditingRvers:Article[] = [];
-  
 
-  constructor(private serviceReversement:ReversementService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService, 
+
+  constructor(private serviceReversement:ReversementService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService,
     private serviceArticle:ArticleService,private formBulder:FormBuilder,
-    private sanitizer:DomSanitizer) { 
+    private sanitizer:DomSanitizer, public outil: ToolsService) {
     this.initDtOptions();
     this.initFormsGroup();
     moment.locale('fr');
@@ -157,13 +158,13 @@ export class ReversementComponent implements OnInit {
    initFormsGroup(){
     this.addReversementFormGroup = this.formBulder.group({
       addNumRevers:['RV-200000001', Validators.required],
-      addDateRevers:[new Date().toISOString().substring(0, 10), Validators.required], 
+      addDateRevers:[new Date().toISOString().substring(0, 10), Validators.required],
       addReg:[0, Validators.required]
     });
 
     this.editReversementFormGroup = this.formBulder.group({
       editNumRevers:['', Validators.required],
-      editDateRevers:[new Date(), Validators.required], 
+      editDateRevers:[new Date(), Validators.required],
       editReg:[0, Validators.required]
     });
   }
@@ -277,7 +278,7 @@ export class ReversementComponent implements OnInit {
     this.tempEditLigneReversement=[];
     this.editReversement = this.reversement[inde];
     console.log(this.editReversement);
-    
+
     this.serviceReversement.getAllLigneReversement().subscribe(
       (data) => {
         this.ligneReversement = data;
@@ -302,7 +303,7 @@ export class ReversementComponent implements OnInit {
   }
 
   onShowAddArticleModalAddingReversement(){
-   
+
     this.addArticle1.show();
     this.getAllArticle();
 
@@ -361,7 +362,7 @@ onSubmitAddReversementFormsGroup(){
   this.serviceReversement.addReversement(newReversement).subscribe(
     (data) => {
       console.log('********',data);
-      
+
       this.tempAddLigneReversement.forEach(element => {
         element.numReversement = data;
         this.serviceReversement.addLigneReversement(element).subscribe(
@@ -538,7 +539,7 @@ initPrintPdfOfReversement(inde:number){
       lig.push(element.quantiteLigneReversement);
      // lig.push(element.num+' à '+element.numFinLignePointVente);
       lig.push(element.puligneReversement);
-      
+
       lig.push(element.puligneReversement*element.quantiteLigneReversement);
       lig.push(element.quittanceReversement);
       lig.push(moment(element.dateQuittanceReversement).format('DD/MM/YYYY'));
@@ -547,35 +548,45 @@ initPrintPdfOfReversement(inde:number){
       lignes.push(lig);
 
       totalHT += element.puligneReversement*element.quantiteLigneReversement;
-    
+
 
     }
 
   });
   doc.setDrawColor(0);
   doc.setFillColor(255, 255, 255);
-  doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+  //doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
   //doc.setFont("Times New Roman");
-  
-  doc.setFontSize(25);
-  doc.text('REVERSEMENT', 62, 30);
+  doc.addImage(this.outil.entete, 5, 5, 190, 25);
+  autoTable(doc, {
+    theme: 'plain',
+    margin: { top: 35},
+
+    body: [['REVERSEMENT\nRéférence: ' + commande.regisseur.magasinier.nomMagasinier + ' du ' +
+      moment(commande.dateVersement).format('DD/MM/YYYY')]],
+    bodyStyles: {
+      fontSize:20,halign: 'center'
+    }
+  });
+  /*doc.setFontSize(25);
+  doc.text(, 62, 30);
   doc.setFontSize(14);
-  doc.text('Référence : '+commande.numReversement, 15, 45);
-  doc.text('Régisseur : '+commande.regisseur.magasinier.nomMagasinier+' '+
+  doc.text(' : '+commande.numReversement, 15, 45);
+  doc.text('Régisseur : '+
   commande.regisseur.magasinier.prenomMagasinier, 15, 55);
-  doc.text('Date : '+moment(commande.dateVersement).format('DD/MM/YYYY'), 145, 45);
-  
- 
+  doc.text('Date : '+, 145, 45);*/
+
+
   autoTable(doc, {
     theme: 'grid',
     head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant','Numéro Quittance','Date Quittance','Bénéficiaire','Observation']],
     headStyles: {
        fillColor: [41, 128, 185],
-        textColor: 255, 
+        textColor: 255,
         fontStyle: 'bold' ,
     },
     margin: { top: 100 },
-    
+
     body: lignes
     ,
   });
@@ -589,7 +600,7 @@ initPrintPdfOfReversement(inde:number){
     body: [
       ['Montant Total', totalHT]
     ]
-  
+
   });
   doc.text('Powered by Guichet Unique', 130, 230);
   //doc.autoPrint();

@@ -7,17 +7,21 @@
         <!--Fin card header-->
         <div class="card-body">
             <div class="row">
+              <div class="col-lg-3">
+                <button class="btn btn-success" data-toggle="modal" (click)="initNewVente()" type="button">Nouvelle
+                  prestation</button>
+              </div>
+              <div class="col-lg-3">
+                <button class="btn btn-success" data-toggle="modal" (click)="initNewImput()" type="button">Nouvelle
+                  imputation</button>
+              </div>
+              <div class="col-lg-3">
+                <button class="btn btn-success" data-toggle="modal" (click)="initLoyer()" type="button">Nouvelle redevance</button>
+              </div>
+              </div>
+              <div class="row">
                 <div class="col-lg-4">
-                    <h5><i class="fa fa-align-justify">Liste des opérations du jours</i></h5>
-                </div>
-                <div class="col-lg-2">
-                    <button class="btn btn-success" data-toggle="modal" (click)="initNewVente()" type="button">Nouvelle prestation</button>
-                </div>
-                <div class="col-lg-2">
-                    <button class="btn btn-success" data-toggle="modal" (click)="initNewImput()" type="button">Nouvelle imputation</button>
-                </div>
-                <div class="col-lg-2">
-                    <button class="btn btn-success" data-toggle="modal" (click)="initLoyer()" type="button">Nouvelle redevance</button>
+                  <h5><i class="fa fa-align-justify">Liste des opérations du jours</i></h5>
                 </div> <br><br><br>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabDailyOp" [dtTrigger]="dtrigDailyOp" id="dtop">
@@ -145,9 +149,6 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                            <div class="row">
-                              matlab
-                            </div>
                         </div>
                         <div class="card-footer"></div>
                     </div>
@@ -462,22 +463,30 @@
 <!--Annulation-->
 <div bsModal #opAnnul="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-warning" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
+        <form [formGroup]="annulGroup" class="form-horizontal" (ngSubmit)="annulerOperation()">
+            <div class="modal-content">
+              <div class="modal-header">
                 <h4 class="modal-title">Annulation</h4>
                 <button type="button" class="close" (click)="fermerAnnulation()" aria-label="Close">
-<span aria-hidden="true">&times;</span>
-</button>
-            </div>
-            <div class="modal-body">
-                <p>Vous tentez d'annuler l'oppération de caisse <mark style="color: red;">{{annulop.numOpCaisse}}</mark></p>
-                <p>Êtes-vous sûre de vouloir l'annuler ?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="fermerAnnulation()">Non</button>
-                <button type="button" class="btn btn-success" (click)="annulerOperation(annulop)">Oui</button>
-            </div>
-        </div>
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+                  </div>
+                  <div class="modal-body">
+                <div class="row">
+                  <p>Vous tentez d'annuler l'oppération de caisse <mark style="color: red;">{{annulop.numOpCaisse}}</mark></p>
+                  <p>Êtes-vous sûre de vouloir l'annuler ?</p>
+                  </div>
+                <div class="row">
+                  <label for="motif">Motif d'annulation</label>
+                  <input type="text" class="formControl" formControlName="motif">
+                </div>
+                </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="fermerAnnulation()">Abandonner</button>
+                <button type="button" class="btn btn-success" (click)="annulerOperation()">Continuer</button>
+                </div>
+                </div>
+        </form>
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->

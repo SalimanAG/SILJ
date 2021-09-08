@@ -14,6 +14,8 @@ import { ValeurLocativeService } from '../../../../services/definition/valeur-lo
 import autotable from 'jspdf-autotable'
 import { PrixImmeuble } from '../../../../models/prixImmeuble.model';
 import { Subject } from 'rxjs';
+import { ToolsService } from '../../../../services/utilities/tools.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-liste-valeur-locative',
@@ -50,7 +52,8 @@ export class ListeValeurLocativeComponent implements OnInit {
   immeub: Immeuble[];
 
   constructor(public communeService: CommuneService, public vlService: ValeurLocativeService,
-    public fbuilder: FormBuilder, public sanit: DomSanitizer) {
+    public fbuilder: FormBuilder, public sanit: DomSanitizer, public outils: ToolsService,
+    public tst: ToastrService) {
     moment.locale('fr');
     this.imGroup = fbuilder.group({
       arrond: new FormControl(-1),
@@ -134,7 +137,6 @@ export class ListeValeurLocativeComponent implements OnInit {
 
   vlParSite() {
     const doc = new jsPDF();
-    doc.text('' + doc.getNumberOfPages(), 55, 5)
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
     doc.setFontSize(18);
@@ -162,12 +164,24 @@ export class ListeValeurLocativeComponent implements OnInit {
                   imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
                 list.push(imm);
               });
-            doc.addPage();
-            doc.text('' + doc.getNumberOfPages(), 8, 10);
-            doc.text('Arrondissement : ' + this.arrondissements[this.imGroup.value['arrond']].nomArrondi, 40, 20);
-            doc.text('Site : ' + this.sites[this.imGroup.value['sit']].libSite, 50, 30);
-            doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 55, 40);
-            autotable(doc, {
+              doc.addPage();
+              doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 25);
+              autotable(doc, {
+              theme: 'plain',
+              margin: { top: 35, left: 0, right: 0,},
+              body: [
+                [
+                  this.arrondissements[this.imGroup.value['arrond']].nomArrondi +
+                  '\t\t\t' + this.sites[this.imGroup.value['sit']].libSite +
+                  ' \nListe des '+this.typesVL[this.imGroup.value['typVlA']].libTypIm]
+                ],
+                bodyStyles: {
+                  fontSize: 14,
+                  cellPadding: 1,
+                  halign:'center'
+              },
+            });
+              autotable(doc, {
               theme: 'grid',
               head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
               headStyles: {
@@ -178,13 +192,11 @@ export class ListeValeurLocativeComponent implements OnInit {
               margin: { top: 50 },
               body: list,
             });
-            alert(this.immeub.length + ' valeurs locatives trouvées');
-
             this.vuePdf = this.sanit.bypassSecurityTrustResourceUrl(doc.output('datauristring', { filename: 'immeuble.pdf' }));
             this.appercu.show();
           }
           else {
-            alert('Aucune valeur inactive ne répond aux critères spécifiés');
+            this.tst.info('Aucune valeur inactive ne répond aux critères spécifiés');
           }
         }
         else {
@@ -199,7 +211,7 @@ export class ListeValeurLocativeComponent implements OnInit {
                 imm.push(elt.codeIm);
                 imm.push(elt.libIm);
                 imm.push(elt.stuctResp);
-                imm.push(elt.quartier.nomQuartier);
+                //imm.push(elt.quartier.nomQuartier);
                 imm.push(elt.superficie);
                 if (elt.etatIm)
                   imm.push("En contrat");
@@ -210,10 +222,22 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.text('' + doc.getNumberOfPages(), 8, 10);
-              doc.text('Arrondissement : ' + this.arrondissements[this.imGroup.value['arrond']].nomArrondi, 40, 20);
-              doc.text('Site : ' + sit.libSite, 45, 3);
-              doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 50, 40);
+              doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 25);
+              autotable(doc, {
+              theme: 'plain',
+              margin: { top: 35, left: 0, right: 0,},
+              body: [
+                [
+                  this.arrondissements[this.imGroup.value['arrond']].nomArrondi +
+                  '\t\t\t' + sit.libSite +
+                  ' \nListe des '+this.typesVL[this.imGroup.value['typVlA']].libTypIm]
+                ],
+                bodyStyles: {
+                  fontSize: 14,
+                  cellPadding: 1,
+                  halign:'center'
+              },
+            });
               autotable(doc, {
                 theme: 'grid',
                 head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
@@ -229,7 +253,7 @@ export class ListeValeurLocativeComponent implements OnInit {
               this.appercu.show();
             }
             else {
-              alert('Aucune valeur inactive ne répond aux critères spécifiés');
+              this.tst.info(sit.libSite+' : Aucune valeur inactive ne répond aux critères spécifiés');
             }
           });
         }
@@ -259,10 +283,22 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.text('' + doc.getNumberOfPages(), 8, 10);
-              doc.text('Arrondissement : ' + sit.arrondissement.nomArrondi, 40, 20);
-              doc.text('Site : ' + sit.libSite, 45, 30);
-              doc.text('Liste des  : ' + this.typesVL[this.imGroup.value['typVlA']].libTypIm, 50, 40);
+              doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 25);
+              autotable(doc, {
+              theme: 'plain',
+              margin: { top: 35, left: 30, right: 25,},
+              body: [
+                [
+                  this.arrondissements[this.imGroup.value['arrond']].nomArrondi +
+                  '\t\t\t' + sit.libSite +
+                  ' \nListe des '+this.typesVL[this.imGroup.value['typVlA']].libTypIm]
+                ],
+                bodyStyles: {
+                  fontSize: 14,
+                  cellPadding: 1,
+                  halign:'center'
+              },
+            });
               autotable(doc, {
                 theme: 'grid',
                 head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
@@ -278,7 +314,7 @@ export class ListeValeurLocativeComponent implements OnInit {
               this.appercu.show();
             }
             else {
-              alert('Aucune valeur inactive ne répond aux critères spécifiés');
+            this.tst.info(sit.libSite+' : Aucune valeur inactive ne répond aux critères spécifiés');
             }
           });
         });
@@ -307,15 +343,27 @@ export class ListeValeurLocativeComponent implements OnInit {
                     imm.push(elt.valUnit);
                     if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
                       imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                  imm.push(elt.quartier.nomQuartier)
                     list.push(imm);
                   });
                 doc.addPage();
-                doc.text('' + sit.arrondissement.nomArrondi, 40, 20);
-                doc.text('Site: ' + sit.libSite, 45, 30);
-                doc.text('Liste des : ' + tvl.libTypIm, 50, 40);
+                doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 20);
                 autotable(doc, {
+                theme: 'plain',
+                margin: { top: 35, left: 0, right: 0,},
+                    body: [
+                      ['' + sit.arrondissement.nomArrondi + '\t\t\t' + sit.libSite +
+                        '\nListe des : ' + tvl.libTypIm]
+                    ],
+                  bodyStyles: {
+                    fontSize: 14,
+                    cellPadding: 1,
+                    halign:'center'
+                },
+              });
+               autotable(doc, {
                   theme: 'grid',
-                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix', 'Quartier']],
                   headStyles: {
                     fillColor: [41, 128, 185],
                     textColor: 255,
@@ -351,16 +399,27 @@ export class ListeValeurLocativeComponent implements OnInit {
                   imm.push(elt.valUnit);
                   if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
                     imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
-                  list.push(imm);
+                imm.push(elt.quartier.nomQuartier);
+                list.push(imm);
                 });
                 doc.addPage();
-                doc.text('' + doc.getNumberOfPages(), 8, 10);
-                doc.text('' + sit.arrondissement.nomArrondi, 40, 20);
-                doc.text('Site: ' + sit.libSite, 45, 30);
-                doc.text('Liste des : ' + typ.libTypIm, 50, 40);
+                doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 25);
+                autotable(doc, {
+                  theme: 'plain',
+                  margin: { top: 35, left: 0, right: 0,},
+                      body: [
+                        ['' + sit.arrondissement.nomArrondi + '\t\t\t' + sit.libSite +
+                          '\nListe des : ' + typ.libTypIm]
+                      ],
+                    bodyStyles: {
+                      fontSize: 14,
+                      cellPadding: 1,
+                      halign:'center'
+                  },
+                });
                 autotable(doc, {
                   theme: 'grid',
-                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
+                  head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix', 'Quartier']],
                   headStyles: {
                     fillColor: [41, 128, 185],
                     textColor: 255,
@@ -405,10 +464,21 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.text('' + doc.getNumberOfPages(), 8, 10);
-              doc.text('Arrondissement : ' + this.arrondissements[this.imLibGroup.value['arrondl']].nomArrondi, 40, 20);
-              doc.text('Site : ' + this.sites[this.imLibGroup.value['sitl']].libSite, 50, 30);
-              doc.text('Liste des ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm + ' libres', 55, 40);
+              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              autotable(doc, {
+                  theme: 'plain',
+                  margin: { top: 35, left: 30, right: 25,},
+                      body: [
+                        ['' + this.arrondissements[this.imLibGroup.value['arondl']].nomArrondi + '\t\t\t' +
+                        this.sites[this.imLibGroup.value['sitl']].libSite +
+                          '\nListe des : ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm]
+                      ],
+                    bodyStyles: {
+                      fontSize: 14,
+                      cellPadding: 1,
+                      halign:'center'
+                  },
+                });
               autotable(doc, {
                 theme: 'grid',
                 head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuel']],
@@ -424,7 +494,7 @@ export class ListeValeurLocativeComponent implements OnInit {
               this.appercu.show();
             }
             else {
-              alert('Aucune valeur inactive ne répond aux critères spécifiés');
+              this.tst.info('Aucune valeur inactive ne répond aux critères spécifiés');
             }
         }
         else {
@@ -446,10 +516,21 @@ export class ListeValeurLocativeComponent implements OnInit {
                   list.push(imm);
                 });
                 doc.addPage();
-                doc.text('' + doc.getNumberOfPages(), 8, 10);
-                doc.text('Arrondissement : ' + this.arrondissements[this.imLibGroup.value['arrondl']].nomArrondi, 40, 20);
-                doc.text('Site : ' + sit.libSite, 45, 3);
-                doc.text('Liste des ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm + ' libres', 50, 40);
+              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              autotable(doc, {
+                  theme: 'plain',
+                  margin: { top: 35, left: 30, right: 25,},
+                      body: [
+                        ['' + this.arrondissements[this.imLibGroup.value['arondl']].nomArrondi + '\t\t\t' +
+                        sit.libSite +
+                          '\nListe des : ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm+'s libres']
+                      ],
+                    bodyStyles: {
+                      fontSize: 14,
+                      cellPadding: 1,
+                      halign:'center'
+                  },
+                });
                 autotable(doc, {
                   theme: 'grid',
                   head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Etat', 'Prix']],
@@ -465,7 +546,7 @@ export class ListeValeurLocativeComponent implements OnInit {
               this.appercu.show();
             }
             else {
-              alert('Aucune valeur inactive ne répond aux critères spécifiés');
+              this.tst.info(sit.libSite+' : Aucune valeur inactive ne répond aux critères spécifiés');
             }
           });
         }
@@ -489,10 +570,21 @@ export class ListeValeurLocativeComponent implements OnInit {
               list.push(imm);
             });
             doc.addPage();
-            doc.text('' + doc.getNumberOfPages(), 8, 10);
-            doc.text('Arrondissement : ' + sit.arrondissement.nomArrondi, 40, 20);
-            doc.text('Site : ' + sit.libSite, 45, 30);
-            doc.text('Liste des  : ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm, 50, 40);
+              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              autotable(doc, {
+                theme: 'plain',
+                margin: { top: 35, left: 0, right: 0,},
+                    body: [
+                      ['' + this.arrondissements[this.imLibGroup.value['arondl']].nomArrondi + '\t\t\t' +
+                      sit.libSite +
+                        '\nListe des : ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm+'s libres']
+                    ],
+                  bodyStyles: {
+                    fontSize: 14,
+                    cellPadding: 1,
+                    halign:'center'
+                },
+              });
             autotable(doc, {
               theme: 'grid',
               head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Prix actuel']],
@@ -508,7 +600,7 @@ export class ListeValeurLocativeComponent implements OnInit {
             this.appercu.show();
           }
           else {
-            alert('Aucune valeur inactive ne répond aux critères spécifiés');
+            this.tst.info(sit.libSite+' : Aucune valeur inactive ne répond aux critères spécifiés');
           }
         });
       }
@@ -537,9 +629,21 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.text('' + sit.arrondissement.nomArrondi, 80, 20);
-              doc.text('Site: ' + sit.libSite, 60, 30);
-              doc.text('Liste des : ' + tvl.libTypIm, 50, 40);
+              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              autotable(doc, {
+                  theme: 'plain',
+                  margin: { top: 35, left: 30, right: 25,},
+                      body: [
+                        ['' + this.arrondissements[this.imLibGroup.value['arondl']].nomArrondi + '\t\t\t' +
+                        sit.libSite +
+                          '\nListe des : ' + tvl.libTypIm+'s libres']
+                      ],
+                    bodyStyles: {
+                      fontSize: 14,
+                      cellPadding: 1,
+                      halign:'center'
+                  },
+                });
               autotable(doc, {
                 theme: 'grid',
                 head: [['Code', 'Libellé', 'Structure responsable', 'Surface', 'Valeur U', 'Etat', 'Prix']],
@@ -579,7 +683,23 @@ export class ListeValeurLocativeComponent implements OnInit {
                     imm.push(elt.codeIm);
                   list.push(imm);
                 });
-                doc.addPage();
+              doc.addPage();
+
+              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              autotable(doc, {
+                  theme: 'plain',
+                  margin: { top: 35, left: 0, right: 0,},
+                      body: [
+                        ['' + this.arrondissements[this.imLibGroup.value['arondl']].nomArrondi + '\t\t\t' +
+                        sit.libSite +
+                          '\nListe des : ' + this.typesVL[this.imLibGroup.value['typVlAl']].libTypIm+'s libres']
+                      ],
+                    bodyStyles: {
+                      fontSize: 14,
+                      cellPadding: 1,
+                      halign:'center'
+                  },
+                });
                 doc.text('' + doc.getNumberOfPages(), 8, 10);
                 doc.text('' + sit.arrondissement.nomArrondi, 40, 20);
                 doc.text('Site: ' + sit.libSite, 45, 30);

@@ -29,6 +29,7 @@ import {jsPDF} from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToolsService } from '../../../../services/utilities/tools.service';
 @Component({
   selector: 'app-point-vente',
   templateUrl: './point-vente.component.html',
@@ -102,9 +103,9 @@ export class PointVenteComponent implements OnInit {
   new Utilisateur('','','','','',false, new Service('',''))) );
 
 
-  constructor(private servicePointVente:PointVenteService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService, 
+  constructor(private servicePointVente:PointVenteService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService,
     private serviceArticle:ArticleService, private serviceCorres:CorrespondantService, private formBulder:FormBuilder,
-    private sanitizer:DomSanitizer ){ 
+    private sanitizer:DomSanitizer, public outil: ToolsService ){
       this.initDtOptions();
       this.initFormsGroup();
       moment.locale('fr');
@@ -177,7 +178,7 @@ export class PointVenteComponent implements OnInit {
    initFormsGroup(){
     this.addPointVenteFormGroup = this.formBulder.group({
       addNumPv:['PV-20000001', Validators.required],
-      addDatePv:[new Date().toISOString().substring(0, 10), Validators.required], 
+      addDatePv:[new Date().toISOString().substring(0, 10), Validators.required],
      // addpayPoint:[0, Validators.required],
       addCorres:[0, Validators.required],
       addReg:[0, Validators.required]
@@ -185,7 +186,7 @@ export class PointVenteComponent implements OnInit {
 
     this.editPointVenteFormGroup = this.formBulder.group({
       editNumPv:['', Validators.required],
-      editDatePv:[new Date(), Validators.required], 
+      editDatePv:[new Date(), Validators.required],
      // editpayPoint:[0, Validators.required],
       editCorres:[0, Validators.required],
       editReg:[0, Validators.required]
@@ -279,7 +280,7 @@ export class PointVenteComponent implements OnInit {
           if(element.typecorres.codeTypCorres != "LIV")
           this.correspondant.push(element);
         });
-        
+
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des correspondants', erreur);
@@ -295,14 +296,14 @@ export class PointVenteComponent implements OnInit {
         this.dtTrigger2.next();
         $('#tabListArt2').dataTable().api().destroy();
         this.dtTrigger3.next();
-      }, 
+      },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des articles', erreur);
       }
     );
   }
 
-  
+
 
   popArticleAddingOfPointVente(inde:number){
     this.tempAddLignePointVente.splice(inde, 1);
@@ -322,7 +323,7 @@ export class PointVenteComponent implements OnInit {
     this.anulPointVente = this.pointVente[inde];
     this.annulerPvModal.show();
   }
-  
+
 
   initAddPointVente(){
     //this.onConcernedCommandSelected();
@@ -330,16 +331,16 @@ export class PointVenteComponent implements OnInit {
   }
 
   onShowAddArticleModalAddingPointVente(){
-   
+
       this.addArticle1.show();
       this.getAllArticle();
-  
+
   }
 
   onShowAddArticleModalEditingPointVente(){
     this.addArticle2.show();
     this.getAllArticle();
-  
+
   }
 
   addArticleForAddingOfPointVente(inde:number){
@@ -370,7 +371,7 @@ export class PointVenteComponent implements OnInit {
         exit;
       }
     });
-  
+
     if(exist===false){
       this.tempEditLignePointVente.push(new LignePointVente(0, this.articles[inde].prixVenteArticle, 0,0,
       new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
@@ -378,13 +379,13 @@ export class PointVenteComponent implements OnInit {
   new Utilisateur('','','','','',false, new Service('',''))) ),
         this.articles[inde]));
     }
-  
+
   }
 
   onSubmitAddPointVenteFormsGroup(){
     var concernedStocker:Stocker = null
     var magasinStock:Gerer = null ;
-    
+
 
     const newPointVente= new PointVente(this.addPointVenteFormGroup.value['addNumPv'],
     this.addPointVenteFormGroup.value['addDatePv'],false,
@@ -395,13 +396,13 @@ export class PointVenteComponent implements OnInit {
     this.servicePointVente.addPointVente(newPointVente).subscribe(
       (data) => {
         console.log('********',data);
-        
+
         this.tempAddLignePointVente.forEach(element => {
           element.pointVente = data;
           this.servicePointVente.addLignePointVente(element).subscribe(
             (data2) => {
               console.log('********',data2);
-              
+
 
             },
             (erreur) => {
@@ -419,7 +420,7 @@ export class PointVenteComponent implements OnInit {
                        magasinStock = gererl;
                        exit;
                     }
-    
+
                   });
 
                   //coding
@@ -432,17 +433,17 @@ export class PointVenteComponent implements OnInit {
                         {
                           concernedStocker = quant;
                           exist1 = true;
-                          
-                         
-        
+
+
+
                         }
                         if(exist1){
                            //concernedStocker.quantiterStocker = element;
                            concernedStocker.quantiterStocker = concernedStocker.quantiterStocker+(- element.quantiteLignePointVente);
                            this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
                              (dataStock) => {
-                               console.log("QA",dataStock); 
-                               
+                               console.log("QA",dataStock);
+
                              },
                              (erreur) => {
                                console.log('Erreur lors de la modification du Stocker pour réajustement du stock', erreur);
@@ -452,21 +453,21 @@ export class PointVenteComponent implements OnInit {
                         else{
                           this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePointVente*(-1), 0, 0, 0, element.article,magasinStock.magasin)).subscribe(
                             (data4) => {
-            
+
                             },
                             (erreur) => {
                               console.log('Erreur lors de lAjout dUn Stocker', erreur);
                             }
                           );
                         }
-        
-                      }); 
-                  
+
+                      });
+
                 },
                 (erreur) => {
                   console.log('Erreur lors de la liste gerer', erreur);
                 }
-    
+
               );
 
             },
@@ -498,19 +499,19 @@ export class PointVenteComponent implements OnInit {
     this.editPointVenteFormGroup.value['editDatePv'],false,
     this.serviceExercice.exoSelectionner,  this.correspondant[this.editPointVenteFormGroup.value['editCorres']],
     this.regisseur[this.editPointVenteFormGroup.value['editReg']]);
-  
+
     let oldPointVenteLines:LignePointVente[] = [];
-  
+
     this.lignePointVente.forEach(element => {
       if(element.pointVente.numPointVente==this.editPointVente.numPointVente){
         oldPointVenteLines.push(element);
       }
     });
-  
-  
+
+
     this.servicePointVente.editPointVente(this.editPointVente.numPointVente, newPv).subscribe(
       (data) => {
-  
+
         //Pour ajout et ou modification des lignes
         this.tempEditLignePointVente.forEach(element => {
           let added:boolean = true;
@@ -518,10 +519,10 @@ export class PointVenteComponent implements OnInit {
             if(element.article.codeArticle==element2.article.codeArticle){
               added = false;
               element.pointVente = data;
-  
+
               this.servicePointVente.editLignePointVente(element2.idLignePointVente.toString(), element).subscribe(
                 (data2) => {
-  
+
                 },
                 (erreur) => {
                   console.log('Erreur lors de la modification de ligne de reversement', erreur);
@@ -530,68 +531,68 @@ export class PointVenteComponent implements OnInit {
               exit;
             }
           });
-  
+
           if(added===true){
             element.pointVente = data;
             this.servicePointVente.addLignePointVente(element).subscribe(
               (data3) => {
-  
+
               },
               (erreur) => {
                 console.log('Erreur lors de la création dUne nouvelle ligne pour lEdition', erreur)
               }
             );
           }
-  
+
         });
-  
-  
+
+
         //Pour suppression des lignes suprimés
         oldPointVenteLines.forEach(element => {
           let deleted:boolean = true;
           this.tempEditLignePointVente.forEach(element2 => {
-  
+
             if(element.article.codeArticle==element2.article.codeArticle){
               deleted = false;
               exit;
             }
-  
+
           });
-  
+
           if(deleted===true){
             this.servicePointVente.deleteLignePointVente(element.idLignePointVente.toString()).subscribe(
               (data) => {
-  
+
               },
               (erreur) => {
                 console.log('Erreur lors de la suppression de la ligne', erreur);
               }
             );
           }
-  
+
         });
-  
+
         this.editComModal.hide();
-  
+
         this.getAllPointVente();
         this.getAllLignePointVente();
-  
+
       },
       (erreur) => {
         console.log('Erreur lors de lEdition du point vente', erreur);
       }
     );
-  
-  
-  
+
+
+
   }
-  
+
 
   initEditPointVente(inde:number){
     this.tempEditLignePointVente=[];
     this.editPointVente = this.pointVente[inde];
     console.log(this.editPointVente);
-    
+
     this.servicePointVente.getAllLignePointVente().subscribe(
       (data) => {
         this.lignePointVente = data;
@@ -611,7 +612,7 @@ export class PointVenteComponent implements OnInit {
   }
 
   onConfirmDeletePointVente(){
-    
+
     this.getAllLignePointVente();
     let faled:boolean=false;
     this.lignePointVente.forEach(element => {
@@ -636,7 +637,7 @@ export class PointVenteComponent implements OnInit {
         );
       }
     });
-  
+
     if(faled==false){
       this.servicePointVente.deletePointVente(this.suprPointVente.numPointVente).subscribe(
         (data) => {
@@ -649,7 +650,7 @@ export class PointVenteComponent implements OnInit {
         }
       );
     }
-    
+
 
   }
 
@@ -701,7 +702,7 @@ export class PointVenteComponent implements OnInit {
 
                           });
 
-                          
+
                           if(exist2){
                             concernedStockerMagCorres.quantiterStocker+=element3.quantiteLignePointVente;
                             this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
@@ -775,30 +776,41 @@ export class PointVenteComponent implements OnInit {
         lig.push(element.quantiteLignePointVente);
         lig.push(element.numDebLignePointVente+' à '+element.numFinLignePointVente);
         lig.push(element.pulignePointVente);
-        
+
         lig.push(element.pulignePointVente*element.quantiteLignePointVente);
         lignes.push(lig);
 
         totalHT += element.pulignePointVente*element.quantiteLignePointVente;
-      
+
 
       }
 
     });
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+    //doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
     //doc.setFont("Times New Roman");
-    
-    doc.setFontSize(25);
-    doc.text('POINT DE VENTE', 62, 30);
+    doc.addImage(this.outil.entete, 5, 5, 190, 20);
+    autoTable(doc, {
+    theme: 'plain',
+    margin: { top: 35},
+
+    body: [['POINT DE VENTE N°: ' +commande.numPointVente +' du ' +
+      moment(commande.datePointVente).format('DD/MM/YYYY') + '\nCorrespondant : ' +
+      commande.correspondant.magasinier.nomMagasinier + ' ' + commande.correspondant.magasinier.prenomMagasinier]],
+    bodyStyles: {
+      fontSize:20,halign: 'center'
+    }
+  });
+    /*doc.setFontSize(25);
+    doc.text('', 62, 30);
     doc.setFontSize(14);
-    doc.text('Référence : '+commande.numPointVente, 15, 45);
-    doc.text('Date : '+moment(commande.datePointVente).format('DD/MM/YYYY'), 145, 45);
+    doc.text('Référence : ', 15, 45);
+    doc.text('Date : '+moment().format('DD/MM/YYYY'), 145, 45);
     doc.text('Correspondant : '+commande.correspondant.magasinier.nomMagasinier+ ' '+
     commande.correspondant.magasinier.prenomMagasinier, 15, 55);
     doc.text('Régisseur : '+commande.regisseur.magasinier.nomMagasinier+' '+
-    commande.regisseur.magasinier.prenomMagasinier, 15, 65);
+    commande.regisseur.magasinier.prenomMagasinier, 15, 65);*/
     if(commande.payerPoint==false){doc.text('Statut du paiement : '+'NON PAYER', 15, 75)}
     if(commande.payerPoint==true){doc.text('Statut du paiement : '+' PAYER', 15, 75)}
     //doc.text('Payer point : '+commande.payerPoint, 15, 75);
@@ -807,11 +819,11 @@ export class PointVenteComponent implements OnInit {
       head: [['Article', 'Désignation', 'Quantité', 'Numéro de série', 'PU', 'Montant']],
       headStyles: {
          fillColor: [41, 128, 185],
-          textColor: 255, 
+          textColor: 255,
           fontStyle: 'bold' ,
       },
       margin: { top: 100 },
-      
+
       body: lignes
       ,
     });
@@ -825,15 +837,15 @@ export class PointVenteComponent implements OnInit {
       body: [
         ['Montant Total', totalHT]
       ]
-    
+
     });
     doc.text('Powered by Guichet Unique', 130, 230);
     //doc.autoPrint();
     //doc.output('dataurlnewwindow');
 
-    
 
-  
+
+
 
     this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'pointVente.pdf'}));
     this.viewPdfModal.show();
