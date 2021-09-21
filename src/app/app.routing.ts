@@ -58,6 +58,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { AuthGuardService } from '../services/administration/auth-guard.service';
 import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/inventaire-stock.component';
 import { TypeModeComponent } from './type-mode/type-mode.component';
+import { SignataireComponent } from './signataire/signataire.component';
 
 export const routes: Routes = [
   {
@@ -345,6 +346,10 @@ export const routes: Routes = [
       {
         path: 'mod-pay',
         component: TypeModeComponent
+      },
+      {
+        path: 'signataire',
+        component: SignataireComponent
       },
 
       {

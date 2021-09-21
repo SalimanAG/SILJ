@@ -20,7 +20,7 @@ export class Tools2Service {
 
     for (const sign of listSigner) {
       if(sign.rapport.codRap == codeRapport && sign.datDeb.valueOf() <= dateSig.valueOf() && sign.datFin.valueOf() >= dateSig.valueOf()){
-        selectedPoste.push(sign.post);
+        selectedPoste.push(sign.poste);
         
       }
     }

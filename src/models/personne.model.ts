@@ -1,4 +1,4 @@
 export class Personne{
-  id: number;
+  idPers: number;
     constructor(public nomPers: String, public prenomPers: String){}
 }

@@ -15,6 +15,7 @@ import { Regisseur } from '../../../models/regisseur.model';
 import { Service } from '../../../models/service.model';
 import { Gerer } from '../../../models/gerer.model';
 import { Magasin } from '../../../models/magasin.model';
+import { Fonction } from '../../../models/fonction.model';
 
 @Component({
   selector: 'app-regisseur',
@@ -36,11 +37,11 @@ export class RegisseurComponent implements OnInit {
   editRegFormsGroup: FormGroup;
   regisseur : Regisseur[];
   editReg:Regisseur = new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('','')));
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('','')));
   suprReg:Regisseur = new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('','')));
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('','')));
   infosReg:Regisseur = new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('','')));
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('','')));
 
   //Quelques listes
   utilisateur: Utilisateur[];

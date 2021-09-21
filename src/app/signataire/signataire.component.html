@@ -86,8 +86,8 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of signers; let i = index">
-              <td>{{ item.rapport.libRap }}</td>
-              <td>{{ item.post.libPost }}</td>
+              <td>{{ item.rapport?.libRap }}</td>
+              <td>{{ item.poste?.libPost }}</td>
               <td>
                 <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initModSign(i)"><span
                     class="fa fa-edit"></span></button>
@@ -468,20 +468,21 @@
         </div>
         <div class="modal-body">
           <div class="form-row">
-            <label for="ra">Poste</label>
+            <label for="ra">Rapport</label>
             <select id="rap" name="ra" class="form-control" formControlName="ra">
-              <option *ngFor="let item of rapports; let i = index" [value]="item">
+              <option *ngFor="let item of rapports; let i = index" [value]="i">
                 {{ item.libRap }}</option>
             </select>
             <label for="po">Poste</label>
             <select id="pos" name="po" class="form-control" formControlName="po">
-              <option *ngFor="let item of postes; let i = index" [value]="item">
+              <option *ngFor="let item of postes; let i = index" [value]="i">
                 {{ item.libPost }}</option>
             </select>
-          </div>
+          </div> <br>
           <div class="form-row">
             <div class="col-md-2"><label class="col-form-label" for="deb">Début</label> </div>
-            <div class="col-md-4"><input type=" date" name="deb" class="form-control" formControlName="deb"></div>
+            <div class="col-md-4"><input type="date" name="deb" class="form-control" formControlName="deb"></div>
+
             <div class="col-md-2"> <label class="col-form-label" for="fin">Fin</label> </div>
             <div class="col-md-4">
               <input type="date" name="fin" class="form-control" formControlName="fin">
@@ -502,7 +503,7 @@
 </div>
 <!-- /.modal -->
 
-<div bsModal #modPost="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<div bsModal #modSign="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-lg modal-primary" role="document">
     <!-----Début formulaire-->

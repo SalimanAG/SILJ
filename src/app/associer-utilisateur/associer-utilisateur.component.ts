@@ -19,6 +19,7 @@ import { UtilisateurService } from '../../services/administration/utilisateur.se
 import { CommuneService } from '../../services/definition/commune.service';
 import * as moment from  'moment';
 import { AffectUserToArrondi } from '../../models/affectUserToArrondi.model';
+import { Fonction } from '../../models/fonction.model';
 
 @Component({
   selector: 'app-associer-utilisateur',
@@ -54,24 +55,24 @@ export class AssocierUtilisateurComponent implements OnInit {
 
   //Onglet Associer user à Arrondissement
   affectUserToArrondis:AffectUserToArrondi[] = [];
-  editAffectUserToArrondi : AffectUserToArrondi = new AffectUserToArrondi(new Utilisateur('', '', '', '', '', false, new Service('', '')), new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))), new Date(), new Date());
-  suprAffectUserToArrondi:  AffectUserToArrondi = new AffectUserToArrondi(new Utilisateur('', '', '', '', '', false, new Service('', '')), new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))), new Date(), new Date());
+  editAffectUserToArrondi : AffectUserToArrondi = new AffectUserToArrondi(new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', '')), new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))), new Date(), new Date());
+  suprAffectUserToArrondi:  AffectUserToArrondi = new AffectUserToArrondi(new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', '')), new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))), new Date(), new Date());
   addAffectUserToArrondiFormsGroup: FormGroup;
   editAffectUserToArrondiFormsGroup: FormGroup;
 
   //Onglet Associer user à Caisse
   affecters:Affecter[];
   editAffecter : Affecter = new Affecter(new Date(), new Date(), new Caisse('', '', new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
-  new Utilisateur('', '', '', '', '', false, new Service('', '')));
+  new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', '')));
   suprAffecter: Affecter = new Affecter(new Date(), new Date(), new Caisse('', '', new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
-  new Utilisateur('', '', '', '', '', false, new Service('', '')));
+  new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', '')));
   addAffecterFormsGroup: FormGroup;
   editAffecterFormsGroup: FormGroup;
 
   //Onglet Associer user à Groupe d'Utilisateur
   affectUserToGroups: AffectUserGroup[];
-  editAffectUserToGroup:AffectUserGroup = new AffectUserGroup(new Utilisateur('', '', '', '', '', false, new Service('', '')), new GroupUser('', ''));
-  suprAffectUserToGroup:AffectUserGroup = new AffectUserGroup(new Utilisateur('', '', '', '', '', false, new Service('', '')), new GroupUser('', ''));
+  editAffectUserToGroup:AffectUserGroup = new AffectUserGroup(new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', '')), new GroupUser('', ''));
+  suprAffectUserToGroup:AffectUserGroup = new AffectUserGroup(new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', '')), new GroupUser('', ''));
   addAffectUserToGroupFormsGroup:FormGroup;
   editAffectUserToGroupFormsGroup:FormGroup;
 

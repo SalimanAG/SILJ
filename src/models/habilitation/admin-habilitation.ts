@@ -327,6 +327,12 @@ static navIdata: INavData[] = [
     url: '/droit-groupe',
     icon: 'icon-pie-chart'
   },
+  // signataire
+  {
+    name: 'Signataire',
+    url: '/signataire',
+    icon: 'icon-pie-chart'
+  },
 
   {
     name: 'Sauvégarde',

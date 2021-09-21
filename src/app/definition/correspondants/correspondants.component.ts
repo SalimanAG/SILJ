@@ -23,6 +23,7 @@ import { CorrespondantService } from '../../../services/definition/correspondant
 import * as moment from  'moment';
 import { element } from 'protractor';
 import { exit } from 'process';
+import { Fonction } from '../../../models/fonction.model';
 
 @Component({
   selector: 'app-correspondants',
@@ -53,11 +54,11 @@ export class CorrespondantsComponent implements OnInit {
   editCorresFormsGroup: FormGroup;
   correspondants:Correspondant[];
   editCorres:Correspondant = new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', '')));
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', '')));
   suprCorres:Correspondant = new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', '')));
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', '')));
   infosCorres:Correspondant = new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', '')));
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', '')));
 
   //Quelques listes
   utilisateurs: Utilisateur[] = [];
@@ -77,13 +78,13 @@ export class CorrespondantsComponent implements OnInit {
   editAffecteSiteFormsGroup: FormGroup;
   etreAffectes:EtreAffecte[];
   editEtreAffecte:EtreAffecte = new EtreAffecte(new Date(), new Date(), new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new SiteMarcher('', '', '',
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new SiteMarcher('', '', '',
   new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))));
   suprEtreAffecte:EtreAffecte = new EtreAffecte(new Date(), new Date(), new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new SiteMarcher('', '', '',
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new SiteMarcher('', '', '',
   new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))));
   infoEtreAffecte:EtreAffecte = new EtreAffecte(new Date(), new Date(), new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new SiteMarcher('', '', '',
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new SiteMarcher('', '', '',
   new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))));
 
 

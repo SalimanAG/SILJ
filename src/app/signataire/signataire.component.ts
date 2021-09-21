@@ -170,12 +170,12 @@ export class SignataireComponent implements OnInit {
   }
 
   listRapp() {
-    this.sis.getRapports().subscribe()
-    data => {
+    this.sis.getRapports().subscribe(
+   ( data) => {
       this.rapports = data;
       console.log(this.rapports);
 
-      };
+      });
   }
 
   initForms() {
@@ -243,12 +243,16 @@ export class SignataireComponent implements OnInit {
   valAddPost() {
     let obj = new Poste(this.addPostGroup.value['cod'], this.addPostGroup.value['lib']);
       this.sis.addPoste(obj).subscribe(
-        data => {
-          this.tst.success('Ajout de poste réussi')
+        (data) => {
+          this.tst.success('Ajout de poste réussi');
+          
+           this.annulAddPost();
+          
         },
-        err => {
-          this.tst.warning('Ajour de poste échoué')
+        (err) => {
+          this.tst.warning('Ajour de poste échoué');
       });
+      
   }
   annulAddPost() {
     this.addPost.hide();
@@ -264,13 +268,14 @@ export class SignataireComponent implements OnInit {
       this.sis.editPoste(this.pos.idPost, obj).subscribe(
         data => {
           this.tst.success('Modification de poste réussie')
-          this.listPost();
+          //this.listPost();
+          this.annulModPost();
         },
         err => {
           this.tst.warning('Modification de poste échoué')
         }
       )
-    this.modPost.hide();
+    
   }
 
   annulModPost() {
@@ -284,16 +289,17 @@ export class SignataireComponent implements OnInit {
   }
   valSupPost() {
     this.sis.delPoste(this.pos.idPost).subscribe(
-      data => {
+      (data) => {
         this.tst.success('Suppression effectuée avec succès');
+        this.listPost();
+        this.supPost.hide();
       },
-      err => {
+      (err) => {
         this.tst.warning('Suppression échouée');
         console.log(err);
       }
     );
-    this.listPost();
-    this.supPost.hide();
+    
   }
 
   ////Gestion des personnes
@@ -432,8 +438,10 @@ export class SignataireComponent implements OnInit {
   ////Gestion des affectation  de de droit de signature
   listSign() {
     this.sis.getSignerActuel().subscribe(
-      data => {
+      (data) => {
         this.signers = data;
+        console.log('signataire list ', data);
+        
         $('#dtSign').dataTable().api().destroy();
         this.dataSign.next();
       }
@@ -446,12 +454,20 @@ export class SignataireComponent implements OnInit {
     this.listPost();
   }
   valAddSign() {
-    let obj = new Signer(this.addSignGroup.value['deb'],this.addSignGroup.value['fin'],this.addSignGroup.value['po'], this.addSignGroup.value['ra']);
+    let obj = new Signer(this.addSignGroup.value['deb'], this.addSignGroup.value['fin'], this.postes[this.addSignGroup.value['po']], this.rapports[this.addSignGroup.value['ra']]);
+    console.log('value ', obj);
+    
       this.sis.addSigner(obj).subscribe(
-        data => {
-          this.tst.success('Ajout d\'assignation de droit de signature')
+        (data) => {
+          console.log('donnéé', data);
+          
+          this.tst.success('Ajout d\'assignation de droit de signature');
+          this.listSign();
+          this.addSign.hide();
+
+
         },
-        err => {
+        (err) => {
           this.tst.warning('Ajour d\'Signpation échoué')
       });
   }
