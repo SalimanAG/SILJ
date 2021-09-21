@@ -29,6 +29,11 @@ import { TresorierCommunalService } from '../../../../services/definition/tresor
 import { Stocker } from '../../../../models/stocker.model';
 import { PlageNumDispoService } from '../../../../services/saisie/PlageNumDispo.service';
 import { PlageNumDispo } from '../../../../models/PlageNumDispo';
+import { ToolsService } from '../../../../services/utilities/tools.service';
+import { Occuper } from '../../../../models/occuper.model';
+import { SignataireService } from '../../../../services/administration/signataire-service.service';
+import { Signer } from '../../../../models/signer.model';
+import { Tools2Service } from '../../../../services/utilities/tools2.service';
 
 @Component({
   selector: 'app-bon-approvisionnement',
@@ -102,10 +107,14 @@ export class BonApprovisionnementComponent  implements OnInit {
   carveauxMairie:Magasin = new Magasin('', '');
   carveauxTresor:Magasin = new Magasin('', '');
 
+  codeDoc = 'BA';
+  listSigner: Signer[] = [];
+  listOccuper: Occuper[] = [];
+
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
     private formBulder:FormBuilder, private serviceBonAppro:BonApproService, private sanitizer:DomSanitizer,
     private serviceCorres:CorrespondantService, private serviceRegiss:RegisseurService,
-    private serviceTresorier: TresorierCommunalService, private pnd: PlageNumDispoService) {
+    private serviceTresorier: TresorierCommunalService, private pnd: PlageNumDispoService, private serviceSignataire: SignataireService) {
 
     this.pdfToShow=sanitizer.bypassSecurityTrustResourceUrl('/');
       this.initDtOptions();
@@ -202,6 +211,8 @@ export class BonApprovisionnementComponent  implements OnInit {
     this.getAllPlageNumArticle();
     this.getCarveauMairie();
     this.getCarveauTresor();
+    this.getAllOccuper();
+    this.getAllSigner();
 
     this.serviceBonAppro.getAllAppro().subscribe(
       (data) => {
@@ -315,6 +326,28 @@ export class BonApprovisionnementComponent  implements OnInit {
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des régisseurs', erreur);
+      }
+    );
+  }
+
+  getAllOccuper(){
+    this.serviceSignataire.getOccupers().subscribe(
+      (data) => {
+        this.listOccuper = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des occupations', erreur);
+      }
+    );
+  }
+
+  getAllSigner(){
+    this.serviceSignataire.getSigners().subscribe(
+      (data) => {
+        this.listSigner = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des signers', erreur);
       }
     );
   }
@@ -1404,13 +1437,24 @@ export class BonApprovisionnementComponent  implements OnInit {
 
             });
             moment.locale('fr');
-            doc.setDrawColor(0);
+            /*doc.setDrawColor(0);
             doc.setFillColor(255, 255, 255);
             doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
             //doc.setFont("Times New Roman");
             doc.setFontSize(22);
             doc.text('BON APPROVISIONNEMENT', 57, 30);
-            doc.setFontSize(14);
+            doc.setFontSize(14);*/
+
+            doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+            doc.setDrawColor(0);
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+            //doc.setFont("Times New Roman");
+            doc.setFontSize(15);
+            doc.text('BON APPROVISIONNEMENT', 69, 35);
+            doc.setFontSize(12);
+
             doc.text('Référence : '+appro.numAppro, 15, 45);
             doc.text('Date : '+moment(appro.dateAppro).format('DD/MM/YYYY'), 152, 45);
 
@@ -1441,6 +1485,29 @@ export class BonApprovisionnementComponent  implements OnInit {
               ,
             });
             //doc.autoPrint();
+
+            let tabSignataire = [];
+        
+            Tools2Service.getSignatairesOfAdocAtAmoment(this.codeDoc, appro.dateAppro, this.listOccuper, this.listSigner)
+            .forEach(elementSign => {
+              tabSignataire.push(elementSign.post.libPost+'\n\n\n\n\n'+elementSign.personne.nomPers+' '+elementSign.personne.prenomPers);
+            });
+    
+            autoTable(doc, {
+              theme: 'plain',
+              margin: { top: 100 },
+              columnStyles: {
+                0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+                2: { textColor: 0, fontStyle: 'bold', halign: 'left' },
+              },
+              body: [
+                  tabSignataire
+                ,
+              ]
+              ,
+            });
+    
+
             this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'bonAppro.pdf'}));
             this.viewPdfModal.show();
 

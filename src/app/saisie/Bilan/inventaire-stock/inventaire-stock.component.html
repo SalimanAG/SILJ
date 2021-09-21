@@ -14,30 +14,30 @@
             Date
             <input type="date" [formControl]="dateInventaire" id="dateInventaire" >
           </label>
-  
-        
-        <label style="padding-left: 20px;"> 
+
+
+        <label style="padding-left: 20px;">
           Magasin:
                   <select  [formControl]="magasinIventaire" name="magasinIventaire">
                       <option *ngFor="let mag of magasinlist; let i=index" [value]="mag.codeMagasin">{{mag.libMagasin}}</option>
                   </select>
         </label>
-  
+
         <label style="padding-left: 20px;">
             Description:
             <input type="text" [formControl]="description" style="width: 260px; height: 35px;" name="description" placeholder="Description de l'inventaire" autocomplete="off">
           </label>
-  
+
         <label style="padding-left: 20px;">
-  
+
           <button  [disabled]="this.magasinIventaire.value=='' " class="btn btn-primary" data-toggle="modal" (click)="afficherInventaireList()">Générer <!--span class="fa fa-plus-circle"></span--></button>
-         
+
         </label>
 
         <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
       </div>
-    
-  
+
+
         <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" [dtTrigger]="dtTrigger1" id="actualiseInv">
             <thead>
               <tr>
@@ -51,7 +51,7 @@
             <tbody>
                 <tr *ngFor="let inv of inventaire; let i = index">
                     <td>{{ inv.numInv}}</td>
-                    <td>{{ inv.dateInv | date :  "dd/MM/y"  }}</td>
+                    <td>{{ inv.dateInv | date : "dd/MM/yyyy" }}</td>
                     <td>{{ inv.descrInv }}</td> descrInv
                     <td>{{ inv.magasin.libMagasin }}</td>
                     <td>
@@ -83,7 +83,7 @@
                       </button>
                   </div>
                   <div class="card-body">
-  
+
                     <div class="row">
                         <table class="table table-bordered table-striped table-lg">
                           <thead>
@@ -109,11 +109,11 @@
                               <td>{{ ((templateLigneInventaire[i].stockTheoriq*templateLigneInventaire[i].pu)-(templateLigneInventaire[i].stockreel*templateLigneInventaire[i].pu)) }}</td>
                               <td><input [(ngModel)]="templateLigneInventaire[i].Observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
                             </tr>
-    
+
                           </tbody>
                         </table>
                       </div>
-  
+
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
@@ -121,11 +121,10 @@
                   </div>
                 </div><!-- /.modal-content -->
               </form>
-  
+
             </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
-  
+
+
     </div>
   </div>
-  

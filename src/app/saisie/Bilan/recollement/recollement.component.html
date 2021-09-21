@@ -23,10 +23,10 @@
             <tbody>
                 <tr *ngFor="let recoll of recollement; let i = index">
                     <td>{{ recoll.numRecollement }}</td>
-                    <td>{{ recoll.dateRecollement | date : "dd/MM/y" }}</td>
+                    <td>{{ recoll.dateRecollement | date : "dd/MM/yyyy" }}</td>
                     <td>{{ recoll.descriptionRecollement }}</td>
-                    <td>{{ recoll.magasinSource.codeMagasin }} - {{ recoll.magasinSource.libMagasin }} </td>
-                    <td>{{  recoll.magasinDestination.codeMagasin }} - {{ recoll.magasinDestination.libMagasin }} </td>
+                    <td>{{ recoll.magasinsource.libMagasin }} </td>
+                    <td>{{ recoll.magasinDestination.libMagasin }} </td>
                     <td>
                         <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditRecollement(i)"><span class="fa fa-edit"></span></button>
                         <button *ngIf="!recoll.valideRecol" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteRecollement(i)"><span class="fa fa-trash"></span></button>
@@ -211,7 +211,7 @@
                           </option>
                         </select-->
                         <input type="text" class="form-control" id="editMagasinSource" readonly="true"
-                        formControlName="editMagasinSource" [ngModel]="editRecollement.magasinSource.codeMagasin.concat(' - '.concat(editRecollement.magasinSource.libMagasin.valueOf())) " autocomplete="off">
+                        formControlName="editMagasinSource" [ngModel]="editRecollement.magasinsource.codeMagasin.concat(' - '.concat(editRecollement.magasinsource.libMagasin.valueOf())) " autocomplete="off">
                     </div>
                     <div class="form-group col-sm-6">
                       <label for="editMagasinDestination">Magasin Destinataire</label>

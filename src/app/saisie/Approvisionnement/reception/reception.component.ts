@@ -31,6 +31,10 @@ import { data } from 'jquery';
 import { ToolsService } from '../../../../services/utilities/tools.service';
 import { PlageNumDispo } from '../../../../models/PlageNumDispo';
 import { PlageNumDispoService } from '../../../../services/saisie/PlageNumDispo.service';
+import { SignataireService } from '../../../../services/administration/signataire-service.service';
+import { Signer } from '../../../../models/signer.model';
+import { Occuper } from '../../../../models/occuper.model';
+import { Tools2Service } from '../../../../services/utilities/tools2.service';
 
 @Component({
   selector: 'app-reception',
@@ -98,11 +102,16 @@ export class ReceptionComponent implements OnInit {
 
   pdfToShow = null;
 
+  codeDoc = 'PR';
+  listSigner: Signer[] = [];
+  listOccuper: Occuper[] = [];
+
   constructor(private serviceCommande:CommandeService, private serviceExercice:ExerciceService,
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService, private serviceReception:ReceptionService,
     private formBulder:FormBuilder, private sanitizer:DomSanitizer, private serviceUser:UtilisateurService,
     private serviceCorres:CorrespondantService, private serviceTresorier:TresorierCommunalService,
-    private serviceTools:ToolsService, public disPlaNum : PlageNumDispoService, public pnds : PlageNumDispoService) {
+    private serviceTools:ToolsService, public disPlaNum : PlageNumDispoService, public pnds : PlageNumDispoService
+    , private serviceSignataire: SignataireService) {
       this.getAllLigneReception();
       this.initDtOptions();
     this.initFormsGroup();
@@ -193,6 +202,8 @@ export class ReceptionComponent implements OnInit {
     this.getAllLigneCommande();
     this.getAllExercice();
     this.getCarveauTresor();
+    this.getAllSigner();
+    this.getAllOccuper();
 
     this.serviceArticle.getAllArticle().subscribe(
       (data) => {
@@ -291,6 +302,28 @@ export class ReceptionComponent implements OnInit {
     //console.log(comm);
     return comm;
 
+  }
+
+  getAllOccuper(){
+    this.serviceSignataire.getOccupers().subscribe(
+      (data) => {
+        this.listOccuper = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des occupations', erreur);
+      }
+    );
+  }
+
+  getAllSigner(){
+    this.serviceSignataire.getSigners().subscribe(
+      (data) => {
+        this.listSigner = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des signers', erreur);
+      }
+    );
   }
 
   getAllReception(){
@@ -1003,13 +1036,24 @@ export class ReceptionComponent implements OnInit {
 
         });
         moment.locale('fr');
-        doc.setDrawColor(0);
+        /*doc.setDrawColor(0);
         doc.setFillColor(255, 255, 255);
         doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
         //doc.setFont("Times New Roman");
         doc.setFontSize(25);
         doc.text('RECEPTION ACHAT', 60, 30);
-        doc.setFontSize(14);
+        doc.setFontSize(14);*/
+
+        doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+        doc.setDrawColor(0);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+        //doc.setFont("Times New Roman");
+        doc.setFontSize(15);
+        doc.text('RECEPTION ACHAT', 75, 35);
+        doc.setFontSize(12);
+
         doc.text('Référence : '+reception.numReception, 15, 45);
         doc.text('Date : '+moment(reception.dateReception).format('DD/MM/YYYY') , 152, 45);
         doc.text('Commande : '+receptComm.numCommande+'\tDu\t'+moment(receptComm.dateCommande).format('DD/MM/YYYY'), 15, 55);
@@ -1045,7 +1089,7 @@ export class ReceptionComponent implements OnInit {
           ,
         });
 
-        autoTable(doc, {
+        /*autoTable(doc, {
           theme: 'plain',
           margin: { top: 100 },
           columnStyles: {
@@ -1056,6 +1100,27 @@ export class ReceptionComponent implements OnInit {
             ['Le Trésorier Communal\n\n\n\n\n',
             '\t\t\t\t\t\t\t\t\t\t\t\t\t',
              'Le Fournisseur\n\n\n\n\n'+receptComm.frs.identiteFrs]
+          ]
+          ,
+        });*/
+
+        let tabSignataire = [];
+        
+        Tools2Service.getSignatairesOfAdocAtAmoment(this.codeDoc, reception.dateReception, this.listOccuper, this.listSigner)
+        .forEach(elementSign => {
+          tabSignataire.push(elementSign.post.libPost+'\n\n\n\n\n'+elementSign.personne.nomPers+' '+elementSign.personne.prenomPers);
+        });
+
+        autoTable(doc, {
+          theme: 'plain',
+          margin: { top: 100 },
+          columnStyles: {
+            0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+            2: { textColor: 0, fontStyle: 'bold', halign: 'left' },
+          },
+          body: [
+              tabSignataire
+            ,
           ]
           ,
         });

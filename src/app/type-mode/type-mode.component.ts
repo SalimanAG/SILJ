@@ -26,10 +26,6 @@ export class TypeModeComponent implements OnInit {
   tabTyp: DataTables.Settings = {};
   dtrigTyp: Subject<TypCorres> = new Subject<TypCorres>();
 
-  @ViewChild('addTyp') public addTyp: ModalDirective;
-  @ViewChild('modTyp') public modTyp: ModalDirective;
-  @ViewChild('delTyp') public delTyp: ModalDirective;
-
   ////////////////////// Mode de paiement
   mod = new ModePaiement('', '');
   modes: ModePaiement[];
@@ -40,7 +36,7 @@ export class TypeModeComponent implements OnInit {
 
   @ViewChild('addMod') public addMod: ModalDirective;
   @ViewChild('modMod') public modMod: ModalDirective;
-  @ViewChild('delmod') public delMod: ModalDirective;
+  @ViewChild('delMod') public delMod: ModalDirective;
 
   constructor(private os: OperationCaisseService, private fbuilder: FormBuilder, private router: Router,
     private cs: CorrespondantService, public tst: ToastrService) {
@@ -67,7 +63,7 @@ export class TypeModeComponent implements OnInit {
 
     this.addModGrou = this.fbuilder.group({
       cod: ['', Validators.requiredTrue],
-      alib: ['', Validators.requiredTrue]
+      lib: ['', Validators.requiredTrue]
     });
 
     this.modModGrou = this.fbuilder.group({
@@ -155,12 +151,16 @@ export class TypeModeComponent implements OnInit {
   }
 
   ajouteMod() {
-    this.os.addAMode(new ModePaiement(this.addModGrou.value['code'], this.addModGrou.value['lib'])).subscribe(
+    let nMod = new ModePaiement(this.addModGrou.value['cod'], this.addModGrou.value['lib']);
+    console.log('Avant Envoi', nMod);
+
+    this.os.addAMode(nMod).subscribe(
       data => {
-        console.log('ajout avec succès');
+        console.log("Retour du serveur: "+data);
         this.ChargerModes();
       },
       err => {
+        this.tst.warning('Nouvelle institution échouée ');
         console.log('Nouvelle institution échouée ', err);
       }
     );
@@ -169,12 +169,13 @@ export class TypeModeComponent implements OnInit {
   }
 
   initDelMod(i: number) {
+    this.tst.info(''+i);
     this.mod = this.modes[i];
     this.delMod.show();
   }
 
   modifieMod() {
-    this.os.editAMode(this.mod.codeModPay, new ModePaiement(this.modModGrou.value['code'], this.modModGrou.value['lib'])).subscribe(
+    this.os.editAMode(this.mod.codeModPay, new ModePaiement(this.modModGrou.value['cod'], this.modModGrou.value['lib'])).subscribe(
       data => {
         console.log('ajout avec succès');
         this.ChargerModes();
@@ -188,6 +189,7 @@ export class TypeModeComponent implements OnInit {
 
   initModMod(i: number) {
     this.mod = this.modes[i];
+    this.tst.info(''+this.mod);
     this.modMod.show();
 }
 
@@ -202,76 +204,5 @@ export class TypeModeComponent implements OnInit {
     );
     this.delMod.hide();
   }
-
-///////// Type de correspondant
-
-  initAddTyp() {
-    this.addTypGrou.reset();
-    this.addTyp.show();
-  }
-
-  ajouteType() {
-      this. tcor = new TypCorres(this.addTypGrou.value['code'], this.addTypGrou.value['lib']);
-      this.cs.addATypCorres (this.tcor).subscribe(
-        data => {
-          console.log('Ajout réussi');
-          this.chargerTypes();
-          this.addTyp.hide();
-        },
-        err => {
-          console.log('Ajout échoué: ', err);
-
-        }
-      );
-    }
-
-  chargerTypes() {
-    this.cs.getAllTypCorres().subscribe(
-      data => {
-        this.typeCorres = data;
-        $('#dtTyp').dataTable().api().destroy();
-        this.dtrigTyp.next();
-      }
-    );
-  }
-
-  initModTyp(typ: TypCorres) {
-    this.tcor = typ;
-    this.modTyp.show();
-  }
-
-  modifieType() {
-    const np = new TypCorres(this.modTypGrou.value['cod'], this.modTypGrou.value['lib']);
-    this.cs.editATypCorres(this.tcor.codeTypCorres, np).subscribe(
-      data => {
-        console.log('Modification effectuée avec succès');
-        this.chargerTypes();
-        this.modTyp.hide();
-      },
-      err => {
-        console.log('La modification a échoué. ', err);
-      }
-    );
-  }
-
-  initDelTyp(i: number) {
-    this.tcor = this.typeCorres[i];
-    this.delTyp.show();
-  }
-
-  deleteType() {
-    this.cs.deleteATypCorres(this.tcor.codeTypCorres).subscribe(
-      data => {
-        console.log('Suppresion réussie');
-        this.chargerTypes();
-        this.delTyp.hide();
-      },
-      err => {
-        this.tst.warning('Suppression échouée ', err);
-
-      }
-    );
-  }
-
 
 }

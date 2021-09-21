@@ -143,9 +143,8 @@ export class PointCaisseComponent implements OnInit {
   pointUneCaisse(c: Caisse, d1: Date, d2: Date) {
     this.pcaisse = [];
     let colonne: any[];
-    let stypop = 0;
     this.modes.forEach(m => {
-      stypop=0
+      let smod=0
       colonne = [];
       this.typeop.forEach(t => {
         let stypmod = 0;
@@ -156,7 +155,7 @@ export class PointCaisseComponent implements OnInit {
                 lo.opCaisse.typeRecette.codeTypRec === 'P' && lo.opCaisse.dateSaisie <= d2 &&
                 lo.opCaisse.modePaiement.codeModPay === m.codeModPay).reduce((s, l) =>
                   s += l.prixLigneOperCaisse.valueOf() * l.qteLigneOperCaisse, 0);
-            stypop += stypmod;
+            smod += stypmod;
           } break;
           case 'L': {
             stypmod = this.echeances.filter(
@@ -164,7 +163,7 @@ export class PointCaisseComponent implements OnInit {
                  lo.opCaisse.dateSaisie <= d2 &&
                 lo.opCaisse.modePaiement.codeModPay === m.codeModPay).reduce((s, l) =>
                   s += l.prix.valueOf(), 0);
-            stypop += stypmod;
+            smod += stypmod;
           } break;
           case 'I': {
             stypmod = this.ligOpc.filter(
@@ -172,13 +171,13 @@ export class PointCaisseComponent implements OnInit {
                 lo.opCaisse.typeRecette.codeTypRec === t.codeTypRec && lo.opCaisse.dateSaisie <= d2 &&
                 lo.opCaisse.modePaiement.codeModPay === m.codeModPay).reduce((s, l) =>
                   s += l.prixLigneOperCaisse.valueOf() * l.qteLigneOperCaisse, 0);
-            stypop += stypmod;
+            smod += stypmod;
           } break;
         }
         colonne.push(stypmod);
       });
-      this.tcaisse+=stypop
-      colonne.push(stypop);
+      this.tcaisse+=smod
+      colonne.push(smod);
       this.pcaisse.push(colonne);
     });
     this.col=[];
@@ -234,10 +233,13 @@ export class PointCaisseComponent implements OnInit {
             this.typeop.forEach(t => {
               switch (t.codeTypRec) {
                 case 'I': {
+                  this.tst.info(this.ligOpc.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
+                    l.opCaisse.dateOpCaisse <= this.pcGroup.value['finPC'] && l.opCaisse.typeRecette.codeTypRec == t.codeTypRec &&
+                    l.opCaisse.caisse.codeCaisse == this.caiArr[this.pcGroup.value['caiPC']].codeCaisse).length+' ligne(s) d\''+t.libeTypRec)
                   this.col.push(this.ligOpc.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
                     l.opCaisse.dateOpCaisse <= this.pcGroup.value['finPC'] && l.opCaisse.typeRecette.codeTypRec == t.codeTypRec &&
                     l.opCaisse.caisse.codeCaisse == this.caiArr[this.pcGroup.value['caiPC']].codeCaisse).reduce((s, l) =>
-                    s+=l.prixLigneOperCaisse*l.qteLigneOperCaisse,0));
+                      s += l.prixLigneOperCaisse * l.qteLigneOperCaisse, 0));
                   break;
                 }
                 case 'L': {
@@ -530,13 +532,13 @@ export class PointCaisseComponent implements OnInit {
 
   pointEche() {
 
-    this.opServ.getCaisseMode(this.caiArr[this.pcGroup.value['caiPC']].codeCaisse.toString(),
-      'E', new Date(this.pcGroup.value['debPC']), new Date(this.pcGroup.value['finPC'])).subscribe(
-        data => {
-          let l = data;
-        console.log('Total Location perçue: ');
-        }
-      )
+    //this.opServ.getCaiss(this.caiArr[this.pcGroup.value['caiPC']].codeCaisse.toString(),
+//      'E', new Date(this.pcGroup.value['debPC']), new Date(this.pcGroup.value['finPC'])).subscribe(
+        //data => {
+//          let l = data;
+ //       console.log('Total Location perçue: ');
+///        }
+//      )
   }
 
   manageCollapses(inde:number){

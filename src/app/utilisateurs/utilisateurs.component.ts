@@ -4,6 +4,7 @@ import { DataTableDirective } from 'angular-datatables';
 import { data } from 'jquery';
 import {ModalDirective} from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
+import { Fonction } from '../../models/fonction.model';
 import { Service } from '../../models/service.model';
 import { Utilisateur } from '../../models/utilisateur.model';
 import { UtilisateurService } from '../../services/administration/utilisateur.service';
@@ -29,12 +30,14 @@ export class UtilisateursComponent implements OnInit {
   addUserFormsGroup: FormGroup;
   editUserFormsGroup: FormGroup;
   utilisateurs:Utilisateur[];
-  editUser:Utilisateur = new Utilisateur('', '', '', '', '', false, new Service('',''));
-  suprUser:Utilisateur = new Utilisateur('', '', '', '', '', false, new Service('',''));
-  infosUser:Utilisateur = new Utilisateur('', '', '', '', '', false, new Service('',''));
+  editUser:Utilisateur = new Utilisateur('', '', '', '',new Fonction('',''), false, new Service('',''));
+  suprUser:Utilisateur = new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('',''));
+  infosUser:Utilisateur = new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('',''));
 
   //liste des services
   services:Service[];
+  //liste des fonctions
+  fonctions: Fonction[];
 
   constructor(private serviceUser:UtilisateurService, private formBulder:FormBuilder, private serviceCommune:CommuneService) {
     this.dtOptions1 = {
@@ -63,7 +66,7 @@ export class UtilisateursComponent implements OnInit {
       addMotDePass:'',
       addNomUtilisateur:['', Validators.required],
       addPrenomUtilisateur:['', Validators.required],
-      addFonctionUtilisateur:'',
+      addFonctiontilisateur:'',
       addActiveUtilisateur:false,
       addService:-1
     });
@@ -73,7 +76,7 @@ export class UtilisateursComponent implements OnInit {
       editMotDePass:'',
       editNomUtilisateur:['', Validators.required],
       editPrenomUtilisateur:['', Validators.required],
-      editFonctionUtilisateur:'',
+      editFonctiontilisateur:'',
       editActiveUtilisateur:false,
       editService:-1,
       editAskMdp:false
@@ -92,6 +95,7 @@ export class UtilisateursComponent implements OnInit {
     );
 
     this.getAllService();
+    this.getAllFonctions();
 
   }
 
@@ -103,6 +107,18 @@ export class UtilisateursComponent implements OnInit {
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des services : ', erreur);
+      }
+    );
+  }
+
+  getAllFonctions(){
+    this.serviceCommune.getAllFonctions().subscribe(
+      (data) => {
+        this.fonctions = data;
+        console.log(this.fonctions);
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des fonctions : ', erreur);
       }
     );
   }
@@ -145,10 +161,16 @@ export class UtilisateursComponent implements OnInit {
       service = this.services[this.addUserFormsGroup.value['addService']];
     }
 
+    let fonction = null;
+    if(this.addUserFormsGroup.value['addService'] != -1){
+      fonction = this.fonctions[this.addUserFormsGroup.value['addFonctiontilisateur']];
+    }
+
     const newUser = new Utilisateur(this.addUserFormsGroup.value['addLogin'], null,
-    this.addUserFormsGroup.value['addNomUtilisateur'], this.addUserFormsGroup.value['addPrenomUtilisateur'],
-    this.addUserFormsGroup.value['addFonctionUtilisateur'], this.addUserFormsGroup.value['addActiveUtilisateur'],
-    service, true);
+      this.addUserFormsGroup.value['addNomUtilisateur'], this.addUserFormsGroup.value['addPrenomUtilisateur'],
+      fonction, this.addUserFormsGroup.value['addActiveUtilisateur'], service, true);
+    console.log(newUser);
+
 
     this.serviceUser.addAUser(newUser).subscribe(
       (data) => {
@@ -157,7 +179,7 @@ export class UtilisateursComponent implements OnInit {
           addLogin:'',
           addNomUtilisateur:'',
           addPrenomUtilisateur:'',
-          addFonctionUtilisateur:'',
+          addFonctiontilisateur:'',
           addActiveUtilisateur:false
         });
         this.getAllService();
@@ -178,7 +200,7 @@ export class UtilisateursComponent implements OnInit {
     }
     const newUser = new Utilisateur(this.editUserFormsGroup.value['editLogin'], null,
     this.editUserFormsGroup.value['editNomUtilisateur'], this.editUserFormsGroup.value['editPrenomUtilisateur'],
-    this.editUserFormsGroup.value['editFonctionUtilisateur'], this.editUserFormsGroup.value['editActiveUtilisateur'],
+    this.editUserFormsGroup.value['editFonctiontilisateur'], this.editUserFormsGroup.value['editActiveUtilisateur'],
     service, this.editUserFormsGroup.value['editAskMdp']);//editAskMdp
 
     newUser.idUtilisateur = this.editUser.idUtilisateur;

@@ -8,7 +8,7 @@
       <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
     </div>
 
-      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" 
+      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
       [dtTrigger]="dtTrigger1" id="PvDataTable">
           <thead>
               <tr>
@@ -23,11 +23,11 @@
           <tbody>
               <tr *ngFor="let pv of pointVente; let i = index">
                   <td>{{ pv.numPointVente }}</td>
-                  <td>{{ pv.datePointVente }}</td>
+                  <td>{{ pv.datePointVente | date:'dd/MM/yyyy hh:mm' }}</td>
                   <td *ngIf="pv.payerPoint===true">Payer</td>
                   <td *ngIf="pv.payerPoint===false">NON Payer</td>
                   <td>{{ pv.correspondant.magasinier.nomMagasinier }}  {{ pv.correspondant.magasinier.prenomMagasinier }}</td>
-                  <td>{{ pv.regisseur.magasinier.nomMagasinier }}  {{ pv.regisseur.magasinier.prenomMagasinier }} </td> 
+                  <td>{{ pv.regisseur.magasinier.nomMagasinier }} {{ pv.regisseur.magasinier.prenomMagasinier }} </td>
                   <td>
                       <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditPointVente(i)"><span class="fa fa-edit"></span></button>
                       <button *ngIf="!pv.validePoint"class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeletePointVente(i)"><span class="fa fa-trash"></span></button>
@@ -142,7 +142,7 @@
                               <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfPointVente(i)"><span class="fa fa-trash"></span></button>
                             </td>
                           </tr>
-  
+
                         </tbody>
                       </table>
                     </div>
@@ -175,7 +175,7 @@
                   <div class="form-group col-sm-6">
                     <label for="editNumPv">Numéro</label>
                     <input type="text" class="form-control" id="editNumPv"
-                      formControlName="editNumPv" placeholder="Numéro du point" 
+                      formControlName="editNumPv" placeholder="Numéro du point"
                       [ngModel]="editPointVente.numPointVente" readonly>
                   </div>
                   <div class="form-group col-sm-6">
@@ -244,7 +244,7 @@
                   </div>
 
               </div>
-             
+
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
@@ -342,7 +342,7 @@
 
             <div class="card" style="margin: 0;">
               <div class="card-body">
-                <table class="table table-striped" id="tabListArt2" 
+                <table class="table table-striped" id="tabListArt2"
                 datatable [dtOptions]="dtOptions3" [dtTrigger]="dtTrigger3">
                 <thead>
                   <tr>

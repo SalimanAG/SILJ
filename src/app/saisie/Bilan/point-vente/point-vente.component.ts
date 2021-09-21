@@ -30,6 +30,7 @@ import autoTable from 'jspdf-autotable';
 import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToolsService } from '../../../../services/utilities/tools.service';
+import { Fonction } from '../../../../models/fonction.model';
 @Component({
   selector: 'app-point-vente',
   templateUrl: './point-vente.component.html',
@@ -61,16 +62,16 @@ export class PointVenteComponent implements OnInit {
   addPointVenteFormGroup:FormGroup;
   editPointVenteFormGroup:FormGroup;
   editPointVente:PointVente = new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))) );
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))) );
 
   suprPointVente:PointVente = new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))) );
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))) );
 
   anulPointVente:PointVente = new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))) );
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))) );
 
   tempAddLignePointVente:LignePointVente[] = [];
   tempEditLignePointVente:LignePointVente[] = [];
@@ -78,12 +79,12 @@ export class PointVenteComponent implements OnInit {
 
   lignePointVente:LignePointVente[] = [];
   editLignePointVente :LignePointVente = new LignePointVente(0,0,0,0,new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))) ),new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')));
+  new TypCorres('', ''), new Utilisateur('', '', '', '',new Fonction('',''), false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))) ),new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')));
 
   suprLignePointVente :LignePointVente = new LignePointVente(0,0,0,0,new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))) ),new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')));
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))) ),new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')));
 
 
   exercices:Exercice[] = [];
@@ -99,8 +100,8 @@ export class PointVenteComponent implements OnInit {
   articlesOfAConcernedPointVenteEditingPv:Article[] = [];
 
   concernedPointVente: PointVente = new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))) );
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))) );
 
 
   constructor(private servicePointVente:PointVenteService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService,
@@ -355,8 +356,8 @@ export class PointVenteComponent implements OnInit {
     if(exist===false){
       this.tempAddLignePointVente.push(new LignePointVente(0, this.articles[inde].prixVenteArticle, 0, 0,
          new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
-        new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
-        new Utilisateur('','','','','',false, new Service('',''))) ),
+        new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
+        new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))) ),
         this.articles[inde]));
     }
 
@@ -375,8 +376,8 @@ export class PointVenteComponent implements OnInit {
     if(exist===false){
       this.tempEditLignePointVente.push(new LignePointVente(0, this.articles[inde].prixVenteArticle, 0,0,
       new PointVente('', new Date(), false,new Exercice('', '', new Date(), new Date(), '', false),new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))) ),
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Regisseur('',new Magasinier('','',''),
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))) ),
         this.articles[inde]));
     }
 

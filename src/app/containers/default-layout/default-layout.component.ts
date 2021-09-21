@@ -32,15 +32,16 @@ export class DefaultLayoutComponent {
     let not_valid_user:boolean = false;
 
     console.log('User connected', this.serviceUser.connectedUser);
-    const serviceCode = this.serviceUser.connectedUser?.service.codeService;
+    //const serviceCode = this.serviceUser.connectedUser?.service.codeService;
+    const codeFonction = this.serviceUser.connectedUser?.fonctionUtilisateur.codeFonction;
   if (this.serviceUser.connectedUser != null) {
 
-    switch (serviceCode) {
+    switch (codeFonction) {
       case 'S1':
         this.navItems = CaissierHabilitation.navIdata; 
         break;
       case 'S2':
-        this.navItems = RegisseurHabilitation.navIdata; 
+        this.navItems = RegisseurHabilitation.navIdata;  
         break;
       case 'S3':
         this.navItems = LiveurHabilitation.navIdata; 

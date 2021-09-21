@@ -100,6 +100,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/inventaire-stock.component';
 import { InventaireService } from '../services/saisie/inventaire.service';
 import { TypeModeComponent } from './type-mode/type-mode.component';
+import { SignataireComponent } from './signataire/signataire.component';
 
 @NgModule({
   imports: [
@@ -179,6 +180,7 @@ import { TypeModeComponent } from './type-mode/type-mode.component';
     AutheComponent,
     InventaireStockComponent,
     TypeModeComponent,
+    SignataireComponent,
   ],
   providers: [{
     provide: LocationStrategy,

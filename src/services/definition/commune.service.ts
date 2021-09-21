@@ -8,6 +8,7 @@ import { Quartier } from '../../models/quartier.model';
 import { Service } from '../../models/service.model';
 import { SiteMarcher } from '../../models/siteMarcher.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
+import { Fonction } from '../../models/fonction.model';
 
 
 @Injectable({
@@ -119,6 +120,15 @@ export class CommuneService {
 
   deleteService(code:String){
     return this.httpClient.delete<boolean>(this.host+'/commune/service/byCodSev/'+code);
+  }
+
+  //Fonction
+  getAllFonctions(){
+    return this.httpClient.get<Fonction[]>(this.host+'/commune/fonc/list');
+  }
+
+  getAFonction(id: String){
+    return this.httpClient.get<Fonction>(this.host+'/commune/fonc/byCodFon/'+id);
   }
 
   // Site marcher

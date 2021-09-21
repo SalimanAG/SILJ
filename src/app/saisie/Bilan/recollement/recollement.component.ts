@@ -31,6 +31,7 @@ import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { element } from 'protractor';
 import { ToolsService } from '../../../../services/utilities/tools.service';
+import { Fonction } from '../../../../models/fonction.model';
 
 @Component({
   selector: 'app-recollement',
@@ -69,7 +70,7 @@ export class RecollementComponent implements OnInit {
 
   //
   concernedRegisse:Regisseur = new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('','')));
+  new Utilisateur('','','','',new Fonction ('',''),false, new Service('','')));
 
   tempAddLigneRecollement:LigneRecollement[] = [];
   tempEditLigneRecollement:LigneRecollement[] = [];
@@ -721,7 +722,7 @@ onConfirmDeleteRecollement(){
 onConfirmAnnulerRecollement(){
 
         const Recoll = new Recollement(this.annulRecollement.numRecollement, this.annulRecollement.descriptionRecollement,
-          this.annulRecollement.dateRecollement, this.annulRecollement.magasinSource, this.annulRecollement.magasinDestination, this.annulRecollement.exercice);
+          this.annulRecollement.dateRecollement, this.annulRecollement.magasinsource, this.annulRecollement.magasinDestination, this.annulRecollement.exercice);
           Recoll.valideRecol = false;
         //console.log('Element modifier',pla);
         this.serviceRecollement.editRecollement(this.annulRecollement.numRecollement, Recoll).subscribe(
@@ -739,7 +740,7 @@ onConfirmAnnulerRecollement(){
                         let concernedStockerMagasinSource:Stocker = null;
                         let concernedStockerMagasinDestinataire:Stocker = null;
                         data4.forEach(element4 => {
-                          if(element4.magasin.codeMagasin == element3.recollement.magasinSource.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
+                          if(element4.magasin.codeMagasin == element3.recollement.magasinsource.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
                             concernedStockerMagasinSource = element4;
                             exist1 = true;
                             exit;
@@ -764,7 +765,7 @@ onConfirmAnnulerRecollement(){
                           );
                         }
                         else{
-                          this.serviceCorrespodant.addAStocker(new Stocker(element3.quantiteLigneRecollement, 0, 0, 0, element3.article, element3.recollement.magasinSource)).subscribe(
+                          this.serviceCorrespodant.addAStocker(new Stocker(element3.quantiteLigneRecollement, 0, 0, 0, element3.article, element3.recollement.magasinsource)).subscribe(
                             (data6) => {
 
                             },
@@ -857,8 +858,8 @@ initPrintPdfOfRecollement(inde:number){
     margin: { top: 35},
 
     body: [['RECOLLEMENT N°: ' + commande.numRecollement + ' du ' +
-      moment(commande.dateRecollement).format('DD/MM/YYYY')+'\n'+commande.magasinSource.codeMagasin+' - '+
-  commande.magasinSource.libMagasin+' vers '+commande.magasinDestination.codeMagasin+' - '+
+      moment(commande.dateRecollement).format('DD/MM/YYYY')+'\n'+commande.magasinsource.codeMagasin+' - '+
+  commande.magasinsource.libMagasin+' vers '+commande.magasinDestination.codeMagasin+' - '+
   commande.magasinDestination.libMagasin+'\n'+commande.descriptionRecollement]],
     bodyStyles: {
       fontSize:20,halign: 'center'

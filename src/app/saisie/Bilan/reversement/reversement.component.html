@@ -7,8 +7,8 @@
         <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAddReversement()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
         <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
       </div>
-  
-        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1" 
+
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
         [dtTrigger]="dtTrigger1" id="RecovDataTable">
             <thead>
                 <tr>
@@ -21,8 +21,8 @@
             <tbody>
                 <tr *ngFor="let revers of reversement; let i = index">
                     <td>{{ revers.numReversement }}</td>
-                    <td>{{ revers.dateVersement }}</td>
-                    <td>{{ revers.regisseur.magasinier.nomMagasinier }}  {{ revers.regisseur.magasinier.prenomMagasinier }} </td> 
+                    <td>{{ revers.dateVersement |date:'dd/MM/yyyy hh:mm' }}</td>
+                    <td>{{ revers.regisseur.magasinier.nomMagasinier }}  {{ revers.regisseur.magasinier.prenomMagasinier }} </td>
                     <td>
                         <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditReversement(i)"><span class="fa fa-edit"></span></button>
                         <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReversement(i)"><span class="fa fa-trash"></span></button>
@@ -54,7 +54,7 @@
                 </tr>
             </tfoot>
         </table>
-  
+
     <!--Modal add-->
         <div bsModal #addComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-primary modal-xl" role="document">
@@ -87,7 +87,7 @@
                           </option>
                         </select>
                       </div>
-  
+
                     </div><!--/.row-->
 
                     <div class="row">
@@ -120,16 +120,16 @@
                               <td><input [(ngModel)]="tempAddLigneReversement[i].dateQuittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="date" ></td>
                               <td><input [(ngModel)]="tempAddLigneReversement[i].beneficiaire" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
                               <td><input [(ngModel)]="tempAddLigneReversement[i].observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
-                            
+
                               <td>
                                 <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfReversement(i)"><span class="fa fa-trash"></span></button>
                               </td>
                             </tr>
-    
+
                           </tbody>
                         </table>
                       </div>
-  
+
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
@@ -137,10 +137,10 @@
                   </div>
                 </div><!-- /.modal-content -->
               </form>
-  
+
             </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
+
     <!--Modal edit-->
     <div bsModal #editComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-warning modal-xl" role="document">
@@ -158,7 +158,7 @@
                     <div class="form-group col-sm-4">
                       <label for="editNumRevers">Numéro</label>
                       <input type="text" class="form-control" id="editNumRevers"
-                        formControlName="editNumRevers" placeholder="Numéro du point" 
+                        formControlName="editNumRevers" placeholder="Numéro du point"
                         [ngModel]="editReversement.numReversement" readonly="true" autocomplete="off">
                     </div>
                     <div class="form-group col-sm-4">
@@ -208,7 +208,7 @@
                           <td><input [(ngModel)]="tempEditLigneReversement[i].dateQuittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="date" ></td>
                           <td><input [(ngModel)]="tempEditLigneReversement[i].beneficiaire" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
                           <td><input [(ngModel)]="tempEditLigneReversement[i].observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
-                        
+
                           <td>
                             <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfReversement(i)"><span class="fa fa-trash"></span></button>
                           </td>
@@ -218,7 +218,7 @@
                     </table>
                   </div>
                 </div>
-               
+
               </div>
               <div class="modal-footer">
               <button type="button" class="btn btn-secondary" (click)="editComModal.hide()">Annuler</button>
@@ -226,12 +226,12 @@
               </div>
             </div><!-- /.modal-content -->
           </form>
-  
+
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
+
     <!--Modal delete-->
-  
+
     <div bsModal #deleteComModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-danger" role="document">
         <div class="modal-content">
@@ -252,7 +252,7 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
+
     <!--Modal de selection d'Article pour ajout de Reception-->
     <div bsModal #addArticle1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-success modal-lg" role="document">
@@ -264,7 +264,7 @@
             </button>
           </div>
           <div class="modal-body">
-  
+
               <div class="card" style="margin: 0;">
                 <div class="card-body">
                   <table class="table table-striped" id="tabListArt1"
@@ -291,17 +291,17 @@
                   </table>
                 </div>
               </div>
-  
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="addArticle1.hide()">Ok</button>
-  
+
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
-  
+
+
      <!--Modal de selection d'Article pour edition de Reception-->
      <div bsModal #addArticle2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-success modal-lg" role="document">
@@ -313,7 +313,7 @@
             </button>
           </div>
           <div class="modal-body">
-  
+
               <div class="card" style="margin: 0;">
                 <div class="card-body">
                     <table class="table table-striped" id="tabListArt2"
@@ -340,11 +340,11 @@
                   </table>
                 </div>
               </div>
-  
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="addArticle2.hide()">Ok</button>
-  
+
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -364,7 +364,7 @@
               <div class="row">
                 <iframe class="col" [src]='pdfToShow' frameborder="0" style="height: 400px;"></iframe>
               </div>
-  
+
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="viewPdfModal.hide()">Fermer</button>
@@ -372,10 +372,9 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-  
-  
-  
-  
+
+
+
+
     </div>
   </div>
-  

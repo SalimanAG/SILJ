@@ -37,6 +37,12 @@ import { Magasin } from '../../../../models/magasin.model';
 import { Stocker } from '../../../../models/stocker.model';
 import { PlageNumDispo } from '../../../../models/PlageNumDispo';
 import { PlageNumDispoService } from '../../../../services/saisie/PlageNumDispo.service';
+import { ToolsService } from '../../../../services/utilities/tools.service';
+import { Fonction } from '../../../../models/fonction.model';
+import { Signer } from '../../../../models/signer.model';
+import { Occuper } from '../../../../models/occuper.model';
+import { SignataireService } from '../../../../services/administration/signataire-service.service';
+import { Tools2Service } from '../../../../services/utilities/tools2.service';
 
 @Component({
   selector: 'app-placement',
@@ -71,22 +77,22 @@ export class PlacementComponent  implements OnInit {
   regisseurs:Regisseur[] = [];
   utilisateurs:Utilisateur[] = [];
   concernedRegisse:Regisseur = new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('','')));
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('','')));
 
 
   placements:Placement[];
   addPlacementFormGroup:FormGroup;
   editPlacementFormGroup:FormGroup;
   editPlacement:Placement = new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
   suprPlacement:Placement = new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
 
   annulPlacement:Placement = new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','','',false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
-  new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
+  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
+  new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
 
   lignePlacements:LignePlacement[];
   tempAddLignePlacement:LignePlacement[] = [];
@@ -108,13 +114,17 @@ export class PlacementComponent  implements OnInit {
   carveauxMairie:Magasin = new Magasin('', '');
   magOfSelectedCorres:Magasin = new Magasin('', '');
 
+  codeDoc = 'BP';
+  listSigner: Signer[] = [];
+  listOccuper: Occuper[] = [];
+
   constructor(private serviceCommande:CommandeService, public serviceExercice:ExerciceService,
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService,
     private formBulder:FormBuilder, private servicePlacement:PlacementService,
     private servicePlageNumArticle:BonApproService, private serviceCorres:CorrespondantService,
     private serviceCommune:CommuneService, private serviceRegisseur:RegisseurService,
     private serviceUtilisateur: UtilisateurService, private sanitizer: DomSanitizer,
-  public pds: PlageNumDispoService) {
+  public pds: PlageNumDispoService, private serviceSignataire: SignataireService) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -333,6 +343,28 @@ export class PlacementComponent  implements OnInit {
     this.getMagasinOfSelectedCorres(this.addPlacementFormGroup.value['addCorrespondant']);
   }
 
+  getAllOccuper(){
+    this.serviceSignataire.getOccupers().subscribe(
+      (data) => {
+        this.listOccuper = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des occupations', erreur);
+      }
+    );
+  }
+
+  getAllSigner(){
+    this.serviceSignataire.getSigners().subscribe(
+      (data) => {
+        this.listSigner = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des signers', erreur);
+      }
+    );
+  }
+
   getAllExercice(){
     this.serviceExercice.getAllExo().subscribe(
       (data) => {
@@ -508,8 +540,8 @@ export class PlacementComponent  implements OnInit {
 
     if(exist===false){
       this.tempAddLignePlacement.push(new LignePlacement(0, this.articles[inde].prixVenteArticle,new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
-      new Utilisateur('','','','','',false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
-      new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), this.serviceExercice.exoSelectionner),
+      new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
+      new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), this.serviceExercice.exoSelectionner),
       this.articles[inde]));
 
       //this.tempAddPlageNumArticle.push(new PlageNumArticle(0, 0, null, this.tempAddLignePlacement[this.tempAddLignePlacement.length-1], null));
@@ -529,8 +561,8 @@ export class PlacementComponent  implements OnInit {
 
     if(exist===false){
       this.tempEditLignePlacement.push(new LignePlacement(0, this.articles[inde].prixVenteArticle,new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
-      new Utilisateur('','','','','',false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
-      new TypCorres('', ''), new Utilisateur('', '', '', '', '', false, new Service('', ''))), this.serviceExercice.exoSelectionner),
+      new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
+      new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), this.serviceExercice.exoSelectionner),
       this.articles[inde]));
 
       //this.tempEditPlageNumArticle.push(new PlageNumArticle(0, 0, null, this.tempEditLignePlacement[this.tempEditLignePlacement.length-1], null));
@@ -1638,13 +1670,24 @@ export class PlacementComponent  implements OnInit {
 
         });
         moment.locale('fr');
-        doc.setDrawColor(0);
+        /*doc.setDrawColor(0);
         doc.setFillColor(255, 255, 255);
         doc.roundedRect(50, 20, 120, 15, 3, 3, 'FD');
         //doc.setFont("Times New Roman");
         doc.setFontSize(22);
         doc.text('BON PLACEMENT', 75, 30);
-        doc.setFontSize(14);
+        doc.setFontSize(14);*/
+
+        doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+        doc.setDrawColor(0);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+        //doc.setFont("Times New Roman");
+        doc.setFontSize(15);
+        doc.text('BON PLACEMENT', 79, 35);
+        doc.setFontSize(12);
+
         doc.text('Référence : '+placem.numPlacement, 15, 45);
         doc.text('Date : '+moment(placem.datePlacement).format('DD/MM/YYYY') , 152, 45);
         doc.text('Correspondant : '+placem.correspondant.magasinier.nomMagasinier+' '+placem.correspondant.magasinier.prenomMagasinier, 15, 55);
@@ -1689,6 +1732,30 @@ export class PlacementComponent  implements OnInit {
           ]
           ,
         });
+
+        /*let tabSignataire = [];
+        
+        Tools2Service.getSignatairesOfAdocAtAmoment(this.codeDoc, placem.datePlacement, this.listOccuper, this.listSigner)
+        .forEach(elementSign => {
+          tabSignataire.push(elementSign.post.libPost+'\n\n\n\n\n'+elementSign.personne.nomPers+' '+elementSign.personne.prenomPers);
+        });
+
+        tabSignataire.push('Le Correspondant'+'\n\n\n\n\n'+placem.correspondant.magasinier.nomMagasinier+' '+placem.correspondant.magasinier.prenomMagasinier);
+
+        autoTable(doc, {
+          theme: 'plain',
+          margin: { top: 100 },
+          columnStyles: {
+            0: { textColor: 0, fontStyle: 'bold', halign: 'center' },
+            2: { textColor: 0, fontStyle: 'bold', halign: 'left' },
+          },
+          body: [
+              tabSignataire
+            ,
+          ]
+          ,
+        });*/
+
 
 
         //doc.autoPrint();

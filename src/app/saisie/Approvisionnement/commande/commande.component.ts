@@ -20,6 +20,10 @@ import autoTable from 'jspdf-autotable';
 import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToolsService } from '../../../../services/utilities/tools.service';
+import { Signer } from '../../../../models/signer.model';
+import { Occuper } from '../../../../models/occuper.model';
+import { SignataireService } from '../../../../services/administration/signataire-service.service';
+import { Tools2Service } from '../../../../services/utilities/tools2.service';
 
 @Component({
   selector: 'app-commande',
@@ -69,9 +73,14 @@ export class CommandeComponent implements OnInit {
 
   pdfToShow = null;
 
+  codeDoc = 'BC';
+  listSigner: Signer[] = [];
+  listOccuper: Occuper[] = [];
+
   constructor(private serviceCommande:CommandeService, private serviceExercice:ExerciceService,
     private serviceFrs:FournisseurService, private serviceArticle:ArticleService,
-    private formBulder:FormBuilder, private sanitizer:DomSanitizer, public serviceTools:ToolsService) {
+    private formBulder:FormBuilder, private sanitizer:DomSanitizer, public serviceTools:ToolsService
+    , private serviceSignataire: SignataireService) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -166,6 +175,8 @@ export class CommandeComponent implements OnInit {
     this.getAllFrs();
     this.getAllLigneCommande();
     this.getAllExercice();
+    this.getAllOccuper();
+    this.getAllSigner();
 
     this.serviceArticle.getAllArticle().subscribe(
       (data) => {
@@ -189,6 +200,29 @@ export class CommandeComponent implements OnInit {
     );
 
   }
+
+  getAllOccuper(){
+    this.serviceSignataire.getOccupers().subscribe(
+      (data) => {
+        this.listOccuper = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des occupations', erreur);
+      }
+    );
+  }
+
+  getAllSigner(){
+    this.serviceSignataire.getSigners().subscribe(
+      (data) => {
+        this.listSigner = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des signers', erreur);
+      }
+    );
+  }
+
 
   getAllFrs(){
     this.serviceFrs.getAllFrs().subscribe(
@@ -542,13 +576,24 @@ export class CommandeComponent implements OnInit {
 
         });
         moment.locale('fr');
-        doc.setDrawColor(0);
+        /*doc.setDrawColor(0);
         doc.setFillColor(255, 255, 255);
         doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
         //doc.setFont("Times New Roman");
         doc.setFontSize(25);
         doc.text('COMMANDE ACHAT', 62, 30);
-        doc.setFontSize(14);
+        doc.setFontSize(14);*/
+
+        doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+        doc.setDrawColor(0);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+        //doc.setFont("Times New Roman");
+        doc.setFontSize(15);
+        doc.text('COMMANDE ACHAT', 75, 35);
+        doc.setFontSize(12);
+
         doc.text('Référence : '+commande.numCommande, 15, 45);
         doc.text('Date : '+moment(commande.dateCommande).format('DD/MM/YYYY'), 152, 45);
         doc.text('Fournisseur : '+commande.frs.identiteFrs, 15, 55);
@@ -583,6 +628,13 @@ export class CommandeComponent implements OnInit {
           ,
         });
 
+        let tabSignataire = [];
+        
+        Tools2Service.getSignatairesOfAdocAtAmoment(this.codeDoc, commande.dateCommande, this.listOccuper, this.listSigner)
+        .forEach(elementSign => {
+          tabSignataire.push(elementSign.post.libPost+'\n\n\n\n\n'+elementSign.personne.nomPers+' '+elementSign.personne.prenomPers);
+        });
+
         autoTable(doc, {
           theme: 'plain',
           margin: { top: 100 },
@@ -591,9 +643,8 @@ export class CommandeComponent implements OnInit {
             2: { textColor: 0, fontStyle: 'bold', halign: 'left' },
           },
           body: [
-            ['Le Trésorier Communal\n\n\n\n\n',
-            '\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t',
-            'Le Maire\n\n\n\n\n\t\t\t\t\t\t\t\t\t\t\t\t']
+              tabSignataire
+            ,
           ]
           ,
         });

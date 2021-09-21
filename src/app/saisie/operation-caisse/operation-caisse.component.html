@@ -7,6 +7,7 @@
         <!--Fin card header-->
         <div class="card-body">
             <div class="row">
+              <div class="col-lg-3"></div>
               <div class="col-lg-3">
                 <button class="btn btn-success" data-toggle="modal" (click)="initNewVente()" type="button">Nouvelle
                   prestation</button>
@@ -45,6 +46,8 @@
                         <td>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Détail de l'opération" (click)="initdetail(oc)"><span class="fa fa-align-justify"></span></button>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération" *ngIf="oc.valideOpCaisse" (click)="initAnnulOp(oc)"><span class="fa fa-undo"></span></button>
+                            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération"
+                              *ngIf="oc.valideOpCaisse" (click)="initAnnulOp(oc)"><span class="fa fa-done"></span></button>
                             <button class="btn btn-danger btn-sm" data-toggle="modal tooltip" data-placement="top" title="Supprimer l'opération" *ngIf="!oc.valideOpCaisse" (click)="initSUpOP(oc)"><span class="fa fa-trash"></span></button>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Apperçu du reçu" (click)="afficheFacture(oc)"><span class="fa fa-file-o"></span></button>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Apperçu du ticket" *ngIf="oc.typeRecette.codeTypRec.valueOf()==='P'" (click)="imprimeTicket(oc)"><span class="fa fa-dot-circle-o"></span></button>
@@ -132,9 +135,13 @@
                                         <td>{{tmpLigne.article.codeArticle}}</td>
                                         <td>{{tmpLigne.article.libArticle}}</td>
                                         <td><input [(ngModel)]="tempLigneOpCais[[i]].commentaireLigneOperCaisse" type="text" class="form-control" [ngModelOptions]="{standalone: true} "></td>
-                                        <td><input type="number" class="form-control" aria-valuemin="1" (change)="recalculerTotalvente()" (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].prixLigneOperCaisse" [ngModelOptions]="{standalone: true}"></td>
+                                        <td><input type="number" class="form-control" placeholder="0" (change)="recalculerTotalvente()"
+                                            (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].prixLigneOperCaisse"
+                                            [ngModelOptions]="{standalone: true}"></td>
                                         <td>
-                                            <input type="number" class="form-control" aria-valuemin="0" aria-valuemax="5" (change)="recalculerTotalvente()" (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].qteLigneOperCaisse" [ngModelOptions]="{standalone: true}">
+                                            <input type="number" class="form-control" placeholder="0" (change)="recalculerTotalvente()"
+                                              (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].qteLigneOperCaisse"
+                                              [ngModelOptions]="{standalone: true}">
                                         </td>
                                         <td>{{tempLigneOpCais[i].prixLigneOperCaisse*tempLigneOpCais[i].qteLigneOperCaisse}}</td>
                                         <td>
@@ -150,12 +157,11 @@
                                 </tfoot>
                             </table>
                         </div>
-                        <div class="card-footer"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
                     <button type="button" class="btn btn-secondary" (click)="fermeVente()">Fermer</button>
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
                 </div>
                 <!--div class="modal-footer">
         </div-->
@@ -246,7 +252,7 @@
                                       {{ afu.caisse.libeCaisse }}</option>
                                     </select>
                                     <label for="loyDat">Date de paiement</label>
-                                    <input formControlName="loyDat" id="loyDat" type="datetime" class="form-control">
+                                    <input formControlName="loyDat" id="loyDat" type="datetime-local" class="form-control">
                                     <label for="loyCai">Mode de paiement</label>
                                     <select formControlName="loyMod" class="form-control">
                                         <option value="-1">Choisir le contrat</option>
@@ -361,7 +367,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="fermerImput()">Close</button>
+                    <button type="button" class="btn btn-secondary" (click)="fermerImput()">Fermer</button>
                     <button type="submit" class="btn btn-primary">Valider</button>
                 </div>
             </div>

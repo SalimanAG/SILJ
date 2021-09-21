@@ -26,7 +26,7 @@
           <td>{{ user.idUtilisateur }}</td>
           <td>{{ user.nomUtilisateur }}</td>
           <td>{{ user.prenomUtilisateur }}</td>
-          <td>{{ user.fonctionUtilisateur }}</td>
+          <td>{{ user.fonctionUtilisateur.libFonction }}</td>
           <td *ngIf="user.service!==null && user.service!==undefined">{{ user.service.libService }}</td>
           <td *ngIf="user.service===null || user.service===undefined">AUCUN</td>
           <td *ngIf="user.activeUtilisateur.valueOf()===true">OUI</td>
@@ -83,7 +83,7 @@
                     <!-- Formulaire pour enrégistrer un article-->
                     <div class="card">
                       <div class="card-header">
-                        <strong>Nouveau Utilisateur</strong>
+                        <strong>Nouvel Utilisateur</strong>
 
                       </div>
                       <div class="card-body">
@@ -106,37 +106,33 @@
                              autocomplete="off" formControlName="addLogin" placeholder="Login de l'Utilisateur">
                           </div>
                           <div class="form-group col-sm-6">
-                            <label for="addMotDePass">Mot de Passe</label>
+                            <label for="addFonctionUtilisateur">Fonction</label>
+                            <select id="addFonctionUtilisateur" name="addFonctionUtilisateur" class="form-control"
+                              formControlName="addFonctionUtilisateur">
+                              <option value="-1"></option>
+                              <option *ngFor="let servi of fonctions; let i = index" [value]="i">
+                                {{ servi.libFonction }}
+                              </option>
+                            </select>
+                            <!--label for="addMotDePass">Mot de Passe</label>
                             <input type="password" class="form-control" id="addMotDePass"
-                             autocomplete="off" formControlName="addMotDePass" disabled="true" placeholder="Mot de Passe de l'Utilisateur">
+                             autocomplete="off" formControlName="addMotDePass" disabled="true" placeholder="Mot de Passe de l'Utilisateur"-->
                           </div>
                         </div><!--/.row-->
                         <div class="row">
                           <div class="form-group col-sm-6">
-                            <label for="addFonctionUtilisateur">Fonction</label>
-                            <input type="text" class="form-control" id="addFonctionUtilisateur"
-                            formControlName="addFonctionUtilisateur" placeholder="Fonction de l'Utilisateur">
-                          </div>
-                          <div class="form-group col-sm-6">
                             <label for="addService">Service</label>
-                              <select id="addService" name="addService" class="form-control"
+                            <select id="addService" name="addService" class="form-control"
                               formControlName="addService">
                                 <option value="-1"></option>
                                 <option *ngFor="let servi of services; let i = index" [value]="i">
-                                  {{ servi.codeService }} - {{ servi.libService }}
+                                {{ servi.libService }}
                                 </option>
-
-                              </select>
-
+                            </select>
                           </div>
-                        </div><!--/.row-->
-                        <div class="form-group row">
-                          <div class="col-md-12 col-form-label">
-                            <div class="form-check form-check-inline mr-3">
-                              <label class="form-check-label" for="addActiveUtilisateur">  Compte Actif</label>
-                              <input class="form-check-input" type="checkbox" id="addActiveUtilisateur"
-                              formControlName="addActiveUtilisateur" >
-                            </div>
+                          <div class="form-check form-check-inline mr-3">
+                            <label class="form-check-label" for="addActiveUtilisateur"> Compte Actif</label>
+                            <input class="form-check-input" type="checkbox" id="addActiveUtilisateur" formControlName="addActiveUtilisateur">
                           </div>
                         </div>
                       </div>
@@ -190,44 +186,42 @@
                             autocomplete="off" formControlName="editLogin" [ngModel]="editUser.login" placeholder="Login de l'Utilisateur">
                           </div>
                           <div class="form-group col-sm-6">
-                            <label for="editMotDePass">Mot de Passe</label>
+                            <label for="editFonctionUtilisateur">Fonction</label>
+                            <select id="editService" name="editService" class="form-control" formControlName="editService">
+                              <option value="-1"></option>
+                              <option *ngFor="let servi of fonctions; let i = index" [value]="i">
+                               {{ servi.libFonction }}
+                              </option>
+                            </select>
+                            <!--label for="editMotDePass">Mot de Passe</label>
                             <input type="password" class="form-control" id="editMotDePass" readonly
-                            autocomplete="off" formControlName="editMotDePass" placeholder="Mot de Passe de l'Utilisateur">
+                            autocomplete="off" formControlName="editMotDePass" placeholder="Mot de Passe de l'Utilisateur"-->
                           </div>
                         </div><!--/.row-->
                         <div class="row">
-                          <div class="form-group col-sm-6">
-                            <label for="editFonctionUtilisateur">Fonction</label>
-                            <input type="text" class="form-control" id="editFonctionUtilisateur"
-                             formControlName="editFonctionUtilisateur" [ngModel]="editUser.fonctionUtilisateur" placeholder="Fonction de l'Utilisateur">
-                          </div>
-                          <div class="form-group col-sm-6">
+                          <div class="form-group col-sm-3">
                             <label for="editService">Service</label>
                               <select id="editService" name="editService" class="form-control"
                               formControlName="editService">
                                 <option value="-1"></option>
                                 <option *ngFor="let servi of services; let i = index" [value]="i">
-                                  {{ servi.codeService }} - {{ servi.libService }}
+                                  {{ servi.libService }}
                                 </option>
                               </select>
-
                           </div>
-                        </div><!--/.row-->
+                          <div class="form-check form-check-inline mr-4">
+                            <input class="form-check-input" type="checkbox" id="editActiveUtilisateur" [ngModel]="editUser.activeUtilisateur"
+                              formControlName="editActiveUtilisateur">
+                            <label class="form-check-label" for="editActiveUtilisateur"> Compte Actif</label>
+                            </div>
+                          <div class="form-check form-check-inline mr-6">
+                            <input class="form-check-input" type="checkbox" id="editAskMdp" [ngModel]="editUser.askMdp1erLance"
+                              formControlName="editAskMdp">
+                            <label class="form-check-label" for="editAskMdp"> Saisir le Mot de Passe à la Prochaine Connexion </label>
+                            </div>
+                            </div>
+                        <!--/.row-->
                         <div class="form-group row">
-                          <div class="col-md-6 col-form-label">
-                            <div class="form-check form-check-inline mr-3">
-                              <input class="form-check-input" type="checkbox" id="editActiveUtilisateur"
-                               [ngModel]="editUser.activeUtilisateur" formControlName="editActiveUtilisateur" >
-                              <label class="form-check-label" for="editActiveUtilisateur">  Compte Actif</label>
-                            </div>
-                          </div>
-                          <div class="col-md-6 col-form-label">
-                            <div class="form-check form-check-inline mr-6">
-                              <input class="form-check-input" type="checkbox" id="editAskMdp"
-                              [ngModel]="editUser.askMdp1erLance" formControlName="editAskMdp" >
-                              <label class="form-check-label" for="editAskMdp"> Saisir le Mot de Passe à la Première Connexion </label>
-                            </div>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -269,7 +263,7 @@
             <div class="modal-dialog modal-info modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h4 class="modal-title">Détail Sur Article</h4>
+                  <h4 class="modal-title">Détail Sur Utilisateur</h4>
                   <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -295,7 +289,7 @@
                       </tr>
                       <tr>
                         <th>Fonction</th>
-                        <td>{{ infosUser.fonctionUtilisateur }}</td>
+                        <td>{{ infosUser.fonctionUtilisateur.libFonction }}</td>
                       </tr>
                       <tr>
                         <th>Service</th>

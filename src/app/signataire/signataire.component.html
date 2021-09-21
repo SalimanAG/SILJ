@@ -1,0 +1,567 @@
+<p>signataire works!</p>
+<tabset>
+  <!--Onglet Poste-->
+  <tab>
+    <ng-template tabHeading><i class="icon-basket-loaded"></i> Poste</ng-template>
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste des postes signataires
+      </div>
+      <div class="card-body">
+        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal"
+              (click)="initAddPost()">Nouveau poste signataire <span class="fa fa-plus-circle"></span></button></div>
+          <div class="col-3 align-self-end" style="padding: 0%; margin: 0%;"></div>
+        </div>
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabPost"
+          [dtTrigger]="dataPost" id="dtPost">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of postes; let i = index">
+              <td>{{ item.codPost }}</td>
+              <td>{{ item.libPost }}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initModPost(i)"><span
+                    class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initSupPost(i)"><span
+                    class="fa fa-trash"></span></button>
+                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--Le bouton des options-->
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                      class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item">Something else
+                        here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </tab>
+  <!--Onglet poste_Rapport-->
+  <tab>
+    <ng-template tabHeading><i class="icon-basket-loaded"></i> Poste signataire</ng-template>
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste des documents par poste signataire
+      </div>
+      <div class="card-body">
+        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal"
+              (click)="initAddSign()">Nouveau droit de signature <span class="fa fa-plus-circle"></span></button></div>
+          <div class="col-3 align-self-end" style="padding: 0%; margin: 0%;"></div>
+        </div>
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabSign"
+          [dtTrigger]="dataSign" id="dtSign">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Poste signataire</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of signers; let i = index">
+              <td>{{ item.rapport.libRap }}</td>
+              <td>{{ item.post.libPost }}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initModSign(i)"><span
+                    class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initSupSign(i)"><span
+                    class="fa fa-trash"></span></button>
+                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--Le bouton des options-->
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                      class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item">Something else
+                        here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Document</th>
+              <th>Poste signataire</th>
+              <th>Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </tab>
+  <!--Onglet Personne-->
+  <tab>
+    <ng-template tabHeading><i class="icon-basket-loaded"></i> Personne signataire</ng-template>
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste des personnes signataires
+      </div>
+      <div class="card-body">
+        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal"
+              (click)="initAddPers()">Nouvelle personne signataire <span class="fa fa-plus-circle"></span></button>
+          </div>
+          <div class="col-3 align-self-end" style="padding: 0%; margin: 0%;"></div>
+        </div>
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabPers"
+          [dtTrigger]="dataPers" id="dtPers">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of personnes; let i = index">
+              <td>{{ item.nomPers }}</td>
+              <td>{{ item.prenomPers }}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initModPers(i)"><span
+                    class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initSupPers(i)"><span
+                    class="fa fa-trash"></span></button>
+                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--Le bouton des options-->
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                      class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item">Something else
+                        here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </tab>
+  <!--Onglet Affecttion-->
+  <tab>
+    <ng-template tabHeading><i class="icon-basket-loaded"></i> Affectation au poste </ng-template>
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste des postes signataires
+      </div>
+      <div class="card-body">
+        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal"
+              (click)="initAddPost()">Nouvelle occupation de poste <span class="fa fa-plus-circle"></span></button>
+          </div>
+          <div class="col-3 align-self-end" style="padding: 0%; margin: 0%;"></div>
+        </div>
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabOccu"
+          [dtTrigger]="dataOccu" id="dtOccu">
+          <thead>
+            <tr>
+              <th>Poste</th>
+              <th>Nom</th>
+              <th>Prénom(s)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of occupers; let i = index">
+              <td>{{ item.post.libPost }}</td>
+              <td>{{ item.personne.nomPers }}</td>
+              <td>{{ item.personne.prenomPers }}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initModPers(i)"><span
+                    class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initSupPers(i)"><span
+                    class="fa fa-trash"></span></button>
+                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--Le bouton des options-->
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                      class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item">Something else
+                        here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Poste</th>
+              <th>Nom</th>
+              <th>Prénom(s)</th>
+              <th>Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </tab>
+</tabset>
+
+<!--------------------------------Ajout de poste----------------------->
+<div bsModal #addPost="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-primary modal-sm" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="addPostGroup" (ngSubmit)="valAddPost()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Ajout de poste</h4>
+          <button type="button" class="close" (click)="annulAddPost()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col-md-12">
+            <label class="col-form-label" for="cod">Code</label>
+            <input type=" text" name="cod" class="form-control" formControlName="cod">
+          </div>
+          <div class="col-md-12">
+            <label class="col-form-label" for="lib">Libellé</label>
+            <input type="text" name="lib" class="form-control" formControlName="lib">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="annulAddPost()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!--fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div bsModal #modPost="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-primary" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="modPostGroup" (ngSubmit)="valModPost()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Modification de mode de paiement</h4>
+          <button type="button" class="close" (click)="annulModPost()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col-md-12"> <label class="col-form-label" for="cod">code</label>
+            <input type="text" name="cod" class="form-control" formControlName="cod" [ngModel]=pos.codPost>
+          </div>
+          <div class="col-md-12"> <label class="col-form-label" for="lib">Article</label>
+            <input type="text" name="lib" class="form-control" formControlName="lib" [ngModel]=pos.libPost>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="annulModPost()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Modifier</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!----Fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div bsModal #supPost="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-danger" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Supprimer poste</h4>
+        <button type="button" class="close" (click)="supPost.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <!-----Nom-->
+          <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{pos.codPost}} {{pos.libPost}}</mark></p>
+          <p>Le confirmez-vous ?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="delMod.hide()">Abandonner</button>
+        <button type="submit" class="btn btn-primary" (click)="valSupPost()">Continuer</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<!--------------------------------Ajout de personne----------------------->
+<div bsModal #addPers="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-primary modal-sm" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="addPersGroup" (ngSubmit)="valAddPers()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Ajouter une personne signataire</h4>
+          <button type="button" class="close" (click)="annulAddPers()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col-md-12">
+            <label class="col-form-label" for="cod">Code</label>
+            <input type=" text" name="cod" class="form-control" formControlName="cod">
+          </div>
+          <div class="col-md-12">
+            <label class="col-form-label" for="lib">Libellé</label>
+            <input type="text" name="lib" class="form-control" formControlName="lib">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="annulAddPers()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!--fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div bsModal #modPers="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-primary" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="modPersGroup" (ngSubmit)="valModPers()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Modification de personne</h4>
+          <button type="button" class="close" (click)="annulmodPers()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-graoup row">
+            <div class="col-md-12"> <label class="col-form-label" for="nm">Nom</label>
+              <input type="text" name="nm" class="form-control" formControlName="nm" [(ngModel)]=pers.nomPers>
+            </div>
+            <div class="col-md-12"> <label class="col-form-label" for="pn">Prénom</label>
+              <input type="text" name="pn" class="form-control" formControlName="pn" [(ngModel)]=pers.prenomPers>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="annulmodPers()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Modifier</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!----Fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div bsModal #supPers="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-danger" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Supprimer une personne</h4>
+        <button type="button" class="close" (click)="supPers.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <!-----Nom-->
+          <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{pers.nomPers}} {{pers.prenomPers}</mark>
+          </p>
+          <p>Le confirmez-vous ?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="delMod.hide()">Abandonner</button>
+        <button type="submit" class="btn btn-primary" (click)="valSupPost()">Continuer</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<!--------------------------------Ajout d'assignation----------------------->
+<div bsModal #addSign="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-primary modal-md" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="addSignGroup" (ngSubmit)="valAddSign()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Associer un rapport à un poste</h4>
+          <button type="button" class="close" (click)="annulAddSign()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <label for="ra">Poste</label>
+            <select id="rap" name="ra" class="form-control" formControlName="ra">
+              <option *ngFor="let item of rapports; let i = index" [value]="item">
+                {{ item.libRap }}</option>
+            </select>
+            <label for="po">Poste</label>
+            <select id="pos" name="po" class="form-control" formControlName="po">
+              <option *ngFor="let item of postes; let i = index" [value]="item">
+                {{ item.libPost }}</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="col-md-2"><label class="col-form-label" for="deb">Début</label> </div>
+            <div class="col-md-4"><input type=" date" name="deb" class="form-control" formControlName="deb"></div>
+            <div class="col-md-2"> <label class="col-form-label" for="fin">Fin</label> </div>
+            <div class="col-md-4">
+              <input type="date" name="fin" class="form-control" formControlName="fin">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="annulModPost()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!--fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div bsModal #modPost="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-primary" role="document">
+    <!-----Début formulaire-->
+    <form [formGroup]="modPostGroup" (ngSubmit)="valModPost()" class="form-horizontal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Modification de mode de paiement</h4>
+          <button type="button" class="close" (click)="annulmodSign()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col-md-3"> <label class="col-form-label" for="cod">code</label> </div>
+          <div class="col-md-3">
+            <input type="text" name="cod" class="form-control" formControlName="cod" [(ngModel)]=pos.codPost>
+          </div>
+          <div class="col-md-3"> <label class="col-form-label" for="lib">Article</label> </div>
+          <div class="col-md-4">
+            <input type="text" name="lib" class="form-control" formControlName="lib" [ngModel]=pos.libPost>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="annulmodSign()">Abandonner</button>
+          <button type="submit" class="btn btn-primary">Modifier</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </form>
+    <!----Fin formulaire-->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+<div bsModal #delMod="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-danger" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Supprimer Mode de paiement</h4>
+        <button type="button" class="close" (click)="delMod.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <!-----Nom-->
+          <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{sign}</mark></p>
+          <p>Le confirmez-vous ?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="delMod.hide()">Abandonner</button>
+        <button type="submit" class="btn btn-primary" (click)="valSupPost()">Continuer</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

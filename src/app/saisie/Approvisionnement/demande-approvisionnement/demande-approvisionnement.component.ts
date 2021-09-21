@@ -17,6 +17,10 @@ import autoTable from 'jspdf-autotable';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
 import { UtilisateurService } from '../../../../services/administration/utilisateur.service';
+import { ToolsService } from '../../../../services/utilities/tools.service';
+import { SignataireService } from '../../../../services/administration/signataire-service.service';
+import { Signer } from '../../../../models/signer.model';
+import { Occuper } from '../../../../models/occuper.model';
 
 @Component({
   selector: 'app-demande-approvisionnement',
@@ -63,8 +67,13 @@ export class DemandeApprovisionnementComponent  implements OnInit {
 
   pdfToShow = null;
 
+  codeDoc = '';
+  listSigner: Signer[] = [];
+  listOccuper: Occuper[] = [];
+
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
-    private formBulder:FormBuilder, private sanitizer: DomSanitizer, private serviceUser: UtilisateurService) {
+    private formBulder:FormBuilder, private sanitizer: DomSanitizer, private serviceUser: UtilisateurService
+    , private serviceSignataire: SignataireService) {
 
     this.pdfToShow=sanitizer.bypassSecurityTrustResourceUrl('/');
       this.initDtOptions();
@@ -179,6 +188,28 @@ export class DemandeApprovisionnementComponent  implements OnInit {
       }
     );
 
+  }
+
+  getAllOccuper(){
+    this.serviceSignataire.getOccupers().subscribe(
+      (data) => {
+        this.listOccuper = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des occupations', erreur);
+      }
+    );
+  }
+
+  getAllSigner(){
+    this.serviceSignataire.getSigners().subscribe(
+      (data) => {
+        this.listSigner = data;
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des signers', erreur);
+      }
+    );
   }
 
   getAllDemandeAppro(){
@@ -512,13 +543,24 @@ export class DemandeApprovisionnementComponent  implements OnInit {
 
         });
         moment.locale('fr');
-        doc.setDrawColor(0);
+        /*doc.setDrawColor(0);
         doc.setFillColor(255, 255, 255);
         doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
         //doc.setFont("Times New Roman");
         doc.setFontSize(18);
         doc.text('DEMANDE APPROVISIONNEMENT', 53, 30);
-        doc.setFontSize(14);
+        doc.setFontSize(14);*/
+
+        doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+        doc.setDrawColor(0);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+        //doc.setFont("Times New Roman");
+        doc.setFontSize(15);
+        doc.text('DEMANDE APPROVISIONNEMENT', 62, 35);
+        doc.setFontSize(12);
+
         doc.text('Référence : '+demandeAppro.numDA, 15, 45);
         doc.text('Date : '+moment(new Date(demandeAppro.dateDA.toString())).format('DD/MM/YYYY'), 152, 45);
         autoTable(doc, {

@@ -3,6 +3,16 @@ import { INavData } from '@coreui/angular';
 
 export class CaissierHabilitation {
   static navIdata: INavData[] = [
+
+    {
+      name: 'Accueil',
+      url: '/accueil',
+      icon: 'icon-home',
+      badge: {
+        variant: 'info',
+        text: ''
+      }
+    },
     //Groupe utilisation
     {
       title: true,

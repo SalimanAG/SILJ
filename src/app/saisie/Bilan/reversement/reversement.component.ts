@@ -25,6 +25,7 @@ import autoTable from 'jspdf-autotable';
 import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToolsService } from '../../../../services/utilities/tools.service';
+import { Fonction } from '../../../../models/fonction.model';
 @Component({
   selector: 'app-reversement',
   templateUrl: './reversement.component.html',
@@ -56,10 +57,10 @@ export class ReversementComponent implements OnInit {
     editReversementFormGroup:FormGroup;
 
     editReversement:Reversement = new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','','',false, new Service('',''))));
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))));
 
     suprReversement:Reversement = new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','','',false, new Service('',''))));
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))));
 
     tempAddLigneReversement:LigneReversement[] = [];
     tempEditLigneReversement:LigneReversement[] = [];
@@ -68,11 +69,11 @@ export class ReversementComponent implements OnInit {
     ligneReversement:LigneReversement[] = [];
 
     editLigneReversement :LigneReversement = new LigneReversement(0,0,'',new Date(),'','',new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','','',false, new Service('','')))),
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('','')))),
     new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')) );
 
     suprLigneReversement :LigneReversement = new LigneReversement(0,0,'',new Date(),'','',new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','','',false, new Service('','')))),
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('','')))),
     new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')) );
 
     exercices:Exercice[] = [];
@@ -328,7 +329,7 @@ addArticleForAddingOfReversement(inde:number){
   if(exist===false){
     this.tempAddLigneReversement.push(new LigneReversement(0, this.articles[inde].prixVenteArticle, '', new Date(), '','',
     new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','','',false, new Service('','')))),
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('','')))),
       this.articles[inde]));
   }
 
@@ -347,7 +348,7 @@ addArticleForEditingOfReversement(inde:number){
   if(exist===false){
     this.tempEditLigneReversement.push(new LigneReversement(0, this.articles[inde].prixVenteArticle, '', new Date(),'','',
     new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','','',false, new Service('','')))),
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('','')))),
       this.articles[inde]));
   }
 

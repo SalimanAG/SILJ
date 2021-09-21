@@ -149,14 +149,15 @@ export class OperationCaisseComponent implements OnInit {
   lineOfPV: LignePointVente[];
   totalImput: number;
   total: number;
+  deb=new Date(new Date().getFullYear(), new Date().getMonth(),
+    new Date().getDate(),0,0);
 
-  constructor(private serCor: CorrespondantService, private serU: UtilisateurService,
-    private serExo: ExerciceService,
-    private servPV: PointVenteService,
-    private servOp: OperationCaisseService, private fbuilder: FormBuilder, private router: Router,
-    private sanitizer: DomSanitizer, private tst: ToastrService, public outil: ToolsService) {
+  constructor(private serCor: CorrespondantService, private serU: UtilisateurService, public outil: ToolsService,
+    private serExo:ExerciceService, private servPV: PointVenteService, private servOp: OperationCaisseService,
+    private fbuilder: FormBuilder, private router: Router, private sanitizer: DomSanitizer, private tst: ToastrService,
+  ) {
 
-
+    this.exo = serExo.exoSelectionner;
     moment.locale('fr');
 
     this.tabDailyOp = {
@@ -318,6 +319,9 @@ export class OperationCaisseComponent implements OnInit {
     this.rechargerLigneOpCaisse();
     this.chargerPV();
     this.ChargerAccessoires();
+    console.log('Exo sélectionné', this.serExo.exoSelectionner);
+    this.serExo.getAllExo()
+
   }
 
   ngOnInit() {
@@ -341,7 +345,7 @@ export class OperationCaisseComponent implements OnInit {
     this.servOp.getAllTypes().subscribe(
       data => {
         typs = data;
-        if (typs.length == 0) {
+        /*if (typs.length == 0) {
           this.servOp.addATypes(new TypeRecette('P', 'Prestation')).subscribe(
             data => {
               this.servOp.addATypes(new TypeRecette('L', 'Prestation')).subscribe(
@@ -355,7 +359,7 @@ export class OperationCaisseComponent implements OnInit {
 
             }
           );
-        }
+        }*/
       }
     );
 
@@ -508,9 +512,6 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   annulerOperation() {
-    this.annulop.valideOpCaisse = false;
-    this.annulop.annulMotif = this.annulGroup.value['motif'];
-    this.annulop.auteurAnnul= this.user;
     switch (this.annulop.typeRecette.codeTypRec) {
       case 'P': {
         const lop = this.lignesOp.filter(lop => lop.opCaisse.numOpCaisse === this.annulop.numOpCaisse);
@@ -534,6 +535,9 @@ export class OperationCaisseComponent implements OnInit {
                         n++;
                         if (n === lop.length) {
                           this.rechargerLigneOpCaisse();
+                          this.annulop.valideOpCaisse = false;
+                          this.annulop.annulMotif = this.annulGroup.value['motif'];
+                          this.annulop.auteurAnnul= this.user;
                           this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
                             data => {
                               this.chargerOperations();
@@ -566,6 +570,9 @@ export class OperationCaisseComponent implements OnInit {
                     if (this.echeances.filter(ec => ec.opCaisse.numOpCaisse === this.annulop.numOpCaisse).length === 0) {
                       this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
                         data => {
+                          this.annulop.valideOpCaisse = false;
+                          this.annulop.annulMotif = this.annulGroup.value['motif'];
+                          this.annulop.auteurAnnul= this.user;
                           this.servOp.getAllOp().subscribe(
                             dataop => {
                               console.log('Annulation effectuée avec succès');
@@ -598,6 +605,9 @@ export class OperationCaisseComponent implements OnInit {
                 this.servPV.editPointVente(elt.numPointVente, ptv).subscribe(
                   data => {
                     if (this.pointV.filter(pt => pt.opCaisse.numOpCaisse === this.annulop.numOpCaisse).length === 0) {
+                      this.annulop.valideOpCaisse = false;
+                      this.annulop.annulMotif = this.annulGroup.value['motif'];
+                      this.annulop.auteurAnnul= this.user;
                       this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
                         data => {
                           console.log('Annulation effectuée avec succès');
@@ -854,6 +864,8 @@ export class OperationCaisseComponent implements OnInit {
       new TypeRecette('P', 'Prestation'), this.modes[this.addVentGroup.value['nVentMod']], this.serExo.exoSelectionner,
       this.user);
     newOC.annulMotif = null;
+    console.log(newOC);
+
     this.servOp.addOp(newOC)
       .subscribe(
         (data) => {
@@ -1056,7 +1068,7 @@ export class OperationCaisseComponent implements OnInit {
             } else {
               p = prix.prixIm;
             }
-            const eche = new Echeance(mois[des.getMonth()-1], dde.getFullYear(), new Date(des), false,
+            const eche = new Echeance(mois[dde.getMonth()], dde.getFullYear(), new Date(des), false,
             p, con, null);
             this.echeanceAPayer.push(eche);
             n++;

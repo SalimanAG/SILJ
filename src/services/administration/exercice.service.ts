@@ -14,7 +14,9 @@ export class ExerciceService {
   constructor(private httpCli:HttpClient, private serviceIp:AssocierUtilisateurService) {
     this.getAllExo().subscribe(
       (data) => {
-        this.exoSelectionner = data[data.length-1];
+        this.exoSelectionner = data[data.length - 1];
+        console.log(this.exoSelectionner);
+
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des exos', erreur);

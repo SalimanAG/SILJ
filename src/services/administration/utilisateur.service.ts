@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Fonction } from '../../models/fonction.model';
 import { Service } from '../../models/service.model';
 import { Utilisateur } from '../../models/utilisateur.model';
 import { AssocierUtilisateurService } from './associer-utilisateur.service';
@@ -11,7 +12,7 @@ export class UtilisateurService {
 
   private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
-  public connectedUser:Utilisateur = new Utilisateur('', '', '', '','', false, new Service('', ''));
+  public connectedUser:Utilisateur = new Utilisateur('', '', '', '',new Fonction('',''), false, new Service('', ''));
 
   public isAuth:boolean = false;
 
