@@ -1,7 +1,6 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataTableDirective } from 'angular-datatables';
-import { data } from 'jquery';
 import {ModalDirective} from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { Fonction } from '../../models/fonction.model';
@@ -66,7 +65,7 @@ export class UtilisateursComponent implements OnInit {
       addMotDePass:'',
       addNomUtilisateur:['', Validators.required],
       addPrenomUtilisateur:['', Validators.required],
-      addFonctiontilisateur:'',
+      addFonctionUtilisateur:0,
       addActiveUtilisateur:false,
       addService:-1
     });
@@ -76,7 +75,7 @@ export class UtilisateursComponent implements OnInit {
       editMotDePass:'',
       editNomUtilisateur:['', Validators.required],
       editPrenomUtilisateur:['', Validators.required],
-      editFonctiontilisateur:'',
+      editFonctionUtilisateur:0,
       editActiveUtilisateur:false,
       editService:-1,
       editAskMdp:false
@@ -162,14 +161,15 @@ export class UtilisateursComponent implements OnInit {
     }
 
     let fonction = null;
-    if(this.addUserFormsGroup.value['addService'] != -1){
-      fonction = this.fonctions[this.addUserFormsGroup.value['addFonctiontilisateur']];
+    if(this.addUserFormsGroup.value['addFonctionUtilisateur'] != -1){
+      fonction = this.fonctions[this.addUserFormsGroup.value['addFonctionUtilisateur']];
     }
 
+    
     const newUser = new Utilisateur(this.addUserFormsGroup.value['addLogin'], null,
       this.addUserFormsGroup.value['addNomUtilisateur'], this.addUserFormsGroup.value['addPrenomUtilisateur'],
       fonction, this.addUserFormsGroup.value['addActiveUtilisateur'], service, true);
-    console.log(newUser);
+
 
 
     this.serviceUser.addAUser(newUser).subscribe(
@@ -198,9 +198,15 @@ export class UtilisateursComponent implements OnInit {
     if(this.editUserFormsGroup.value['editService'] != -1){
       service = this.services[this.editUserFormsGroup.value['editService']];
     }
+
+    let fonction = null;
+    if(this.editUserFormsGroup.value['editFonctionUtilisateur'] != -1){
+      fonction = this.fonctions[this.editUserFormsGroup.value['editFonctionUtilisateur']];
+    }
+
     const newUser = new Utilisateur(this.editUserFormsGroup.value['editLogin'], null,
     this.editUserFormsGroup.value['editNomUtilisateur'], this.editUserFormsGroup.value['editPrenomUtilisateur'],
-    this.editUserFormsGroup.value['editFonctiontilisateur'], this.editUserFormsGroup.value['editActiveUtilisateur'],
+    fonction, this.editUserFormsGroup.value['editActiveUtilisateur'],
     service, this.editUserFormsGroup.value['editAskMdp']);//editAskMdp
 
     newUser.idUtilisateur = this.editUser.idUtilisateur;
@@ -228,7 +234,6 @@ export class UtilisateursComponent implements OnInit {
         console.log('Erreur lors de la suppression : ', erreur);
       }
     );
-
 
   }
 
