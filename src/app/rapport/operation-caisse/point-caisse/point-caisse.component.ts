@@ -531,7 +531,7 @@ export class PointCaisseComponent implements OnInit {
     }
   }
 
-  pointEche() {
+ /* pointEche() {
     this.opServ.getloptypmod('2021-01-01', '2021-09-22', 'P', 'E').subscribe(
       (data) => {
         console.log(data);
@@ -540,7 +540,7 @@ export class PointCaisseComponent implements OnInit {
       (err) => {
         console.log(err);
       });
-  }
+  }*/
 
   manageCollapses(inde:number){
     this.opened = inde;
