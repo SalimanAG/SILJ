@@ -21,6 +21,7 @@ import { LignePointVente } from '../../../../models/lignePointVente.model';
 import { ToastrService } from 'ngx-toastr';
 import { ToolsService } from '../../../../services/utilities/tools.service';
 import { HttpParams } from '@angular/common/http';
+import { data } from 'jquery';
 
 @Component({
   selector: 'app-point-caisse',
@@ -531,14 +532,14 @@ export class PointCaisseComponent implements OnInit {
   }
 
   pointEche() {
+    this.opServ.getloptypmod('2021-01-01', '2021-09-22', 'P', 'E').subscribe(
+      (data) => {
+        console.log(data);
 
-    //this.opServ.getCaiss(this.caiArr[this.pcGroup.value['caiPC']].codeCaisse.toString(),
-//      'E', new Date(this.pcGroup.value['debPC']), new Date(this.pcGroup.value['finPC'])).subscribe(
-        //data => {
-//          let l = data;
- //       console.log('Total Location perçue: ');
-///        }
-//      )
+      },
+      (err) => {
+        console.log(err);
+      });
   }
 
   manageCollapses(inde:number){

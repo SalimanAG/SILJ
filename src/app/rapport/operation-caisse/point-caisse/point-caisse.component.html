@@ -17,7 +17,7 @@
           <div class="form-group col-sm-3">
             <label for="arrPC">Arrondissement</label>
             <select id="arrPC" name="arrPC" class="form-control" formControlName="arrPC" (ngModelChange)="filtre()">
-              <option value="-1">Tous les arrondissements</option>
+              <!--option value="-1">Tous les arrondissements</option-->
               <option *ngFor="let item of arrondissements; let i = index" [value]="i">
                 {{ item.codeArrondi }} - {{ item.nomArrondi }}</option>
             </select>
@@ -25,9 +25,9 @@
           <div class="form-group col-sm-3">
             <label for="caiPC">Caisse</label>
             <select id="caiPC" name="caiPC" formControlName="caiPC" class="form-control">
-              <option value="-1">Toutes les caisses</option>
+              <!--option value="-1">Toutes les caisses</option-->
               <option *ngFor="let caisse of caiArr; let i = index" [value]="i">
-                {{ caisse.codeCaisse }} - {{ caisse.libeCaisse }}</option>
+                {{ caisse.libeCaisse }}</option>
             </select>
 
           </div>
@@ -44,7 +44,7 @@
 
         </div>
         <button type="submit" class="btn btn-primary">Générer</button>
-        <!--button type="button" class="btn btn-primary" (click)="pointEche()">arrondissement</button-->
+        <button type="button" class="btn btn-primary" (click)="pointEche()">arrondissement</button>
       </form>
     </div>
 
