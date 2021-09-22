@@ -184,30 +184,30 @@ export class SignataireComponent implements OnInit {
       lib: new FormControl('',Validators.required)
     });
     this.modPostGroup= this.builder.group({
-      cod: new FormControl('',Validators.required),
-      lib: new FormControl('',Validators.required)
+      modCod: new FormControl('',Validators.required),
+      modLib: new FormControl('',Validators.required)
     });
 
     this.addPersGroup = this.builder.group({
-      cod: new FormControl('',Validators.required),
-      lib: new FormControl('',Validators.required)
+      nomPers: new FormControl('',Validators.required),
+      prenomPers: new FormControl('',Validators.required)
     });
     this.modPersGroup= this.builder.group({
-      nm: new FormControl('',Validators.required),
-      pn: new FormControl('',Validators.required)
+      modNomPers: new FormControl('',Validators.required),
+      modPrenompers: new FormControl('',Validators.required)
     });
 
     this.addSignGroup = this.builder.group({
-      po: new FormControl('',Validators.required),
-      ra: new FormControl('',Validators.required),
-      deb: new FormControl('',Validators.required),
-      fin: new FormControl('',Validators.required)
+      addPo: new FormControl('',Validators.required),
+      addRa: new FormControl('',Validators.required),
+      addDeb: new FormControl('',Validators.required),
+      addFin: new FormControl('',Validators.required)
     });
     this.modSignGroup= this.builder.group({
-      po: new FormControl('',Validators.required),
-      ra: new FormControl('',Validators.required),
-      deb: new FormControl('',Validators.required),
-      fin: new FormControl('',Validators.required)
+      modSignPo: new FormControl('',Validators.required),
+      modSignRa: new FormControl('',Validators.required),
+      modSignDeb: new FormControl('',Validators.required),
+      modSignFin: new FormControl('',Validators.required)
     });
 
     this.addOccuGroup = this.builder.group({
@@ -236,10 +236,11 @@ export class SignataireComponent implements OnInit {
   }
 
   initAddPost() {
-    this.pos = new Poste('', '');
-    console.log(this.pos);
-    this.addPost.show()
+    this.addPost.show();
   }
+
+
+  //Valider add postes
   valAddPost() {
     let obj = new Poste(this.addPostGroup.value['cod'], this.addPostGroup.value['lib']);
       this.sis.addPoste(obj).subscribe(
@@ -261,17 +262,20 @@ export class SignataireComponent implements OnInit {
 
   initModPost(i: number) {
     this.pos = this.postes[i];
-    this.modPost.show()
+    this.modPost.show();
   }
+
+
+  // Valider la modification de post
   valModPost() {
-      let obj = new Poste(this.modPostGroup.value['cod'], this.modPostGroup.value['lib']);
+      let obj = new Poste(this.modPostGroup.value['modCod'], this.modPostGroup.value['modLib']);
       this.sis.editPoste(this.pos.idPost, obj).subscribe(
-        data => {
+        (data) => {
           this.tst.success('Modification de poste réussie')
           //this.listPost();
           this.annulModPost();
         },
-        err => {
+        (err) => {
           this.tst.warning('Modification de poste échoué')
         }
       )
@@ -287,6 +291,7 @@ export class SignataireComponent implements OnInit {
     this.pos = this.postes[i];
     this.supPost.show()
   }
+
   valSupPost() {
     this.sis.delPoste(this.pos.idPost).subscribe(
       (data) => {
@@ -317,15 +322,22 @@ export class SignataireComponent implements OnInit {
     this.addPers.show();
   }
   valAddPers() {
-    let obj = new Personne(this.addPersGroup.value['cod'], this.addPersGroup.value['lib']);
+    let obj = new Personne(this.addPersGroup.value['nomPers'], this.addPersGroup.value['prenomPers']);
+    console.log('Personne', obj);
+    
       this.sis.addPersonne(obj).subscribe(
-        data => {
-          this.tst.success('Ajout de personne réussi')
+       (data) => {
+         console.log('Personne data', data);
+         
+          this.tst.success('Ajout de personne réussi');
+          this.annulAddPers();
         },
-        err => {
+        (err) => {
           this.tst.warning('Ajour de personne échoué')
       });
   }
+
+  // List des personnes et fermeture du modal personne
   annulAddPers() {
     this.listPers();
     this.addPers.hide();
@@ -337,19 +349,24 @@ export class SignataireComponent implements OnInit {
     console.log('id: '+this.pers.idPers);
     this.modPers.show()
   }
+
+  //Valider midification de personne
   valModPers() {
-      let obj = new Personne(this.modPersGroup.value['nm'], this.modPersGroup.value['pn']);
-      this.sis.editPersonne(this.pers.idPers, obj).subscribe(
-        data => {
+      let objPersonUpdated = new Personne(this.modPersGroup.value['modNomPers'], this.modPersGroup.value['modPrenompers']);
+      objPersonUpdated.idPers = this.pers.idPers;
+      console.log('Personne en mode', objPersonUpdated);
+      
+      this.sis.editPersonne(this.pers.idPers, objPersonUpdated).subscribe(
+       (data) => {
           this.tst.success('Modification de personne réussie')
-          console.log('Modif ',data);
+          console.log('Modif personne success ',data);
 
           this.listPers();
         },
-        err => {
+       ( err) => {
           this.tst.warning('Modification de personne échoué')
         }
-      )
+      );
     this.modPers.hide();
     }
   annulmodPers() {
@@ -357,16 +374,18 @@ export class SignataireComponent implements OnInit {
   }
 
   initSupPers(i: number) {
-    this.pos = this.postes[i];
-    this.supOccu.show()
+    this.pers = this.personnes[i];
+    this.supPers.show();
   }
+
+  //Validation pour suppressiin cde personne
   valSupPers() {
     this.sis.delPersonne(this.pers.idPers).subscribe(
-      data => {
+      (data) => {
         this.tst.success('Suppression effectuée avec succès');
         this.listPers();
       },
-      err => {
+      (err )=> {
         this.tst.warning('La suppression a échoué');
       }
     );
@@ -452,14 +471,29 @@ export class SignataireComponent implements OnInit {
     this.addSign.show()
     this.listRapp();
     this.listPost();
+    this.addSignGroup.patchValue({
+      addDeb: "",
+      addFin: "",
+      addPo: "",
+      addRa: ""
+    })
   }
+
+  //Valider ajout de signataire
   valAddSign() {
-    let obj = new Signer(this.addSignGroup.value['deb'], this.addSignGroup.value['fin'], this.postes[this.addSignGroup.value['po']], this.rapports[this.addSignGroup.value['ra']]);
+    let obj = new Signer(this.addSignGroup.value['addDeb'], this.addSignGroup.value['addFin'], this.postes[this.addSignGroup.value['addPo']], this.rapports[this.addSignGroup.value['addRa']]);
     console.log('value ', obj);
     
       this.sis.addSigner(obj).subscribe(
         (data) => {
           console.log('donnéé', data);
+
+          this.addSignGroup.patchValue({
+            addDeb: '',
+            addFin: '',
+            addPo: '',
+            addRa: ''
+          })
           
           this.tst.success('Ajout d\'assignation de droit de signature');
           this.listSign();
@@ -476,15 +510,19 @@ export class SignataireComponent implements OnInit {
     this.listSign();
   }
 
+
+  // initialisation de la boite de dialogue de modification 
   initModSign(i: number) {
     this.sign = this.signers[i];
+    console.log('id', this.sign);
+    
     this.listRapp();
     this.listPost();
     this.modSign.show()
   }
   valModSign() {
       let obj = new Signer(this.modPostGroup.value['deb'], this.modPostGroup.value['fin'], this.modPostGroup.value['po'], this.modPostGroup.value['ra']);
-      this.sis.editSigner(this.sign.id, obj).subscribe(
+      this.sis.editSigner(this.sign.idSign, obj).subscribe(
         data => {
           this.tst.success('Modification d\'Signpation de poste réussie')
         },
@@ -498,12 +536,30 @@ export class SignataireComponent implements OnInit {
     this.listSign();
   }
 
+
+  //initialisation de la boite de dialogue de suppression
   initSupSign(i: number) {
     this.sign = this.signers[i];
-    this.supSign.show()
+    console.log('val', this.sign);
+    
+    this.supSign.show();
   }
+
+
   valSupSign() {
-    this.sis.delSigner(this.sign.id);
+    this.sis.delSigner(this.sign.idSign).subscribe(
+      (data) =>{
+        this.tst.success('Suppression effectuée avec succès');
+        console.log('data', data);
+        this.listSign();
+        this.supSign.hide();
+        
+
+      },
+      (err) =>{
+
+      });
+    
   }
 
 }
