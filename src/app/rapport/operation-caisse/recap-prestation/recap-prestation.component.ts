@@ -154,7 +154,7 @@ export class RecapPrestationComponent implements OnInit {
     this.serviceOpCaisse.getAllOp().subscribe(
       (data) => {
 
-        this.serviceOpCaisse.getAllOpLines().subscribe(
+        this.serviceOpCaisse.getAllValideLines().subscribe(
           (data2) => {
 
             doc.setDrawColor(0);

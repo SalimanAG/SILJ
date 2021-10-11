@@ -26,7 +26,7 @@
           <td>{{ user.idUtilisateur }}</td>
           <td>{{ user.nomUtilisateur }}</td>
           <td>{{ user.prenomUtilisateur }}</td>
-          <td>{{ user.fonctionUtilisateur?.libFonction }}</td>
+          <td>{{ user.fonctionUtilisateur.libFonction }}</td>
           <td *ngIf="user.service!==null && user.service!==undefined">{{ user.service.libService }}</td>
           <td *ngIf="user.service===null || user.service===undefined">AUCUN</td>
           <td *ngIf="user.activeUtilisateur.valueOf()===true">OUI</td>
@@ -35,8 +35,8 @@
             <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditUser(i)"><span class="fa fa-edit"></span></button>
             <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteUser(i)"><span class="fa fa-trash"></span></button>
             <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosUser(i)"><span class="fa fa-eye"></span></button>
-            <!--<button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
-            Le bouton des options
+            <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+            <!--Le bouton des options-->
             <div class="btn-group" dropdown>
               <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
               <ul *dropdownMenu class="dropdown-menu" role="menu">
@@ -49,7 +49,7 @@
                 <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                 </li>
               </ul>
-            </div>-->
+            </div>
           </td>
         </tr>
 
@@ -108,9 +108,10 @@
                           <div class="form-group col-sm-6">
                             <label for="addFonctionUtilisateur">Fonction</label>
                             <select id="addFonctionUtilisateur" name="addFonctionUtilisateur" class="form-control"
-                              formControlName="addFonctionUtilisateur">
+                              formControlName="addFonctiontilisateur">
+                              <option value="-1"></option>
                               <option *ngFor="let servi of fonctions; let i = index" [value]="i">
-                                {{ servi?.libFonction }}
+                                {{ servi.libFonction }}
                               </option>
                             </select>
                             <!--label for="addMotDePass">Mot de Passe</label>
@@ -125,7 +126,7 @@
                               formControlName="addService">
                                 <option value="-1"></option>
                                 <option *ngFor="let servi of services; let i = index" [value]="i">
-                                {{ servi?.libService }}
+                                {{ servi.libService }}
                                 </option>
                             </select>
                           </div>
@@ -186,7 +187,8 @@
                           </div>
                           <div class="form-group col-sm-6">
                             <label for="editFonctionUtilisateur">Fonction</label>
-                            <select id="editService" name="editService" class="form-control" formControlName="editFonctionUtilisateur">
+                            <select id="editService" name="editService" class="form-control" formControlName="editService">
+                              <option value="-1"></option>
                               <option *ngFor="let servi of fonctions; let i = index" [value]="i">
                                {{ servi.libFonction }}
                               </option>
@@ -301,7 +303,7 @@
                       </tr>
                       <tr>
                         <th>Dernière Connexion</th>
-                        <td>le 31/12/2020 à 17h30 -- Pas encore</td>
+                        <td>le 31/12/2020 à 17h30 Pas encore</td>
                       </tr>
                       <tr>
                         <th>En ligne</th>

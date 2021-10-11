@@ -180,11 +180,11 @@ export class RecapLivrableComponent implements OnInit {
     doc.text('  Période du \t\t'+moment(this.repport1FormsGroup.value['rep1DateDebut']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 45);
     doc.text('\t\tAu\t\t'+moment(this.repport1FormsGroup.value['rep1DateFin']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 55);
 
-    this.serviceOpCaisse.getAllOpLines().subscribe(
+    this.serviceOpCaisse.getAllValideLines().subscribe(
       (data) => {
-        this.serviceOpCaisse.getAllEcheances().subscribe(
+        this.serviceOpCaisse.getAllEcheancesValides().subscribe(
           (data2) => {
-            this.serviceOpCaisse.getAllOp().subscribe(
+            this.serviceOpCaisse.getOpValide().subscribe(
               (data3) => {
 
                 let totalGeneral = 0;
@@ -598,7 +598,7 @@ export class RecapLivrableComponent implements OnInit {
     this.serviceOpCaisse.getAllOp().subscribe(
       (data) => {
 
-        this.serviceOpCaisse.getAllOpLines().subscribe(
+        this.serviceOpCaisse.getAllValideLines().subscribe(
           (data2) => {
 
             /*doc.setDrawColor(0);

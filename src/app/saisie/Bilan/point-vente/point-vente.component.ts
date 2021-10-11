@@ -31,6 +31,12 @@ import * as moment from 'moment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ToolsService } from '../../../../services/utilities/tools.service';
 import { Fonction } from '../../../../models/fonction.model';
+import { OperationCaisseService } from '../../../../services/saisie/operation-caisse.service';
+import { Caisse } from '../../../../models/caisse.model';
+import { UtilisateurService } from '../../../../services/administration/utilisateur.service';
+import { OpCaisse } from '../../../../models/OpeCaisse.model';
+import { TypeRecette } from '../../../../models/type.model';
+import { ModePaiement } from '../../../../models/mode.model';
 @Component({
   selector: 'app-point-vente',
   templateUrl: './point-vente.component.html',
@@ -50,6 +56,7 @@ export class PointVenteComponent implements OnInit {
 
   //
   @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
+  caisse: Caisse;
 
   dtOptions1: DataTables.Settings = {};
   dtOptions2: DataTables.Settings = {};
@@ -106,7 +113,8 @@ export class PointVenteComponent implements OnInit {
 
   constructor(private servicePointVente:PointVenteService, private serviceRegisseur:RegisseurService, private serviceExercice:ExerciceService,
     private serviceArticle:ArticleService, private serviceCorres:CorrespondantService, private formBulder:FormBuilder,
-    private sanitizer:DomSanitizer, public outil: ToolsService ){
+    private sanitizer: DomSanitizer, public outil: ToolsService, private servOp: OperationCaisseService,
+    public useSer: UtilisateurService) {
       this.initDtOptions();
       this.initFormsGroup();
       moment.locale('fr');
@@ -195,6 +203,12 @@ export class PointVenteComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.servOp.getUserCaisse(this.useSer.connectedUser.idUtilisateur).subscribe(
+      (datc) => {
+        this.caisse = datc[0].caisse;
+      }
+    )
 
     this.getAllLignePointVente();
     this.getAllExercice();
@@ -387,16 +401,25 @@ export class PointVenteComponent implements OnInit {
     var concernedStocker:Stocker = null
     var magasinStock:Gerer = null ;
 
+    const newOp = new OpCaisse('001', this.addPointVenteFormGroup.value['addDatePv'],
+      this.correspondant[this.addPointVenteFormGroup.value['addCorres']].magasinier.nomMagasinier + ' ' +
+      this.correspondant[this.addPointVenteFormGroup.value['addCorres']].magasinier.prenomMagasinier, true, 'Retour de vente',
+      new Date(), this.caisse, new TypeRecette('I', 'Imputation'), new ModePaiement('E', 'Espèces'),
+      this.serviceExercice.exoSelectionner, this.useSer.connectedUser);
 
-    const newPointVente= new PointVente(this.addPointVenteFormGroup.value['addNumPv'],
+    /*this.servOp.addOp(newOp).subscribe(
+      (dataOp) => {*/
+        const newPointVente= new PointVente(this.addPointVenteFormGroup.value['addNumPv'],
     this.addPointVenteFormGroup.value['addDatePv'],false,
     this.serviceExercice.exoSelectionner, this.correspondant[this.addPointVenteFormGroup.value['addCorres']],
     this.regisseur[this.addPointVenteFormGroup.value['addReg']]);
-    newPointVente.validePoint = true;
+        newPointVente.validePoint = true;
+        //newPointVente.payerPoint = true;
+        //newPointVente.opCaisse=dataOp
     console.log(this.tempAddLignePointVente, newPointVente);
     this.servicePointVente.addPointVente(newPointVente).subscribe(
       (data) => {
-        console.log('********',data);
+        console.log('********', data);
 
         this.tempAddLignePointVente.forEach(element => {
           element.pointVente = data;
@@ -410,6 +433,7 @@ export class PointVenteComponent implements OnInit {
               console.log('Erreur lors de la création de la ligne de point vente',erreur );
             }
           );
+         
 
            //Début reajustement de stock au sein du magasin du correspondant
               this.serviceCorres.getAllGerer().subscribe(
@@ -489,6 +513,8 @@ export class PointVenteComponent implements OnInit {
         console.log('Erreur lors de la création de point vente', erreur);
       }
     );
+      //}
+    //)
 
 
 

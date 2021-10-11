@@ -46,7 +46,7 @@ export class RegisseurHabilitation {
             name: 'Régisseurs',
             url: '/reg',
             icon: 'icon-puzzle'
-    
+
           },
           {
             name: 'Trésorier Communal',
@@ -86,8 +86,8 @@ export class RegisseurHabilitation {
         name: 'Opération de caisse',
         url: '/op-caisse',
         icon: 'icon-puzzle'
-      },*/
-      /*{
+      },
+      {
         name: 'Livraisons',
         url: '/livraison',
         icon: 'icon-puzzle'
@@ -264,7 +264,7 @@ export class RegisseurHabilitation {
     ]
   },
 
-    
+
     // **********************************************************/
   ];
 }

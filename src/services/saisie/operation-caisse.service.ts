@@ -19,6 +19,14 @@ import { LignePointVente } from '../../models/lignePointVente.model';
 import { Gerer } from '../../models/gerer.model';
 import { Affecter } from '../../models/affecter.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
+import { Observable } from 'rxjs';
+import { OpPrestBlock } from '../../models/opprestlock.model';
+import { OpLocBlock } from '../../models/oployerbloc.model';
+import { OpPointBlock } from './oppbloc.model';
+
+
+import { SearchOpCaisseDTO } from '../../models/searchOpCaisseDTO.model';
+import { SearchLinesOpCaissDTO } from '../../models/searchLinesOpCaissDTO.model';
 
 @Injectable({
   providedIn: 'root'
@@ -31,17 +39,61 @@ export class OperationCaisseService {
 
   }
 
+  getPoitVenteByOp(num: String) {
+    return this.lien.get<LignePointVente[]>(this.host+'stock/lignepointvente/byOp/'+num)
+  }
+
+  getUserCaisse(id: Number) {
+    return this.lien.get<Affecter[]>(this.host + 'facturation/affecter/uc/actu/usId=' + id);
+  }
+
   getAllOp() {
     return this.lien.get<OpCaisse[]>(this.host + 'facturation/opcaisse/list');
+  }
+
+  getloptypmod(dDeb: String, dFin: String, typ: String, mod: String): Observable<Object> {
+    return this.lien.get<LigneOpCaisse[]>(this.host + 'facturation/opcaisse/byPer/' + typ+'/' +
+      mod+'?dDeb=$'+dDeb+'&?dFin=$'+dFin)
   }
 
   getAOpCaissById(code: String) {
     return this.lien.get<OpCaisse>(this.host + 'facturation/opcaisse/byCodOpCai/' + code);
   }
 
-  addOp(corps: OpCaisse) {
+  getDailyOp(id: Number) {
+    return this.lien.get<OpCaisse[]>(this.host + 'facturation/opcaisse/jdh/usId='+id);
+  }
+
+  getOpValide() {
+    return this.lien.get<OpCaisse[]>(this.host + 'facturation/opcaisse/list/vld');
+  }
+
+  getOpAnnulees() {
+    return this.lien.get<OpCaisse[]>(this.host + 'facturation/opcaisse/list/anl');
+  }
+
+  imputCorres(corps: OpCaisse, points: PointVente[]) {
     return this.lien.post<OpCaisse>(this.host + 'facturation/opcaisse/list', corps);
   }
+
+  addOp(corps: OpCaisse) {
+    return this.lien.post<OpCaisse>(this.host + 'facturation/opcaisse/list', corps)
+  }
+
+  addVente(corps: OpPrestBlock) {
+    return this.lien.post<OpCaisse>(this.host + 'facturation/op/listV', corps)
+  }
+
+  addLoyer(corps: OpLocBlock) {
+    console.log(corps);
+
+    return this.lien.post<OpCaisse>(this.host + 'facturation/op/listL', corps)
+  }
+
+  addImput(corps: OpPointBlock) {
+    return this.lien.post<OpCaisse>(this.host + 'facturation/op/listI', corps)
+  }
+
 
   editAOpCaiss(code: String, corps: OpCaisse) {
     return this.lien.put<OpCaisse>(this.host + 'facturation/opcaisse/byCodOpCai/' + code, corps);
@@ -79,20 +131,32 @@ export class OperationCaisseService {
     return this.lien.get<TypeRecette[]>(this.host + 'facturation/typeRecette/list');
   }
 
-  addATypes(typ: TypeRecette) {
+  addEcheanceByOp(typ: TypeRecette) {
     return this.lien.post<TypeRecette[]>(this.host + 'facturation/typeRecette/list', typ);
   }
-/*
-  getAllUsers() {
-    return this.lien.get<Utilisateur[]>(this.host + 'commune/user/list');
+
+  getEcheanceByOp(num: String) {
+    return this.lien.get<Echeance[]>(this.host + 'location/echeance/byOp/'+num);
   }
 
-  getAllExos() {
-    return this.lien.get<Exercice[]>(this.host + 'commune/exercice/list');
+  getLignePVByOp(numop: String) {
+    return this.lien.get<LignePointVente[]>(this.host + 'stock/lignepointvente/byOp/'+numop);
   }
-*/
+
   getAllArticles() {
     return this.lien.get<Article[]>(this.host + 'stock/article/list');
+  }
+
+  getAllValideLines() {
+    return this.lien.get<LigneOpCaisse[]>(this.host + 'facturation/ligneOpCaisse/list/vld');
+  }
+
+  getAllAnnulLines() {
+    return this.lien.get<LigneOpCaisse[]>(this.host + 'facturation/ligneOpCaisse/list/anl');
+  }
+
+  saveBlock(bloc: OpPrestBlock) {
+    return this.lien.post<LigneOpCaisse[]>(this.host + 'facturation/ligneOpCaisse/op', bloc);
   }
 
   getAllOpLines() {
@@ -111,6 +175,10 @@ export class OperationCaisseService {
     return this.lien.get<LigneOpCaisse>(this.host + 'facturation/ligneOpCaisse/byCodLigOpCai/' + (id));
   }
 
+  getLineByOp(id: String) {
+    return this.lien.get<LigneOpCaisse[]>(this.host + 'facturation/ligneOpCaisse/numOp/' + (id));
+  }
+
   deleteAOpLine(id: number) {
     return this.lien.delete<LigneOpCaisse>(this.host + 'facturation/ligneOpCaisse/byCodLigOpCai/' + (id));
   }
@@ -121,6 +189,14 @@ export class OperationCaisseService {
 
   getAllContrats() {
     return this.lien.get<Contrat[]>(this.host + 'location/contrat/list');
+  }
+
+  getAllEcheancesValides() {
+    return this.lien.get<Echeance[]>(this.host + 'location/echeance/list/vld');
+  }
+
+  getAllEcheancesAnnulees() {
+    return this.lien.get<Echeance[]>(this.host + 'location/echeance/list/anl');
   }
 
   getAllEcheances() {
@@ -166,6 +242,14 @@ export class OperationCaisseService {
 
   getAllLPV() {
     return this.lien.get<LignePointVente[]>(this.host + 'stock/lignepointvente/list');
+  }
+
+   //Léonel
+   getAllOpCaisseOfDay(searchOpCaisseDTO: SearchOpCaisseDTO){
+    return this.lien.post<OpCaisse[]>(this.host + 'facturation/find/date-between',searchOpCaisseDTO);
+  }
+  getAllLinesOpCaisseByPeriodeAndCaisse(searchLinesOpCaissDTO: SearchLinesOpCaissDTO){
+    return this.lien.post<LigneOpCaisse[]>(this.host + 'facturation/find/lines-opcaisse-by-periode-caisse',searchLinesOpCaissDTO);
   }
 
 }

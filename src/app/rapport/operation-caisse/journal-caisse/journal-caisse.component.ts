@@ -34,21 +34,32 @@ export class JournalCaisseComponent implements OnInit {
   modePayements:ModePaiement[] = [];
   typeRecettes:TypeRecette[] =[];
   repport1FormsGroup: FormGroup;
+  annulGroup: FormGroup;
   pdfToShow = null;
   @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
-
+  deb = new Date();
 
   constructor(private serviceCaisse:CaisseService, private serviceOpCaisse:OperationCaisseService,
     private serviceUser:UtilisateurService, private serviceAssoUserToCaisse:AssocierUtilisateurService,
     private serviceArticle:ArticleService, private formBulder:FormBuilder, private sanitizer:DomSanitizer) {
 
-      moment.locale('fr');
+    moment.locale('fr');
+    this.deb.setHours(0);
+    this.deb.setMinutes(0)
+
 
       this.repport1FormsGroup = this.formBulder.group({
         rep1Caisse:-1,
         rep1ModePaiement:-1,
-        rep1DateDebut:[moment(Date.now()).format('yyyy-MM-DDTHH:mm') , Validators.required],
+        rep1DateDebut:[moment(this.deb).format('yyyy-MM-DDTHH:mm') , Validators.required],
         rep1DateFin:[moment(Date.now()).format('yyyy-MM-DDTHH:mm'), Validators.required]
+      });
+
+      this.annulGroup = this.formBulder.group({
+        annulCaisse:-1,
+        annulMode:-1,
+        annulDebut:[moment(this.deb).format('yyyy-MM-DDTHH:mm') , Validators.required],
+        annulFin:[moment(Date.now()).format('yyyy-MM-DDTHH:mm'), Validators.required]
       });
 
     }
@@ -168,11 +179,11 @@ export class JournalCaisseComponent implements OnInit {
     doc.text('  Période du \t\t'+moment(this.repport1FormsGroup.value['rep1DateDebut']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 45);
     doc.text('\t\tAu\t\t'+moment(this.repport1FormsGroup.value['rep1DateFin']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 55);
 
-    this.serviceOpCaisse.getAllOpLines().subscribe(
+    this.serviceOpCaisse.getAllValideLines().subscribe(
       (data) => {
-        this.serviceOpCaisse.getAllEcheances().subscribe(
+        this.serviceOpCaisse.getAllEcheancesValides().subscribe(
           (data2) => {
-            this.serviceOpCaisse.getAllOp().subscribe(
+            this.serviceOpCaisse.getOpValide().subscribe(
               (data3) => {
 
                 let totalGeneral = 0;
@@ -555,5 +566,411 @@ export class JournalCaisseComponent implements OnInit {
     );
 
   }
+
+  annulClicked(){
+
+    const doc = new jsPDF();
+
+    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(15);
+    doc.text('JOURNAL DES ANNULATIONS', 75, 35);
+    doc.setFontSize(12);
+    doc.text('  Période du \t\t'+moment(this.annulGroup.value['annulDebut']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 45);
+    doc.text('\t\tAu\t\t'+moment(this.annulGroup.value['annulFin']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 55);
+
+    this.serviceOpCaisse.getAllAnnulLines().subscribe(
+      (data) => {
+        this.serviceOpCaisse.getAllEcheancesAnnulees().subscribe(
+          (data2) => {
+            this.serviceOpCaisse.getOpAnnulees().subscribe(
+              (data3) => {
+
+                let totalGeneral = 0;
+
+
+                if(this.annulGroup.value['annulCaisse']==-1){
+
+                  let modePai:String = '';
+                  if(this.annulGroup.value['annulMode'] == -1){
+                    modePai = 'Tous les modes';
+                  } else {
+                    console.log('mode ', this.annulGroup.value['annulMode'])
+                    modePai = this.modePayements[this.annulGroup.value['annulMode']].libeModPay;
+                  }
+
+                  this.userAssociatedCaisse.forEach(element => {
+                    autoTable(doc, {
+                      theme: 'plain',
+                      margin: { top: 68 },
+                      columnStyles: {
+                        0: { textColor: 0, fontStyle: 'bold', halign: 'right' },
+                        1: { textColor: 0, halign: 'left' },
+                      },
+                      body: [
+                        ['Arrondissement / Site : ', element.arrondissement.codeArrondi+' - '+element.arrondissement.nomArrondi],
+                        ['Caisse :', element.codeCaisse+' - '+element.libeCaisse],
+                        ['Mode de Paiement :', modePai+'']
+                      ]
+                      ,
+                    });
+
+                    let totalCaisse = 0;
+
+                    let lignes = [];
+
+                    if(this.annulGroup.value['annulMode'] == -1){
+                      //console.log('opCaisses', data3);
+                      data3.forEach(element2 => {
+                        //console.log('Location', element2);
+                        //console.log('Essaie', new Date(element2.dateOpCaisse).valueOf(), 'ed', new Date(this.repport1FormsGroup.value['rep1DateDebut']));
+                        //console.log('comp1', element2.dateOpCaisse >= this.repport1FormsGroup.value['rep1DateDebut']);
+                        //console.log('comp2', element2.dateOpCaisse <= this.repport1FormsGroup.value['rep1DateFin']);
+                        if(new Date(element2.dateOpCaisse).valueOf() >= new Date(this.repport1FormsGroup.value['rep1DateDebut']).valueOf() && new Date(element2.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
+                        && element2.caisse.codeCaisse == element.codeCaisse){
+
+
+                          if(element2.typeRecette.codeTypRec == 'L'){
+                            let lig = [];
+                            lig.push(element2.numOpCaisse);
+                            lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
+                            lig.push(element2.typeRecette.libeTypRec);
+                            let qte:number = 0;
+                            let montan:number = 0;
+                            let immeuble:Immeuble = null;
+                            data2.forEach(element3 => {
+                              if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
+                                immeuble = element3.contrat.immeuble;
+                                qte++;
+                                montan += element3.prix.valueOf();
+                              }
+                            });
+                            lig.push('Location de la valeur Locative '+immeuble.codeIm+' du Site '+immeuble.siteMarcher.codeSite);
+                            lig.push('');
+                            lig.push(qte);
+                            lig.push(montan);
+
+                            lignes.push(lig);
+                            totalCaisse += montan;
+
+                          }
+                          else {
+
+                            data.forEach(element3 => {
+                              let lig = [];
+                              if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
+
+                                lig.push(element2.numOpCaisse);
+                                lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
+                                lig.push(element3.article.codeArticle);
+                                lig.push(element3.article.libArticle);
+                                lig.push(element3.prixLigneOperCaisse);
+                                lig.push(element3.qteLigneOperCaisse);
+                                lig.push(element3.prixLigneOperCaisse*element3.qteLigneOperCaisse)
+                                totalCaisse+=element3.prixLigneOperCaisse*element3.qteLigneOperCaisse;
+                                lignes.push(lig);
+                              }
+                            });
+
+                          }
+                        }
+                      });
+
+                    }
+                    else{
+
+                      data3.forEach(element2 => {
+                        //console.log('Location', element2);
+                        if(new Date(element2.dateOpCaisse).valueOf() >= new Date(this.annulGroup.value['annulDebut']).valueOf() && new Date(element2.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
+                        && element2.caisse.codeCaisse == element.codeCaisse && element2.modePaiement.codeModPay == this.modePayements[this.annulGroup.value['annulMode']].codeModPay){
+
+
+                          if(element2.typeRecette.codeTypRec == 'L'){
+                            let lig = [];
+                            lig.push(element2.numOpCaisse);
+                            lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
+                            lig.push(element2.typeRecette.libeTypRec);
+                            let qte:number = 0;
+                            let montan:number = 0;
+                            let immeuble:Immeuble = null;
+                            data2.forEach(element3 => {
+                              if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
+                                immeuble = element3.contrat.immeuble;
+                                qte++;
+                                montan += element3.prix.valueOf();
+                              }
+                            });
+                            lig.push('Location de la valeur Locative '+immeuble.codeIm+' du Site '+immeuble.siteMarcher.codeSite);
+                            lig.push('');
+                            lig.push(qte);
+                            lig.push(montan);
+
+                            lignes.push(lig);
+                            totalCaisse += montan;
+
+                          }
+                          else {
+                            data.forEach(element3 => {
+                              let lig = [];
+                              if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
+
+                                lig.push(element2.numOpCaisse);
+                                lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
+                                lig.push(element3.article.codeArticle);
+                                lig.push(element3.article.libArticle);
+                                lig.push(element3.prixLigneOperCaisse);
+                                lig.push(element3.qteLigneOperCaisse);
+                                lig.push(element3.prixLigneOperCaisse*element3.qteLigneOperCaisse)
+                                totalCaisse+=element3.prixLigneOperCaisse*element3.qteLigneOperCaisse;
+                                lignes.push(lig);
+                              }
+                            });
+
+                          }
+                        }
+                      });
+
+
+                    }
+
+                    autoTable(doc, {
+                      theme: 'grid',
+                      head: [['Reçu', 'Date', 'Article', 'Intitulé', 'Prix U', 'Quantité', 'Montant']],
+                      headStyles:{
+                         fillColor: [41, 128, 185],
+                         textColor: 255,
+                         fontStyle: 'bold' ,
+                      },
+                      margin: { top: 10 },
+                      body: lignes
+                      ,
+                    });
+
+                    autoTable(doc, {
+                      theme: 'grid',
+                      margin: { top: 50, left:100 },
+                      columnStyles: {
+                        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                      },
+                      body: [
+                        ['Montant Total Caisse '+element.codeCaisse, totalCaisse],
+                      ]
+                      ,
+                    });
+
+                    totalGeneral += totalCaisse;
+
+                  });
+                }
+                else {
+
+                  let modePai:String = '';
+                  if(this.annulGroup.value['annulMode'] == -1){
+                    modePai = 'Tous les modes';
+                  }else{
+                    modePai = this.modePayements[this.annulGroup.value['annulMode']].libeModPay;
+                  }
+
+                  let element:Caisse = this.userAssociatedCaisse[this.annulGroup.value['annulCaisse']];
+
+                  autoTable(doc, {
+                    theme: 'plain',
+                    margin: { top: 68 },
+                    columnStyles: {
+                      0: { textColor: 0, fontStyle: 'bold', halign: 'right' },
+                      1: { textColor: 0, halign: 'left' },
+                    },
+                    body: [
+                      ['Arrondissement / Site : ', element.arrondissement.codeArrondi+' - '+element.arrondissement.nomArrondi],
+                      ['Caisse :', element.codeCaisse+' - '+element.libeCaisse],
+                      ['Mode de Paiement :', modePai+'']
+                    ]
+                    ,
+                  });
+
+                  let totalCaisse = 0;
+
+                  let lignes = [];
+
+                  if(this.annulGroup.value['annulMode'] == -1){
+                    //console.log('opCaisses', data3);
+                    data3.forEach(element2 => {
+                      //console.log('Location', element2);
+                      if(new Date(element2.dateOpCaisse).valueOf() >= new Date(this.annulGroup.value['annulDebut']).valueOf() && new Date(element2.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
+                      && element2.caisse.codeCaisse == element.codeCaisse){
+
+
+                        if(element2.typeRecette.codeTypRec == 'L'){
+                          let lig = [];
+                          lig.push(element2.numOpCaisse);
+                          lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
+                          lig.push(element2.typeRecette.libeTypRec);
+                          let qte:number = 0;
+                          let montan:number = 0;
+                          let immeuble:Immeuble = null;
+                          data2.forEach(element3 => {
+                            if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
+                              immeuble = element3.contrat.immeuble;
+                              qte++;
+                              montan += element3.prix.valueOf();
+                            }
+                          });
+                          lig.push('Location de la valeur Locative '+immeuble.codeIm+' du Site '+immeuble.siteMarcher.codeSite);
+                          lig.push('');
+                          lig.push(qte);
+                          lig.push(montan);
+
+                          lignes.push(lig);
+                          totalCaisse += montan;
+
+                        }
+                        else {
+                          data.forEach(element3 => {
+                            let lig = [];
+                            if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
+
+                              lig.push(element2.numOpCaisse);
+                              lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
+                              lig.push(element3.article.codeArticle);
+                              lig.push(element3.article.libArticle);
+                              lig.push(element3.prixLigneOperCaisse);
+                              lig.push(element3.qteLigneOperCaisse);
+                              lig.push(element3.prixLigneOperCaisse*element3.qteLigneOperCaisse)
+                              totalCaisse+=element3.prixLigneOperCaisse*element3.qteLigneOperCaisse;
+                              lignes.push(lig);
+                            }
+                          });
+
+                        }
+                      }
+                    });
+
+                  }
+                  else{
+
+                    data3.forEach(element2 => {
+                      //console.log('Location', element2);
+                      if(new Date(element2.dateOpCaisse).valueOf() >= new Date(this.annulGroup.value['annulDebut']).valueOf() && new Date(element2.dateOpCaisse).valueOf() <= new Date(this.repport1FormsGroup.value['rep1DateFin']).valueOf()
+                      && element2.caisse.codeCaisse == element.codeCaisse && element2.modePaiement.codeModPay == this.modePayements[this.annulGroup.value['annulMode']].codeModPay){
+
+
+                        if(element2.typeRecette.codeTypRec == 'L'){
+                          let lig = [];
+                          lig.push(element2.numOpCaisse);
+                          lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
+                          lig.push(element2.typeRecette.libeTypRec);
+                          let qte:number = 0;
+                          let montan:number = 0;
+                          let immeuble:Immeuble = null;
+                          data2.forEach(element3 => {
+                            if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
+                              immeuble = element3.contrat.immeuble;
+                              qte++;
+                              montan += element3.prix.valueOf();
+                            }
+                          });
+                          lig.push('Location de la valeur Locative '+immeuble.codeIm+' du Site '+immeuble.siteMarcher.codeSite);
+                          lig.push('');
+                          lig.push(qte);
+                          lig.push(montan);
+
+                          lignes.push(lig);
+                          totalCaisse += montan;
+
+                        }
+                        else {
+                          data.forEach(element3 => {
+                            let lig = [];
+                            if(element3.opCaisse.numOpCaisse == element2.numOpCaisse){
+
+                              lig.push(element2.numOpCaisse);
+                              lig.push(moment(element2.dateOpCaisse).format('DD/MM/YYYY à HH:mm'));
+                              lig.push(element3.article.codeArticle);
+                              lig.push(element3.article.libArticle);
+                              lig.push(element3.prixLigneOperCaisse);
+                              lig.push(element3.qteLigneOperCaisse);
+                              lig.push(element3.prixLigneOperCaisse*element3.qteLigneOperCaisse)
+                              totalCaisse+=element3.prixLigneOperCaisse*element3.qteLigneOperCaisse;
+                              lignes.push(lig);
+                            }
+                          });
+
+                        }
+                      }
+                    });
+
+
+                  }
+
+                  autoTable(doc, {
+                    theme: 'grid',
+                    head: [['Reçu', 'Date', 'Article', 'Intitulé', 'Prix U', 'Quantité', 'Montant']],
+                    headStyles:{
+                       fillColor: [41, 128, 185],
+                       textColor: 255,
+                       fontStyle: 'bold' ,
+                    },
+                    margin: { top: 10 },
+                    body: lignes
+                    ,
+                  });
+
+                  autoTable(doc, {
+                    theme: 'grid',
+                    margin: { top: 50, left:100 },
+                    columnStyles: {
+                      0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                    },
+                    body: [
+                      ['Montant Total Caisse '+element.codeCaisse, totalCaisse],
+                    ]
+                    ,
+                  });
+
+                  totalGeneral += totalCaisse;
+
+
+                }
+
+                autoTable(doc, {
+                  theme: 'grid',
+                  margin: { top: 50 },
+                  columnStyles: {
+                    0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign: 'left' },
+                    1: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', halign: 'right' }
+                  },
+                  body: [
+                    ['Total Général', totalGeneral],
+                  ]
+                  ,
+                });
+
+                this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'journalDeCaisse.pdf'}));
+                this.viewPdfModal.show();
+              },
+              (erreur) => {
+                console.log('Erreur lors de la récupération des opérations de caisse', erreur);
+              }
+            );
+
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération des échéances', erreur);
+          }
+        );
+        //console.log('Lignes dOperation de Caisse', data);
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des lignes dOpération de Caisse', erreur);
+      }
+    );
+
+  }
+
 
 }

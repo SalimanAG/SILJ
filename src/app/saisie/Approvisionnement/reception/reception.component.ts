@@ -1105,7 +1105,7 @@ export class ReceptionComponent implements OnInit {
         });*/
 
         let tabSignataire = [];
-        
+
         Tools2Service.getSignatairesOfAdocAtAmoment(this.codeDoc, reception.dateReception, this.listOccuper, this.listSigner)
         .forEach(elementSign => {
           tabSignataire.push(elementSign.post.libPost+'\n\n\n\n\n'+elementSign.personne.nomPers+' '+elementSign.personne.prenomPers);

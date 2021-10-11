@@ -22,6 +22,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ToolsService } from '../../../../services/utilities/tools.service';
 import { HttpParams } from '@angular/common/http';
 import { data } from 'jquery';
+import { PointVenteService } from '../../../../services/saisie/point-vente.service';
 
 @Component({
   selector: 'app-point-caisse',
@@ -40,7 +41,8 @@ export class PointCaisseComponent implements OnInit {
   caisses : Caisse[];
   caiArr : Caisse[];
   opcaisse : OpCaisse[];
-  ligOpc : LigneOpCaisse[];
+  ligOpcValide : LigneOpCaisse[];
+  ligOpcAnnule : LigneOpCaisse[];
   echeances : Echeance[];
   typeop : TypeRecette[];
   modes : ModePaiement[];
@@ -53,10 +55,15 @@ export class PointCaisseComponent implements OnInit {
   @ViewChild ('appercu') public appercu : ModalDirective;
   vuePdf;
 
+  total: number = 0;
+
   pcGroup : FormGroup;
+  imputG : FormGroup;
+  prestG : FormGroup;
+  locatG : FormGroup;
   constructor(public fBuilder : FormBuilder, public comServ : CommuneService,
-    public caiSer: CaisseService, public opServ : OperationCaisseService,
-    public sanit: DomSanitizer, public tst: ToastrService, public outils: ToolsService) {
+    public caiSer: CaisseService, public opServ : OperationCaisseService, public pvs: PointVenteService,
+    public sanit: DomSanitizer, public tst: ToastrService, public outils: ToolsService, private outil: ToolsService) {
     this.vuePdf=sanit.bypassSecurityTrustResourceUrl('/');
     this.pcGroup=fBuilder.group({
       arrPC: new FormControl(-1),
@@ -64,6 +71,22 @@ export class PointCaisseComponent implements OnInit {
       debPC: new FormControl(moment(this.deb).format('YYYY-MM-DDTHH:mm')),
       finPC: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm'))
     });
+
+    this.imputG=fBuilder.group({
+      debIm: new FormControl(moment(this.deb).format('YYYY-MM-DDT00:00')),
+      finIm: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm'))
+    });
+
+    this.prestG=fBuilder.group({
+      debP: new FormControl(moment(this.deb).format('YYYY-MM-DDT00:00')),
+      finP: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm'))
+    });
+
+    this.locatG=fBuilder.group({
+      deblc: new FormControl(moment(this.deb).format('YYYY-MM-DDT00:00')),
+      finlc: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm'))
+    });
+
   }
 
   ngOnInit(): void {
@@ -103,16 +126,16 @@ export class PointCaisseComponent implements OnInit {
       }
     );
 
-    this.opServ.getAllOpLines().subscribe(
+    this.opServ.getAllValideLines().subscribe(
       data=>{
-        this.ligOpc=data;
+        this.ligOpcValide=data;
       },
       erlop=>{
         console.log(erlop);
       }
     );
 
-    this.opServ.getAllEcheances().subscribe(
+    this.opServ.getAllEcheancesValides().subscribe(
       data=>{
         this.echeances=data;
       },
@@ -129,6 +152,8 @@ export class PointCaisseComponent implements OnInit {
         console.log(erec);
       }
     );
+
+
 
   }
 
@@ -151,7 +176,7 @@ export class PointCaisseComponent implements OnInit {
         let stypmod = 0;
         switch (t.codeTypRec) {
           case 'P': {
-            stypmod = this.ligOpc.filter(
+            stypmod = this.ligOpcValide.filter(
               lo => lo.opCaisse.caisse.codeCaisse === c.codeCaisse && lo.opCaisse.dateSaisie >= d1 &&
                 lo.opCaisse.typeRecette.codeTypRec === 'P' && lo.opCaisse.dateSaisie <= d2 &&
                 lo.opCaisse.modePaiement.codeModPay === m.codeModPay).reduce((s, l) =>
@@ -167,7 +192,7 @@ export class PointCaisseComponent implements OnInit {
             smod += stypmod;
           } break;
           case 'I': {
-            stypmod = this.ligOpc.filter(
+            stypmod = this.ligOpcValide.filter(
               lo => lo.opCaisse.caisse.codeCaisse === c.codeCaisse && lo.opCaisse.dateSaisie >= d1 &&
                 lo.opCaisse.typeRecette.codeTypRec === t.codeTypRec && lo.opCaisse.dateSaisie <= d2 &&
                 lo.opCaisse.modePaiement.codeModPay === m.codeModPay).reduce((s, l) =>
@@ -234,10 +259,10 @@ export class PointCaisseComponent implements OnInit {
             this.typeop.forEach(t => {
               switch (t.codeTypRec) {
                 case 'I': {
-                  this.tst.info(this.ligOpc.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
+                  this.tst.info(this.ligOpcValide.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
                     l.opCaisse.dateOpCaisse <= this.pcGroup.value['finPC'] && l.opCaisse.typeRecette.codeTypRec == t.codeTypRec &&
                     l.opCaisse.caisse.codeCaisse == this.caiArr[this.pcGroup.value['caiPC']].codeCaisse).length+' ligne(s) d\''+t.libeTypRec)
-                  this.col.push(this.ligOpc.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
+                  this.col.push(this.ligOpcValide.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
                     l.opCaisse.dateOpCaisse <= this.pcGroup.value['finPC'] && l.opCaisse.typeRecette.codeTypRec == t.codeTypRec &&
                     l.opCaisse.caisse.codeCaisse == this.caiArr[this.pcGroup.value['caiPC']].codeCaisse).reduce((s, l) =>
                       s += l.prixLigneOperCaisse * l.qteLigneOperCaisse, 0));
@@ -251,7 +276,7 @@ export class PointCaisseComponent implements OnInit {
                   break;
                 }
                 case 'P': {
-                  this.col.push(this.ligOpc.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
+                  this.col.push(this.ligOpcValide.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
                     l.opCaisse.dateOpCaisse <= this.pcGroup.value['finPC'] && l.opCaisse.typeRecette.codeTypRec == t.codeTypRec &&
                     l.opCaisse.caisse.codeCaisse == this.caiArr[this.pcGroup.value['caiPC']].codeCaisse).reduce((s, l) =>
                       s += l.prixLigneOperCaisse * l.qteLigneOperCaisse, 0));
@@ -349,7 +374,7 @@ export class PointCaisseComponent implements OnInit {
                 this.typeop.forEach(t => {
                   switch (t.codeTypRec) {
                     case 'I': {
-                      this.col.push(this.ligOpc.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
+                      this.col.push(this.ligOpcAnnule.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
                         l.opCaisse.dateOpCaisse <= this.pcGroup.value['finPC'] && l.opCaisse.typeRecette.codeTypRec == t.codeTypRec &&
                         l.opCaisse.caisse.arrondissement.codeArrondi == this.arrondissements[this.pcGroup.value['arrPC']].codeArrondi).reduce((s, l) =>
                         s+=l.prixLigneOperCaisse*l.qteLigneOperCaisse,0));
@@ -363,7 +388,7 @@ export class PointCaisseComponent implements OnInit {
                       break;
                     }
                     case 'P': {
-                      this.col.push(this.ligOpc.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
+                      this.col.push(this.ligOpcValide.filter(l => l.opCaisse.dateOpCaisse >= this.pcGroup.value['debPC'] &&
                         l.opCaisse.dateOpCaisse <= this.pcGroup.value['finPC'] && l.opCaisse.typeRecette.codeTypRec == t.codeTypRec &&
                         l.opCaisse.caisse.arrondissement.codeArrondi == this.arrondissements[this.pcGroup.value['arrPC']].codeArrondi).reduce((s, l) =>
                           s += l.prixLigneOperCaisse * l.qteLigneOperCaisse, 0));
@@ -531,20 +556,60 @@ export class PointCaisseComponent implements OnInit {
     }
   }
 
- /* pointEche() {
-    this.opServ.getloptypmod('2021-01-01', '2021-09-22', 'P', 'E').subscribe(
-      (data) => {
-        console.log(data);
+  pointEche() {
+    let dat1 = moment(new Date(this.pcGroup.value['debPC'])).format('YYYYMMDD_HH:mm:SS');
+    let dat2 = moment(new Date(this.pcGroup.value['finPC'])).format('YYYYMMDD_HH:mm:SS');
 
-      },
-      (err) => {
-        console.log(err);
-      });
-  }*/
+  }
 
   manageCollapses(inde:number){
     this.opened = inde;
     this.clicked = inde;
+  }
+
+  pointImput() {
+    this.pvs.getAllLignePointVente().subscribe(
+      (data) => {
+        this.total = data.filter(d => new Date(d.pointVente.datePointVente) <= new Date(this.imputG.value['debIm']) &&
+          new Date(d.pointVente.datePointVente) <= new Date(this.imputG.value['finIm'])).reduce((t, l) =>
+            t += l.quantiteLignePointVente * l.pulignePointVente, 0);
+
+        const doc=new jsPDF();
+        doc.setDrawColor(0);
+        doc.setFillColor(255, 255, 255);
+        doc.setFontSize(18);
+        doc.deletePage(1);
+
+        doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    //doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.addImage(this.outil.entete, 5, 5, 190, 20);
+    autoTable(doc, {
+    theme: 'plain',
+    margin: { top: 35},
+
+      body: [['POINT DES VENTES DES CORRESPONDANTS DU ' + moment(new Date(this.imputG.value['debIm'])).format('DD/MM/YYYY HH:mm') +
+    ' AU '+moment(new Date(this.imputG.value['debIm'])).format('DD/MM/YYYY HH:mm')]]    ,
+    bodyStyles: {
+      fontSize:20,halign: 'center'
+    }
+    });
+
+        autoTable(doc, {
+      theme: 'grid',
+      margin: { top: 100, left:130 },
+      columnStyles: {
+        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+      },
+      body: [
+        [ this.total]
+      ]
+
+    });
+    doc.text('Powered by Guichet Unique', 130, 230);
+      }
+    );
   }
 
 }

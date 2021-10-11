@@ -7,35 +7,55 @@
         <!--Fin card header-->
         <div class="card-body">
             <div class="row">
-              <div class="col-lg-3"></div>
-              <div class="col-lg-3">
-                <button class="btn btn-success" data-toggle="modal" (click)="initNewVente()" type="button">Nouvelle
-                  prestation</button>
-              </div>
-              <div class="col-lg-3">
-                <button class="btn btn-success" data-toggle="modal" (click)="initNewImput()" type="button">Nouvelle
-                  imputation</button>
-              </div>
-              <div class="col-lg-3">
-                <button class="btn btn-success" data-toggle="modal" (click)="initLoyer()" type="button">Nouvelle redevance</button>
-              </div>
+              <!--div class="form-group row">
+                              <div class="col-lg-3"></div>
+                              <div class="col-lg-3">
+                                <button class="btn btn-success" data-toggle="modal" (click)="initAnnulations()" type="button">Nouvelle
+                                  Voir les annulation</button>
+                                </div>
+                                <div class="col-lg-3">
+                                  <button class="btn btn-success" data-toggle="modal" (click)="initNewImput()" type="button">Nouvelle
+                                    imputation</button>
+                                </div>
+                                <div class="col-lg-3">
+                                  <button class="btn btn-success" data-toggle="modal" (click)="initLoyer()" type="button">Nouvelle redevance</button>
+                                </div>
+                                </div-->
+                                <div class="form-group row">
+                                  <div class="col-lg-3"></div>
+                                  <div class="col-lg-3">
+                                    <button *ngIf="this.user.fonctionUtilisateur.codeFonction=='S1'" class="btn btn-success" data-toggle="modal"
+                                      (click)="initNewVente()" type="button">Nouvelle
+                                      prestation</button>
+                                  </div>
+                                  <div class="col-lg-3">
+                                    <button *ngIf="this.user.fonctionUtilisateur.codeFonction=='S1'" class="btn btn-success" data-toggle="modal"
+                                      (click)="initNewImput()" type="button">Nouvelle
+                                      imputation</button>
+                                  </div>
+                                  <div class="col-lg-3">
+                                    <button *ngIf="this.user.fonctionUtilisateur.codeFonction=='S1'" class="btn btn-success" data-toggle="modal"
+                                      (click)="initLoyer()" type="button">Nouvelle redevance</button>
+                                  </div>
+                                </div>
               </div>
               <div class="row">
                 <div class="col-lg-4">
                   <h5><i class="fa fa-align-justify">Liste des opérations du jours</i></h5>
                 </div> <br><br><br>
             </div>
-            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabDailyOp" [dtTrigger]="dtrigDailyOp" id="dtop">
-                <thead>
-                    <tr>
-                        <th>Numero</th>
-                        <th>Date</th>
-                        <th>Paiement par</th>
-                        <th>Type de recette</th>
-                        <th>contribuable</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabDailyOp" [dtTrigger]="dtrigDailyOp"
+              id="dtop">
+              <thead>
+                <tr>
+                  <th>Numero</th>
+                  <th>Date</th>
+                  <th>Paiement par</th>
+                  <th>Type de recette</th>
+                  <th>contribuable</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
                 <tbody *ngFor="let oc of opDay; let i=index;">
                     <tr>
                         <td>{{oc.numOpCaisse}}</td>
@@ -46,10 +66,11 @@
                         <td>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Détail de l'opération" (click)="initdetail(oc)"><span class="fa fa-align-justify"></span></button>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération" *ngIf="oc.valideOpCaisse" (click)="initAnnulOp(oc)"><span class="fa fa-undo"></span></button>
-                            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération"
-                              *ngIf="oc.valideOpCaisse" (click)="initAnnulOp(oc)"><span class="fa fa-done"></span></button>
-                            <button class="btn btn-danger btn-sm" data-toggle="modal tooltip" data-placement="top" title="Supprimer l'opération" *ngIf="!oc.valideOpCaisse" (click)="initSUpOP(oc)"><span class="fa fa-trash"></span></button>
-                            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Apperçu du reçu" (click)="afficheFacture(oc)"><span class="fa fa-file-o"></span></button>
+                            <!--button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération"
+                                                                                      *ngIf="!oc.valideOpCaisse" (click)="initAnnulOp(oc)"><span class="fa fa-done"></span></button-->
+                            <!--button class="btn btn-danger btn-sm" data-toggle="modal tooltip" data-placement="top" title="Supprimer l'opération" *ngIf="!oc.valideOpCaisse" (click)="initSUpOP(oc)"><span class="fa fa-trash"></span></button-->
+                            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Apperçu du reçu"
+                              (click)="afficheFacture(oc)"><span class="fa fa-file-o"></span></button>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Apperçu du ticket" *ngIf="oc.typeRecette.codeTypRec.valueOf()==='P'" (click)="imprimeTicket(oc)"><span class="fa fa-dot-circle-o"></span></button>
                         </td>
                     </tr>
@@ -90,12 +111,12 @@
                                 <div class="col-sm-2">
                                     <label for="nVentCais">Caisse</label>
                                     <select id="nVentCais" formControlName="nVentCais" class="form-control" required>
-                        <option  *ngFor="let afu of affectUser; let i = index" [value]="i">{{ afu.caisse.libeCaisse }}</option>
+                        <option *ngFor="let c of caisses; let i = index" [value]="i">{{ c.libeCaisse }}</option>
                     </select>
                                 </div>
                                 <div class="col-sm-2.5">
-                                    <label class="form-label" for="nVentDat">Date</label>
-                                    <input type="datetime-local" id="nVentDat" formControlName="nVentDat" class="form-control" value="new Date()" required>
+                                    <label for="addVentDat">Date de début</label>
+                                    <input type="datetime-local" class="form-control" id="nVentDat" formControlName="nVentDat" placeholder="Date de fin">
                                 </div>
                                 <div class="col-xl-2">
                                     <label for="nVentMod">Mode</label>
@@ -152,7 +173,7 @@
                                 <tfoot>
                                     <tr>
                                         <td style="text-align: center; font-weight: bold;" colspan="5">Total</td>
-                                        <td style="text-align: center; font-weight: bold;" colspan="2">{{totalVente}}</td>
+                                        <td style="text-align: center; font-weight: bold;" colspan="2">{{total}}</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -232,14 +253,15 @@
                                                 </td>
                                                 <td>{{echetmp.prix}}</td>
                                                 <td>
-                                                    <p style="text-align: center;"><input type="checkbox" formControlName="coche" [(ngModel)]="echetmp.payeEcheance" [(value)]="echetmp.payeEcheance" (change)="considererEcheance(i)"></p>
+                                                    <p style="text-align: center;"><input type="checkbox" formControlName="coche" [(ngModel)]="echetmp.payeEcheance"
+                                                        (change)="considererEcheance(i)"></p>
                                                 </td>
                                             </tr>
                                         </tbody>
                                         <tfoot>
                                             <tr>
                                                 <td style="text-align: center; font-weight: bold;" colspan="3">Total</td>
-                                                <td style="text-align: center; font-weight: bold;" colspan="2">{{totalLoyer}}</td>
+                                                <td style="text-align: center; font-weight: bold;" colspan="2">{{total}}</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -247,15 +269,15 @@
                                 <div class="col-sm-3">
                                     <label for="loyCai">Caisse</label>
                                     <select id="loyCai" formControlName="loyCai" class="form-control">
-                                        <option value="-1">Choisir le locataire</option>
-                                    <option  *ngFor="let afu of affectUser; let i = index" [value]="i">
-                                      {{ afu.caisse.libeCaisse }}</option>
+                                        <option value="-1">Choisir la caisse</option>
+                                        <option *ngFor="let afu of caisses; let i = index" [value]="i">
+                                          {{ afu.libeCaisse }}</option>
                                     </select>
                                     <label for="loyDat">Date de paiement</label>
                                     <input formControlName="loyDat" id="loyDat" type="datetime-local" class="form-control">
                                     <label for="loyCai">Mode de paiement</label>
                                     <select formControlName="loyMod" class="form-control">
-                                        <option value="-1">Choisir le contrat</option>
+                                        <option value="-1">Choisir le mode de paiement</option>
                                       <option *ngFor="let m of modes; let i=index" [value]="i">
                                         {{m.libeModPay}}
                                       </option>
@@ -339,7 +361,7 @@
                                     <tfoot>
                                         <tr>
                                             <td style="text-align: center; font-weight: bold;" colspan="3">Total</td>
-                                            <td style="text-align: center; font-weight: bold;" colspan="2">{{totalImput}}</td>
+                                            <td style="text-align: center; font-weight: bold;" colspan="2">{{total}}</td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -349,8 +371,8 @@
                                 <input formControlName="addImDat" id="addImDat" type="datetime-local" class="form-control">
                                 <label for="addImCai">Caisse</label>
                                 <select id="addImCai" formControlName="addImCai" class="form-control" required>
-                                      <option  *ngFor="let afu of affectUser; let i = index" [value]="i">
-                                        {{ afu.caisse.libeCaisse }}
+                                      <option *ngFor="let afu of caisses; let i = index" [value]="i">
+                                        {{ afu.libeCaisse }}
                                       </option>
                                     </select>
                                 <label for="addImMod">Mode</label>

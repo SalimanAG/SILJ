@@ -9,6 +9,7 @@ export class OpCaisse{
 
   annulMotif: String;
   auteurAnnul: Utilisateur;
+  datAnnul: Date;
 constructor(public numOpCaisse:String,public dateOpCaisse: Date,public contribuable: String,public valideOpCaisse: boolean,
    public obsOpCaisse: String, public dateSaisie: Date,public caisse: Caisse,public typeRecette: TypeRecette,
    public modePaiement: ModePaiement, public exercice: Exercice,public utilisateur: Utilisateur, public valid?:boolean){

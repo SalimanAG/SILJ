@@ -39,6 +39,7 @@ import { ArticleService } from '../../../services/definition/article.service';
 import { CorrespondantService } from '../../../services/definition/correspondant.service';
 import { UtilisateurService } from '../../../services/administration/utilisateur.service';
 import { Fonction } from '../../../models/fonction.model';
+import { SearchLinesOpCaissDTO } from '../../../models/searchLinesOpCaissDTO.model';
 
 @Component({
   selector: 'app-livraison',
@@ -108,26 +109,23 @@ export class LivraisonComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.servOp.getAllOpLines().subscribe(
+    console.log('date debut ==>');
+    console.log(this.debut.value);
+    
+    let searchLinesOpCaissDTO = new SearchLinesOpCaissDTO;
+    searchLinesOpCaissDTO.startDateTime = this.debut.value;
+    searchLinesOpCaissDTO.endDateTime = this.fin.value;
+    searchLinesOpCaissDTO.codeCaisse = this.opCaisseLivre.value;
+    console.log('payload');
+    console.log(searchLinesOpCaissDTO);
+   
+    this.servOp.getAllLinesOpCaisseByPeriodeAndCaisse(searchLinesOpCaissDTO).subscribe(
       (data) => {
-        data.forEach((element,index) => {
-          if(element.livre===false && element.article.livrableArticle===true && element.opCaisse.typeRecette.codeTypRec==="P"
-          && element.opCaisse.caisse.codeCaisse===this.opCaisseLivre.value
-          &&  new Date(element.opCaisse.dateOpCaisse).valueOf()>= new Date(this.debut.value).valueOf() && new Date(element.opCaisse.dateOpCaisse).valueOf()<= new Date(this.fin.value).valueOf())
-          {
-            this.ligneopcaisse.push(element);
-
-            console.log('verifi',this.ligneopcaisse);
-
-
-          }
-          console.log("xxx", new Date(this.debut.value));
-          console.log("yyy",element.opCaisse.dateOpCaisse);
-
-
-
-
-        });
+        this.ligneopcaisse= data;
+        console.log('data with payload search ==>');
+        console.log( data);
+        
+        
         this.dtTrigger1.next();
 
       },
@@ -197,7 +195,7 @@ export class LivraisonComponent implements OnInit {
 
   }
 
-  chargerInformations(){
+ /* chargerInformations(){
 
     this.ligneopcaisse = [];
     $('#actualise').dataTable().api().destroy();
@@ -233,12 +231,21 @@ export class LivraisonComponent implements OnInit {
       }
     );
 
-  }
+  }*/
 
   verifierRecuperation()
   {
 
-    this.chargerInformations();
+    //this.chargerInformations();
+    let searchLinesOpCaissDTO = new SearchLinesOpCaissDTO;
+    searchLinesOpCaissDTO.startDateTime = this.debut.value;
+    searchLinesOpCaissDTO.endDateTime = this.fin.value;
+    searchLinesOpCaissDTO.codeCaisse = this.opCaisseLivre.value;
+    console.log('payload 2 ==>');
+    console.log(searchLinesOpCaissDTO);
+    this.getAllLinesOpCaisseNotLivreByPeriodeAndCaisse(searchLinesOpCaissDTO);
+    $('#actualise').dataTable().api().destroy();
+    this.dtTrigger1.next();
 
   }
 
@@ -257,7 +264,20 @@ export class LivraisonComponent implements OnInit {
           console.log(data);
 
 
-          this.chargerInformations();
+          //this.chargerInformations();
+
+          ///////////////////charge info
+           //this.chargerInformations();
+    let searchLinesOpCaissDTO = new SearchLinesOpCaissDTO;
+    searchLinesOpCaissDTO.startDateTime = this.debut.value;
+    searchLinesOpCaissDTO.endDateTime = this.fin.value;
+    searchLinesOpCaissDTO.codeCaisse = this.opCaisseLivre.value;
+    console.log('payload 2 ==>');
+    console.log(searchLinesOpCaissDTO);
+    $('#actualise').dataTable().api().destroy();
+    this.dtTrigger1.next();
+    this.getAllLinesOpCaisseNotLivreByPeriodeAndCaisse(searchLinesOpCaissDTO);
+    //end
 
         },
         (erreur) => {
@@ -324,11 +344,26 @@ export class LivraisonComponent implements OnInit {
       );
 
 
-
-
   }
 
+  // get all lines opcaisse by periode and caisse
+  getAllLinesOpCaisseNotLivreByPeriodeAndCaisse(searchLinesOpCaissDTO: SearchLinesOpCaissDTO){
 
+    this.servOp.getAllLinesOpCaisseByPeriodeAndCaisse(searchLinesOpCaissDTO).subscribe(
+      (data) => {
+        this.ligneopcaisse= data;
+        console.log('data with payload search ==>');
+        console.log( data);
+        
+        $('#actualise').dataTable().api().destroy();
+        //this.dtTrigger1.next();
 
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération de la liste des actes livrables non livré ', erreur);
+      }
+    );
+
+  }
 
 }

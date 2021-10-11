@@ -44,6 +44,9 @@ import { ExerciceService } from '../../../services/administration/exercice.servi
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { ToolsService } from '../../../services/utilities/tools.service';
+import { OpPrestBlock } from '../../../models/opprestlock.model';
+import { OpLocBlock } from '../../../models/oployerbloc.model';
+import { SearchOpCaisseDTO } from '../../../models/searchOpCaisseDTO.model';
 
 @Component({
   selector: 'app-operation-caisse',
@@ -63,13 +66,16 @@ export class OperationCaisseComponent implements OnInit {
   @ViewChild('recherche') public recherche: ModalDirective;
   @ViewChild('supOP') public supOP: ModalDirective;
 
+  tittres: any[];
+  lignes: any[];
+  titre: any;
   pdfToShow: any;
   //// Accueil
   timp: String[] = ['Ticket', 'Reçu'];
   stk: Stocker[];
   annulop = new OpCaisse(null, null, null, null, '', null, null, null, null, null, null);
   tabDailyOp: DataTables.Settings = {};
-  dtrigDailyOp: Subject<any> = new Subject<any>();
+  dtrigDailyOp: Subject<OpCaisse> = new Subject<OpCaisse>();
   tabAllOp: DataTables.Settings = {};
   dtrigAllOp: Subject<any> = new Subject<any>();
   listOp: OpCaisse[];
@@ -87,6 +93,8 @@ export class OperationCaisseComponent implements OnInit {
   annulGroup: FormGroup;
   dtLigne: Subject<any> = new Subject<any>();
 
+  annulations: OpCaisse[];
+
   /////// Vente
   tabArtV: DataTables.Settings = {};
   dtArt: Subject<Article> = new Subject<Article>();
@@ -102,6 +110,7 @@ export class OperationCaisseComponent implements OnInit {
   addArtGroup: FormGroup;
   tempLigneOpCais: LigneOpCaisse[] = [];
   lignesOfOp: LigneOpCaisse[];
+  echancesOfOp: Echeance[];
   tmpOpC: OpCaisse;
   serVal: ValeurLocativeService;
 
@@ -140,6 +149,7 @@ export class OperationCaisseComponent implements OnInit {
   coi: Correspondant[] = [];
   tabLignePoint: DataTables.Settings = {};
   // dtPV:Subject<any>=new Subject<any>()
+  caisses: Caisse[];
   ind: number = 0;
   pointV: PointVente[];
   pointPayable: PointVente[];
@@ -156,32 +166,13 @@ export class OperationCaisseComponent implements OnInit {
     private serExo:ExerciceService, private servPV: PointVenteService, private servOp: OperationCaisseService,
     private fbuilder: FormBuilder, private router: Router, private sanitizer: DomSanitizer, private tst: ToastrService,
   ) {
+    this.pdfToShow=sanitizer.bypassSecurityTrustResourceUrl('/');
 
     this.exo = serExo.exoSelectionner;
     moment.locale('fr');
 
-    this.tabDailyOp = {
-      pagingType: 'full_numbers',
-      pageLength: 5,
-      lengthMenu: [5, 10, 25, 50, 100],
-      language: {
-        lengthMenu: 'Affichage de _MENU_ lignes par page',
-        zeroRecords: 'Aucune ligne trouvée - Desolé',
-        info: 'Affichage de la page _PAGE_ sur _PAGES_',
-        infoEmpty: 'Pas de ligne trouvée',
-        infoFiltered: '(Filtré à partie de _MAX_ lignes)',
-        search: 'Rechercher',
-        loadingRecords: 'Chargement en cours...',
-        paginate: {
-          first: 'Début',
-          last: 'Fin',
-          next: 'Suivant',
-          previous: 'Précédent'
-        }
-      }
-    };
 
-    this.tabAllOp = {
+    this.tabDailyOp = {
       pagingType: 'full_numbers',
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
@@ -304,7 +295,7 @@ export class OperationCaisseComponent implements OnInit {
 
     this.addImputGroup = new FormGroup({
       addImCor: new FormControl(0),
-      addImDat: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm')),
+      addImDat: new FormControl(moment(new Date()).format('DD/MM/YYYY HH:mm')),
       addImCai: new FormControl(0),
       addImMod: new FormControl(0),
       addImObs: new FormControl(),
@@ -315,82 +306,78 @@ export class OperationCaisseComponent implements OnInit {
     });
 
     this.user = this.serU.connectedUser;
+
     this.chargerEcheances();
     this.rechargerLigneOpCaisse();
     this.chargerPV();
     this.ChargerAccessoires();
-    console.log('Exo sélectionné', this.serExo.exoSelectionner);
-    this.serExo.getAllExo()
+    this.chargerModes();
+    this.chargerCaisse();
 
   }
 
   ngOnInit() {
-    this.servOp.getAllOp()
+    this.initOpCaisse();
+    let typs: TypeRecette[];
+
+    /*this.servOp.getDailyOp(this.user.idUtilisateur)
       .subscribe(
         (data) => {
-          this.listOp = data;
-          this.dtrigAllOp.next();
-          this.opDay = this.listOp.filter(op => op.utilisateur.idUtilisateur === this.serU.connectedUser.idUtilisateur &&
-            new Date(op.dateSaisie).toLocaleDateString().substr(0, 10) === new Date().toLocaleDateString().substr(0, 10)
-          );
-          this.dtrigDailyOp.next();
+          this.opDay = data;
+        this.dtrigDailyOp.next();
         },
         (erreur) => {
           console.log('Opération : ' + erreur);
         }
-      );
-    this.initOpCaisse();
-
-    let typs: TypeRecette[];
-    this.servOp.getAllTypes().subscribe(
-      data => {
-        typs = data;
-        /*if (typs.length == 0) {
-          this.servOp.addATypes(new TypeRecette('P', 'Prestation')).subscribe(
-            data => {
-              this.servOp.addATypes(new TypeRecette('L', 'Prestation')).subscribe(
-                data => {
-                  this.servOp.addATypes(new TypeRecette('I', 'Prestation')).subscribe();
-                }
-              );
-            },
-            erre => {
-              console.error('Erreur ajout de type: ', erre);
-
-            }
-          );
-        }*/
-      }
-    );
-
-    let mod: ModePaiement[];
-    this.servOp.getAllModes().subscribe(
-      data => {
-        mod = data;
-        if (mod.length == 0) {
-          this.servOp.addAMode(new ModePaiement('E', 'Espèces')).subscribe(
-            data => {
-              this.servOp.addAMode(new ModePaiement('C', 'Chèque')).subscribe(
-                data => {
-                  this.servOp.addAMode(new ModePaiement('M', 'Monnaie mobile')).subscribe();
-                }
-              );
-            },
-            err => {
-              console.error('Erreut ajout de mode : ', err);
-
-            }
-          );
-        }
-      }
-    );
-
+    );*/
+    let searchOpCaisseDTO = new SearchOpCaisseDTO;
+    searchOpCaisseDTO.startDate = moment(new Date()).format('YYYY-MM-DD');
+    searchOpCaisseDTO.endDate = moment(new Date()).format('YYYY-MM-DD');
+ 
+     this.servOp.getAllOpCaisseOfDay(searchOpCaisseDTO).subscribe(
+         (data) => {
+           console.log('op caisse du jour ==>');
+           console.log(data);
+           this.listOp = data;
+           this.opDay = data;
+        
+           this.dtrigDailyOp.next();
+         },
+         (erreur) => {
+           console.log('Opération : ' + erreur);
+         }
+       );
   }
 
-  fermeSup() {
-    $('#dtop').dataTable().api().destroy();
-    this.dtrigDailyOp.next();
-    this.detailOp.hide();
+  chargerDailyOp() {
+    /*this.servOp.getDailyOp(this.user.idUtilisateur)
+      .subscribe(
+        (data) => {
+        this.opDay=data;
+        $('#dtop').dataTable().api().destroy();
+        this.dtrigDailyOp.next();
+        },
+        (erreur) => {
+          console.log('Opération : ' + erreur);
+        }
+      );*/
+      let searchOpCaisseDTO = new SearchOpCaisseDTO;
+      searchOpCaisseDTO.startDate = moment(new Date()).format('YYYY-MM-DD');
+      searchOpCaisseDTO.endDate = moment(new Date()).format('YYYY-MM-DD');
+   
+       this.servOp.getAllOpCaisseOfDay(searchOpCaisseDTO).subscribe(
+           (data) => {
+             console.log('op caisse du jour ==>');
+             console.log(data);
+             this.listOp = data;
+             this.opDay = data;
+             $('#dtop').dataTable().api().destroy();
+             this.dtrigDailyOp.next();
+           },
+           (erreur) => {
+             console.log('Opération : ' + erreur);
+           }
+         );
   }
 
   chargerModes() {
@@ -402,6 +389,23 @@ export class OperationCaisseComponent implements OnInit {
         console.error('Erreure de chargement : ', err);
 
       });
+  }
+
+  initAnnulations() {
+
+  }
+
+  fermeSup() {
+    $('#dtop').dataTable().api().destroy();
+    this.dtrigDailyOp.next();
+    this.detailOp.hide();
+  }
+
+  chargerAnnulation() {
+    this.servOp.getOpAnnulees().subscribe(
+      (datan)=>{
+        this.annulations = datan;
+    });
   }
 
   initRecherche() { }
@@ -420,7 +424,7 @@ export class OperationCaisseComponent implements OnInit {
                 this.rechargerLigneOpCaisse();
                 this.servOp.deleteAOpCaiss(this.annulop.numOpCaisse).subscribe(
                   data => {
-                    this.chargerOperations();
+                    this.chargerDailyOp();
                     console.log('Suppression éffectuée avec succès');
                   },
                   err => {
@@ -444,7 +448,7 @@ export class OperationCaisseComponent implements OnInit {
               if (i === 0) {
                 this.servOp.deleteAOpCaiss(this.annulop.numOpCaisse).subscribe(
                   data => {
-                    this.chargerOperations();
+                    this.chargerDailyOp();
                     console.log('Suppression éffectuée avec succès');
                   },
                   err => {
@@ -482,7 +486,7 @@ export class OperationCaisseComponent implements OnInit {
                               this.rechargerLigneOpCaisse();
                               this.servOp.deleteAOpCaiss(this.annulop.numOpCaisse).subscribe(
                                 data => {
-                                  this.chargerOperations();
+                                  this.chargerDailyOp();
                                   console.log('Suppression éffectuée avec succès');
                                 },
                                 err => {
@@ -512,17 +516,50 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   annulerOperation() {
-    switch (this.annulop.typeRecette.codeTypRec) {
-      case 'P': {
+    this.annulop.valideOpCaisse = false;
+    this.annulop.annulMotif = this.annulGroup.value['motif'];
+    this.annulop.datAnnul = new Date();
+    this.annulop.auteurAnnul = this.user;
+    this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
+      data => {
+        this.chargerDailyOp();
+        switch (this.annulop.typeRecette.codeTypRec) {
+          case 'L': {
+            let echeancesOp = this.echeances.filter(e => e.opCaisse.numOpCaisse == this.annulop.numOpCaisse)
+            echeancesOp.forEach(elt => {
+              elt.payeEcheance = false;
+              this.servOp.editEcheance(elt.idEcheance, elt).subscribe(
+                (datae) => {
+                },
+                (erre) => {
+                  console.log(erre);
+                  this.annulop.valideOpCaisse = true;
+                  this.annulop.annulMotif = null
+                  this.annulop.datAnnul = null
+                  this.annulop.auteurAnnul = null
+                  this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
+                    dataAnAn => {
+                      this.tst.warning('Lannullation a échoué');
+                    }
+                  )
+                }
+              )
+            })
+            break;
+          }
+          case 'P': {
         const lop = this.lignesOp.filter(lop => lop.opCaisse.numOpCaisse === this.annulop.numOpCaisse);
-        let n: number = 0;
         lop.forEach(elt => {
-          if (elt.livre === true) {
+          if (elt.livre == true) {
+            console.log('lig op editing: ', elt);
+
+
             this.serCor.getAllStocker().subscribe(
               (data) => {
                 this.stk = data;
                 const st = this.stk.find(stc => stc.article.codeArticle === elt.article.codeArticle &&
                   stc.magasin.codeMagasin === elt.magasin.codeMagasin);
+            console.log('Ligne stocké concerné: ',st);
                 const stc = new Stocker(st.quantiterStocker + elt.qteLigneOperCaisse, st.stockDeSecuriter, st.stockMinimal,
                   st.cmup, st.article, st.magasin);
                 st.quantiterStocker += elt.qteLigneOperCaisse;
@@ -532,21 +569,22 @@ export class OperationCaisseComponent implements OnInit {
                     elt.livre = false;
                     this.servOp.editOpLine(elt.idLigneOperCaisse, elt).subscribe(
                       datalop => {
-                        n++;
+                        /*n++;
                         if (n === lop.length) {
                           this.rechargerLigneOpCaisse();
                           this.annulop.valideOpCaisse = false;
                           this.annulop.annulMotif = this.annulGroup.value['motif'];
-                          this.annulop.auteurAnnul= this.user;
+                          this.annulop.auteurAnnul = this.user;
+
                           this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
                             data => {
-                              this.chargerOperations();
+                              this.chargerDailyOp();
                             },
                             erran => {
                               console.log('Annulation échouée');
                             }
                           );
-                        }
+                        }*/
                       },
                       errlop => { }
                     );
@@ -557,6 +595,12 @@ export class OperationCaisseComponent implements OnInit {
         });
         break;
       }
+        }
+      },
+      (err) => { console.log('Annulation échouée', err); }
+    );
+    /*switch (this.annulop.typeRecette.codeTypRec) {
+
       case 'L': {
         this.servOp.getAllEcheances()
           .subscribe(
@@ -611,7 +655,7 @@ export class OperationCaisseComponent implements OnInit {
                       this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
                         data => {
                           console.log('Annulation effectuée avec succès');
-                          this.chargerOperations();
+                          this.chargerDailyOp();
                         },
                         erran => {
                           console.log('Annulation échouée');
@@ -625,12 +669,12 @@ export class OperationCaisseComponent implements OnInit {
           );
         break;
       }
-    }
+    }*/
     this.opAnnul.hide();
   }
 
   rechargerLigneOpCaisse() {
-    this.servOp.getAllOpLines()
+    this.servOp.getAllValideLines()
       .subscribe(
         (data) => {
           $('#datatable_ligneop').dataTable().api().destroy();
@@ -642,16 +686,44 @@ export class OperationCaisseComponent implements OnInit {
       );
   }
 
-  chargerDétailOpCaisse(opcai: OpCaisse) {
-    this.rechargerLigneOpCaisse();
-    console.log('nombre total de ligne: ', this.listOp.length);
-    this.lignesOfOp = this.lignesOp.filter(function (ligne) {
-      return ligne.opCaisse.numOpCaisse === opcai.numOpCaisse;
-    });
-    this.vtotal = this.lignesOfOp.reduce(function (total, ligne) {
-      return total + ligne.prixLigneOperCaisse * ligne.qteLigneOperCaisse;
-    }, 0);
-    console.log(this.lignesOfOp.length + ' lignes concernée(s)');
+  chargerDétailOpCaisse(opc: OpCaisse) {
+
+    switch (opc.typeRecette.codeTypRec) {
+      case 'L': {
+        this.titre = 'Facture de loyer N° : ' + opc.numOpCaisse + ' du ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nDéposant : ' +
+          opc.contribuable;
+        this.tittres = ['Mois', 'Année', 'Loyer'];
+        this.servOp.getEcheanceByOp(opc.numOpCaisse).subscribe(
+          (datae) => {
+            this.echancesOfOp = datae;
+            this.vtotal = this.echancesOfOp.reduce(function (total, ligne) {
+              return total + ligne.prix.valueOf();}, 0);
+          }
+        )
+        break;
+      }
+      default: {
+        this.titre = 'Facture de caisse N° : ' + opc.numOpCaisse + ' du ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nContribuable : ' +
+          opc.contribuable;
+        this.tittres = ['Codes', 'Libellé', 'Qte', 'Pu', 'Montant'];
+        this.servOp.getLineByOp(opc.numOpCaisse).subscribe(
+          (data) => {
+            this.lignesOfOp = data;
+            this.vtotal = this.lignesOfOp.reduce(function (total, ligne) {
+              return total + ligne.prixLigneOperCaisse * ligne.qteLigneOperCaisse;
+            }, 0);
+            //this.total = lines.reduce((t, l) => t += l.qteLigneOperCaisse * l.prixLigneOperCaisse, 0);
+          }
+        )
+        break;
+      }
+    }
+    /*this.lignesOfOp = this.lignesOp.filter(function (ligne) {
+      return ligne.opCaisse.numOpCaisse === opc.numOpCaisse;
+    });*/
+
   }
 
   initdetail(op: OpCaisse) {
@@ -660,7 +732,7 @@ export class OperationCaisseComponent implements OnInit {
     this.vnum = op.numOpCaisse;
     this.vcai = op.caisse.libeCaisse;
     this.dats = op.dateSaisie;
-    this.vdat = op.dateOpCaisse.toLocaleDateString();
+    this.vdat = moment(new Date(op.dateOpCaisse)).format('DD/MM/yyyy HH:mm');
     this.vobs = op.obsOpCaisse;
     this.vcon = op.contribuable;
     this.vuse = op.utilisateur.nomUtilisateur + ' ' + op.utilisateur.prenomUtilisateur;
@@ -670,61 +742,17 @@ export class OperationCaisseComponent implements OnInit {
 
   }
 
-  chargerOperations() {
-    this.servOp.getAllOp()
-      .subscribe(
-        (data) => {
-          this.listOp = data;
-          this.opDay = this.listOp.filter(op => op.utilisateur.idUtilisateur === this.serU.connectedUser.idUtilisateur &&
-            new Date(op.dateSaisie).toLocaleDateString().substr(0, 10) === new Date().toLocaleDateString().substr(0, 10)
-          );
-        },
-        (erreur) => {
-          console.log('Opération : ' + erreur);
-        }
-      );
+  chargerCaisse() {
+    this.servOp.getUserCaisse(this.user.idUtilisateur).subscribe(
+      data => {
+        this.caisses = data.map(d => d.caisse);
+
+      }
+    );
+
   }
 
   ChargerAccessoires() {
-    // Modes de paiement
-    this.servOp.getAllModes()
-      .subscribe(
-        (data) => {
-          this.modes = data;
-        },
-        (err) => {
-          console.log('Modes: ', err);
-        }
-      );
-
-    // Affectations aux caisses
-    this.servOp.getAllAffectations()
-      .subscribe(
-        (data) => {
-          this.affectations = data;
-          this.affectUser = this.affectations.filter(af =>
-            af.utilisateur.idUtilisateur === this.user.idUtilisateur &&
-            // new Date(af.dateDebAffecter) <= new Date() &&
-            af.dateFinAffecter == null
-          );
-          this.caissesValides = this.affectUser.map(au => au.caisse);
-        },
-        (err) => {
-          console.log('Affectations', err);
-
-        }
-      );
-
-    /// Types
-    this.servOp.getAllTypes()
-      .subscribe(
-        (data) => {
-          this.opTypes = data;
-        },
-        (err) => {
-          console.log('types erreur: ', err);
-        }
-      );
 
     ///// Contrats
     this.servOp.getAllContrats()
@@ -748,16 +776,6 @@ export class OperationCaisseComponent implements OnInit {
         }
       );
 
-    ///// Point vente
-    this.servOp.getAllPV()
-      .subscribe(
-        (data) => {
-          this.pointV = data;
-        },
-        err => {
-          console.log('point Vente: ', err);
-        }
-      );
   }
 
   initAnnulOp(op: OpCaisse) {
@@ -786,15 +804,25 @@ export class OperationCaisseComponent implements OnInit {
   // Gestion des prestations
   initNewVente() {
     this.chargerModes();
-    this.totalVente = 0;
-    this.tempLigneOpCais = [];
-    this.tmpOpC = new OpCaisse('0001', new Date(), 'Divers', true, '', new Date(),
-      this.caissesValides[0], this.opTypes[0], this.modes[0], this.exo, this.user);
-    this.addVente.show();
-    this.addVentGroup.patchValue({
-      nVentDat: moment(new Date()).format('DD/MM/YYYY HH:mm'),
-      nVentCont: '', nVentObs: ''
-    });
+    this.servOp.getUserCaisse(this.user.idUtilisateur).subscribe(
+      data => {
+        this.caisses = data.map(d => d.caisse);
+        this.total = 0;
+        this.tempLigneOpCais = [];
+        /*;*/
+        this.addVentGroup.patchValue({
+          nVentDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
+          nVentCont: '', nVentObs: '',nVentCais: 0, nVentMod: 0
+        });
+        this.tmpOpC = new OpCaisse('0001', new Date(), 'Divers', true, '', new Date(),
+          this.caisses[0],
+          new TypeRecette('P', 'Prestation'),
+          this.modes[0], this.exo, this.user)
+        this.addVente.show();
+
+      }
+    );
+
   }
 
   fermeVente() {
@@ -839,18 +867,13 @@ export class OperationCaisseComponent implements OnInit {
 
   }
 
-  recupererTotalVente(n: number) {
-    console.log('tempon');
-    this.tligne = this.tempLigneOpCais[n].qteLigneOperCaisse * this.tempLigneOpCais[n].qteLigneOperCaisse;
-    console.log('Total ligne: ' + this.tligne);
-
-  }
-
   recalculerTotalvente() {
-    this.totalVente = 0;
+    /*this.totalVente = 0;
     this.tempLigneOpCais.forEach(elt => {
       this.totalVente += elt.qteLigneOperCaisse * elt.prixLigneOperCaisse;
-    });
+    });*/
+    this.total = this.tempLigneOpCais.reduce((t, l) =>
+      t += l.qteLigneOperCaisse * l.prixLigneOperCaisse, 0);
   }
 
   AjouteVente() {
@@ -860,18 +883,27 @@ export class OperationCaisseComponent implements OnInit {
       Number.parseInt(dat.substr(0, 2), 10), Number.parseInt(dat.substr(11, 2), 10), Number.parseInt(dat.substr(14, 2), 10));
 
     const newOC = new OpCaisse('01', new Date(this.addVentGroup.value['nVentDat']), this.addVentGroup.value['nVentCont'],
-      true, this.addVentGroup.value['nVentObs'], new Date(), this.caissesValides[this.addVentGroup.value['nVentCais']],
+      true, this.addVentGroup.value['nVentObs'], new Date(), this.caisses[this.addVentGroup.value['nVentCais']],
       new TypeRecette('P', 'Prestation'), this.modes[this.addVentGroup.value['nVentMod']], this.serExo.exoSelectionner,
       this.user);
     newOC.annulMotif = null;
     console.log(newOC);
 
-    this.servOp.addOp(newOC)
+    this.servOp.addVente(new OpPrestBlock(newOC, this.tempLigneOpCais))
       .subscribe(
         (data) => {
-          // Chargement des opérations
+          this.chargerDailyOp();
+          this.imprimeTicket(data);
+          this.tempLigneOpCais = [];
+          this.addVentGroup.patchValue({
+            nVentDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
+            nVentCont: '', nVentObs: '',nVentCais: 0, nVentMod: 0
+          });
+
+
+          /*/ Chargement des opérations
           // gestion des lignes
-          this.chargerOperations();
+          this.chargerDailyOp();
           this.tempLigneOpCais.forEach((element, index) => {
             const newLine = new LigneOpCaisse(element.qteLigneOperCaisse, element.prixLigneOperCaisse,
               element.commentaireLigneOperCaisse, data, element.article);
@@ -885,7 +917,7 @@ export class OperationCaisseComponent implements OnInit {
                         (data3) => {
                           this.lignesOp = data3;
                           this.addVentGroup.patchValue({
-                            nVentDat: moment(new Date()).format('DD/MM/YYYY HH:mm'),
+                            nVentDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
                             nVentCont: '', nVentObs: ''
                           });
                           this.imprimeTicket(data);
@@ -902,7 +934,7 @@ export class OperationCaisseComponent implements OnInit {
                 (erre) => {
                   console.log('Ajout de ligne', erre);
                 });
-          });
+          });*/
         },
         (err) => {
           console.log('Opération échouée', err);
@@ -915,15 +947,18 @@ export class OperationCaisseComponent implements OnInit {
     this.ChargerAccessoires;
     this.chargerEcheances();
     this.chargerLocataire();
-    this.totalVente = 0;
-    this.addLoyer.show();
-    this.tmpOpC = new OpCaisse(new Date().getUTCFullYear() + '-000001', new Date(), 'Divers', true, '', new Date(),
-      this.caissesValides[0], new TypeRecette('VD', 'Prestation'), this.modes[0], this.exo, this.user);
-    this.totalLoyer = 0;
-    this.addLoyerGroup.patchValue({
-      loyDat: moment(new Date()).format('DD/MM/YYYY HH:mm'),
-      loyCont: '', loyObs: ''
-    });
+    this.chargerModes();
+    this.chargerCaisse();
+        this.total = 0;
+        this.addLoyer.show();
+        this.tmpOpC = new OpCaisse(new Date().getUTCFullYear() + '-000001', new Date(), 'Divers', true, '', new Date(),
+          this.caissesValides[0], new TypeRecette('VD', 'Prestation'), this.modes[0], this.exo, this.user);
+        this.totalLoyer = 0;
+        this.addLoyerGroup.patchValue({
+          loyDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
+          loyCont: '', loyObs: '', loyMod: 0, loyCai: 0
+        });
+
     this.echeanceAPayer = [];
     this.dtTrigEche.next();
 
@@ -940,6 +975,8 @@ export class OperationCaisseComponent implements OnInit {
     if (this.echeanceAPayer.some(ech => ech.payeEcheance)) {
       const echeancepaye = this.echeanceAPayer.filter(e => e.payeEcheance === true);
       let j = this.echeanceAPayer.filter(e => e.payeEcheance === true).length;
+      console.log(echeancepaye);
+
 
       if (this.addLoyerGroup.value['loyCai'] !== null && this.addLoyerGroup.value['loyMod'] !== null &&
         this.addLoyerGroup.value['loyDat'] !== null) {
@@ -947,11 +984,21 @@ export class OperationCaisseComponent implements OnInit {
         const datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
           Number.parseInt(dat.substr(0, 2), 10), Number.parseInt(dat.substr(11, 2), 10), Number.parseInt(dat.substr(14, 2), 10));
         const newOC = new OpCaisse('0001', new Date(this.addLoyerGroup.value['loyDat']), this.addLoyerGroup.value['loyCon'], true,
-          this.addLoyerGroup.value['loyObs'], new Date(), this.caissesValides[this.addLoyerGroup.value['loyCai']],
+          this.addLoyerGroup.value['loyObs'], new Date(), this.caisses[this.addLoyerGroup.value['loyCai']],
           new TypeRecette('L', 'Location'), this.modes[this.addLoyerGroup.value['loyMod']], this.serExo.exoSelectionner,
           this.user);
         newOC.annulMotif = null;
-        this.servOp.addOp(newOC)
+        const bloc = new OpLocBlock(newOC, echeancepaye);
+        this.servOp.addLoyer(bloc).subscribe(
+          data => {
+            this.afficheFacture(data);
+          },
+          err => {
+            console.log('Enregistrement échoué du paiement',err);
+
+          }
+        )
+        /*this.servOp.addLoyer(new OpLoyerBlock(newOC, echeancepaye))
           .subscribe(
             (dataop) => {
               echeancepaye.forEach(elt => {
@@ -971,7 +1018,7 @@ export class OperationCaisseComponent implements OnInit {
                                 this.echeances = datalisteop;
                                 this.imprimeFacture(dataop);
                                 this.addLoyerGroup.patchValue({
-                                  loyDat: moment(new Date()).format('DD/MM/YYYY HH:mm'),
+                                  loyDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
                                   loyLoc: -1, loyVL: -1, loyCont: '', loyObs: ''
                                 });
                                 this.genererEcheancier(null);
@@ -991,14 +1038,14 @@ export class OperationCaisseComponent implements OnInit {
             },
             (err) => {
               console.log('Nouvelle opération ', err);
-            });
+            });*/
       } else {
         console.log('Vérifier que la caisse, la date, le mode et numéro du paiement sont renseignés');
       }
     } else {
       console.log('Veuillez cocher au moins une échéance à payer');
     }
-    this.chargerOperations();
+    this.chargerDailyOp();
   }
 
   chargerImmeubles(loc: Locataire) {
@@ -1026,6 +1073,7 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   genererEcheancier(con: Contrat) {
+    this.total=0
     if (con == null) {
       this.echeanceAPayer = [];
     } else {
@@ -1061,7 +1109,6 @@ export class OperationCaisseComponent implements OnInit {
           );
 
           if (prix != null) {
-            console.log(con.immeuble);
             let p = prix.prixIm;
             if (con.immeuble.valUnit === true) {
               p=p*con.immeuble.superficie
@@ -1073,8 +1120,9 @@ export class OperationCaisseComponent implements OnInit {
             this.echeanceAPayer.push(eche);
             n++;
           } else {
-             this.tst.info('Il n\'y a pa de prix pour l\'échéance du ' + mois[des.getMonth() - 1] + ' ' +
-             dde.getFullYear());
+             alert('Il n\'y a pa de prix pour l\'échéance du ' + mois[des.getMonth() - 1] + ' ' +
+               dde.getFullYear());
+            break;
           }
         }
         dde = des;
@@ -1109,11 +1157,20 @@ export class OperationCaisseComponent implements OnInit {
 
   considererEcheance(p: number) {
     if (this.echeanceAPayer[p].payeEcheance) {
-          this.totalLoyer += this.echeanceAPayer[p].prix.valueOf();
-        } else {
-        this.totalLoyer -= this.echeanceAPayer[p].prix.valueOf();
+      if (p > 0 && !this.echeanceAPayer[p - 1].payeEcheance) {
+        alert('Veuillez payer les premières échéances');
+        this.addLoyerGroup.patchValue({ coche: false })
       }
-    console.log(this.echeanceAPayer[p]);
+    } else {
+      if (p > 0 && this.echeanceAPayer[p + 1].payeEcheance) {
+        alert('Veuillez payer les premières échéances');
+        this.addLoyerGroup.patchValue({ coche: false })
+      }
+    }
+        this.echeanceAPayer.sort((a, b) => a.dateEcheance.valueOf() - b.dateEcheance.valueOf());
+        $('#dteche').dataTable().api().destroy();
+        this.dtTrigEche.next();
+    this.total=this.echeanceAPayer.filter(e=>e.payeEcheance).reduce((t,e)=>t+=e.prix.valueOf(),0)
   }
 
   /// Gestion des imputations
@@ -1123,7 +1180,7 @@ export class OperationCaisseComponent implements OnInit {
     this.totalLoyer = 0;
     this.addImput.show();
     this.addImputGroup.patchValue({
-      addImDat: moment(Date.now()).format('DD/MM/YYYY HH:mm:ss'),
+      addImDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
       addImCor: 0, addImMod: 0, addImCai: 0
     });
     this.coi = this.pointV.filter(pp => pp.correspondant.imputableCorres === true && pp.payerPoint === false).map(pp => pp.correspondant);
@@ -1181,7 +1238,7 @@ export class OperationCaisseComponent implements OnInit {
         this.caissesValides[this.addImputGroup.value['addImCai']], new TypeRecette('I', 'Imputation Correspondant'),
           this.modes[this.addImputGroup.value['addImMod']], this.serExo.exoSelectionner, this.user);
       newOC.annulMotif = null;
-      this.servOp.addOp(newOC)
+      this.servOp.imputCorres(newOC,this.pointPayable)
         .subscribe(
           (dataOP) => {
             this.pointPayable.forEach(elt => {
@@ -1212,7 +1269,7 @@ export class OperationCaisseComponent implements OnInit {
                     this.totalImput = 0;
                     this.ImputLine = [];
                     this.addImputGroup.patchValue({
-                      addimDat: moment(Date.now()).format('jj/MM/aaaa hh/mm'),
+                      addImDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
                       addImCor: -1, addImObs: 0
                     });
                   }
@@ -1230,32 +1287,297 @@ export class OperationCaisseComponent implements OnInit {
     } else {
       console.log('pas enregistrement');
     }
-    this.chargerOperations();
+    this.chargerDailyOp();
+  }
+
+  chargerDetailOp(opc: OpCaisse) {
+    this.lignes = [];
+    this.total = 0;
+    let lines
+    switch (opc.typeRecette.codeTypRec) {
+      case 'L': {
+        this.titre = 'Facture de loyer N° : ' + opc.numOpCaisse + ' du ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nDéposant : ' +
+          opc.contribuable;
+        this.tittres = ['Mois', 'Année', 'Loyer'];
+        break;
+      }
+      case 'P': {
+        this.titre = 'Facture de caisse N° : ' + opc.numOpCaisse + ' du ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nContribuable : ' +
+          opc.contribuable;
+        this.tittres = ['Codes', 'Libellé', 'Qte', 'Pu', 'Montant'];
+        this.servOp.getLineByOp(opc.numOpCaisse).subscribe(
+          (data) => {
+            lines = data;
+            lines.forEach(element => {
+              let lig = [];
+              lig.push(element.article.codeArticle);
+              lig.push(element.article.libArticle);
+              lig.push(element.qteLigneOperCaisse);
+              lig.push(element.prixLigneOperCaisse);
+              lig.push(element.prixLigneOperCaisse * element.qteLigneOperCaisse);
+              lig.push(element.commentaireLigneOperCaisse);
+              this.total+= element.qteLigneOperCaisse * element.prixLigneOperCaisse
+              this.lignes.push(lig);
+            });
+            //this.total = lines.reduce((t, l) => t += l.qteLigneOperCaisse * l.prixLigneOperCaisse, 0);
+          }
+        )
+        break;
+      }
+      case 'I': {
+        this.tittres = ['Codes', 'Libellé', 'Qte', 'Pu', 'Montant'];
+        break;
+      }
+    }
+    const fact = new jsPDF();
+      fact.addImage(this.outil.entete, 5, 5, 190, 25);
+      autoTable(fact, {
+        theme: 'plain',
+        margin: { left: 5, top: 30, right: 5, bottom: 1 },
+        body: [[this.titre]],
+        bodyStyles: {
+          fontSize: 15,
+          cellPadding: 1,
+          halign: 'center',
+        }
+      });
+  console.log(this.lignes);
+
+      autoTable(fact, {
+        head: [this.tittres],
+        margin: { top: 60 },
+        body: [this.lignes],
+      });
+
+      autoTable(fact, {
+        theme: 'grid',
+        margin: { top: 30, left: 130 },
+        columnStyles: {
+          0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+        },
+        body: [['Total', this.total]],
+      });
+      console.log('Total facture: '+ this.total);
+
+      autoTable(fact, {
+        theme: 'plain',
+        margin: { top: 30, left: 130 },
+        columnStyles: {
+          0: { textColor: 0, fontStyle: 'bold', fontSize: 12, halign:'justify' },
+        },
+        body: [['Le(La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
+          this.serU.connectedUser.prenomUtilisateur]]
+      });
+      this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
+      this.appercu.show();
   }
 
   afficheFacture(opc: OpCaisse) {
     const fact = new jsPDF();
-    fact.addImage(this.outil.entete, 5, 5, 190, 25);
-    let titre: String;
+    const lig= [];
+    switch (opc.typeRecette.codeTypRec) {
+      case 'L': {
+        this.titre = 'Facture de loyer N° : ' + opc.numOpCaisse + ' du ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nDéposant : ' +
+          opc.contribuable;
+        this.tittres = ['Mois', 'Année', 'Echéance', 'Loyer'];
+        this.servOp.getEcheanceByOp(opc.numOpCaisse).subscribe(
+          data => {
+              if (data.length > 0) {
+              this.total = data.reduce((d, e) => d += e.prix.valueOf(), 0);
+              data.forEach(elt => {
+                const col = [];
+                col.push(elt.moisEcheance);
+                col.push(elt.annee);
+                col.push(moment(new Date(elt.dateEcheance)).format('DD/MM/YYYY'));
+                col.push(elt.prix);
+                lig.push(col)
+              });
+
+              fact.addImage(this.outil.entete, 5, 5, 190, 25);
+              autoTable(fact, {
+                theme: 'plain',
+                margin: { left: 5, top: 30, right: 5, bottom: 1 },
+                body: [[this.titre]],
+                bodyStyles: {
+                  fontSize: 15,
+                  cellPadding: 1,
+                  halign: 'center',
+                }
+              });
+
+              autoTable(fact, {
+                head: [this.tittres],
+                margin: { top: 60 },
+                body: lig,
+              });
+              autoTable(fact, {
+                theme: 'grid',
+                margin: { top: 30, left: 130 },
+                columnStyles: {
+                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                },
+                body: [['Total', this.total]],
+              });
+
+              autoTable(fact, {
+                theme: 'plain',
+                margin: { top: 30, left: 130 },
+                columnStyles: {
+                  0: { textColor: 0, fontStyle: 'bold', fontSize: 12, halign:'justify' },
+                },
+                body: [['Le(La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
+                  this.serU.connectedUser.prenomUtilisateur]]
+              });
+                this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
+    this.appercu.show();
+            }
+          }
+        )
+        break;
+      }
+      default: {
+        this.titre = 'Facture de caisse N° : ' + opc.numOpCaisse + ' du ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nContribuable : ' +
+          opc.contribuable;
+        this.tittres = ['Codes', 'Libellé', 'Qte', 'Pu', 'Montant'];
+        this.servOp.getLineByOp(opc.numOpCaisse).subscribe(
+          (data) => {
+              if (data.length > 0) {
+              this.total = data.reduce((d, e) => d += e.qteLigneOperCaisse*e.prixLigneOperCaisse.valueOf(), 0);
+              data.forEach(elt => {
+                const col = [];
+                col.push(elt.article.codeArticle);
+                col.push(elt.article.libArticle);
+                col.push(elt.qteLigneOperCaisse);
+                col.push(elt.prixLigneOperCaisse);
+                col.push(elt.prixLigneOperCaisse*elt.qteLigneOperCaisse);
+                lig.push(col)
+              });
+
+              fact.addImage(this.outil.entete, 5, 5, 190, 25);
+              autoTable(fact, {
+                theme: 'plain',
+                margin: { left: 5, top: 30, right: 5, bottom: 1 },
+                body: [[this.titre]],
+                bodyStyles: {
+                  fontSize: 15,
+                  cellPadding: 1,
+                  halign: 'center',
+                }
+              });
+
+              autoTable(fact, {
+                head: [this.tittres],
+                margin: { top: 60 },
+                body: lig,
+              });
+              autoTable(fact, {
+                theme: 'grid',
+                margin: { top: 30, left: 130 },
+                columnStyles: {
+                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                },
+                body: [['Total', this.total]],
+              });
+
+              autoTable(fact, {
+                theme: 'plain',
+                margin: { top: 30, left: 130 },
+                columnStyles: {
+                  0: { textColor: 0, fontStyle: 'bold', fontSize: 12, halign:'justify' },
+                },
+                body: [['Le(La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
+                  this.serU.connectedUser.prenomUtilisateur]]
+              });
+                this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
+    this.appercu.show();
+            }
+          }
+        )
+        break;
+      }/*
+      case 'I': {
+        this.titre = 'Facture de reversement N° : ' + opc.numOpCaisse + ' du ' +
+          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nCorrespondant : ' +
+          opc.contribuable;
+        this.tittres = ['Codes', 'Libellé', 'Qte', 'Pu', 'Montant'];
+        this.servOp.getLignePVByOp(opc.numOpCaisse).subscribe(
+          (data) => {
+            console.log(data);
+              if (data.length > 0) {
+              //this.total = data.reduce((d, e) => d += e.quantiteLignePointVente*e.pulignePointVente.valueOf(), 0);
+              data.forEach(elt => {
+                const col = [];
+                col.push(elt.article.codeArticle);
+                col.push(elt.article.libArticle);
+                col.push(elt.quantiteLignePointVente);
+                col.push(elt.pulignePointVente);
+                col.push(elt.pulignePointVente*elt.quantiteLignePointVente);
+                lig.push(col)
+              });
+
+              fact.addImage(this.outil.entete, 5, 5, 190, 25);
+              autoTable(fact, {
+                theme: 'plain',
+                margin: { left: 5, top: 30, right: 5, bottom: 1 },
+                body: [[this.titre]],
+                bodyStyles: {
+                  fontSize: 15,
+                  cellPadding: 1,
+                  halign: 'center',
+                }
+              });
+
+              autoTable(fact, {
+                head: [this.tittres],
+                margin: { top: 60 },
+                body: lig,
+              });
+              autoTable(fact, {
+                theme: 'grid',
+                margin: { top: 30, left: 130 },
+                columnStyles: {
+                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                },
+                body: [['Total', this.total]],
+              });
+
+              autoTable(fact, {
+                theme: 'plain',
+                margin: { top: 30, left: 130 },
+                columnStyles: {
+                  0: { textColor: 0, fontStyle: 'bold', fontSize: 12, halign:'justify' },
+                },
+                body: [['Le(La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
+                  this.serU.connectedUser.prenomUtilisateur]]
+              });
+                this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
+    this.appercu.show();
+            }
+          }
+        )
+        break;
+      }*/
+    }
+    /*/*
+
+
+
+    */
+    /*} else {
+      this.tst.info('la facture n\'a pas de détail');
+    }*/
+/*
     const ligne = [];
     let total = 0;
 
     switch (opc.typeRecette.codeTypRec) {
+
+
       default: {
-        titre = 'Facture de caisse N° : ' + opc.numOpCaisse +
-          ' du : ' + moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nContribuable : ' + opc.contribuable;
-        autoTable(fact, {
-          theme: 'plain',
-          margin: { left: 5, top: 30, right: 5, bottom: 1 },
-          body: [
-            [titre.toString()]
-          ],
-          bodyStyles: {
-            fontSize: 15,
-            cellPadding: 1,
-            halign: 'center',
-          }
-        });
         this.rechargerLigneOpCaisse();
         const loptmp = this.lignesOp.filter(function (lop) {
           return lop.opCaisse.numOpCaisse === opc.numOpCaisse;
@@ -1271,17 +1593,12 @@ export class OperationCaisseComponent implements OnInit {
           total += element.prixLigneOperCaisse * element.qteLigneOperCaisse;
           ligne.push(lig);
         });
-        autoTable(fact, {
-          head: [['Article', 'Désignation', 'Qte', 'PU', 'Montant', 'Obs']],
-          margin: { top: 60 },
-          body: ligne,
-        });
         break;
       }
 
       case 'L': {
         const eche = this.echeances.filter(e => e.opCaisse.numOpCaisse === opc.numOpCaisse);
-        titre = '\nContrat de location N° : ' + eche[0].contrat.numContrat +
+        this.titre = '\nContrat de location N° : ' + eche[0].contrat.numContrat +
           '\nBoutique :' + eche[0].contrat.immeuble.libIm +
 
           '\nFacture de loyer N° : ' + opc.numOpCaisse + ' du ' +
@@ -1292,7 +1609,7 @@ export class OperationCaisseComponent implements OnInit {
           theme: 'plain',
           margin: { left: 5, top: 30, right: 5, bottom: 1 },
           body: [
-            [titre.toString()]
+            [this.titre.toString()]
           ],
           bodyStyles: {
             fontSize: 15,
@@ -1336,9 +1653,9 @@ export class OperationCaisseComponent implements OnInit {
       body: [['Le(La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
         this.serU.connectedUser.prenomUtilisateur]]
     });
-    // fact.autoPrint();
-    this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
-    this.appercu.show();
+    // fact.autoPrint();*/
+    //fact.text('ygygj\ndfj\nffgy\nfghfg\nfgfg\nfgfg\nffty\nhkhjk\njhjkhhjh',10,65)
+
   }
 
   imprimeFacture(opc: OpCaisse) {

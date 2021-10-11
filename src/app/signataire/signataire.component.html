@@ -1,4 +1,4 @@
-
+<p>signataire works!</p>
 <tabset>
   <!--Onglet Poste-->
   <tab>
@@ -24,8 +24,8 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of postes; let i = index">
-              <td>{{ item?.codPost }}</td>
-              <td>{{ item?.libPost }}</td>
+              <td>{{ item.codPost }}</td>
+              <td>{{ item.libPost }}</td>
               <td>
                 <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initModPost(i)"><span
                     class="fa fa-edit"></span></button>
@@ -33,7 +33,20 @@
                     class="fa fa-trash"></span></button>
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
-                
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                      class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item">Something else
+                        here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
               </td>
             </tr>
 
@@ -82,7 +95,20 @@
                     class="fa fa-trash"></span></button>
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
-               
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                      class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item">Something else
+                        here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
               </td>
             </tr>
 
@@ -132,7 +158,20 @@
                     class="fa fa-trash"></span></button>
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
-               
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                      class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item">Something else
+                        here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
               </td>
             </tr>
 
@@ -184,7 +223,20 @@
                     class="fa fa-trash"></span></button>
                 <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
                 <!--Le bouton des options-->
-                
+                <div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span
+                      class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item">Something else
+                        here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item">Separated link</a>
+                    </li>
+                  </ul>
+                </div>
               </td>
             </tr>
 
@@ -219,11 +271,11 @@
         <div class="modal-body">
           <div class="col-md-12">
             <label class="col-form-label" for="cod">Code</label>
-            <input type=" text" name="cod" class="form-control" formControlName="cod" autocomplete="off">
+            <input type=" text" name="cod" class="form-control" formControlName="cod">
           </div>
           <div class="col-md-12">
             <label class="col-form-label" for="lib">Libellé</label>
-            <input type="text" name="lib" class="form-control" formControlName="lib" autocomplete="off">
+            <input type="text" name="lib" class="form-control" formControlName="lib">
           </div>
 
         </div>
@@ -247,21 +299,21 @@
     <form [formGroup]="modPostGroup" (ngSubmit)="valModPost()" class="form-horizontal">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Modification du Post</h4>
+          <h4 class="modal-title">Modification de mode de paiement</h4>
           <button type="button" class="close" (click)="annulModPost()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <div class="col-md-12"> <label class="col-form-label" for="modCod">Code</label>
-            <input type="text" name="modCod" class="form-control" formControlName="modCod" [ngModel]=pos.codPost autocomplete="off">
+          <div class="col-md-12"> <label class="col-form-label" for="cod">code</label>
+            <input type="text" name="cod" class="form-control" formControlName="cod" [ngModel]=pos.codPost>
           </div>
-          <div class="col-md-12"> <label class="col-form-label" for="modLib">Libellé</label>
-            <input type="text" name="modLib" class="form-control" formControlName="modLib" [ngModel]=pos.libPost autocomplete="off">
+          <div class="col-md-12"> <label class="col-form-label" for="lib">Article</label>
+            <input type="text" name="lib" class="form-control" formControlName="lib" [ngModel]=pos.libPost>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="annulModPost()">Annuler</button>
+          <button type="button" class="btn btn-secondary" (click)="annulModPost()">Abandonner</button>
           <button type="submit" class="btn btn-primary">Modifier</button>
         </div>
       </div>
@@ -291,8 +343,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="supPost.hide()">Annuler</button>
-        <button type="submit" class="btn btn-primary" (click)="valSupPost()">Valider</button>
+        <button type="button" class="btn btn-secondary" (click)="delMod.hide()">Abandonner</button>
+        <button type="submit" class="btn btn-primary" (click)="valSupPost()">Continuer</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -316,12 +368,12 @@
         </div>
         <div class="modal-body">
           <div class="col-md-12">
-            <label class="col-form-label" for="nomPers">Nom</label>
-            <input type=" text" name="nomPers" class="form-control" formControlName="nomPers" autocomplete="off">
+            <label class="col-form-label" for="cod">Code</label>
+            <input type=" text" name="cod" class="form-control" formControlName="cod">
           </div>
           <div class="col-md-12">
-            <label class="col-form-label" for="prenomPers">Prénoms</label>
-            <input type="text" name="prenomPers" class="form-control" formControlName="prenomPers" autocomplete="off">
+            <label class="col-form-label" for="lib">Libellé</label>
+            <input type="text" name="lib" class="form-control" formControlName="lib">
           </div>
         </div>
         <div class="modal-footer">
@@ -351,16 +403,16 @@
         </div>
         <div class="modal-body">
           <div class="form-graoup row">
-            <div class="col-md-12"> <label class="col-form-label" for="modNomPers">Nom</label>
-              <input type="text" name="modNomPers" class="form-control" formControlName="modNomPers" [ngModel]=pers.nomPers>
+            <div class="col-md-12"> <label class="col-form-label" for="nm">Nom</label>
+              <input type="text" name="nm" class="form-control" formControlName="nm" [(ngModel)]=pers.nomPers>
             </div>
-            <div class="col-md-12"> <label class="col-form-label" for="modPrenompers">Prénoms</label>
-              <input type="text" name="modPrenompers" class="form-control" formControlName="modPrenompers" [ngModel]=pers.prenomPers>
+            <div class="col-md-12"> <label class="col-form-label" for="pn">Prénom</label>
+              <input type="text" name="pn" class="form-control" formControlName="pn" [(ngModel)]=pers.prenomPers>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="annulmodPers()">Annuler</button>
+          <button type="button" class="btn btn-secondary" (click)="annulmodPers()">Abandonner</button>
           <button type="submit" class="btn btn-primary">Modifier</button>
         </div>
       </div>
@@ -385,16 +437,14 @@
       <div class="modal-body">
         <div class="form-group row">
           <!-----Nom-->
-          <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{pers.nomPers}} - {{pers.prenomPers}}</mark>
+          <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{pers.nomPers}} {{pers.prenomPers}</mark>
           </p>
-          <br>
-          <br>
           <p>Le confirmez-vous ?</p>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="supPers.hide()">Annuler</button>
-        <button type="submit" class="btn btn-primary" (click)="valSupPers()">Valider</button>
+        <button type="button" class="btn btn-secondary" (click)="delMod.hide()">Abandonner</button>
+        <button type="submit" class="btn btn-primary" (click)="valSupPost()">Continuer</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -418,30 +468,30 @@
         </div>
         <div class="modal-body">
           <div class="form-row">
-            <label for="addRa">Rapport</label>
-            <select id="addRa" name="addRa" class="form-control" formControlName="addRa" autocomplete="off">
+            <label for="ra">Rapport</label>
+            <select id="rap" name="ra" class="form-control" formControlName="ra">
               <option *ngFor="let item of rapports; let i = index" [value]="i">
                 {{ item.libRap }}</option>
             </select>
-            <label for="addPo">Poste</label>
-            <select id="addPo" name="addPo" class="form-control" formControlName="addPo" autocomplete="off">
+            <label for="po">Poste</label>
+            <select id="pos" name="po" class="form-control" formControlName="po">
               <option *ngFor="let item of postes; let i = index" [value]="i">
                 {{ item.libPost }}</option>
             </select>
           </div> <br>
           <div class="form-row">
-            <div class="col-md-2"><label class="col-form-label" for="addDeb">Début</label> </div>
-            <div class="col-md-4"><input type="date" name="addDeb" class="form-control" formControlName="addDeb"></div>
+            <div class="col-md-2"><label class="col-form-label" for="deb">Début</label> </div>
+            <div class="col-md-4"><input type="date" name="deb" class="form-control" formControlName="deb"></div>
 
-            <div class="col-md-2"> <label class="col-form-label" for="addFin">Fin</label> </div>
+            <div class="col-md-2"> <label class="col-form-label" for="fin">Fin</label> </div>
             <div class="col-md-4">
-              <input type="date" name="addFin" class="form-control" formControlName="addFin">
+              <input type="date" name="fin" class="form-control" formControlName="fin">
             </div>
           </div>
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="annulAddSign()">Annuler</button>
+          <button type="button" class="btn btn-secondary" (click)="annulModPost()">Annuler</button>
           <button type="submit" class="btn btn-primary">Valider</button>
         </div>
       </div>
@@ -457,41 +507,26 @@
   aria-hidden="true">
   <div class="modal-dialog modal-lg modal-primary" role="document">
     <!-----Début formulaire-->
-    <form [formGroup]="modSignGroup" (ngSubmit)="valModSign()" class="form-horizontal">
+    <form [formGroup]="modPostGroup" (ngSubmit)="valModPost()" class="form-horizontal">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Modification de droit de signature</h4>
+          <h4 class="modal-title">Modification de mode de paiement</h4>
           <button type="button" class="close" (click)="annulmodSign()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <div class="row">
-              <div class="col-md-6">
-                <label class="col-form-label" for="modSignRa">Rapport</label>
-                <input type="text" name="modSignRa" class="form-control" formControlName="modSignRa" [ngModel]= 'sign.rapport?.codRap+ " - " +sign.rapport?.libRap' autocomplete="off" >
-              </div>
-
-              <div class="col-md-6">
-                <label class="col-form-label" for="modSignPo">Poste</label>
-                <input type="text" name="modSignPo" class="form-control" formControlName="modSignPo" [ngModel]='sign.poste?.codPost+ " - " +sign.poste?.libPost' autocomplete="off">
-              </div>
+          <div class="col-md-3"> <label class="col-form-label" for="cod">code</label> </div>
+          <div class="col-md-3">
+            <input type="text" name="cod" class="form-control" formControlName="cod" [(ngModel)]=pos.codPost>
           </div>
-
-            <div class="row"> 
-              <div class="col-md-6">
-                <label class="col-form-label" for="modSignDeb">Date début</label>
-                <input type="date" name="modSignDeb" class="form-control" formControlName="modSignDeb" [(ngModel)]=sign.datDeb autocomplete="off">
-              </div>
-            
-              <div class="col-md-6">
-                <label class="col-form-label" for="modSignFin">Date fin</label>
-                <input type="date" name="modSignFin" class="form-control" formControlName="modSignFin" [ngModel]=sign.datFin autocomplete="off">
-              </div>
+          <div class="col-md-3"> <label class="col-form-label" for="lib">Article</label> </div>
+          <div class="col-md-4">
+            <input type="text" name="lib" class="form-control" formControlName="lib" [ngModel]=pos.libPost>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="annulmodSign()">Annuler</button>
+          <button type="button" class="btn btn-secondary" (click)="annulmodSign()">Abandonner</button>
           <button type="submit" class="btn btn-primary">Modifier</button>
         </div>
       </div>
@@ -504,13 +539,13 @@
 <!-- /.modal -->
 
 
-<div bsModal #supSign="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<div bsModal #delMod="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-danger" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Supprimer le droit de signature </h4>
-        <button type="button" class="close" (click)="supSign.hide()" aria-label="Close">
+        <h4 class="modal-title">Supprimer Mode de paiement</h4>
+        <button type="button" class="close" (click)="delMod.hide()" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -522,8 +557,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="supSign.hide()">Annuler</button>
-        <button type="submit" class="btn btn-primary" (click)="valSupSign()">Valider</button>
+        <button type="button" class="btn btn-secondary" (click)="delMod.hide()">Abandonner</button>
+        <button type="submit" class="btn btn-primary" (click)="valSupPost()">Continuer</button>
       </div>
     </div>
     <!-- /.modal-content -->
