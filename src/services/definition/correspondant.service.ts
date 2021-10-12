@@ -52,6 +52,25 @@ export class CorrespondantService {
     return this.httpCli.delete<boolean>(this.host+'/stock/magasin/byCodMag/'+code);
    }
 
+   //***********Léonel*********** */
+   //Magasin d'un magasier
+   getMagasinByMagasinier(code: String){
+    return this.httpCli.get<Magasin[]>(this.host+'/stock/magasinByMagasinier/'+code);
+
+   }
+
+   //updatedStocker
+   updatedStocker(codeArticle: String, codeMag: String, quant: number){ 
+    //return this.httpCli.get<Stocker[]>(this.host+'/stock/stocker/list/${id}');
+    return this.httpCli.get(`${this.host}/stock/stocker/list/${codeArticle}/${codeMag}/${quant}`);
+
+   }
+   //get all correspondant imputable
+   getAllCorrespondantImputable(){
+    return this.httpCli.get(`${this.host}/stock/correspondant-imputable/list`);
+
+   }
+
 
 
   //Partie réservée Magasinier

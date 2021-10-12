@@ -134,49 +134,69 @@
                                 </div>
                             </div>
                             <br>
-                            <br>
-                            <div class="col-xl-12">
-                                <button type="button" class="btn btn-block btn-primary active" aria-pressed="true" (click)="ouvreAddArt()">Ajouter Article</button>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <button type="button" class="btn btn-block btn-primary active" aria-pressed="true" (click)="ouvreAddArt()">Ajouter Article</button>
+                                </div>
                             </div>
                             <br>
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Code</th>
-                                        <th>Libellé</th>
-                                        <th>Commentaire</th>
-                                        <th>Prix unitaire</th>
-                                        <th>Quantité</th>
-                                        <th>Montant</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let tmpLigne of tempLigneOpCais; let i=index">
-                                        <td>{{tmpLigne.article.codeArticle}}</td>
-                                        <td>{{tmpLigne.article.libArticle}}</td>
-                                        <td><input [(ngModel)]="tempLigneOpCais[[i]].commentaireLigneOperCaisse" type="text" class="form-control" [ngModelOptions]="{standalone: true} "></td>
-                                        <td><input type="number" class="form-control" placeholder="0" (change)="recalculerTotalvente()"
-                                            (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].prixLigneOperCaisse"
-                                            [ngModelOptions]="{standalone: true}"></td>
-                                        <td>
-                                            <input type="number" class="form-control" placeholder="0" (change)="recalculerTotalvente()"
-                                              (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].qteLigneOperCaisse"
-                                              [ngModelOptions]="{standalone: true}">
-                                        </td>
-                                        <td>{{tempLigneOpCais[i].prixLigneOperCaisse*tempLigneOpCais[i].qteLigneOperCaisse}}</td>
-                                        <td>
-                                            <button class="btn btn-block btn-sm" data-toggle="modal" style="color: red;" (click)="supTempLigneOpCais(i)"><span class="fa fa-trash"></span></button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td style="text-align: center; font-weight: bold;" colspan="5">Total</td>
-                                        <td style="text-align: center; font-weight: bold;" colspan="2">{{total}}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                            <div class="row">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Libellé</th>
+                                            <th>Commentaire</th>
+                                            <th>Prix unitaire</th>
+                                            <th>Quantité</th>
+                                            <th>Montant</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let tmpLigne of tempLigneOpCais; let i=index">
+                                            <td>{{tmpLigne.article.codeArticle}}</td>
+                                            <td>{{tmpLigne.article.libArticle}}</td>
+                                            <td><input [(ngModel)]="tempLigneOpCais[[i]].commentaireLigneOperCaisse" type="text" class="form-control" [ngModelOptions]="{standalone: true} "></td>
+                                            <td><input type="number" class="form-control" placeholder="0" (change)="recalculerTotalvente()"
+                                                (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].prixLigneOperCaisse"
+                                                [ngModelOptions]="{standalone: true}"></td>
+                                            <td>
+                                                <input type="number" class="form-control" placeholder="0" (change)="recalculerTotalvente()"
+                                                (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].qteLigneOperCaisse"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td>{{tempLigneOpCais[i].prixLigneOperCaisse*tempLigneOpCais[i].qteLigneOperCaisse}}</td>
+                                            <td>
+                                                <button class="btn btn-block btn-sm" data-toggle="modal" style="color: red;" (click)="supTempLigneOpCais(i)"><span class="fa fa-trash"></span></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td style="text-align: center; font-weight: bold;" colspan="5">Total</td>
+                                            <td style="text-align: center; font-weight: bold;" colspan="2">{{total}}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="depotVent">Montant Perçu</label>
+                                    <input type="number" id="depotVent" (change)="recalculerReliquat()" (keyup)="recalculerReliquat()" formControlName="depotVent" class="form-control" placeholder="Montant perçu" autocomplete="false">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="monnaiVent">Monaie Rendu</label>
+                                    <input type="number" id="monnaiVent" (change)="recalculerReliquat()" (keyup)="recalculerReliquat()" formControlName="monnaiVent" class="form-control" placeholder="Monnaie rendue" autocomplete="false">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="reliqVent">Reliquat</label>
+                                    <input type="number" id="reliqVent" formControlName="reliqVent" readonly class="form-control" placeholder="Reliquat restant" value="Reliquat" autocomplete="false">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -320,16 +340,29 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <label for="addImCor">Correspondant</label>
                                 </div>
                                 <div class="col-sm-3">
-                                    <select formControlName="addImCor" class="form-control" #corre (change)="chargerPointNI(coi[addImputGroup.value['addImCor']])">
+                                    <!--select formControlName="addImCor" class="form-control" #corre (change)="chargerPointNI(coi[addImputGroup.value['addImCor']])">
                     <option *ngFor="let corr of coi; let i=index" [value]="i">{{corr.magasinier.nomMagasinier}} {{corr.magasinier.prenomMagasinier}}</option>
+                  </select-->
+                                    <select formControlName="addImCor" class="form-control"  (ngModelChange)="showPointVente(magasinierImpList[addImputGroup.value['addImCor']])">
+                    <option *ngFor="let corr of magasinierImpList; let i=index" [value]="i">{{corr.magasinier?.nomMagasinier}} {{corr.magasinier?.prenomMagasinier}}</option>
                   </select>
                                 </div>
+
+                                <!--Point vente imputable par correspondant-->
+                                <div class="col-sm-2">
+                                    <label for="addImCor">Point de vente</label>
+                                </div>
                                 <div class="col-sm-3">
-                                    <button type="button" class="btn btn-secondary" (click)="chargerPointNI(coi[addImputGroup.value['addImCor']])">
+                                    <select formControlName="addImPv" class="form-control" >
+                    <option *ngFor="let pv of pointVentOfCorrespondant; let i=index" [value]="pv.numPointVente">{{pv.numPointVente}}</option>
+                  </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" class="btn btn-secondary" (click)="chargerPointNI()">
                                       Afficher
                                   </button>
                                 </div>
@@ -351,8 +384,8 @@
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let lpv of ImputLine; let i=index">
-                                            <td>{{lpv.article.codeArticle}}</td>
-                                            <td>{{lpv.article.libArticle}}</td>
+                                            <td>{{lpv.article?.codeArticle}}</td>
+                                            <td>{{lpv.article?.libArticle}}</td>
                                             <td>{{lpv.pulignePointVente}}</td>
                                             <td>{{lpv.quantiteLignePointVente}}</td>
                                             <td>{{lpv.pulignePointVente*lpv.quantiteLignePointVente}}</td>
@@ -361,7 +394,7 @@
                                     <tfoot>
                                         <tr>
                                             <td style="text-align: center; font-weight: bold;" colspan="3">Total</td>
-                                            <td style="text-align: center; font-weight: bold;" colspan="2">{{total}}</td>
+                                            <td style="text-align: center; font-weight: bold;" colspan="2">{{totalImput}}</td>
                                         </tr>
                                     </tfoot>
                                 </table>

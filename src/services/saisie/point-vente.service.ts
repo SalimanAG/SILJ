@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { PointVente } from '../../models/pointVente.model';
 import { LignePointVente } from '../../models/lignePointVente.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
+import { OpCaisse } from '../../models/OpeCaisse.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -52,6 +53,23 @@ editLignePointVente(code:String, corps:LignePointVente){
 
 deleteLignePointVente(code:String){
   return this.httpcli.delete<boolean>(this.host+'/stock/lignepointvente/byCodLpv/'+code);
+}
+
+//Léo 
+getAllPointVenteNonPayByCorrespondant(codeCorres: String){
+  return this.httpcli.get(`${this.host}/stock/correspondant-imputable/list-point-vente-non-payer/${codeCorres}`);
+
+}
+
+getAllLignePointVenteByNumPointVente(numPv: string){
+  return this.httpcli.get(`${this.host}/stock/ligne-point-vente/by-num-pv/${numPv}`);
+
+}
+
+//AddImputaion 
+addImputation(opCaisse: OpCaisse, numPointVente: String){
+  return this.httpcli.post(`${this.host}/stock/add-imput/${numPointVente}`,opCaisse);
+
 }
 
 }

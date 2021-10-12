@@ -250,6 +250,14 @@ export class OperationCaisseService {
   }
   getAllLinesOpCaisseByPeriodeAndCaisse(searchLinesOpCaissDTO: SearchLinesOpCaissDTO){
     return this.lien.post<LigneOpCaisse[]>(this.host + 'facturation/find/lines-opcaisse-by-periode-caisse',searchLinesOpCaissDTO);
+
   }
+
+  getAllLinesImputation(searchLinesOpCaissDTO: SearchLinesOpCaissDTO){
+    return this.lien.post(this.host + 'stock/ligne-point-vente/list-imput',searchLinesOpCaissDTO);
+
+  }
+
+  
 
 }

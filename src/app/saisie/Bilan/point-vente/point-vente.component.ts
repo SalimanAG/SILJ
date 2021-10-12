@@ -187,7 +187,7 @@ export class PointVenteComponent implements OnInit {
    initFormsGroup(){
     this.addPointVenteFormGroup = this.formBulder.group({
       addNumPv:['PV-20000001', Validators.required],
-      addDatePv:[new Date().toISOString().substring(0, 10), Validators.required],
+      addDatePv:[moment(new Date()).format('YYYY-MM-DDTHH:mm'), Validators.required],
      // addpayPoint:[0, Validators.required],
       addCorres:[0, Validators.required],
       addReg:[0, Validators.required]
@@ -206,9 +206,9 @@ export class PointVenteComponent implements OnInit {
 
     this.servOp.getUserCaisse(this.useSer.connectedUser.idUtilisateur).subscribe(
       (datc) => {
-        this.caisse = datc[0].caisse;
+        this.caisse = datc[0]?.caisse;
       }
-    )
+    );
 
     this.getAllLignePointVente();
     this.getAllExercice();
@@ -244,8 +244,8 @@ export class PointVenteComponent implements OnInit {
       (data) => {
         //data.forEach
         this.pointVente = data;
-        //$('#PvDataTable').dataTable().api().destroy();
-        //this.dtTrigger1.next();
+        $('#PvDataTable').dataTable().api().destroy();
+        this.dtTrigger1.next();
         //this.dtTrigger1.next();
       },
       (erreur) => {
@@ -398,17 +398,7 @@ export class PointVenteComponent implements OnInit {
   }
 
   onSubmitAddPointVenteFormsGroup(){
-    var concernedStocker:Stocker = null
-    var magasinStock:Gerer = null ;
 
-    const newOp = new OpCaisse('001', this.addPointVenteFormGroup.value['addDatePv'],
-      this.correspondant[this.addPointVenteFormGroup.value['addCorres']].magasinier.nomMagasinier + ' ' +
-      this.correspondant[this.addPointVenteFormGroup.value['addCorres']].magasinier.prenomMagasinier, true, 'Retour de vente',
-      new Date(), this.caisse, new TypeRecette('I', 'Imputation'), new ModePaiement('E', 'Espèces'),
-      this.serviceExercice.exoSelectionner, this.useSer.connectedUser);
-
-    /*this.servOp.addOp(newOp).subscribe(
-      (dataOp) => {*/
         const newPointVente= new PointVente(this.addPointVenteFormGroup.value['addNumPv'],
     this.addPointVenteFormGroup.value['addDatePv'],false,
     this.serviceExercice.exoSelectionner, this.correspondant[this.addPointVenteFormGroup.value['addCorres']],
@@ -425,7 +415,33 @@ export class PointVenteComponent implements OnInit {
           element.pointVente = data;
           this.servicePointVente.addLignePointVente(element).subscribe(
             (data2) => {
-              console.log('********',data2);
+              console.log('******** lignes',data2);
+              console.log();
+
+              this.serviceCorres.getMagasinByMagasinier(this.correspondant[this.addPointVenteFormGroup.value['addCorres']].magasinier.numMAgasinier.toString()).subscribe(
+                (data8: any ) => {
+                  console.log('Magasin ==>');
+                  console.log(data);
+                  var magasinStock:Magasin = data8;
+
+                  this.serviceCorres.updatedStocker(element.article?.codeArticle, magasinStock.codeMagasin, element.quantiteLignePointVente).subscribe(
+                    (data) => {
+                      console.log('Stocker up ==>');
+                      console.log(data);
+                      
+                      
+                    },
+                    (erreur) => {
+                      console.log('Erreur lors de la modification ou ajout de stocker', erreur);
+                    }
+                  );
+                  
+                  
+                },
+                (erreur) => {
+                  console.log('Erreur lors de ajout de la ligne point vente', erreur);
+                }
+              );
 
 
             },
@@ -434,74 +450,6 @@ export class PointVenteComponent implements OnInit {
             }
           );
          
-
-           //Début reajustement de stock au sein du magasin du correspondant
-              this.serviceCorres.getAllGerer().subscribe(
-                (datagererlist) => {
-                  datagererlist.forEach(gererl =>{
-                    if(gererl.magasinier.numMAgasinier == this.correspondant[this.addPointVenteFormGroup.value['addCorres']].magasinier.numMAgasinier )
-                    {
-                       //this.gererli.push(gererl);
-                       magasinStock = gererl;
-                       exit;
-                    }
-
-                  });
-
-                  //coding
-                  this.serviceCorres.getAllStocker().subscribe(
-                    (data) => {
-                      let exist1:boolean = false;
-                      console.log('********',data);
-                      data.forEach(quant =>{
-                        if(element.article.codeArticle == quant.article.codeArticle && magasinStock.magasin.codeMagasin == quant.magasin.codeMagasin)
-                        {
-                          concernedStocker = quant;
-                          exist1 = true;
-
-
-
-                        }
-                        if(exist1){
-                           //concernedStocker.quantiterStocker = element;
-                           concernedStocker.quantiterStocker = concernedStocker.quantiterStocker+(- element.quantiteLignePointVente);
-                           this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
-                             (dataStock) => {
-                               console.log("QA",dataStock);
-
-                             },
-                             (erreur) => {
-                               console.log('Erreur lors de la modification du Stocker pour réajustement du stock', erreur);
-                             }
-                           );
-                        }
-                        else{
-                          this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePointVente*(-1), 0, 0, 0, element.article,magasinStock.magasin)).subscribe(
-                            (data4) => {
-
-                            },
-                            (erreur) => {
-                              console.log('Erreur lors de lAjout dUn Stocker', erreur);
-                            }
-                          );
-                        }
-
-                      });
-
-                },
-                (erreur) => {
-                  console.log('Erreur lors de la liste gerer', erreur);
-                }
-
-              );
-
-            },
-            (erreur) => {
-              console.log('Erreur lors de la liste gerer', erreur);
-            }
-
-          );
-              //Fin réajustement de stock
         });
         this.addPointVenteFormGroup.reset();
         this.initFormsGroup();
@@ -513,8 +461,6 @@ export class PointVenteComponent implements OnInit {
         console.log('Erreur lors de la création de point vente', erreur);
       }
     );
-      //}
-    //)
 
 
 

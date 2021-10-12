@@ -2,5 +2,5 @@ import { Echeance } from "./echeance.model";
 import { OpCaisse } from "./OpeCaisse.model";
 
 export class OpLocBlock {
-  constructor(public opc: OpCaisse, public lines: Echeance[]){}
+  constructor(public opc: OpCaisse, public lines: Echeance[], public avance: Number){}
 }

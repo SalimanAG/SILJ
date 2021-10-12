@@ -1,5 +1,5 @@
 
 export class SearchOpCaisseDTO{
     startDate:	string;
-    endDate:	string;
+    endDate:	string; 
 }

@@ -19,6 +19,8 @@ import { LigneOpCaisse } from '../../../../models/ligneopcaisse.model';
 import { Immeuble } from '../../../../models/immeuble.model';
 import { exit } from 'process';
 import { ToolsService } from '../../../../services/utilities/tools.service';
+import { SearchLinesOpCaissDTO } from '../../../../models/searchLinesOpCaissDTO.model';
+import { LignePointVente } from '../../../../models/lignePointVente.model';
 
 @Component({
   selector: 'app-journal-caisse',
@@ -35,7 +37,10 @@ export class JournalCaisseComponent implements OnInit {
   typeRecettes:TypeRecette[] =[];
   repport1FormsGroup: FormGroup;
   annulGroup: FormGroup;
+  imputGroup: FormGroup;
   pdfToShow = null;
+
+  lignePv: LignePointVente [] = [];
   @ViewChild('viewPdfModal') public viewPdfModal: ModalDirective;
   deb = new Date();
 
@@ -60,6 +65,13 @@ export class JournalCaisseComponent implements OnInit {
         annulMode:-1,
         annulDebut:[moment(this.deb).format('yyyy-MM-DDTHH:mm') , Validators.required],
         annulFin:[moment(Date.now()).format('yyyy-MM-DDTHH:mm'), Validators.required]
+      });
+
+      this.imputGroup = this.formBulder.group({
+        imputCaisse:-1,
+        //annulMode:-1,
+        imputDebut:[moment(this.deb).format('yyyy-MM-DDTHH:mm') , Validators.required],
+        imputFin:[moment(Date.now()).format('yyyy-MM-DDTHH:mm'), Validators.required]
       });
 
     }
@@ -969,6 +981,129 @@ export class JournalCaisseComponent implements OnInit {
         console.log('Erreur lors de la récupération des lignes dOpération de Caisse', erreur);
       }
     );
+
+  }
+
+  imputClicked(){
+
+    
+    const doc = new jsPDF();
+
+    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+
+    doc.setDrawColor(0);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(50, 29, 110, 9, 3, 3, 'FD');
+    //doc.setFont("Times New Roman");
+    doc.setFontSize(15);
+    doc.text('JOURNAL DES IMPUTATIONS', 70, 35);
+    doc.setFontSize(12);
+    doc.text('  Période du \t\t'+moment(this.imputGroup.value['imputDebut']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 45);
+    doc.text('\t\tAu\t\t'+moment(this.imputGroup.value['imputFin']).format('DD/MM/YYYY \t\t\t\t HH:mm'), 15, 55);
+   
+    let Cais:String = '';
+    if(this.imputGroup.value['imputCaisse'] == -1){
+      Cais = 'Toutes les caises';
+      
+    let element:Caisse = this.userAssociatedCaisse[this.imputGroup.value['imputCaisse']];
+    }else{
+      Cais = this.userAssociatedCaisse[this.imputGroup.value['imputCaisse']].libeCaisse;
+    }
+
+    let element:Caisse = this.userAssociatedCaisse[this.imputGroup.value['imputCaisse']];
+
+    
+    let totalCaisse = 0;
+        let lignes = [];
+
+    autoTable(doc, {
+      theme: 'plain',
+      margin: { top: 68 },
+      columnStyles: {
+        0: { textColor: 0, fontStyle: 'bold', halign: 'right' },
+        1: { textColor: 0, halign: 'left' },
+      },
+      body: [
+        ['Arrondissement / Site : ', element.arrondissement.codeArrondi+' - '+element.arrondissement.nomArrondi],
+        ['Caisse :', element?.codeCaisse+' - '+element?.libeCaisse]
+      ]
+      ,
+    });
+
+    let searchLinesOpCaissDTO = new SearchLinesOpCaissDTO;
+    searchLinesOpCaissDTO.startDateTime = this.imputGroup.value['imputDebut'];
+    searchLinesOpCaissDTO.endDateTime = this.imputGroup.value['imputFin'];
+    searchLinesOpCaissDTO.codeCaisse = this.userAssociatedCaisse[this.imputGroup.value['imputCaisse']]?.codeCaisse.toString();
+    console.log('payload');
+    console.log(searchLinesOpCaissDTO);
+   
+
+    this.serviceOpCaisse.getAllLinesImputation(searchLinesOpCaissDTO).subscribe(
+      (data: LignePointVente[]) => {
+        //this.modePayements = data;
+        console.log('data',data);
+        
+        data.forEach(element=>{
+          let lig = [];
+          
+          lig.push(element.pointVente.numPointVente);
+          lig.push(moment(element.pointVente.datePointVente).format('DD/MM/YYYY à HH:mm'));
+          lig.push(element.article.codeArticle+'-'+element.article.libArticle);
+          lig.push(element.quantiteLignePointVente);
+          lig.push(element.pulignePointVente);
+          lig.push((element.quantiteLignePointVente)*(element.pulignePointVente));
+          lig.push(element.pointVente.correspondant.magasinier.nomMagasinier+' '+element.pointVente.correspondant.magasinier.prenomMagasinier);
+          totalCaisse +=element.pulignePointVente*element.quantiteLignePointVente;
+
+          lignes.push(lig);
+
+        });
+         console.log('data', lignes);
+
+         autoTable(doc, {
+          theme: 'grid',
+          head: [['Numéro', 'Date', 'Article', 'Qté', 'Prix U','Montant', 'Correspondant']],
+          headStyles:{
+             fillColor: [41, 128, 185],
+             textColor: 255,
+             fontStyle: 'bold' ,
+          },
+          margin: { top: 10 },
+          body: lignes
+          ,
+        });
+    
+        autoTable(doc, {
+          theme: 'grid',
+          margin: { top: 50, left:100 },
+          columnStyles: {
+            0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+          },
+          body: [
+            ['Montant Total Caisse '+element.codeCaisse, totalCaisse],
+          ]
+          ,
+        });
+    
+      
+    
+
+        this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'journalImputation.pdf'}));
+        this.viewPdfModal.show();
+
+       
+        
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des modes de payements', erreur);
+      }
+    );
+
+    console.log('data', lignes);
+  
+
+    
+
 
   }
 

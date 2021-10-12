@@ -7,6 +7,9 @@ import { Utilisateur } from "./utilisateur.model";
 
 export class OpCaisse{
 
+  mttRem: Number;
+  reliquat: Number;
+  monnai: Number;
   annulMotif: String;
   auteurAnnul: Utilisateur;
   datAnnul: Date;
