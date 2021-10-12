@@ -774,7 +774,10 @@ export class PointVenteComponent implements OnInit {
     bodyStyles: {
       fontSize:20,halign: 'center'
     }
+    
   });
+
+  
     /*doc.setFontSize(25);
     doc.text('', 62, 30);
     doc.setFontSize(14);
@@ -784,9 +787,10 @@ export class PointVenteComponent implements OnInit {
     commande.correspondant.magasinier.prenomMagasinier, 15, 55);
     doc.text('Régisseur : '+commande.regisseur.magasinier.nomMagasinier+' '+
     commande.regisseur.magasinier.prenomMagasinier, 15, 65);*/
-    if(commande.payerPoint==false){doc.text('Statut du paiement : '+'NON PAYER', 15, 75)}
-    if(commande.payerPoint==true){doc.text('Statut du paiement : '+' PAYER', 15, 75)}
-    //doc.text('Payer point : '+commande.payerPoint, 15, 75);
+  
+    if(commande.payerPoint==false){doc.text('Statut du paiement : '+'NON PAYER', 15, 60)}
+    if(commande.payerPoint==true){doc.text('Statut du paiement : '+' PAYER', 15, 60)}
+
     autoTable(doc, {
       theme: 'grid',
       head: [['Article', 'Désignation', 'Quantité', 'Numéro de série', 'PU', 'Montant']],
@@ -795,7 +799,7 @@ export class PointVenteComponent implements OnInit {
           textColor: 255,
           fontStyle: 'bold' ,
       },
-      margin: { top: 100 },
+      margin: { top: 140, bottom: 140 },
 
       body: lignes
       ,
@@ -810,8 +814,8 @@ export class PointVenteComponent implements OnInit {
       body: [
         ['Montant Total', totalHT]
       ]
-
     });
+    
     doc.text('Powered by Guichet Unique', 130, 230);
     //doc.autoPrint();
     //doc.output('dataurlnewwindow');
