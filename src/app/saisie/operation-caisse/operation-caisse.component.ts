@@ -1258,13 +1258,13 @@ export class OperationCaisseComponent implements OnInit {
        const datop = new Date(Number.parseInt(dat.substr(6, 4), 10), Number.parseInt(dat.substr(3, 2), 10) - 1,
           Number.parseInt(dat.substr(0, 2), 10), Number.parseInt(dat.substr(11, 2), 10), Number.parseInt(dat.substr(14, 2), 10));
         const newOC = new OpCaisse('000001', new Date(this.addImputGroup.value['addImDat']),
-        this.coi[this.addImputGroup.value['addImCor']].magasinier.nomMagasinier + ' ' +
-        this.coi[this.addImputGroup.value['addImCor']].magasinier.prenomMagasinier, true, this.addLoyerGroup.value['addImObs'],new Date( Date.now()),
+        this.magasinierImpList[this.addImputGroup.value['addImCor']].magasinier.nomMagasinier + ' ' +
+        this.magasinierImpList[this.addImputGroup.value['addImCor']].magasinier.prenomMagasinier, true, this.addImputGroup.value['addImObs'],new Date( Date.now()),
         this.caisses[this.addImputGroup.value['addImCai']], new TypeRecette('I', 'Imputation Correspondant'),
           this.modes[this.addImputGroup.value['addImMod']], this.serExo.exoSelectionner, this.user);
           console.log(newOC);
 
-          this.servPV.addImputation(newOC,this.addImputGroup.value['addImPv'].toString() ).subscribe(
+          this.servPV.addImputation(newOC, this.addImputGroup.value['addImPv'].toString() ).subscribe(
             (data : any) => {
               console.log('data lines ==>');
               console.log(data);
@@ -1287,7 +1287,7 @@ export class OperationCaisseComponent implements OnInit {
                  this.listOp = data;
                  this.opDay = data;
               
-                 this.dtrigDailyOp.next();
+                 //this.dtrigDailyOp.next();
                },
                (erreur) => {
                  console.log('Opération : ' + erreur);
