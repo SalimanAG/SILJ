@@ -1269,6 +1269,7 @@ export class OperationCaisseComponent implements OnInit {
               console.log('data lines ==>');
               console.log(data);
               this.fermerImput();
+              this.afficheFacture(data);
               
             },
             (err) => {
@@ -1388,6 +1389,7 @@ export class OperationCaisseComponent implements OnInit {
       this.appercu.show();
   }
 
+
   afficheFacture(opc: OpCaisse) {
     const fact = new jsPDF();
     const lig= [];
@@ -1437,6 +1439,21 @@ export class OperationCaisseComponent implements OnInit {
               });
 
               autoTable(fact, {
+                theme: 'grid',
+                margin: { top: 0, left: 30, right: 5 },
+                columnStyles: {
+                  0: { textColor: 255, fontStyle: 'bold', fontSize: 8 },
+                },
+                body: [
+                  ['Montant perçu: \t'+ opc.mttRem,'Monnaie rendue: \t'+ opc.monnai,'\tReliquat restant: '+ opc.reliquat]
+                ],
+                bodyStyles: {
+                  fontSize: 8,
+                  cellPadding: 1,
+                },
+              });
+
+              autoTable(fact, {
                 theme: 'plain',
                 margin: { top: 30, left: 130 },
                 columnStyles: {
@@ -1452,7 +1469,7 @@ export class OperationCaisseComponent implements OnInit {
         )
         break;
       }
-      default: {
+      case 'P': {
         this.titre = 'Facture de caisse N° : ' + opc.numOpCaisse + ' du ' +
           moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nContribuable : ' +
           opc.contribuable;
@@ -1492,9 +1509,24 @@ export class OperationCaisseComponent implements OnInit {
                 theme: 'grid',
                 margin: { top: 30, left: 130 },
                 columnStyles: {
-                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                  0: { textColor: 255, fontStyle: 'bold' },
                 },
                 body: [['Total', this.total]],
+              });
+
+              autoTable(fact, {
+                theme: 'grid',
+                margin: { top: 0, left: 30, right: 5 },
+                columnStyles: {
+                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+                },
+                body: [
+                  ['Montant perçu: \t'+ opc.mttRem,'Monnaie rendue: \t'+ opc.monnai,'\tReliquat restant: '+ opc.reliquat]
+                ],
+                bodyStyles: {
+                  fontSize: 8,
+                  cellPadding: 1,
+                },
               });
 
               autoTable(fact, {
@@ -1512,7 +1544,8 @@ export class OperationCaisseComponent implements OnInit {
           }
         )
         break;
-      }/*
+      }
+      
       case 'I': {
         this.titre = 'Facture de reversement N° : ' + opc.numOpCaisse + ' du ' +
           moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') + '\nCorrespondant : ' +
@@ -1522,7 +1555,7 @@ export class OperationCaisseComponent implements OnInit {
           (data) => {
             console.log(data);
               if (data.length > 0) {
-              //this.total = data.reduce((d, e) => d += e.quantiteLignePointVente*e.pulignePointVente.valueOf(), 0);
+              this.total = data.reduce((d, e) => d += e.quantiteLignePointVente*e.pulignePointVente.valueOf(), 0);
               data.forEach(elt => {
                 const col = [];
                 col.push(elt.article.codeArticle);
@@ -1559,6 +1592,21 @@ export class OperationCaisseComponent implements OnInit {
                 body: [['Total', this.total]],
               });
 
+              /*autoTable(fact, {
+                theme: 'grid',
+                margin: { top: 0, left: 30, right: 5 },
+                columnStyles: {
+                  //0: { textColor: 255, fontStyle: 'bold', fontSize: 8 },
+                },
+                body: [
+                  ['Montant payé: \t'+ opc.mttRem,'Monnaie rendue: \t'+ opc.monnai,'\Reliquat restant:\t '+ opc.reliquat]
+                ],
+                bodyStyles: {
+                  fontSize: 8,
+                  cellPadding: 1,
+                },
+              });*/
+
               autoTable(fact, {
                 theme: 'plain',
                 margin: { top: 30, left: 130 },
@@ -1574,102 +1622,8 @@ export class OperationCaisseComponent implements OnInit {
           }
         )
         break;
-      }*/
-    }
-    /*/*
-
-
-
-    */
-    /*} else {
-      this.tst.info('la facture n\'a pas de détail');
-    }*/
-/*
-    const ligne = [];
-    let total = 0;
-
-    switch (opc.typeRecette.codeTypRec) {
-
-
-      default: {
-        this.rechargerLigneOpCaisse();
-        const loptmp = this.lignesOp.filter(function (lop) {
-          return lop.opCaisse.numOpCaisse === opc.numOpCaisse;
-        });
-        loptmp.forEach(element => {
-          const lig = [];
-          lig.push(element.article.codeArticle);
-          lig.push(element.article.libArticle);
-          lig.push(element.qteLigneOperCaisse);
-          lig.push(element.prixLigneOperCaisse);
-          lig.push(element.prixLigneOperCaisse * element.qteLigneOperCaisse);
-          lig.push(element.commentaireLigneOperCaisse);
-          total += element.prixLigneOperCaisse * element.qteLigneOperCaisse;
-          ligne.push(lig);
-        });
-        break;
-      }
-
-      case 'L': {
-        const eche = this.echeances.filter(e => e.opCaisse.numOpCaisse === opc.numOpCaisse);
-        this.titre = '\nContrat de location N° : ' + eche[0].contrat.numContrat +
-          '\nBoutique :' + eche[0].contrat.immeuble.libIm +
-
-          '\nFacture de loyer N° : ' + opc.numOpCaisse + ' du ' +
-          moment(new Date(opc.dateOpCaisse)).format('DD/MM/yyyy hh:mm') +
-          '\nLocataire : ' + eche[0].contrat.locataire.identiteLocataire +
-          '\nDéposant : ' + opc.contribuable;
-        autoTable(fact, {
-          theme: 'plain',
-          margin: { left: 5, top: 30, right: 5, bottom: 1 },
-          body: [
-            [this.titre.toString()]
-          ],
-          bodyStyles: {
-            fontSize: 15,
-            cellPadding: 1,
-            halign: 'center',
-          }
-        });
-        eche.forEach(element => {
-          const lig = [];
-          lig.push(element.moisEcheance);
-          lig.push(element.annee);
-          lig.push(element.prix);
-          ligne.push(lig);
-          total += element.prix.valueOf();
-        });
-        autoTable(fact, {
-          head: [['Mois', 'Année', 'Montant']],
-          margin: { top: 70 },
-          body: ligne,
-        });
-
-        break;
       }
     }
-
-    autoTable(fact, {
-      theme: 'grid',
-      margin: { top: 30, left: 130 },
-      columnStyles: {
-        0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
-      },
-      body: [['Total', total]
-      ],
-    });
-    autoTable(fact, {
-      theme: 'plain',
-      margin: { top: 30, left: 130 },
-      columnStyles: {
-        0: { textColor: 0, fontStyle: 'bold', fontSize: 12, halign:'justify' },
-      },
-      body: [['Le(La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
-        this.serU.connectedUser.prenomUtilisateur]]
-    });
-    // fact.autoPrint();*/
-    //fact.text('ygygj\ndfj\nffgy\nfghfg\nfgfg\nfgfg\nffty\nhkhjk\njhjkhhjh',10,65)
-
   }
 
   //change 
@@ -1881,6 +1835,21 @@ export class OperationCaisseComponent implements OnInit {
           });
 
           autoTable(fact, {
+            theme: 'grid',
+            margin: { top: 0, left: 5, right: 5 },
+            columnStyles: {
+              //0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+            },
+            body: [
+              ['Montant perçu: '+ opc.mttRem,'Monnaie rendue: '+ opc.monnai,'Reliquat restant: '+ opc.reliquat]
+            ],
+            bodyStyles: {
+              fontSize: 8,
+              cellPadding: 1,
+            },
+          });
+
+          autoTable(fact, {
             theme: 'plain',
             margin: { left: -0.1, top: 5, right: 0 },
             body: [
@@ -1888,8 +1857,8 @@ export class OperationCaisseComponent implements OnInit {
                 this.serU.connectedUser.prenomUtilisateur]
             ],
             bodyStyles: {
-              fontSize: 8,
-              cellPadding: 1,
+              fontSize: 10,
+              //cellPadding: ,
               halign: 'center',
               fontStyle: 'bold'
             },
