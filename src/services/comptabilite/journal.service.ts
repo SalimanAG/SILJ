@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Journal } from '../../models/comptaModel/journal.model';
+import { Journal } from '../../models/comptabilite/journal.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 

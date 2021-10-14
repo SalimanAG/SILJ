@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { EtatImmo } from '../../models/comptaModel/etat.immo.model';
+import { EtatImmo } from '../../models/comptabilite/etat-immo.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 

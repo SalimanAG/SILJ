@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Localisation } from '../../models/comptaModel/localisation.model';
+import { Localisation } from '../../models/comptabilite/localisation.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 

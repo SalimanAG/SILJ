@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Associer } from '../../models/comptaModel/assossiercompte.model';
+import { Associer } from '../../models/comptabilite/assossiercompte.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({

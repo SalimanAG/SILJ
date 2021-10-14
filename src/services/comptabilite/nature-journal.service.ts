@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { NatureJournal } from '../../models/comptaModel/natur.journal.model';
+import { NatureJournal } from '../../models/comptabilite/nature-journal.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TypeAmort } from '../../models/comptaModel/type.amort.model';
+import { TypeAmort } from '../../models/comptabilite/type-amort.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 @Injectable({

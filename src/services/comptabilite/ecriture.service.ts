@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Ecriture } from '../../models/comptaModel/ecriture.model';
-import { LigneEcriture } from '../../models/comptaModel/ligne.ecriture.model';
+import { Ecriture } from '../../models/comptabilite/ecriture.model';
+import { LigneEcriture } from '../../models/comptabilite/ligne-ecriture.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 @Injectable({
     providedIn: 'root'
