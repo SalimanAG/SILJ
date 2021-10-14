@@ -307,6 +307,9 @@ export class OperationCaisseComponent implements OnInit {
       addImMod: new FormControl(0),
       addImObs: new FormControl(),
       addImPv: new FormControl(),
+      imputDep: new FormControl(0),
+      imputMon: new FormControl(),
+      imputRel: new FormControl()
     });
 
     this.annulGroup = new FormGroup({
@@ -327,17 +330,6 @@ export class OperationCaisseComponent implements OnInit {
   ngOnInit() {
     this.initOpCaisse();
     let typs: TypeRecette[];
-
-    /*this.servOp.getDailyOp(this.user.idUtilisateur)
-      .subscribe(
-        (data) => {
-          this.opDay = data;
-        this.dtrigDailyOp.next();
-        },
-        (erreur) => {
-          console.log('Opération : ' + erreur);
-        }
-    );*/
     this.serCor.getAllCorrespondantImputable().subscribe(
       (data : any )=> {
         this.magasinierImpList = data
@@ -365,17 +357,6 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   chargerDailyOp() {
-    /*this.servOp.getDailyOp(this.user.idUtilisateur)
-      .subscribe(
-        (data) => {
-        this.opDay=data;
-        $('#dtop').dataTable().api().destroy();
-        this.dtrigDailyOp.next();
-        },
-        (erreur) => {
-          console.log('Opération : ' + erreur);
-        }
-      );*/
       let searchOpCaisseDTO = new SearchOpCaisseDTO;
       searchOpCaisseDTO.startDate = moment(new Date()).format('YYYY-MM-DD');
       searchOpCaisseDTO.endDate = moment(new Date()).format('YYYY-MM-DD');
@@ -584,22 +565,6 @@ export class OperationCaisseComponent implements OnInit {
                     elt.livre = false;
                     this.servOp.editOpLine(elt.idLigneOperCaisse, elt).subscribe(
                       datalop => {
-                        /*n++;
-                        if (n === lop.length) {
-                          this.rechargerLigneOpCaisse();
-                          this.annulop.valideOpCaisse = false;
-                          this.annulop.annulMotif = this.annulGroup.value['motif'];
-                          this.annulop.auteurAnnul = this.user;
-
-                          this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
-                            data => {
-                              this.chargerDailyOp();
-                            },
-                            erran => {
-                              console.log('Annulation échouée');
-                            }
-                          );
-                        }*/
                       },
                       errlop => { }
                     );
@@ -614,77 +579,6 @@ export class OperationCaisseComponent implements OnInit {
       },
       (err) => { console.log('Annulation échouée', err); }
     );
-    /*switch (this.annulop.typeRecette.codeTypRec) {
-
-      case 'L': {
-        this.servOp.getAllEcheances()
-          .subscribe(
-            (data) => {
-              this.echeances = data;
-              this.echeances.filter(ec => ec.opCaisse.numOpCaisse === this.annulop.numOpCaisse).forEach(elt => {
-                const ech = elt;
-                ech.payeEcheance = false;
-                this.servOp.editEcheance(elt.idEcheance, ech).subscribe(
-                  data => {
-                    if (this.echeances.filter(ec => ec.opCaisse.numOpCaisse === this.annulop.numOpCaisse).length === 0) {
-                      this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
-                        data => {
-                          this.annulop.valideOpCaisse = false;
-                          this.annulop.annulMotif = this.annulGroup.value['motif'];
-                          this.annulop.auteurAnnul= this.user;
-                          this.servOp.getAllOp().subscribe(
-                            dataop => {
-                              console.log('Annulation effectuée avec succès');
-                              this.listOp = dataop;
-                              $('#dtop').dataTable().api().destroy();
-                              this.dtrigAllOp.next();
-                            }
-                          );
-                        },
-                        erran => {
-                          console.log('Annulation échouée');
-                        }
-                      );
-                    }
-                  }
-                );
-              });
-            }
-          );
-        break;
-      }
-      case 'I': {
-        this.servPV.getAllPointVente()
-          .subscribe(
-            (data) => {
-              this.pointV = data;
-              this.pointV.filter(pt => pt.opCaisse.numOpCaisse === this.annulop.numOpCaisse).forEach(elt => {
-                const ptv = elt;
-                ptv.payerPoint = false;
-                this.servPV.editPointVente(elt.numPointVente, ptv).subscribe(
-                  data => {
-                    if (this.pointV.filter(pt => pt.opCaisse.numOpCaisse === this.annulop.numOpCaisse).length === 0) {
-                      this.annulop.valideOpCaisse = false;
-                      this.annulop.annulMotif = this.annulGroup.value['motif'];
-                      this.annulop.auteurAnnul= this.user;
-                      this.servOp.editAOpCaiss(this.annulop.numOpCaisse, this.annulop).subscribe(
-                        data => {
-                          console.log('Annulation effectuée avec succès');
-                          this.chargerDailyOp();
-                        },
-                        erran => {
-                          console.log('Annulation échouée');
-                        }
-                      );
-                    }
-                  }
-                );
-              });
-            }
-          );
-        break;
-      }
-    }*/
     this.opAnnul.hide();
   }
 
@@ -729,16 +623,11 @@ export class OperationCaisseComponent implements OnInit {
             this.vtotal = this.lignesOfOp.reduce(function (total, ligne) {
               return total + ligne.prixLigneOperCaisse * ligne.qteLigneOperCaisse;
             }, 0);
-            //this.total = lines.reduce((t, l) => t += l.qteLigneOperCaisse * l.prixLigneOperCaisse, 0);
           }
         )
         break;
       }
     }
-    /*this.lignesOfOp = this.lignesOp.filter(function (ligne) {
-      return ligne.opCaisse.numOpCaisse === opc.numOpCaisse;
-    });*/
-
   }
 
   initdetail(op: OpCaisse) {
@@ -883,10 +772,6 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   recalculerTotalvente() {
-    /*this.totalVente = 0;
-    this.tempLigneOpCais.forEach(elt => {
-      this.totalVente += elt.qteLigneOperCaisse * elt.prixLigneOperCaisse;
-    });*/
     this.total = this.tempLigneOpCais.reduce((t, l) =>
       t += l.qteLigneOperCaisse * l.prixLigneOperCaisse, 0);
       this.recalculerReliquat();
@@ -923,41 +808,6 @@ export class OperationCaisseComponent implements OnInit {
             nVentCont: '', nVentObs: '',nVentCais: 0, nVentMod: 0
           });
 
-
-          /*/ Chargement des opérations
-          // gestion des lignes
-          this.chargerDailyOp();
-          this.tempLigneOpCais.forEach((element, index) => {
-            const newLine = new LigneOpCaisse(element.qteLigneOperCaisse, element.prixLigneOperCaisse,
-              element.commentaireLigneOperCaisse, data, element.article);
-            this.servOp.addOpLine(data, newLine)
-              .subscribe(// ajout de ligne
-                (data2) => {
-                  this.supTempLigneOpCais(this.tempLigneOpCais.indexOf(newLine));
-                  if (this.tempLigneOpCais.length === 0) {
-                    this.servOp.getAllOpLines()
-                      .subscribe(
-                        (data3) => {
-                          this.lignesOp = data3;
-                          this.addVentGroup.patchValue({
-                            nVentDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
-                            nVentCont: '', nVentObs: ''
-                          });
-                          this.imprimeTicket(data);
-                          this.totalVente = 0;
-                          $('#tablign').dataTable().api().destroy();
-                          this.dtLigne.next();
-                        },
-                        (err) => {
-                          console.log('Chargement de lignes: ', err);
-                        }
-                      );
-                  }
-                },
-                (erre) => {
-                  console.log('Ajout de ligne', erre);
-                });
-          });*/
         },
         (err) => {
           console.log('Opération échouée', err);
@@ -971,7 +821,6 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   recalculerReliquatLoy(){
-    //console.log('reliquat loyer: ', this.addLoyerGroup.value['loyMtt']-this.total-this.addLoyerGroup.value['monnai']);
     this.addLoyerGroup.patchValue({loyRel:this.addLoyerGroup.value['avce']+this.addLoyerGroup.value['loyMtt']-this.total-this.addLoyerGroup.value['loyMon']});
   }
 
@@ -1034,47 +883,6 @@ export class OperationCaisseComponent implements OnInit {
 
           }
         )
-        /*this.servOp.addLoyer(new OpLoyerBlock(newOC, echeancepaye))
-          .subscribe(
-            (dataop) => {
-              echeancepaye.forEach(elt => {
-                if (elt.payeEcheance) {
-                  if (this.echeances.find(e => e.contrat.numContrat == elt.contrat.numContrat &&
-                    e.dateEcheance == elt.dateEcheance) == null) {
-                  elt.opCaisse = dataop;
-                  this.servOp.addEcheance(elt).subscribe(
-                    dataech => {
-                      j--;
-                      if (j == 0) {
-                        this.servOp.getAllOp().subscribe(
-                          (data2) => {
-                            this.listOp = data2;
-                            this.servOp.getAllEcheances().subscribe(
-                              datalisteop => {
-                                this.echeances = datalisteop;
-                                this.imprimeFacture(dataop);
-                                this.addLoyerGroup.patchValue({
-                                  loyDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
-                                  loyLoc: -1, loyVL: -1, loyCont: '', loyObs: ''
-                                });
-                                this.genererEcheancier(null);
-                                this.totalLoyer = 0;
-                                this.opDay = this.listOp.filter(op =>
-                                  op.utilisateur.idUtilisateur === this.serU.connectedUser.idUtilisateur &&
-                                  new Date(op.dateSaisie).toLocaleDateString().substr(0, 10) === new Date().toLocaleDateString().substr(0, 10)
-                                );
-                                $('#tablign').dataTable().api().destroy();
-                                this.dtLigne.next();
-                              });
-                          });
-                      }
-                    });
-                }}
-              });
-            },
-            (err) => {
-              console.log('Nouvelle opération ', err);
-            });*/
       } else {
         console.log('Vérifier que la caisse, la date, le mode et numéro du paiement sont renseignés');
       }
@@ -1139,7 +947,6 @@ export class OperationCaisseComponent implements OnInit {
         });
         if (exist.length === 0) {
           const prix = this.prixImm.find(pri => pri.immeuble.codeIm === con.immeuble.codeIm &&
-            // pri.dateFinPrixIm==null
             ((new Date(dde) >= new Date(pri.dateDebPrixIm)  &&  new Date(dde) < new Date(pri.dateFinPrixIm))
             || (new Date(dde) >= new Date(pri.dateDebPrixIm)  && pri.dateFinPrixIm === null ))
           );
@@ -1238,17 +1045,20 @@ export class OperationCaisseComponent implements OnInit {
           this.ImputLine = data ;
           console.log('data lines ==>');
           console.log(data);
-          this.ImputLine.forEach(elet =>{
+          /*this.ImputLine.forEach(elet =>{
             this.totalImput +=elet.pulignePointVente*elet.quantiteLignePointVente;
-          });
-          
-         
-          
+          });*/
+          this.total=this.ImputLine.reduce((t,l)=>t+=l.pulignePointVente*l.quantiteLignePointVente,0);
+          this.recalculerReliquatImput();
         },
         (err) => {
           console.log('Locataire erreur: ', err);
         }
       );
+  }
+
+  recalculerReliquatImput(){
+    this.addImputGroup.patchValue({imputRel:this.addImputGroup.value['imputDep']-this.total-this.addImputGroup.value['imputMon']});
   }
 
   ajouteImputation() {
@@ -1262,7 +1072,10 @@ export class OperationCaisseComponent implements OnInit {
         this.magasinierImpList[this.addImputGroup.value['addImCor']].magasinier.prenomMagasinier, true, this.addImputGroup.value['addImObs'],new Date( Date.now()),
         this.caisses[this.addImputGroup.value['addImCai']], new TypeRecette('I', 'Imputation Correspondant'),
           this.modes[this.addImputGroup.value['addImMod']], this.serExo.exoSelectionner, this.user);
-          console.log(newOC);
+          newOC.mttRem=this.addImputGroup.value['imputDep'];
+          newOC.monnai=this.addImputGroup.value['imputMon'];
+          newOC.reliquat=this.addImputGroup.value['imputRel'];
+          
 
           this.servPV.addImputation(newOC, this.addImputGroup.value['addImPv'].toString() ).subscribe(
             (data : any) => {
@@ -1591,22 +1404,6 @@ export class OperationCaisseComponent implements OnInit {
                 },
                 body: [['Total', this.total]],
               });
-
-              /*autoTable(fact, {
-                theme: 'grid',
-                margin: { top: 0, left: 30, right: 5 },
-                columnStyles: {
-                  //0: { textColor: 255, fontStyle: 'bold', fontSize: 8 },
-                },
-                body: [
-                  ['Montant payé: \t'+ opc.mttRem,'Monnaie rendue: \t'+ opc.monnai,'\Reliquat restant:\t '+ opc.reliquat]
-                ],
-                bodyStyles: {
-                  fontSize: 8,
-                  cellPadding: 1,
-                },
-              });*/
-
               autoTable(fact, {
                 theme: 'plain',
                 margin: { top: 30, left: 130 },
@@ -1631,12 +1428,11 @@ export class OperationCaisseComponent implements OnInit {
     this.pointVentOfCorrespondant = null;
  
     if (corres.idCorrespondant == undefined ) {
+
       this.servPV.getAllPointVenteNonPayByCorrespondant(this.magasinierImpList[0].idCorrespondant).subscribe(
         (data : any )=> {
           console.log(data);
           this.pointVentOfCorrespondant = data;
-          
-  
         }
       );
       
@@ -1647,19 +1443,13 @@ export class OperationCaisseComponent implements OnInit {
           console.log(data);
           this.pointVentOfCorrespondant = data;
           
-  
         }
       );
 
     }
-    //console.log(this.magasinierImpList[0]);
-    
-    
-    
   }
 
   imprimeFacture(opc: OpCaisse) {
-
     const fact = new jsPDF();fact.addImage(this.outil.entete, 5, 5, 190, 25);
     let titre: String;
     const ligne = [];
@@ -1833,22 +1623,6 @@ export class OperationCaisseComponent implements OnInit {
               cellPadding: 1,
             },
           });
-
-         /* autoTable(fact, {
-            theme: 'grid',
-            margin: { top: 0, left: 5, right: 5 },
-            columnStyles: {
-              //0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-            },
-            body: [
-              ['Montant perçu: '+ opc.mttRem,'Monnaie rendue: '+ opc.monnai,'Reliquat restant: '+ opc.reliquat]
-            ],
-            bodyStyles: {
-              fontSize: 8,
-              cellPadding: 1,
-            },
-          });*/
-
           autoTable(fact, {
             theme: 'plain',
             margin: { left: -0.1, top: 5, right: 0 },

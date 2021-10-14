@@ -22,18 +22,18 @@
                                 </div>
                                 </div-->
                                 <div class="form-group row">
-                                  <div class="col-lg-3"></div>
-                                  <div class="col-lg-3">
+                                  <div class="col-3"></div>
+                                  <div class="col-3">
                                     <button *ngIf="this.user.fonctionUtilisateur.codeFonction=='S1'" class="btn btn-success" data-toggle="modal"
                                       (click)="initNewVente()" type="button">Nouvelle
                                       prestation</button>
                                   </div>
-                                  <div class="col-lg-3">
+                                  <div class="col-3">
                                     <button *ngIf="this.user.fonctionUtilisateur.codeFonction=='S1'" class="btn btn-success" data-toggle="modal"
                                       (click)="initNewImput()" type="button">Nouvelle
                                       imputation</button>
                                   </div>
-                                  <div class="col-lg-3">
+                                  <div class="col-3">
                                     <button *ngIf="this.user.fonctionUtilisateur.codeFonction=='S1'" class="btn btn-success" data-toggle="modal"
                                       (click)="initLoyer()" type="button">Nouvelle redevance</button>
                                   </div>
@@ -370,8 +370,34 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label for="addImDat">Date de paiement</label>
+                                <input formControlName="addImDat" id="addImDat" type="datetime-local" class="form-control">
+                            </div>
+                            <div class="col-lg-3">
+                                <label for="addImCai">Caisse</label>
+                                <select id="addImCai" formControlName="addImCai" class="form-control" required>
+                                      <option *ngFor="let afu of caisses; let i = index" [value]="i">
+                                        {{ afu.libeCaisse }}
+                                      </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label for="addImMod">Mode</label>
+                                <select id="addImMod" formControlName="addImMod" class="form-control" required>
+                                      <option  *ngFor="let mod of modes; let i = index" [value]="i">
+                                        {{ mod.libeModPay }}
+                                      </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label for="addImObs">Observation</label>
+                                <input formControlName="addImObs" id="addImObs" type="text" class="form-control" autocomplete="false">
+                            </div>
+                        </div>
                         <div class="form-group row">
-                            <div class="col-lg-9">
+                            <div class="col-lg-12">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -399,26 +425,24 @@
                                     </tfoot>
                                 </table>
                             </div>
-                            <div class="col-lg-3">
-                                <label for="addImDat">Date de paiement</label>
-                                <input formControlName="addImDat" id="addImDat" type="datetime-local" class="form-control">
-                                <label for="addImCai">Caisse</label>
-                                <select id="addImCai" formControlName="addImCai" class="form-control" required>
-                                      <option *ngFor="let afu of caisses; let i = index" [value]="i">
-                                        {{ afu.libeCaisse }}
-                                      </option>
-                                    </select>
-                                <label for="addImMod">Mode</label>
-                                <select id="addImMod" formControlName="addImMod" class="form-control" required>
-                                      <option  *ngFor="let mod of modes; let i = index" [value]="i">
-                                        {{ mod.libeModPay }}
-                                      </option>
-                                    </select>
-                                <label for="addImObs">Observation</label>
-                                <input formControlName="addImObs" id="addImObs" type="text" class="form-control" autocomplete="false">
+                        </div>
+                        <div class="card-footer">
+                            
+                        <div class="form-group-row">
+                            <div class="col-lg-4">
+                                <label for="imputDep">Montant perçu</label>
+                                <input formControlName="imputDep" id="imputDep" type="number" class="form-control">
+                            </div>
+                            <div class="col-lg-4">
+                                <label for="imputMon">Monnaie rendue</label>
+                                <input formControlName="imputMon" id="imputMon" type="number" class="form-control">
+                            </div>
+                            <div class="col-lg-4">
+                                <label for="imputRel">Relicat restant</label>
+                                <input formControlName="imputRel" readonly id="imputRel" type="number" class="form-control">
                             </div>
                         </div>
-                        <div class="card-footer"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
