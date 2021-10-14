@@ -418,13 +418,18 @@ export class PointVenteComponent implements OnInit {
               console.log('******** lignes',data2);
               console.log();
 
-              this.serviceCorres.getMagasinByMagasinier(this.correspondant[this.addPointVenteFormGroup.value['addCorres']].magasinier.numMAgasinier.toString()).subscribe(
-                (data8: any ) => {
-                  console.log('Magasin ==>');
-                  console.log(data);
-                  var magasinStock:Magasin = data8;
+              console.log('codeMag', this.correspondant[this.addPointVenteFormGroup.value['addCorres']].magasinier.numMAgasinier.toString());
+              console.log(newPointVente.correspondant.magasinier.numMAgasinier);
+              
+              
 
-                  this.serviceCorres.updatedStocker(element.article?.codeArticle, magasinStock.codeMagasin, element.quantiteLignePointVente).subscribe(
+              this.serviceCorres.getMagasinByMagasinier(newPointVente.correspondant.magasinier.numMAgasinier.toString()).subscribe(
+                (data8: any) => {
+                  console.log('Magasin ==>');
+                  console.log(data8);
+                  let magasinStock: Magasin = data8;
+
+                  this.serviceCorres.updatedStocker(element.article?.codeArticle,magasinStock.codeMagasin , element.quantiteLignePointVente).subscribe(
                     (data) => {
                       console.log('Stocker up ==>');
                       console.log(data);
