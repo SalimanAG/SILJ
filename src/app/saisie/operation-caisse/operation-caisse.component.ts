@@ -1834,7 +1834,7 @@ export class OperationCaisseComponent implements OnInit {
             },
           });
 
-          autoTable(fact, {
+         /* autoTable(fact, {
             theme: 'grid',
             margin: { top: 0, left: 5, right: 5 },
             columnStyles: {
@@ -1847,7 +1847,7 @@ export class OperationCaisseComponent implements OnInit {
               fontSize: 8,
               cellPadding: 1,
             },
-          });
+          });*/
 
           autoTable(fact, {
             theme: 'plain',
