@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Activite } from '../../models/comptaModel/activite.model';
+import { Activite } from '../../models/comptabilite/activite.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 
