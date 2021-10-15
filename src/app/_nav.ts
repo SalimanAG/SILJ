@@ -270,8 +270,26 @@ export const navItems: INavData[] = [
 // comptabilité
   {
     name: 'Comptabilité',
-    url: '/comptabilite',
+    url: '/base',
     icon: 'icon-speedometer',
+    children:[
+      {
+        name: 'Journalcpta',
+        url: '/jCompta',
+        icon: 'icon-puzzle'
+      },
+      {
+        name: 'localisation',
+        url: '/definition/',
+        icon: 'icon-puzzle'
+      },
+      {
+        name: 'Journal de caisse',
+        url: '/rapport-opcaisse-journalCaise',
+        icon: 'icon-puzzle'
+      }
+
+    ]
   },
 // aide
   {
@@ -329,6 +347,12 @@ export const navItems: INavData[] = [
 
   {
     name: 'Importation & Exportation',
+    url: '/import-Export',
+    icon: 'icon-pie-chart'
+  },
+
+  {
+    name: 'Immo',
     url: '/import-Export',
     icon: 'icon-pie-chart'
   }

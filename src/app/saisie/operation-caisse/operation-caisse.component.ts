@@ -297,7 +297,9 @@ export class OperationCaisseComponent implements OnInit {
       loyDat: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm')),
       loyMtt: new FormControl(''),
       loyRel: new FormControl(''),
-      coche: new FormControl()
+      coche: new FormControl(),
+      avce: new FormControl(''),
+      loyMon: new FormControl('')
     });
 
     this.addImputGroup = new FormGroup({
@@ -817,6 +819,8 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   afficheAvance(c: Contrat){
+    console.log(c);
+    
     this.addLoyerGroup.patchValue({avce:c.avanceContrat});
   }
 
@@ -1015,6 +1019,7 @@ export class OperationCaisseComponent implements OnInit {
         this.dtTrigEche.next();
     this.total=this.echeanceAPayer.filter(e=>e.payeEcheance).reduce((t,e)=>t+=e.prix.valueOf(),0)
   }
+  
 
   /// Gestion des imputations
   initNewImput() {
@@ -1043,12 +1048,11 @@ export class OperationCaisseComponent implements OnInit {
     this.servPV.getAllLignePointVenteByNumPointVente(this.addImputGroup.value['addImPv'].toString()).subscribe(
         (data : any) => {
           this.ImputLine = data ;
-          console.log('data lines ==>');
           console.log(data);
           /*this.ImputLine.forEach(elet =>{
             this.totalImput +=elet.pulignePointVente*elet.quantiteLignePointVente;
           });*/
-          this.total=this.ImputLine.reduce((t,l)=>t+=l.pulignePointVente*l.quantiteLignePointVente,0);
+          this.total=data.reduce((t,l)=>t+=l.pulignePointVente*l.quantiteLignePointVente,0);
           this.recalculerReliquatImput();
         },
         (err) => {
@@ -1427,7 +1431,7 @@ export class OperationCaisseComponent implements OnInit {
   showPointVente(corres : Correspondant){
     this.pointVentOfCorrespondant = null;
  
-    if (corres.idCorrespondant == undefined ) {
+    /*if (corres.idCorrespondant == undefined ) {
 
       this.servPV.getAllPointVenteNonPayByCorrespondant(this.magasinierImpList[0].idCorrespondant).subscribe(
         (data : any )=> {
@@ -1437,7 +1441,7 @@ export class OperationCaisseComponent implements OnInit {
       );
       
     }
-    else  if(corres != null || corres != undefined){
+    else*/  if(corres != null || corres != undefined){
       this.servPV.getAllPointVenteNonPayByCorrespondant(corres.idCorrespondant).subscribe(
         (data : any )=> {
           console.log(data);

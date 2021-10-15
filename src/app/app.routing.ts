@@ -59,6 +59,11 @@ import { AuthGuardService } from '../services/administration/auth-guard.service'
 import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/inventaire-stock.component';
 import { TypeModeComponent } from './type-mode/type-mode.component';
 import { SignataireComponent } from './signataire/signataire.component';
+import { NatureBudgetComponent } from './comptabilite/definition/nature-budget/nature-budget.component';
+import { LocalisationComponent } from './comptabilite/definition/localisation/localisation.component';
+import { JournalComponent } from './comptabilite/definition/journal/journal.component';
+import { ImmobComponent } from './comptabilite/definition/immob/immob.component';
+import { CompteComponent } from './comptabilite/definition/compte/compte.component';
 
 export const routes: Routes = [
   {
@@ -293,9 +298,39 @@ export const routes: Routes = [
         component: StatistiqueComponent
       },
 
-      {
+      /*{
         path: 'comptabilite',
         component: ComptabiliteComponent
+      },*/
+
+      {
+        path: 'jCompta',
+        component: JournalComponent
+      },
+
+      {
+        path: 'journal',
+        component: JournalCaisseComponent
+      },
+
+      {
+        path: 'natBud',
+        component: NatureBudgetComponent
+      },
+
+      {
+        path: 'immo',
+        component: ImmobComponent
+      },
+
+      {
+        path: 'compte',
+        component: CompteComponent
+      },
+
+      {
+        path: 'localisation',
+        component: LocalisationComponent
       },
 
       {

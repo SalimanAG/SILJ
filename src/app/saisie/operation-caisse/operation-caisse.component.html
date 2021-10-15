@@ -225,7 +225,7 @@
                 <div class="modal-body">
                     <div class="card">
                         <div class="card-header">
-                            <div class="row">
+                            <!--div class="row">
                                 <div class="col-xl-1">
                                     <label for="loyLoc">Locataire</label>
                                 </div>
@@ -249,8 +249,54 @@
                                         Générer échéancier
                                     </button>
                                 </div>
+                            </div-->
+                            
+                            <div class="row">
+                                <div class="col-xl-4">
+                                    <label for="loyLoc">Locataire</label>
+                                    <select formControlName="loyLoc" class="form-control" #Loca (ngModelChange)="chargerImmeubles(locataires[addLoyerGroup.value['loyLoc']])">
+                                      <option *ngFor="let loc of locataires; let i=index" [value]="i">
+                                          {{loc.identiteLocataire}}
+                                      </option>
+                                  </select>
+                                </div>
+                                <div class="col-xl-5">
+                                    <label for="loyVL">Boutique</label>
+                                    <select formControlName="loyVL" class="form-control" (ngModelChange)="afficheAvance(contratLocataire[addLoyerGroup.value['loyVL']])">
+                                        <option *ngFor="let cont of contratLocataire; let i=index" [value]="i">{{cont.numContrat}}: {{cont.immeuble.libIm}}</option>
+                                      </select>
+                                </div>
+                                <div class="col-xl-3">
+                                    <label for="avce">Avance</label>
+                                    <input type="number" formControlName="avce" class="form-control" readonly (change)="recalculerReliquatLoy()">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="loyMtt">Montant perçu</label>
+                                    <input type="number" id="loyMtt" (change)="recalculerReliquatLoy()" (keyup)="recalculerReliquatLoy()" formControlName="loyMtt" class="form-control" placeholder="Montant perçu" autocomplete="false">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="loyMon">Monnaie rendue</label>
+                                    <input type="number" id="loyMon" (change)="recalculerReliquatLoy()" (keyup)="recalculerReliquatLoy()" formControlName="loyMon" class="form-control" placeholder="Monnaie rendue" autocomplete="false">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="loyRel">Avance reconstituée</label>
+                                    <input type="number" id="loyRel" formControlName="loyRel" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-8">
+                                    <button type="button" class="btn btn-secondary" (click)="genererEcheancier(contratLocataire[addLoyerGroup.value['loyVL']])">
+                                        Générer échéancier
+                                    </button>
+                                </div>
+                                <div class="col-md-2"></div>
                             </div>
                         </div>
+                        <br>
                         <div class="card-body">
                             <div class="form-group row">
                                 <div class="col-xl-9">

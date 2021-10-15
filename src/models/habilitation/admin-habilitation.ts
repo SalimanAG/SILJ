@@ -271,8 +271,38 @@ static navIdata: INavData[] = [
 // comptabilité
   {
     name: 'Comptabilité',
-    url: '/comptabilite',
+    url: '/base',
     icon: 'icon-speedometer',
+    children:[
+      {
+        name: 'Définition',
+        url:'/base',
+        icon: 'icon-chart',
+        children:[
+          
+          {
+            name: 'Compte',
+            url: '/natBud'
+          },
+          {
+            name: 'Journal',
+            url: '/jCompta'
+          },
+          {
+            name: 'Localisation',
+            url: '/localisation'
+          },
+          {
+            name: 'Immobilisation',
+            url: '/immo'
+          },
+          {
+            name: 'Nature budgetaire',
+            url: '/natBud'
+          }
+        ]
+      }
+    ]
   },
 // aide
   {

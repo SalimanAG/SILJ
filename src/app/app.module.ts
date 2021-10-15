@@ -101,6 +101,11 @@ import { InventaireStockComponent } from './saisie/Bilan/inventaire-stock/invent
 import { InventaireService } from '../services/saisie/inventaire.service';
 import { TypeModeComponent } from './type-mode/type-mode.component';
 import { SignataireComponent } from './signataire/signataire.component';
+import { JournalComponent } from './comptabilite/definition/journal/journal.component';
+import { LocalisationComponent } from './comptabilite/definition/localisation/localisation.component';
+import { NatureBudgetComponent } from './comptabilite/definition/nature-budget/nature-budget.component';
+import { ImmobComponent } from './comptabilite/definition/immob/immob.component';
+import { CompteComponent } from './comptabilite/definition/compte/compte.component';
 
 @NgModule({
   imports: [
@@ -181,6 +186,11 @@ import { SignataireComponent } from './signataire/signataire.component';
     InventaireStockComponent,
     TypeModeComponent,
     SignataireComponent,
+    JournalComponent,
+    LocalisationComponent,
+    NatureBudgetComponent,
+    ImmobComponent,
+    CompteComponent,
   ],
   providers: [{
     provide: LocationStrategy,
