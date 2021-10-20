@@ -17,11 +17,6 @@ static navIdata: INavData[] = [
     title: true,
     name: 'UTILISATION'
   },
-  {
-    name: 'Mobilisation de ressource',
-    url: '/base',
-    icon: 'icon-puzzle',
-    children: [
   
   {
     name: 'Définition',
@@ -73,9 +68,7 @@ static navIdata: INavData[] = [
         name: 'Institut. Reversement',
         url: '/inst-revers',
         icon: 'icon-puzzle'
-      }
-    ]
-  },
+      }]},
   //debut saisie
   {
     name: 'Saisie',
@@ -165,7 +158,6 @@ static navIdata: INavData[] = [
 
 
     ]
-  },]
   },
 
 // comptabilité
