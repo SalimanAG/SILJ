@@ -258,6 +258,11 @@ export class OperationCaisseService {
 
   }
 
+  getAllLinesImputationByArticle(searchLinesOpCaissDTO: SearchLinesOpCaissDTO){
+    return this.lien.post(this.host + 'stock/ligne-point-vente/list-imput-by-article',searchLinesOpCaissDTO);
+
+  }
+
   
 
 }

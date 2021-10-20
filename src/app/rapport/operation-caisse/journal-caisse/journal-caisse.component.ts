@@ -68,10 +68,11 @@ export class JournalCaisseComponent implements OnInit {
       });
 
       this.imputGroup = this.formBulder.group({
-        imputCaisse:-1,
+        imputCaisse:0,
         //annulMode:-1,
         imputDebut:[moment(this.deb).format('yyyy-MM-DDTHH:mm') , Validators.required],
-        imputFin:[moment(Date.now()).format('yyyy-MM-DDTHH:mm'), Validators.required]
+        imputFin:[moment(Date.now()).format('yyyy-MM-DDTHH:mm'), Validators.required],
+        imputType:-1
       });
 
     }
@@ -1037,72 +1038,135 @@ export class JournalCaisseComponent implements OnInit {
     console.log('payload');
     console.log(searchLinesOpCaissDTO);
    
-
-    this.serviceOpCaisse.getAllLinesImputation(searchLinesOpCaissDTO).subscribe(
-      (data: LignePointVente[]) => {
-        //this.modePayements = data;
-        console.log('data',data);
-        
-        data.forEach(element=>{
-          let lig = [];
+    if(this.imputGroup.value['imputType'] == -1){
+      this.serviceOpCaisse.getAllLinesImputation(searchLinesOpCaissDTO).subscribe(
+        (data: LignePointVente[]) => {
+          //this.modePayements = data;
+          console.log('data',data);
           
-          lig.push(element.pointVente.numPointVente);
-          lig.push(moment(element.pointVente.datePointVente).format('DD/MM/YYYY à HH:mm'));
-          lig.push(element.article.codeArticle+'-'+element.article.libArticle);
-          lig.push(element.quantiteLignePointVente);
-          lig.push(element.pulignePointVente);
-          lig.push((element.quantiteLignePointVente)*(element.pulignePointVente));
-          lig.push(element.pointVente.correspondant.magasinier.nomMagasinier+' '+element.pointVente.correspondant.magasinier.prenomMagasinier);
-          totalCaisse +=element.pulignePointVente*element.quantiteLignePointVente;
-
-          lignes.push(lig);
-
-        });
-         console.log('data', lignes);
-
-         autoTable(doc, {
-          theme: 'grid',
-          head: [['Numéro', 'Date', 'Article', 'Qté', 'Prix U','Montant', 'Correspondant']],
-          headStyles:{
-             fillColor: [41, 128, 185],
-             textColor: 255,
-             fontStyle: 'bold' ,
-          },
-          margin: { top: 10 },
-          body: lignes
-          ,
-        });
-    
-        autoTable(doc, {
-          theme: 'grid',
-          margin: { top: 50, left:100 },
-          columnStyles: {
-            0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
-          },
-          body: [
-            ['Montant Total Caisse '+element.codeCaisse, totalCaisse],
-          ]
-          ,
-        });
-    
+          data.forEach(element=>{
+            let lig = [];
+            
+            lig.push(element.pointVente.numPointVente);
+            lig.push(moment(element.pointVente.datePointVente).format('DD/MM/YYYY à HH:mm'));
+            lig.push(element.article.codeArticle+'-'+element.article.libArticle);
+            lig.push(element.quantiteLignePointVente);
+            lig.push(element.pulignePointVente);
+            lig.push((element.quantiteLignePointVente)*(element.pulignePointVente));
+            lig.push(element.pointVente.correspondant.magasinier.nomMagasinier+' '+element.pointVente.correspondant.magasinier.prenomMagasinier);
+            totalCaisse +=element.pulignePointVente*element.quantiteLignePointVente;
+  
+            lignes.push(lig);
+  
+          });
+           console.log('data', lignes);
+  
+           autoTable(doc, {
+            theme: 'grid',
+            head: [['Numéro', 'Date', 'Article', 'Qté', 'Prix U','Montant', 'Correspondant']],
+            headStyles:{
+               fillColor: [41, 128, 185],
+               textColor: 255,
+               fontStyle: 'bold' ,
+            },
+            margin: { top: 10 },
+            body: lignes
+            ,
+          });
       
-    
-
-        this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'journalImputation.pdf'}));
-        this.viewPdfModal.show();
-
-       
+          autoTable(doc, {
+            theme: 'grid',
+            margin: { top: 50, left:100 },
+            columnStyles: {
+              0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+            },
+            body: [
+              ['Montant Total Caisse '+element.codeCaisse, totalCaisse],
+            ]
+            ,
+          });
+      
         
-      },
-      (erreur) => {
-        console.log('Erreur lors de la récupération des modes de payements', erreur);
-      }
-    );
+      
+  
+          this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'journalImputation.pdf'}));
+          this.viewPdfModal.show();
+  
+         
+          
+        },
+        (erreur) => {
+          console.log('Erreur lors de la récupération des modes de payements', erreur);
+        }
+      );
 
-    console.log('data', lignes);
+    }
+    
+    if(this.imputGroup.value['imputType'] == 0){
+
+      
+      this.serviceOpCaisse.getAllLinesImputationByArticle(searchLinesOpCaissDTO).subscribe(
+        (data: any) => {
+
+          console.log('data grouped', data);
+
+          data.forEach(element=>{
+           console.log('element Data', element.lib_article);
+           let lig = [];
+            
+           lig.push(element.code_article+'-'+element.lib_article);
+           lig.push(element.quantite);
+           lig.push(element.montant/element.quantite);
+           lig.push(element.montant);
+           totalCaisse +=element.montant;
+ 
+           lignes.push(lig);
+ 
+          });
+          console.log('tableau', lignes);
+
+          
+          autoTable(doc, {
+            theme: 'grid',
+            head: [['Article', 'Qté', 'Prix Unitaire','Montant']],
+            headStyles:{
+               fillColor: [41, 128, 185],
+               textColor: 255,
+               fontStyle: 'bold' ,
+            },
+            margin: { top: 10 },
+            body: lignes
+            ,
+          });
+      
+          autoTable(doc, {
+            theme: 'grid',
+            margin: { top: 50, left:100 },
+            columnStyles: {
+              0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+            },
+            body: [
+              ['Montant Total Caisse '+element.codeCaisse, totalCaisse],
+            ]
+            ,
+          });
+      
+        
+      
+  
+          this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'journalImputationGroupByArticle.pdf'}));
+          this.viewPdfModal.show();
+  
   
 
-    
+        }, 
+        (erreur) =>{
+          console.log(erreur)
+        }
+        
+      );
+    }
+
 
 
   }
