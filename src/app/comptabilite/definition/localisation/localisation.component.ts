@@ -21,8 +21,8 @@ export class LocalisationComponent implements OnInit {
   @ViewChild('dangerModal') public dangerModal: ModalDirective;
   @ViewChild('infoModal') public infoModal: ModalDirective;
 
-  dtOptions1: DataTables.Settings = {};
-  dtTrigger1: Subject<Localisation> = new Subject<any>();
+  localTab: DataTables.Settings = {};
+  localTrigger: Subject<Localisation> = new Subject<any>();
   @ViewChild(DataTableDirective, {static: false})
   dtElement: DataTableDirective;
   addGroup: FormGroup;
@@ -37,7 +37,7 @@ export class LocalisationComponent implements OnInit {
 
   constructor(private builder: FormBuilder,public comSer: CommuneService, private locService:LocalisationService) {
 
-    this.dtOptions1 = {
+    this.localTab = {
       pagingType: 'full_numbers',
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
@@ -65,20 +65,32 @@ export class LocalisationComponent implements OnInit {
     });
 
     this.editGroup = this.builder.group({
-      editCod:['', Validators.required],
-      editLib:['', Validators.required],
-      editSit:''
+      editCod:[this.editingLoc.codLoc, Validators.required],
+      editLib:[this.editingLoc.libLoc, Validators.required],
+      editSit:[0]
     });
-
-
-
   }
 
   ngOnInit(): void {
     this.locService.getAllLocalisation().subscribe(
       (data) => {
         this.localisations = data;
-        this.dtTrigger1.next();
+        console.log(this.localisations);
+        
+        this.localTrigger.next();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la récupération des Frs', erreur);
+      }
+    );
+  }
+
+  actualise(){
+    this.locService.getAllLocalisation().subscribe(
+      (data) => {
+        this.localisations = data;
+        $('#localId').dataTable().api().destroy();
+        this.localTrigger.next();
       },
       (erreur) => {
         console.log('Erreur lors de la récupération des Frs', erreur);
@@ -95,46 +107,38 @@ export class LocalisationComponent implements OnInit {
     )
   }
 
-  getAllLoc(){
-    this.locService.getAllLocalisation().subscribe(
-      (data) => {
-        this.localisations = data;
-        $('#dataTable1').dataTable().api().destroy();
-        this.dtTrigger1.next();
-        /*this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-          dtInstance.destroy();
-          this.dtTrigger1.next();
-        });*/
-      },
-      (erreur) => {
-        console.log('Erreur lors de la récupération des Frs', erreur);
-      }
-    );
-  }
-
   initInfosFrs(inde:number){
     this.infoLoc = this.localisations[inde];
     this.infoModal.show();
   }
 
-  initEditFrs(inde:number){
-    this.editingLoc = this.localisations[inde];
-    this.edit.show();
+  initEdit(inde:number){        
+    this.comSer.getAllSiteMarcher().subscribe(
+      data=>{
+        this.editingLoc=this.localisations[inde];
+        this.sites=data;
+        this.editGroup.patchValue({
+          editSit: this.sites.map(s=>s.codeSite).indexOf(this.editingLoc.siteMarcher.codeSite),
+          editCod:this.editingLoc.codLoc, editLib:this.editingLoc.libLoc})
+        this.editingLoc = this.localisations[inde];
+        this.edit.show();
+      }
+    );
   }
 
-  initDeleteFrs(inde:number){
+  initDelete(inde:number){
     this.supLoc = this.localisations[inde];
-    this.dangerModal.show();
+    this.del.show();
   }
 
-  onSubmitAddFrsFormsGroup(){
+  onSubmitAdd(){
     const newLoc = new Localisation(0, this.addGroup.value['addCod'], this.addGroup.value['addLib'],
     this.sites[this.addGroup.value['addSit']]);
     this.locService.addALocalisation(newLoc).subscribe(
       (data) => {
         //this.primaryModal.hide();
         this.addGroup.reset();
-        this.getAllLoc();
+        this.actualise();
       },
       (erreur) => {
         console.log('Erreur lors de l\'enrégistrement', erreur);
@@ -143,14 +147,17 @@ export class LocalisationComponent implements OnInit {
 
   }
 
-  onSubmitEditFrsFormsGroup(){
-    const local = new Localisation(0,this.editGroup.value['editCod'], this.editGroup.value['editLib'],
-    this.sites[this.editGroup.value['editTelFRS']]);
-    this.locService.editALocalisation(this.editingLoc.idLoc.toString(), local).subscribe(
+  onSubmitEdit(){
+    console.log(this.editGroup.value['editSit']);
+    
+    this.editingLoc.codLoc = this.editGroup.value['editCod'];
+    this.editingLoc.libLoc= this.editGroup.value['editLib'];
+    this.editingLoc.siteMarcher= this.sites[this.editGroup.value['editSit']];
+    console.log(this.editingLoc);
+    this.locService.editALocalisation(this.editingLoc.idLoc.toString(), this.editingLoc).subscribe(
       (data) => {
-
         this.edit.hide();
-        this.getAllLoc();
+        this.actualise();
       },
       (erreur) => {
         console.log('Erreur lors de la modification : ', erreur);
@@ -159,11 +166,11 @@ export class LocalisationComponent implements OnInit {
 
   }
 
-  onConfirmDeleteFrs(){
+  onConfirmDelete(){
     this.locService.deleteALocalisation(this.supLoc.idLoc.toString()).subscribe(
       (data) => {
-        this.dangerModal.hide();
-        this.getAllLoc();
+        this.del.hide();
+        this.actualise();
       },
       (erreur) => {
         console.log('Erreur lors de la suppression : ', erreur);

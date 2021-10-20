@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-header">
-      <i class="fa fa-align-justify"></i> Liste des Fournisseurs
+      <i class="fa fa-align-justify"></i> Liste des localisations
     </div>
     <div class="card-body">
       <!--Les enfants s'amusent-->
@@ -8,7 +8,7 @@
         <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAdd()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
         <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
       </div>
-      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="localDtOption"
+      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="localTab"
         [dtTrigger]="localTrigger" id="localId">
         <thead>
           <tr>
@@ -19,14 +19,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of sites; let i = index">
+          <tr *ngFor="let item of localisations; let i = index">
             <td>{{ item.codLoc }}</td>
-            <td>{{ item.libL }}</td>
-            <td>{{ item.sit }}</td>
+            <td>{{ item.libLoc }}</td>
+            <td>{{ item.siteMarcher.libSite }}</td>
             <td>
-              <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditFrs(i)"><span class="fa fa-edit"></span></button>
-              <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteFrs(i)"><span class="fa fa-trash"></span></button>
-              <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosFrs(i)"><span class="fa fa-eye"></span></button>
+              <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEdit(i)"><span class="fa fa-edit"></span></button>
+              <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDelete(i)"><span class="fa fa-trash"></span></button>
               <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
               <!--Le bouton des options-->
               <div class="btn-group" dropdown>
@@ -59,7 +58,7 @@
             <!--Modale 1-->
             <div bsModal #add="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-lg modal-primary" role="document">
-                <form [formGroup]="addGroup" (ngSubmit)="onSubmitAddFrsFormsGroup()">
+                <form [formGroup]="addGroup" (ngSubmit)="onSubmitAdd()">
                   <div class="modal-content">
                     <div class="modal-header">
                       <h4 class="modal-title">Enrégistrer une localisation</h4>
@@ -88,9 +87,9 @@
                             </div>
                             <div class="form-group col-sm-6">
                               <label for="addSit">Site</label>
-                              <select class="form-control" id="addSit" placeholder="Site "
+                              <select class="form-control" id="addSit" placeholder="Site " 
                               formControlName="addSit">
-                                <option *ngFor="let item of sites; let i=index" value="item">
+                                <option *ngFor="let item of sites; let i=index" [value]="i">
                                     {{item.libSite}}
                                 </option>
                               </select>
@@ -102,7 +101,7 @@
   
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                      <button type="button" class="btn btn-secondary" (click)="add.hide()">Annuler</button>
                       <button type="submit" class="btn btn-primary" [disabled]="addGroup.invalid">Enrégistrer</button>
                     </div>
                   </div><!-- /.modal-content -->
@@ -133,17 +132,17 @@
                             <div class="form-group col-sm-2">
                               <label for="editCod">Code</label>
                               <input type="text" class="form-control" id="editCod" placeholder="Code de la localisation"
-                              autocomplete="off" formControlName="editCod" [ngModel]="editingLoc.codeFrs">
+                              autocomplete="off" formControlName="editCod" [ngModel]="editingLoc.codLoc">
                             </div>
                             <div class="form-group col-sm-4">
-                              <label for="editLib">Numéro IFU</label>
+                              <label for="editLib">Libellé</label>
                               <input type="text" class="form-control" id="editLib" placeholder="Libellé de la localisation"
-                              autocomplete="off" formControlName="editLib" [ngModel]="editingLoc.numIfuFrs">
+                              autocomplete="off" formControlName="editLib" [ngModel]="editingLoc.libLoc">
                             </div>
                             <div class="form-group col-sm-6">
                               <label for="editSit">Site</label>
                               <select class="form-control" id="editSit" formControlName="editSit">
-                                <option *ngFor="let item of sites; let i=index" value="item">
+                                <option *ngFor="let item of sites; let i=index" [value]="i">
                                     {{item.libSite}}
                                 </option>
                               </select>
@@ -155,7 +154,7 @@
                       </div>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                      <button type="button" class="btn btn-secondary" (click)="edit.hide()">Annuler</button>
                       <button type="submit" class="btn btn-warning" [disabled]="editGroup.invalid">Modifier</button>
                     </div>
                   </div><!-- /.modal-content -->
@@ -170,7 +169,7 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <h4 class="modal-title">Suprimmer Une localissation</h4>
-                    <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
+                    <button type="button" class="close" (click)="del.hide()" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
@@ -179,8 +178,8 @@
                     <p>Le confirmez-vous ?</p>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
-                    <button type="button" class="btn btn-danger" (click)="onConfirmDeleteFrs()">Supprimer</button>
+                    <button type="button" class="btn btn-secondary" (click)="del.hide()">Annuler</button>
+                    <button type="button" class="btn btn-danger" (click)="onConfirmDelete()">Supprimer</button>
                   </div>
                 </div><!-- /.modal-content -->
               </div><!-- /.modal-dialog -->

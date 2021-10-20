@@ -106,6 +106,7 @@ import { LocalisationComponent } from './comptabilite/definition/localisation/lo
 import { NatureBudgetComponent } from './comptabilite/definition/nature-budget/nature-budget.component';
 import { ImmobComponent } from './comptabilite/definition/immob/immob.component';
 import { CompteComponent } from './comptabilite/definition/compte/compte.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   imports: [
@@ -127,6 +128,7 @@ import { CompteComponent } from './comptabilite/definition/compte/compte.compone
     HttpClientModule,
     ReactiveFormsModule,
     ToastrModule.forRoot(),
+    NgSelectModule
 
   ],
   declarations: [

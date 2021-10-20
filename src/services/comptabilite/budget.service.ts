@@ -10,7 +10,7 @@ import { AssocierUtilisateurService } from '../administration/associer-utilisate
 @Injectable({
     providedIn: 'root'
 })
-export class CompteService {
+export class BudgetService {
 
     private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
@@ -32,11 +32,11 @@ export class CompteService {
     }
     
     editATypeBudget(code:Number, corps:TypeBudget){
-        return this.httpCli.put<TypeBudget>(this.host+'/compta/natBud/byCodNat/'+code, corps);
+        return this.httpCli.put<TypeBudget>(this.host+'/compta/natBug/byCodNat/'+code, corps);
     }
     
     deleteATypeBudget(code:String){
-        return this.httpCli.delete<boolean>(this.host+'/compta/natBud/byCodNat/'+code);
+        return this.httpCli.delete<boolean>(this.host+'/compta/natBug/byCodNat/'+code);
     }
     
 

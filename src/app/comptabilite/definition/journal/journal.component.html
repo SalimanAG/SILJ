@@ -1,1 +1,274 @@
-<p>journal works!</p>
+<div class="card">
+    <div class="card-header">
+      <i class="fa fa-align-justify"></i> Liste des journaux
+    </div>
+    <div class="card-body">
+      <!--Les enfants s'amusent-->
+      <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+        <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="initAdd()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+        <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+      </div>
+      <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="jrnTab"
+        [dtTrigger]="jrnTrigger" id="jrnId">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Libellé</th>
+            <th>Contrepartie auto</th>
+            <th>Nature</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of journaux; let i = index">
+            <td>{{ item.codJrn }}</td>
+            <td>{{ item.libJrn }}</td>
+            <th>{{item.autoContrepart.libCpte}}</th>
+            <td>{{ item.natJrn.libNat }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEdit(i)"><span class="fa fa-edit"></span></button>
+              <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDelete(i)"><span class="fa fa-trash"></span></button>
+              <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+              <!--Le bouton des options-->
+              <div class="btn-group" dropdown>
+                <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                <ul *dropdownMenu class="dropdown-menu" role="menu">
+                  <li role="menuitem"><a class="dropdown-item" >Action</a></li>
+                  <li role="menuitem"><a class="dropdown-item" >Another action</a>
+                  </li>
+                  <li role="menuitem"><a class="dropdown-item" >Something else
+                    here</a></li>
+                  <li class="divider dropdown-divider"></li>
+                  <li role="menuitem"><a class="dropdown-item" >Separated link</a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+  
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Code</th>
+            <th>Libellé</th>
+            <th>Contrepartie auto</th>
+            <th>Nature</th>
+            <th>Actions</th>
+          </tr>
+        </tfoot>
+      </table>
+      <!-- Les modales-->
+            <!--Modale 1-->
+            <div bsModal #add="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-primary" role="document">
+                <form [formGroup]="addGroup" (ngSubmit)="onSubmitAdd()">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Enrégistrer un nouveau journal</h4>
+                      <button type="button" class="close" (click)="add.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Formulaire pour enrégistrer un Fournisseur-->
+                      <div class="card">
+                        <div class="card-header">
+                          <strong></strong>
+  
+                        </div>
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="form-group col-sm-4">
+                              <label for="addCod">Code</label>
+                              <input type="text" class="form-control" id="addCod" placeholder=""
+                              autocomplete="off" formControlName="addCod">
+                            </div>
+                            <div class="form-group col-sm-8">
+                              <label for="addLib">Libellé</label>
+                              <input type="text" class="form-control" id="addLib"
+                              autocomplete="off" formControlName="addLib">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-sm-6">
+                              <label for="addConAut">Contrepartie auto</label>
+                              <select class="form-control" id="addConAut" autocomplete="off" formControlName="addConAut">
+                                <option *ngFor="let item of comptes; let i=index" [value]="i">
+                                  {{item.libCpte}}
+                              </option>
+                              </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                              <label for="addNat">Nature du journal</label>
+                              <select class="form-control" id="addNat" autocomplete="off" formControlName="addNat">
+                                <option *ngFor="let item of natures; let i=index" [value]="i">
+                                  {{item.libNat}}
+                              </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="addComAut">Comptes autorisés</label>
+                              <ng-select class="form-control" formControlName="addComAut" multiple="true">
+                                <ng-option *ngFor="let item of comptes" [value]="item">{{item.libCpte}}</ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="add.hide()">Annuler</button>
+                      <button type="submit" class="btn btn-primary" [disabled]="addGroup.invalid">Enrégistrer</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </form>
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal 1 -->
+  
+            <!--Modale 2-->
+            <div bsModal #edit="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-warning modal-lg" role="document">
+                <form [formGroup]="editGroup" (ngSubmit)="onSubmitEdit()">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Modifier Un journal</h4>
+                      <button type="button" class="close" (click)="edit.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Formulaire pour modifier un Locataire-->
+                      <div class="card">
+                        <div class="card-header">
+                        </div>
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="form-group col-sm-4">
+                              <label for="editCod">Code</label>
+                              <input type="text" class="form-control" id="editCod" placeholder=""
+                              autocomplete="off" formControlName="editCod">
+                            </div>
+                            <div class="form-group col-sm-8">
+                              <label for="editLib">Libellé</label>
+                              <input type="text" class="form-control" id="editLib"
+                              autocomplete="off" formControlName="editLib">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-sm-6">
+                              <label for="editConAut">Contrepartie auto</label>
+                              <select class="form-control" id="editConAut" autocomplete="off" formControlName="editConAut">
+                                <option *ngFor="let item of comptes; let i=index" [value]="i">
+                                  {{item.libCpte}}
+                              </option>
+                              </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                              <label for="editNat">Nature du journal</label>
+                              <select class="form-control" id="editNat" autocomplete="off" formControlName="editNat">
+                                <option *ngFor="let item of natures; let i=index" [value]="i">
+                                  {{item.libNat}}
+                              </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-sm-12">
+                              <label for="editComAut">Comptes autorisés</label>
+                              <ng-select class="form-control" formControlName="editComAut" multiple="true">
+                                <ng-option *ngFor="let item of comptes; let i=index" [value]="i">{{item.libCpte}}</ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="edit.hide()">Annuler</button>
+                      <button type="submit" class="btn btn-warning" [disabled]="editGroup.invalid">Modifier</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </form>
+  
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal 2 -->
+  
+            <!--Modale 3-->
+            <div bsModal #del="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-danger" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Suprimmer Une localissation</h4>
+                    <button type="button" class="close" (click)="del.hide()" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{ sup.codJrn }} {{ sup.libJrn }}</mark></p>
+                    <p>Le confirmez-vous ?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="del.hide()">Annuler</button>
+                    <button type="button" class="btn btn-danger" (click)="onConfirmDelete()">Supprimer</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal 3 -->
+  
+            <!--Modale 4-->
+            <!--div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-info modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Détail Sur Fournisseur</h4>
+                    <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <table class="table table-striped">
+  
+                      <tbody>
+                        <tr>
+                          <th>Code</th>
+                          <td>{{ infosFrs.codeFrs }}</td>
+                        </tr>
+                        <tr>
+                          <th>Identité</th>
+                          <td>{{ infosFrs.identiteFrs }}</td>
+                        </tr>
+                        <tr>
+                          <th>Téléphone</th>
+                          <td>{{ infosFrs.telFRS }}</td>
+                        </tr>
+                        <tr>
+                          <th>Raison Sociale</th>
+                          <td>{{ infosFrs.raisonSociale }}</td>
+                        </tr>
+                        <tr>
+                          <th>Adresse</th>
+                          <td>{{ infosFrs.adresseFrs }}</td>
+                        </tr>
+                        <tr>
+                          <th>Numéro IFU</th>
+                          <td>{{ infosFrs.numIfuFrs }}</td>
+                        </tr>
+                        <tr>
+                          <th>Autres Infos</th>
+                          <td>{{ infosFrs.description }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Fermer</button>
+  
+                  </div>
+                </div--><!-- /.modal-content -->
+              <!--/div><!-- /.modal-dialog -->
+            <!--/div><!-- /.modal 4 -->
+    </div>
+  </div>
+  

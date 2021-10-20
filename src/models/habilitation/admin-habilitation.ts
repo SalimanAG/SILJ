@@ -1,4 +1,5 @@
 import { INavData } from '@coreui/angular';
+import * as path from 'path';
 
 export class AdminHabilitation {
 static navIdata: INavData[] = [
@@ -16,7 +17,12 @@ static navIdata: INavData[] = [
     title: true,
     name: 'UTILISATION'
   },
-
+  {
+    name: 'Mobilisation de ressource',
+    url: '/base',
+    icon: 'icon-puzzle',
+    children: [
+  
   {
     name: 'Définition',
     url: '/base',
@@ -159,8 +165,46 @@ static navIdata: INavData[] = [
 
 
     ]
+  },]
   },
 
+// comptabilité
+  {
+    name: 'Comptabilité',
+    url: '/base',
+    icon: 'icon-speedometer',
+    children:[
+      {
+        name: 'Définition',
+        url:'/base',
+        icon: 'icon-chart',
+        children:[
+          
+          {
+            name: 'Compte',
+            url: '/compte'
+          },
+          {
+            name: 'Journal',
+            url: '/jCompta'
+          },
+          {
+            name: 'Localisation',
+            url: '/localisation'
+          },
+          {
+            name: 'Immobilisation',
+            url: '/immo'
+          },
+          {
+            name: 'Nature budgetaire',
+            url: '/natBud'
+          }
+        ]
+      }
+    ]
+  },
+  
   // debut rapport
   {
     name: 'Rapport',
@@ -267,42 +311,6 @@ static navIdata: INavData[] = [
     name: 'Statistiques',
     url: '/statistique',
     icon: 'icon-chart',
-  },
-// comptabilité
-  {
-    name: 'Comptabilité',
-    url: '/base',
-    icon: 'icon-speedometer',
-    children:[
-      {
-        name: 'Définition',
-        url:'/base',
-        icon: 'icon-chart',
-        children:[
-          
-          {
-            name: 'Compte',
-            url: '/natBud'
-          },
-          {
-            name: 'Journal',
-            url: '/jCompta'
-          },
-          {
-            name: 'Localisation',
-            url: '/localisation'
-          },
-          {
-            name: 'Immobilisation',
-            url: '/immo'
-          },
-          {
-            name: 'Nature budgetaire',
-            url: '/natBud'
-          }
-        ]
-      }
-    ]
   },
 // aide
   {
