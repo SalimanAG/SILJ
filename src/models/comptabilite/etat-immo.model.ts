@@ -1,3 +1,4 @@
 export class EtatImmo{
-    constructor(public idEtatImmo: Number, public libEtatImo: String){}
+    public idEtatImmo: Number;
+    constructor(public codeEtatImo: String, public libEtatImo: String){}
 }

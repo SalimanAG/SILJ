@@ -1,3 +1,4 @@
 export class Activite{
-    constructor(public  idAct: Number, public codeAct: String, public libAct: String){}
+    public  idAct: Number;
+    constructor(public codeAct: String, public libAct: String){}
 }

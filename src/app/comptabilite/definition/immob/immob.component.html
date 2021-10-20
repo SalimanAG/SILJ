@@ -1,1 +1,882 @@
-<p>immob works!</p>
+<tabset>
+
+    <!--Onglet Activité-->
+    
+    <tab>
+        <ng-template tabHeading><i class="icon-basket-loaded"></i> Activité</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Activité
+          </div>
+          <div class="card-body">
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+            </div>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions3"
+                [dtTrigger]="dtTrigger3" id="activiteDataTable">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let activite of activite; let i= index">
+                  <td>{{ activite.codeAct }}</td>
+                  <td>{{ activite.libAct }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditActivite(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteActivite(i)"><span class="fa fa-trash"></span></button>
+                   
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-primary" role="document">
+                      <form [formGroup]="addActiviteFormsGroup" (ngSubmit)="onSubmitAddActiviteForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer une activité</h4>
+                            <button type="button" class="close" (click)="primaryModal3.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouvel Activite</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addCodeAct">Code activité</label>
+                                    <input type="text" class="form-control" id="addCodeAct" placeholder="Code"
+                                    formControlName="addCodeAct" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addLibAct">Libellé activité</label>
+                                    <input type="texte" class="form-control" id="addLibAct" placeholder="Libellé"
+                                    formControlName="addLibAct" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+    
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addActiviteFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning" role="document">
+                      <form [formGroup]="editActiviteFormsGroup" (ngSubmit)="onSubmitEditActiviteForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier une activité</h4>
+                            <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Modifier une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier une activité</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCodeAct">Code activité</label>
+                                    <input type="text" class="form-control" id="editCodeAct"
+                                    formControlName="editCodeAct" placeholder="Code"
+                                    [ngModel]="editActivite.codeAct" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editLibAct">Libellé activité</label>
+                                    <input type="texte" class="form-control" id="editLibAct"
+                                    formControlName="editLibAct" placeholder="Libellé "
+                                    [ngModel]="editActivite.libAct" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+    
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editActiviteFormsGroup.invalid">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer une activité</h4>
+                          <button type="button" class="close" (click)="dangerModal3.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Voulez-vous supprimez l'activité <mark style="color: red;">{{suprActivite.libAct}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal3.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteActivite()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+    
+          </div>
+        </div>
+    </tab>
+   <!--Onglet Type Amortissement-->
+    <tab>
+        <ng-template tabHeading><i class="icon-basket-loaded"></i> Type d'Amortissement</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des types d'Amortissement
+          </div>
+          <div class="card-body">
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+            </div>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+                [dtTrigger]="dtTrigger1" id="typeAmortDataTable">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let typeAmort of typeAmort; let i= index">
+                  <td>{{ typeAmort.codeTypAmor }}</td>
+                  <td>{{ typeAmort.libTypAmo }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditTypeAmort(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteTypeAmort(i)"><span class="fa fa-trash"></span></button>
+                   
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-primary" role="document">
+                      <form [formGroup]="addTypeAmortFormsGroup" (ngSubmit)="onSubmitAddTypeAmortForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un Type Amortissement</h4>
+                            <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouveau Type Amortissement</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addCodeTypAmor">Code du Type Amortissement</label>
+                                    <input type="text" class="form-control" id="addCodeTypAmor" placeholder="Code"
+                                    formControlName="addCodeTypAmor" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addLibTypAmo">Libellé du Type Amortissement</label>
+                                    <input type="texte" class="form-control" id="addLibTypAmo" placeholder="Libellé"
+                                    formControlName="addLibTypAmo" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+    
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addTypeAmortFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning" role="document">
+                      <form [formGroup]="editTypeAmortFormsGroup" (ngSubmit)="onSubmitEditTypeAmortForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier un Type Amortissement</h4>
+                            <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Modifier une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier un Type Amortissement</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCodeTypAmor">Code du Type Amortissement</label>
+                                    <input type="text" class="form-control" id="editCodeTypAmor"
+                                    formControlName="editCodeTypAmor" placeholder="Code"
+                                    [ngModel]="editTypeAmort.codeTypAmor" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editLibTypAmo">Libellé du Type Amortissement</label>
+                                    <input type="texte" class="form-control" id="editLibTypAmo"
+                                    formControlName="editLibTypAmo" placeholder="Libellé "
+                                    [ngModel]="editTypeAmort.libTypAmo" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+    
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editTypeAmortFormsGroup.invalid">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer un Type Amortissement</h4>
+                          <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Voulez-vous supprimez le type d'amortissement <mark style="color: red;">{{suprTypeAmort.libTypAmo}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteTypeAmort()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+    
+          </div>
+        </div>
+      </tab>
+
+      <!--Onglet Etat immobilisation-->
+
+      <tab>
+        <ng-template tabHeading><i class="icon-basket-loaded"></i> Etat des Immobilisations</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Etat des Immobilisations
+          </div>
+          <div class="card-body">
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+            </div>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2"
+                [dtTrigger]="dtTrigger2" id="etatImmoDataTable">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let etatImmo of etatImmo; let i= index">
+                  <td>{{ etatImmo.codeEtatImo }}</td>
+                  <td>{{ etatImmo.libEtatImo }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditEtatImmo(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteEtatImmo(i)"><span class="fa fa-trash"></span></button>
+                   
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Code</th>
+                  <th>Libellé</th>
+                  <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-primary" role="document">
+                      <form [formGroup]="addEtatImmoFormsGroup" (ngSubmit)="onSubmitAddEtatImmoForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer un Etat Immobilisations</h4>
+                            <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouveau Etat Immobilisation</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addCodeEtatImo">Code état immobilisation</label>
+                                    <input type="text" class="form-control" id="addCodeEtatImo" placeholder="Code"
+                                    formControlName="addCodeEtatImo" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="addLibEtatImo">Libellé état immobilisation</label>
+                                    <input type="texte" class="form-control" id="addLibEtatImo" placeholder="Libellé"
+                                    formControlName="addLibEtatImo" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+    
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addEtatImmoFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-warning" role="document">
+                      <form [formGroup]="editEtatImmoFormsGroup" (ngSubmit)="onSubmitEditEtatImmoForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier un état immobilisation</h4>
+                            <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Modifier une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier un Type Amortissement</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCodeEtatImo">Code du Type Amortissement</label>
+                                    <input type="text" class="form-control" id="editCodeEtatImo"
+                                    formControlName="editCodeEtatImo" placeholder="Code"
+                                    [ngModel]="editEtatImmo.codeEtatImo" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editLibEtatImo">Libellé du Type Amortissement</label>
+                                    <input type="texte" class="form-control" id="editLibEtatImo"
+                                    formControlName="editLibEtatImo" placeholder="Libellé "
+                                    [ngModel]="editEtatImmo.libEtatImo" autocomplete="off">
+                                  </div>
+    
+                                </div><!--/.row-->
+    
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editEtatImmoFormsGroup.invalid">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer un état immobilisation</h4>
+                          <button type="button" class="close" (click)="dangerModal2.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Voulez-vous supprimez l'état immobilisation <mark style="color: red;">{{suprEtatImmo.libEtatImo}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal2.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteEtatImmo()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+    
+          </div>
+        </div>
+      </tab>
+
+      <!--Onglet Immobilisation-->
+
+      
+      <tab>
+        <ng-template tabHeading><i class="icon-basket-loaded"></i>  Immobilisations</ng-template>
+        <div class="card">
+          <div class="card-header">
+            <i class="fa fa-align-justify"></i> Liste des Immobilisations
+          </div>
+          <div class="card-body">
+            <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+              <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal4.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+              <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+            </div>
+            <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions4"
+                [dtTrigger]="dtTrigger4" id="immoDataTable">
+              <thead>
+                <tr>
+                  <th>Elément</th>
+                  <th>Intitulé</th>
+                  <th>Date d'Entrée</th>
+                  <th>Valeur Amortissable</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let immo of immo; let i= index">
+                  <td>{{ immo.element }}</td>
+                  <td>{{ immo.intitule }}</td>
+                  <td>{{ immo.datEntree | date : "dd/MM/yyyy" }}</td>
+                  <td>{{ immo.valAmortissable }}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditImmo(i)"><span class="fa fa-edit"></span></button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteImmo(i)"><span class="fa fa-trash"></span></button>
+                   
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                    <th>Elément</th>
+                    <th>Intitulé</th>
+                    <th>Date d'Entrée</th>
+                    <th>Valeur Amortissable</th>
+                    <th>Actions</th>
+                </tr>
+              </tfoot>
+            </table>
+    
+            <!-- Les modales-->
+                  <!--Modale 1-->
+                  <div bsModal #primaryModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-primary" role="document">
+                      <form [formGroup]="addImmoFormsGroup" (ngSubmit)="onSubmitAddImmoFormsGroup()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Enrégistrer une immobilisation</h4>
+                            <button type="button" class="close" (click)="primaryModal4.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour enrégistrer un article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Nouvelle immobilisation</strong>
+    
+                              </div>
+                              <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-4">
+                                    <label for="addElement">Elément</label>
+                                    <input type="text" class="form-control" id="addElement" placeholder="Element"
+                                      formControlName="addElement" autocomplete="off">
+                                  </div>
+
+                                  <div class="form-group col-sm-4">
+                                    <label for="addIntitule">Intitulé</label>
+                                    <input type="text" class="form-control" id="addIntitule" placeholder="Intitulé"
+                                      formControlName="addIntitule" autocomplete="off">
+                                  </div>
+                                  <div class="form-group col-sm-4">
+                                    <label for="addDatEntree">Date d'entrée</label>
+                                    <input type="date" class="form-control" id="addDatEntree" placeholder="Date d'entrée"
+                                      formControlName="addDatEntree" autocomplete="off">
+                                </div>
+                                </div><!--/.row-->
+                                <div class="row">
+
+                                    <div class="form-group col-sm-4">
+                                        <label for="addValBrute">Valeur Brute</label>
+                                        <input type="number" 
+                                        (ngModelChange)="calculValeurAmortissable()" class="form-control" id="addValBrute" placeholder="Valeur brute"
+                                          formControlName="addValBrute" autocomplete="off">
+                                    </div>
+
+                                    
+                                    <div class="form-group col-sm-4">
+                                        <label for="addValResid">Valeur Résiduelle</label>
+                                        <input type="number" 
+                                        (ngModelChange)="calculValeurAmortissable()" class="form-control" id="addValResid" placeholder="Valeur résiduelle"
+                                          formControlName="addValResid" autocomplete="off">
+                                    </div>
+
+                                    <div class="form-group col-sm-4">
+                                        <label for="addValAmortissable">Valeur / Base Amortissable</label>
+                                        <input type="number" class="form-control" id="addValAmortissable" placeholder="Valeur amortissable" readonly
+                                          formControlName="addValAmortissable" autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="form-group col-sm-4">
+                                        <label for="addLocalisation">Localisation</label>
+                                          <select id="addLocalisation" name="addLocalisation" class="form-control"
+                                          formControlName = "addLocalisation">
+                                            <option *ngFor="let localisation of localisation; let i = index"
+                                            [value]="i">{{ localisation.codLoc }} - {{ localisation.libLoc }}</option>
+                                          </select>
+                                      </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="addNbAnne">Nbr. Année</label>
+                                        <input type="number" class="form-control" id="addNbAnne" placeholder="Année"
+                                          formControlName="addNbAnne" autocomplete="off" (ngModelChange)="calculTaux()">
+                                    </div>
+
+                                    <div class="form-group col-sm-2">
+                                        <label for="addNbMois">Nbr. mois</label>
+                                        <input type="number" class="form-control" id="addNbMois" placeholder="Mois"
+                                          formControlName="addNbMois" autocomplete="off">
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="addNbJrs">Nbr. jours</label>
+                                        <input type="number" class="form-control" id="addNbJrs" placeholder="Jour(s)"
+                                          formControlName="addNbJrs" autocomplete="off">
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label for="addTaux">Taux ( % )</label>
+                                        <input type="number" class="form-control" id="addTaux" placeholder="Taux" readonly
+                                          formControlName="addTaux" autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="addActivite">Activité</label>
+                                      <select id="addActivite" name="addActivite" class="form-control"
+                                      formControlName = "addActivite">
+                                        <option *ngFor="let activite of activite; let i = index"
+                                        [value]="i">{{ activite.codeAct }} - {{ activite.libAct }}</option>
+                                      </select>
+                                  </div>
+
+                                  <div class="form-group col-sm-6">
+                                    <label for="addService">Service</label>
+                                      <select id="addService" name="addService" class="form-control"
+                                      formControlName = "addService">
+                                        <option *ngFor="let service of service; let i = index"
+                                        [value]="i">{{ service.codeService }} - {{ service.libService }}</option>
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+
+                                
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                      <label for="addTypeAmort">Type Amortissement</label>
+                                        <select id="addTypeAmort" name="addTypeAmort" class="form-control"
+                                        formControlName = "addTypeAmort">
+                                          <option *ngFor="let typeAmort of typeAmort; let i = index"
+                                          [value]="i">{{ typeAmort.codeTypAmor }} - {{ typeAmort.libTypAmo }}</option>
+                                        </select>
+                                    </div>
+  
+                                    <div class="form-group col-sm-6">
+                                      <label for="addEtatImmo">Etat Immobilisation</label>
+                                        <select id="addEtatImmo" name="addEtatImmo" class="form-control"
+                                        formControlName = "addEtatImmo">
+                                          <option *ngFor="let etatImmo of etatImmo; let i = index"
+                                          [value]="i">{{ etatImmo.codeEtatImo }} - {{ etatImmo.libEtatImo }}</option>
+                                        </select>
+                                    </div>
+                                  </div><!--/.row-->
+                              </div>
+                            </div>
+    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="primaryModal4.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addImmoFormsGroup.invalid">Sauvégarder</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 1 -->
+    
+                  <!--Modale 2-->
+                  <div bsModal #warningModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-warning" role="document">
+                      <form [formGroup]="editImmoFormsGroup" (ngSubmit)="onSubmitEditImmoForm()">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Modifier une immobilisation</h4>
+                            <button type="button" class="close" (click)="warningModal4.hide()" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Formulaire pour Modifier une Famille d'article-->
+                            <div class="card">
+                              <div class="card-header">
+                                <strong>Modifier une immobilisation</strong>
+    
+                              </div>
+                                
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="form-group col-sm-4">
+                                        <label for="editElement">Elément</label>
+                                        <input type="text" class="form-control" id="editElement" placeholder="Element"
+                                          formControlName="editElement" [ngModel]="editImmo.element" autocomplete="off">
+                                      </div>
+    
+                                      <div class="form-group col-sm-4">
+                                        <label for="editIntitule">Intitulé</label>
+                                        <input type="text" class="form-control" id="editIntitule" placeholder="Intitulé"
+                                          formControlName="editIntitule" [ngModel]="editImmo.intitule" autocomplete="off">
+                                      </div>
+                                      <div class="form-group col-sm-4">
+                                        <label for="editDatEntree">Date d'entrée</label>
+                                        <input type="date" class="form-control" id="editDatEntree" placeholder="Date d'entrée"
+                                          formControlName="editDatEntree" [ngModel]="editImmo.datEntree" autocomplete="off">
+                                    </div>
+                                    </div><!--/.row-->
+                                    <div class="row">
+    
+                                        <div class="form-group col-sm-4">
+                                            <label for="editValBrute">Valeur Brute</label>
+                                            <input type="number" 
+                                            (ngModelChange)="calculValeurAmortissableEdit()" class="form-control" id="editValBrute" placeholder="Valeur brute"
+                                              formControlName="editValBrute" [ngModel]="editImmo.valBrute" autocomplete="off">
+                                        </div>
+    
+                                        
+                                        <div class="form-group col-sm-4">
+                                            <label for="editValResid">Valeur Résiduelle</label>
+                                            <input type="number" 
+                                            (ngModelChange)="calculValeurAmortissableEdit()" class="form-control" id="editValResid" placeholder="Valeur résiduelle"
+                                              formControlName="editValResid" [ngModel]="editImmo.valResid" autocomplete="off">
+                                        </div>
+    
+                                        <div class="form-group col-sm-4">
+                                            <label for="editValAmortissable">Valeur / Base Amortissable</label>
+                                            <input type="number" class="form-control" id="editValAmortissable" placeholder="Valeur amortissable" readonly
+                                              formControlName="editValAmortissable" [ngModel]="editImmo.valAmortissable" autocomplete="off">
+                                        </div>
+                                    </div>
+    
+                                    <div class="row">
+    
+                                        <div class="form-group col-sm-4">
+                                            <label for="editLocalisation">Localisation</label>
+                                              <select id="editLocalisation" name="editLocalisation" class="form-control"
+                                              formControlName = "editLocalisation">
+                                                <option *ngFor="let localisation of localisation; let i = index"
+                                                [value]="i">{{ localisation.codLoc }} - {{ localisation.libLoc }}</option>
+                                              </select>
+                                          </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="editNbAnne">Nbr. Année</label>
+                                            <input type="number" class="form-control" id="editNbAnne" placeholder="Année"
+                                              formControlName="editNbAnne" [ngModel]="editImmo.nbAnne" autocomplete="off" (ngModelChange)="calculTauxEdit()">
+                                        </div>
+    
+                                        <div class="form-group col-sm-2">
+                                            <label for="editNbMois">Nbr. mois</label>
+                                            <input type="number" class="form-control" id="editNbMois" placeholder="Mois"
+                                              formControlName="editNbMois" [ngModel]="editImmo.nbMois" autocomplete="off">
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="editNbJrs">Nbr. jours</label>
+                                            <input type="number" class="form-control" id="editNbJrs" placeholder="Jour(s)"
+                                              formControlName="editNbJrs" [ngModel]="editImmo.nbJrs" autocomplete="off">
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="editTaux">Taux ( % )</label>
+                                            <input type="number" class="form-control" id="editTaux" placeholder="Taux" readonly
+                                              formControlName="editTaux" autocomplete="off">
+                                        </div>
+                                    </div>
+    
+                                    <div class="row">
+                                      <div class="form-group col-sm-6">
+                                        <label for="editActivite">Activité</label>
+                                          <select id="editActivite" name="editActivite" class="form-control"
+                                          formControlName = "editActivite">
+                                            <option *ngFor="let activite of activite; let i = index"
+                                            [value]="i">{{ activite.codeAct }} - {{ activite.libAct }}</option>
+                                          </select>
+                                      </div>
+    
+                                      <div class="form-group col-sm-6">
+                                        <label for="editService">Service</label>
+                                          <select id="editService" name="editService" class="form-control"
+                                          formControlName = "editService">
+                                            <option *ngFor="let service of service; let i = index"
+                                            [value]="i">{{ service.codeService }} - {{ service.libService }}</option>
+                                          </select>
+                                      </div>
+                                    </div><!--/.row-->
+    
+                                    
+                                    <div class="row">
+                                        <div class="form-group col-sm-6">
+                                          <label for="editTypeAmort">Type Amortissement</label>
+                                            <select id="editTypeAmort" name="editTypeAmort" class="form-control"
+                                            formControlName = "editTypeAmort">
+                                              <option *ngFor="let typeAmort of typeAmort; let i = index"
+                                              [value]="i">{{ typeAmort.codeTypAmor }} - {{ typeAmort.libTypAmo }}</option>
+                                            </select>
+                                        </div>
+      
+                                        <div class="form-group col-sm-6">
+                                          <label for="editEtatImmo">Etat Immobilisation</label>
+                                            <select id="editEtatImmo" name="editEtatImmo" class="form-control"
+                                            formControlName = "editEtatImmo">
+                                              <option *ngFor="let etatImmo of etatImmo; let i = index"
+                                              [value]="i">{{ etatImmo.codeEtatImo }} - {{ etatImmo.libEtatImo }}</option>
+                                            </select>
+                                        </div>
+                                      </div><!--/.row-->
+                                  </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="warningModal4.hide()">Annuler</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editImmoFormsGroup.invalid">Modifier</button>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </form>
+    
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 2 -->
+    
+                  <!--Modale 3-->
+                  <div bsModal #dangerModal4="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-danger" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Suprimmer une immobilisation</h4>
+                          <button type="button" class="close" (click)="dangerModal4.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Voulez-vous supprimez l'immobilisation <mark style="color: red;">{{suprImmo.element}} - {{suprImmo.intitule}}</mark></p>
+                          <p>Le confirmez-vous ?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="dangerModal4.hide()">Annuler</button>
+                          <button type="button" class="btn btn-danger" (click)="onConfirmDeleteImmo()">Supprimer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                  </div><!-- /.modal 3 -->
+    
+    
+        </div>
+    </div>
+    </tab>
+</tabset>

@@ -1,3 +1,4 @@
 export class TypeAmort{
-    constructor(public idTypAmo:Number, public libTypAmo:String){}
+    public idTypAmo:Number
+    constructor(public codeTypAmor:String, public libTypAmo:String){}
 }
