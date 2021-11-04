@@ -1,0 +1,1047 @@
+<div>
+    <title>
+        
+    </title>
+    <div class="card">
+        <div class="card-header">
+            <i class="fa fa-align-justify"></i>{{journal.libJrn}}: Liste des pièces saisies ce jour
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                <button class="btn btn-info" data-toggle="modal" *ngIf="!pret"
+                    (click)="initSearch()" type="button">Rechercher une écriture</button>
+                </div>
+                <div class="col-md-6">
+                    <input *ngIf="pret" width="1000" type="text" [formControl]="valeur" id="valRech"
+                    (keyup)="recherche()" >
+                </div>
+                <div class="col-md-4">
+                    <button *ngIf="pret" class="btn btn-warning" data-toggle="modal" 
+                    (click)="initAdd()" type="button">Quitter la recherche</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12"></div>
+                <div class="col-md-8" style="align-items: center;">
+                <button class="btn btn-success" data-toggle="modal"
+                    (click)="initAdd()" type="button">Nouvelle écriture</button>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+              <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dailyTab" [dtTrigger]="dailyTrigger"
+                    id="dailyId">
+                    <thead>
+                    <tr>
+                        <th style="text-align: center; width: 100px;">Numero</th>
+                        <th style="text-align: center; width: 100px;">Date</th>
+                        <th style="text-align: center; width: 300px;">Description</th>
+                        <th style="text-align: center; width: 150px;">référence interne</th>
+                        <th style="text-align: center; width: 150px;">Référence externe</th>
+                        <th style="text-align: center; width: 200px;">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody *ngFor="let elt of daily; let i=index;">
+                        <tr>
+                            <td>{{elt.numEcri}}</td>
+                            <td>{{elt.datEcri | date:'dd/MM/yyyy hh:mm'}}</td>
+                            <td>{{elt.descript}}</td>
+                            <td>{{elt.refIntern}}</td>
+                            <td>{{elt.refExtern}}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Détail de l'écriture" (click)="initdetail(elt)"><span class="fa fa-align-justify"></span></button>
+                                <button class="btn btn-warning btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'écriture" (click)="initAnnul(elt)"><span class="fa fa-undo"></span></button>
+                                <button class="btn btn-success btn-sm" data-toggle="modal tooltip" data-placement="top" title="Dupliquer l'écriture" (click)="initCopy(elt)"><span class="fa fa-copy"></span></button>
+                                <button class="btn btn-success btn-sm" data-toggle="modal tooltip" data-placement="top" title="Transférer vers" (click)="initTrans(elt)"><span class="fa fa-send"></span></button>
+                                <button class="btn btn-success btn-sm" data-toggle="modal tooltip" data-placement="top" title="copier vers" (click)="initCopy(elt)"><span class="fa fa-share"></span></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Numero</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Référence externe</th>
+                            <th>référence interne</th>
+                            <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    </table>
+                </div>
+            </div>
+        <!--Fin card-body-->
+        </div>
+    </div>
+</div>
+
+<!----------------------------------------addEcriture------------------------------------------->
+<div bsModal #add="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-primary" role="document">
+        <form [formGroup]="addGroup" class="form-horizontal" (ngSubmit)="valideEcriture()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nouvelle ecriture</h4>
+                    <button type="button" class="close" (click)="fermeAdd()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="dat">Date</label>
+                                    <input type="datetime-local" class="form-control" id="dat" formControlName="dat" placeholder="Date">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="refI">Référence interne</label>
+                                    <input type="text" id="refI" formControlName="refI" class="form-control" placeholder="Numéro d'une ancienne pièce" autocomplete="false">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="refE">Référence Externe</label>
+                                    <input type="text" id="refE" formControlName="refE" class="form-control" placeholder="Numéro d'une Fournisseur par ex." autocomplete="false">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <label class="form-label" for="des" >Description</label>
+                                    <input type="text" id="des" (keyup)="editRef()" (change)="editRef()" formControlName="des" 
+                                    class="form-control" placeholder="Description" autocomplete="false">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <button type="button" class="btn btn-block btn-primary active" aria-pressed="true" (click)="initAddingCompte()">Ajouter Article</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <table class="table table-bordered table-striped table-sm" >
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 100px;">Compte</th>
+                                            <th style="width: 250px;">Ecriture</th>
+                                            <th style="width: 250px;">Observation</th>
+                                            <th style="width: 150px;">Débit</th>
+                                            <th style="width: 150px;"> Crédit</th>
+                                            <th> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of lignes; let i=index">
+                                            <td>{{item.compte.numCpte}}</td>
+                                            <td>{{item.reference}}</td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" [(ngModel)]="item.observation"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" (change)="totaliser()" (keyup)="totaliser()"
+                                                (change)="debiter(i)" (keyup)="debiter(i)" [(ngModel)]="item.debit" [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" (change)="totaliser()" (keyup)="totaliser()"
+                                                (change)="crediter(i)" (keyup)="crediter(i)" [(ngModel)]="item.credit" [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-block btn-sm" data-toggle="modal" style="color: red;" (click)="enleveCpte(i)"><span class="fa fa-trash"></span></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total débit: <span>{{totalDebit}}</span></td>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total crédit: <span>{{totalCredit}}</span> </td>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total (débit-crédit): 
+                                                <span *ngIf="solde == 0" style="color:rgb(16, 255, 3);">{{solde}}</span>
+                                                <span *ngIf="solde<0 || solde >0" style="color:rgb(235, 37, 87);">{{solde}}</span>
+                                            </td>
+                                            
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="fermeAdd()">Fermer</button>
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
+                </div>
+                <!--div class="modal-footer">
+        </div-->
+            </div>
+        </form>
+    </div>
+</div>
+
+<!----------------------------------------copyEcriture------------------------------------------->
+<div bsModal #copy="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-primary" role="document">
+        <form [formGroup]="copyGroup" class="form-horizontal" (ngSubmit)="valideCopy()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nouvelle ecriture</h4>
+                    <button type="button" class="close" (click)="fermeCopy()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="cdat">Date</label>
+                                    <input type="datetime-local" class="form-control" id="cdat" formControlName="cdat" placeholder="Date">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="tdest">Journal destination</label>
+                                    <select id="tdest" formControlName="cdest" class="form-control">
+                                        <option *ngFor="let item of journaux" value="item">{{item.libJrn}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="crefE">Référence Externe</label>
+                                    <input type="text" id="crefE" formControlName="crefE" class="form-control" placeholder="Numéro d'une Fournisseur par ex." autocomplete="false">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <label class="form-label" for="cdes" >Description</label>
+                                    <input type="text" id="cdes" (keyup)="editRef()" (change)="editRef()" formControlName="cdes" 
+                                    class="form-control" placeholder="Description" autocomplete="false">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <button type="button" class="btn btn-block btn-primary active" aria-pressed="true" (click)="initAddingCompte()">Ajouter Article</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <table class="table table-bordered table-striped table-sm" >
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 100px;">Compte</th>
+                                            <th style="width: 250px;">Ecriture</th>
+                                            <th style="width: 250px;">Observation</th>
+                                            <th style="width: 150px;">Débit</th>
+                                            <th style="width: 150px;"> Crédit</th>
+                                            <th> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of lignes; let i=index">
+                                            <td>{{item.compte.numCpte}}</td>
+                                            <td>{{item.reference}}</td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" [(ngModel)]="item.observation"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" (change)="totaliser()" (keyup)="totaliser()"
+                                                (change)="debiter(i)" (keyup)="debiter(i)" [(ngModel)]="item.debit" [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" (change)="totaliser()" (keyup)="totaliser()"
+                                                (change)="crediter(i)" (keyup)="crediter(i)" [(ngModel)]="item.credit" [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-block btn-sm" data-toggle="modal" style="color: red;" (click)="enleveCpte(i)"><span class="fa fa-trash"></span></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total débit: <span>{{totalDebit}}</span></td>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total crédit: <span>{{totalCredit}}</span> </td>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total (débit-crédit): 
+                                                <span *ngIf="solde == 0" style="color:rgb(16, 255, 3);">{{solde}}</span>
+                                                <span *ngIf="solde<0 || solde >0" style="color:rgb(235, 37, 87);">{{solde}}</span>
+                                            </td>
+                                            
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="fermeCopy()">Fermer</button>
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
+                </div>
+                <!--div class="modal-footer">
+        </div-->
+            </div>
+        </form>
+    </div>
+</div>
+
+<!----------------------------------------transEcriture------------------------------------------->
+<div bsModal #trans="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-primary" role="document">
+        <form [formGroup]="transGroup" class="form-horizontal" (ngSubmit)="valideTrans()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Transfert ecriture</h4>
+                    <button type="button" class="close" (click)="fermeTrans()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="tdat">Date</label>
+                                    <input type="datetime-local" class="form-control" id="tdat" formControlName="tdat" placeholder="Date">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="tdest">Journal destination</label>
+                                    <select id="tdest" formControlName="tdest" class="form-control">
+                                        <option *ngFor="let item of journaux" value="item">{{item.libJrn}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="trefE">Référence Externe</label>
+                                    <input type="text" id="trefE" formControlName="trefE" class="form-control" placeholder="Numéro d'une Fournisseur par ex." autocomplete="false">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <label class="form-label" for="tdes" >Description</label>
+                                    <input type="text" id="des" (keyup)="editRef()" (change)="editRef()" formControlName="tdes" 
+                                    class="form-control" placeholder="Description" autocomplete="false">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <button type="button" class="btn btn-block btn-primary active" aria-pressed="true" (click)="initAddingCompte()">Ajouter Article</button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <table class="table table-bordered table-striped table-sm" >
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 100px;">Compte</th>
+                                            <th style="width: 250px;">Ecriture</th>
+                                            <th style="width: 250px;">Observation</th>
+                                            <th style="width: 150px;">Débit</th>
+                                            <th style="width: 150px;"> Crédit</th>
+                                            <th> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of lignes; let i=index">
+                                            <td>{{item.compte.numCpte}}</td>
+                                            <td>{{item.reference}}</td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" [(ngModel)]="item.observation"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" (change)="totaliser()" (keyup)="totaliser()"
+                                                (change)="debiter(i)" (keyup)="debiter(i)" [(ngModel)]="item.debit" [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" (change)="totaliser()" (keyup)="totaliser()"
+                                                (change)="crediter(i)" (keyup)="crediter(i)" [(ngModel)]="item.credit" [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-block btn-sm" data-toggle="modal" style="color: red;" (click)="enleveCpte(i)"><span class="fa fa-trash"></span></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total débit: <span>{{totalDebit}}</span></td>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total crédit: <span>{{totalCredit}}</span> </td>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total (débit-crédit): 
+                                                <span *ngIf="solde == 0" style="color:rgb(16, 255, 3);">{{solde}}</span>
+                                                <span *ngIf="solde<0 || solde >0" style="color:rgb(235, 37, 87);">{{solde}}</span>
+                                            </td>
+                                            
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="fermeTrans()">Fermer</button>
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
+                </div>
+                <!--div class="modal-footer">
+        </div-->
+            </div>
+        </form>
+    </div>
+</div>
+
+<!----------------------------------------annulEcriture------------------------------------------->
+<div bsModal #annul="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-warning" role="document">
+        <form [formGroup]="annulGroup" class="form-horizontal" (ngSubmit)="valideAnnul()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Annulation d'écriture ecriture</h4>
+                    <button type="button" class="close" (click)="fermeAdd()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="dat">Date</label>
+                                    <input type="datetime-local" class="form-control" id="dat" formControlName="adat" placeholder="Date">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="arefI">Référence interne</label>
+                                    <input type="text" id="arefI" formControlName="arefI" class="form-control" placeholder="Numéro d'une ancienne pièce" 
+                                    autocomplete="false" readonly [(ngModel)]="ecriture.numEcri">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="arefE">Référence Externe</label>
+                                    <input type="text" id="arefE" formControlName="arefE" class="form-control" placeholder="Numéro d'une Fournisseur par ex."
+                                    readonly [(ngModel)]="ecriture.refE">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <label class="form-label" for="ades" >Description</label>
+                                    <input type="text" id="ades" (keyup)="editRef()" (change)="editRef()" formControlName="ades" 
+                                    class="form-control" placeholder="Description" autocomplete="false"  readonly>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <table class="table table-bordered table-striped table-sm" >
+                                    <thead>
+                                        <tr>
+                                            <th>Compte</th>
+                                            <th>Ecriture</th>
+                                            <th>Observation</th>
+                                            <th>Débit</th>
+                                            <th> Crédit</th>
+                                            <th> </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of lignes; let i=index">
+                                            <td>{{item.compte.numCpte}}</td>
+                                            <td>{{item.reference}}</td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" [(ngModel)]="item.observation" readonly
+                                                [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" (change)="totaliser()" (keyup)="totaliser()" readonly
+                                                (change)="debiter(i)" (keyup)="debiter(i)" [(ngModel)]="item.debit" [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td class="tabledit-view-mode" style="cursor: pointer;">
+                                                <input type="number" class="form-control" (change)="totaliser()" (keyup)="totaliser()" readonly
+                                                (change)="crediter(i)" (keyup)="crediter(i)" [(ngModel)]="item.credit" [ngModelOptions]="{standalone: true}">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-block btn-sm" data-toggle="modal" style="color: red;" (click)="enleveCpte(i)"><span class="fa fa-trash"></span></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total débit: <span>{{totalDebit}}</span></td>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total crédit: <span>{{totalCredit}}</span> </td>
+                                            <td colspan="2"  style="text-align: center; font-weight: bold;"> Total (débit-crédit): 
+                                                <span *ngIf="solde == 0" style="color:rgb(16, 255, 3);">{{solde}}</span>
+                                                <span *ngIf="solde<0 || solde >0" style="color:rgb(235, 37, 87);">{{solde}}</span>
+                                            </td>
+                                            
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="fermeAdd()">Fermer</button>
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
+                </div>
+                <!--div class="modal-footer">
+        </div-->
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-------------------------------------------AddLoyer----------------------------------------->
+<!--div bsModal #addLoyer="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-primary" role="document">
+        <form [formGroup]="addLoyerGroup" class="form-horizontal" (ngSubmit)="ajoutePaiement()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nouveau loyer</h4>
+                    <button type="button" class="close" (click)="fermerLoyer()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-header">
+                            <!--div class="row">
+                                <div class="col-xl-1">
+                                    <label for="loyLoc">Locataire</label>
+                                </div>
+                                <div class="col-xl-3">
+                                    <select formControlName="loyLoc" class="form-control" #Loca (ngModelChange)="chargerImmeubles(locataires[addLoyerGroup.value['loyLoc']])">
+                                      <option *ngFor="let loc of locataires; let i=index" [value]="i">
+                                          {{loc.identiteLocataire}}
+                                      </option>
+                                  </select>
+                                </div>
+                                <div class="col-xl-1">
+                                    <label for="loyVL">Boutique</label>
+                                </div>
+                                <div class="col-xl-5">
+                                    <select formControlName="loyVL" class="form-control">
+                                        <option *ngFor="let cont of contratLocataire; let i=index" [value]="i">{{cont.numContrat}}: {{cont.immeuble.libIm}}</option>
+                                      </select>
+                                </div>
+                                <div class="col-xl-2">
+                                    <button type="button" class="btn btn-secondary" (click)="genererEcheancier(contratLocataire[addLoyerGroup.value['loyVL']])">
+                                        Générer échéancier
+                                    </button>
+                                </div>
+                            </div-->
+                            
+                            <!--div class="row">
+                                <div class="col-xl-4">
+                                    <label for="loyLoc">Locataire</label>
+                                    <select formControlName="loyLoc" class="form-control" #Loca (ngModelChange)="chargerImmeubles(locataires[addLoyerGroup.value['loyLoc']])">
+                                      <option *ngFor="let loc of locataires; let i=index" [value]="i">
+                                          {{loc.identiteLocataire}}
+                                      </option>
+                                  </select>
+                                </div>
+                                <div class="col-xl-5">
+                                    <label for="loyVL">Boutique</label>
+                                    <select formControlName="loyVL" class="form-control" (ngModelChange)="afficheAvance(contratLocataire[addLoyerGroup.value['loyVL']])">
+                                        <option *ngFor="let cont of contratLocataire; let i=index" [value]="i">{{cont.numContrat}}: {{cont.immeuble.libIm}}</option>
+                                      </select>
+                                </div>
+                                <div class="col-xl-3">
+                                    <label for="avce">Avance</label>
+                                    <input type="number" formControlName="avce" class="form-control" readonly (change)="recalculerReliquatLoy()">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="loyMtt">Montant perçu</label>
+                                    <input type="number" id="loyMtt" (change)="recalculerReliquatLoy()" (keyup)="recalculerReliquatLoy()" formControlName="loyMtt" class="form-control" placeholder="Montant perçu" autocomplete="false">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="loyMon">Monnaie rendue</label>
+                                    <input type="number" id="loyMon" (change)="recalculerReliquatLoy()" (keyup)="recalculerReliquatLoy()" formControlName="loyMon" class="form-control" placeholder="Monnaie rendue" autocomplete="false">
+                                </div>
+                                <div class="col-xl-4">
+                                    <label class="form-label" for="loyRel">Avance reconstituée</label>
+                                    <input type="number" id="loyRel" formControlName="loyRel" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-8">
+                                    <button type="button" class="btn btn-secondary" (click)="genererEcheancier(contratLocataire[addLoyerGroup.value['loyVL']])">
+                                        Générer échéancier
+                                    </button>
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="card-body">
+                            <div class="form-group row">
+                                <div class="col-xl-9">
+                                    <table class="table table-bordered" datatable [dtOptions]="tabEcheance" [dtTrigger]="dtTrigEche" id="dteche">
+                                        <thead>
+                                            <tr>
+                                                <th>Année</th>
+                                                <th>Echéance</th>
+                                                <th>Mois</th>
+                                                <th>Prix</th>
+                                                <th>Payé?</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let echetmp of echeanceAPayer; let i=index">
+                                                <td>{{echetmp.annee}}</td>
+                                                <td>{{echetmp.dateEcheance|date: "dd/MM/yyyy"}}</td>
+                                                <td>{{echetmp.moisEcheance}}
+                                                    <span style="font-weight: bold; color: rgb(11, 13, 146);text-align: right;" *ngIf="echetmp.dateEcheance <= today">Consommé</span>
+                                                </td>
+                                                <td>{{echetmp.prix}}</td>
+                                                <td>
+                                                    <p style="text-align: center;"><input type="checkbox" formControlName="coche" [(ngModel)]="echetmp.payeEcheance"
+                                                        (change)="considererEcheance(i)"></p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td style="text-align: center; font-weight: bold;" colspan="3">Total</td>
+                                                <td style="text-align: center; font-weight: bold;" colspan="2">{{total}}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label for="loyCai">Caisse</label>
+                                    <select id="loyCai" formControlName="loyCai" class="form-control">
+                                        <option value="-1">Choisir la caisse</option>
+                                        <option *ngFor="let afu of caisses; let i = index" [value]="i">
+                                          {{ afu.libeCaisse }}</option>
+                                    </select>
+                                    <label for="loyDat">Date de paiement</label>
+                                    <input formControlName="loyDat" id="loyDat" type="datetime-local" class="form-control">
+                                    <label for="loyCai">Mode de paiement</label>
+                                    <select formControlName="loyMod" class="form-control">
+                                        <option value="-1">Choisir le mode de paiement</option>
+                                      <option *ngFor="let m of modes; let i=index" [value]="i">
+                                        {{m.libeModPay}}
+                                      </option>
+                                    </select>
+                                    <label for="loyCon">Contribuable</label>
+                                    <input formControlName="loyCon" id="loyCon" type="text" class="form-control" autocomplete="false">
+                                    <label for="loyObs">Observation</label>
+                                    <input formControlName="loyObs" id="loyObs" type="text" class="form-control" autocomplete="false">
+                                    <!-- (blur)="repartir()"-->
+                                <!--/div>
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="fermerLoyer()">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        <!--/form>
+    </div>
+    <!-- /.modal-dialog -->
+<!--/div>
+<!-- /.modal -->
+
+<!-------------------------------------------AddImput----------------------------------------->
+<!--div bsModal #addImput="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-primary" role="document">
+        <form [formGroup]="addImputGroup" class="form-horizontal" (ngSubmit)="ajouteImputation()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nouvelle imputation</h4>
+                    <button type="button" class="close" (click)="fermerImput()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label for="addImCor">Correspondant</label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <!--select formControlName="addImCor" class="form-control" #corre (change)="chargerPointNI(coi[addImputGroup.value['addImCor']])">
+                    <option *ngFor="let corr of coi; let i=index" [value]="i">{{corr.magasinier.nomMagasinier}} {{corr.magasinier.prenomMagasinier}}</option>
+                  </select-->
+                                    <!--select formControlName="addImCor" class="form-control"  (ngModelChange)="showPointVente(magasinierImpList[addImputGroup.value['addImCor']])">
+                    <option *ngFor="let corr of magasinierImpList; let i=index" [value]="i">{{corr.magasinier?.nomMagasinier}} {{corr.magasinier?.prenomMagasinier}}</option>
+                  </select>
+                                </div>
+
+                                <!--Point vente imputable par correspondant-->
+                                <!--div class="col-sm-2">
+                                    <label for="addImCor">Point de vente</label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <select formControlName="addImPv" class="form-control" >
+                    <option *ngFor="let pv of pointVentOfCorrespondant; let i=index" [value]="pv.numPointVente">{{pv.numPointVente}}</option>
+                  </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" class="btn btn-secondary" (click)="chargerPointNI()">
+                                      Afficher
+                                  </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label for="addImDat">Date de paiement</label>
+                                <input formControlName="addImDat" id="addImDat" type="datetime-local" class="form-control">
+                            </div>
+                            <div class="col-lg-3">
+                                <label for="addImCai">Caisse</label>
+                                <select id="addImCai" formControlName="addImCai" class="form-control" required>
+                                      <option *ngFor="let afu of caisses; let i = index" [value]="i">
+                                        {{ afu.libeCaisse }}
+                                      </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label for="addImMod">Mode</label>
+                                <select id="addImMod" formControlName="addImMod" class="form-control" required>
+                                      <option  *ngFor="let mod of modes; let i = index" [value]="i">
+                                        {{ mod.libeModPay }}
+                                      </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label for="addImObs">Observation</label>
+                                <input formControlName="addImObs" id="addImObs" type="text" class="form-control" autocomplete="false">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-lg-12">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Libellé</th>
+                                            <th>Prix unitaire</th>
+                                            <th>Quantité</th>
+                                            <th>Montant</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let lpv of ImputLine; let i=index">
+                                            <td>{{lpv.article?.codeArticle}}</td>
+                                            <td>{{lpv.article?.libArticle}}</td>
+                                            <td>{{lpv.pulignePointVente}}</td>
+                                            <td>{{lpv.quantiteLignePointVente}}</td>
+                                            <td>{{lpv.pulignePointVente*lpv.quantiteLignePointVente}}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td style="text-align: center; font-weight: bold;" colspan="3">Total</td>
+                                            <td style="text-align: center; font-weight: bold;" colspan="2">{{totalImput}}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            
+                        <div class="form-group-row">
+                            <div class="col-lg-4">
+                                <label for="imputDep">Montant perçu</label>
+                                <input formControlName="imputDep" id="imputDep" type="number" class="form-control">
+                            </div>
+                            <div class="col-lg-4">
+                                <label for="imputMon">Monnaie rendue</label>
+                                <input formControlName="imputMon" id="imputMon" type="number" class="form-control">
+                            </div>
+                            <div class="col-lg-4">
+                                <label for="imputRel">Relicat restant</label>
+                                <input formControlName="imputRel" readonly id="imputRel" type="number" class="form-control">
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="fermerImput()">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        <!--/form>
+    </div>
+    <!-- /.modal-dialog -->
+<!--/div>
+
+
+<!-------------------------------------------Détail-------------------------------------------->
+<!--div bsModal #detail="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-primary" role="document">
+        <form [formGroup]="detailGroup" class="form-horizontal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Détail de l'opération</h4>
+                    <button type="button" class="close" (click)="detailOp.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-header"></div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="vNum">Numéro</label>
+                                    <input type="text" id="vNum" formControlName="vNum" class="form-control" [(value)]="vnum" readonly>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="vDat">Date opération</label>
+                                    <input type="text" id="vDat" formControlName="vDat" class="form-control" [(value)]="vdat" readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="vCai">Caisse</label>
+                                    <input type="text" id="vCai" formControlName="vCai" class="form-control" [(value)]="vcai" readonly>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="vTyp">type operation</label>
+                                    <input type="text" id="vTyp" formControlName="vTyp" class="form-control" [(value)]="vtyp" readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="vNum">Mode de paiement</label>
+                                    <input type="text" id="vMod" formControlName="vMod" class="form-control" [(value)]="vmod" readonly>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="vCon">contribuable</label>
+                                    <input type="text" id="vCon" formControlName="vCon" class="form-control" [(value)]="vcon" readonly>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabDetail">
+                                    <thead>
+                                        <tr>
+                                            <th>Compte</th>
+                                            <th>Libellé</th>
+                                            <th>Débit</th>
+                                            <th>Crédit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody *ngFor="let lig of lignes; let i=index;">
+                                        <tr>
+                                            <td>{{lig.article.codeArticle}}</td>
+                                            <td>{{lig.article.libArticle}}</td>
+                                            <td style="text-align: right;">{{lig.qteLigneOperCaisse}}</td>
+                                            <td style="text-align: right;">{{lig.prixLigneOperCaisse}}</td>
+                                            <td style="text-align: right;">{{lig.qteLigneOperCaisse*lig.prixLigneOperCaisse}}</td>
+                                        </tr>
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" style="text-align: center; font-weight: bold;">Total de la facture</td>
+                                            <td colspan="2" style="text-align: center; font-weight: bold;">{{vtotal}}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="detailOp.hide()">Retour</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        <!--/form>
+    </div>
+    <!-- /.modal-dialog -->
+<!--/div>
+
+<!--Annulation-->
+<!--div bsModal #opAnnul="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-warning" role="document">
+        <form [formGroup]="annulGroup" class="form-horizontal" (ngSubmit)="annulerOperation()">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Annulation</h4>
+                <button type="button" class="close" (click)="fermerAnnulation()" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+                  </div>
+                  <div class="modal-body">
+                <div class="row">
+                  <p>Vous tentez d'annuler l'oppération de caisse <mark style="color: red;">{{annulop.numOpCaisse}}</mark></p>
+                  <p>Êtes-vous sûre de vouloir l'annuler ?</p>
+                  </div>
+                <div class="row">
+                  <label for="motif">Motif d'annulation</label>
+                  <input type="text" class="formControl" formControlName="motif">
+                </div>
+                </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="fermerAnnulation()">Abandonner</button>
+                <button type="button" class="btn btn-success" (click)="annulerOperation()">Continuer</button>
+                </div>
+                </div>
+        </form>
+        <!-- /.modal-content -->
+    <!--/div>
+    <!-- /.modal-dialog -->
+<!--/div>
+
+<!---------------------------------------Suppression d'opération-------------------------------------->
+<!--div bsModal #supOP="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-warning" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Suppression</h4>
+                <button type="button" class="close" (click)="fermeSup()" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+  </button>
+            </div>
+            <div class="modal-body">
+                <p>Vous êtes sur le point de supprimer <mark style="color: red;">{{annulop.numOpCaisse}}</mark> des opérations de caisses</p>
+                <p>Êtes-vous sûre de vouloir l'annuler ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="fermeSup()">Non</button>
+                <button type="button" class="btn btn-success" (click)="supprimerOperation()">Oui</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    <!--/div>
+    <!-- /.modal-dialog -->
+<!--/div>
+
+<!----------------------------------------Apperçu------------------------------------------->
+<!--div bsModal #appercu="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="money" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Apperçu</h4>
+                <button type="button" class="close" (click)="appercu.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <iframe class="col" [src]="pdfToShow" style="height: 400px;" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-------------------Sélection d'article--------------->
+<div bsModal #addCpte="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Sélectionner les compte</h4>
+                <button type="button" class="close" (click)="addCpte.hide()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+            </div>
+            <div class="modal-body">
+                <div class="card" style="margin: 0;">
+                    <div class="card-body">
+                        <table class="table table-striped" id="cpteId" datatable [dtOptions]="cpteTab" [dtTrigger]="cpteTrigger">
+                            <thead>
+                                <tr>
+                                    <th>Numero</th>
+                                    <th>Libellé</th>
+                                    <th>ajouté?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of comptes; let i = index">
+                                    <td>{{ item.numCpte }}</td>
+                                    <td> {{item.libCpte}} </td>
+                                    <td>
+                                        <p style="text-align: center;"><input class="form-check-input" type="checkbox" (click)="choisirCpte(item)"></p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="addCpte.hide()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-------------------Recherche d'opération--------------->
+<!--div bsModal #recherche="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Rechercher...</h4>
+                <button type="button" class="close" (click)="recherche.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <div class="card" style="margin: 0;">
+                    <div class="card-body">
+                        <table class="table table-striped" id="tabListArt" datatable [dtOptions]="tabAllOp" [dtTrigger]="dtrigAllOp" id="dt1">
+                            <thead>
+                                <tr>
+                                    <th>Numero</th>
+                                    <th>Date</th>
+                                    <th>Mode de paiement</th>
+                                    <th>Type recette</th>
+                                    <th>Contribuable</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let articl of Articles; let i = index">
+                                    <td>{{ articl.codeArticle }}</td>
+                                    <td>{{ articl.libArticle }}</td>
+                                    <td>{{ articl.prixVenteArticle }}</td>
+                                    <td>
+                                        <p style="text-align: center;"><input class="form-check-input" type="checkbox" (click)="choisirArticle(i)"></p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Numero</th>
+                                    <th>Date</th>
+                                    <th>Mode de paiement</th>
+                                    <th>Type recette</th>
+                                    <th>Contribuable</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div-->

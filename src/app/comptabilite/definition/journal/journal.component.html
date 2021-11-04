@@ -23,11 +23,13 @@
           <tr *ngFor="let item of journaux; let i = index">
             <td>{{ item.codJrn }}</td>
             <td>{{ item.libJrn }}</td>
-            <th>{{item.autoContrepart.libCpte}}</th>
+            <td>{{item.autoContrepart?.libCpte}}</td>
             <td>{{ item.natJrn.libNat }}</td>
             <td>
-              <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEdit(i)"><span class="fa fa-edit"></span></button>
-              <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDelete(i)"><span class="fa fa-trash"></span></button>
+              <button class="btn btn-warning btn-sm" data-toggle="modal tooltip" data-placement="top" title="Modifier le journal" (click)="initEdit(i)"><span class="fa fa-edit"></span></button>
+              <button class="btn btn-danger btn-sm" data-toggle="modal tooltip" data-placement="top" title="Suppimer le journal" (click)="initDelete(i)"><span class="fa fa-trash"></span></button>
+              <button class="btn btn-success btn-sm" data-toggle="modal tooltip" data-placement="top" title="Ecrire dans le journal" (click)="initEcrit(i)"><span class="fa fa-align-justify"></span></button>
+              <button class="btn btn-success btn-sm" data-toggle="modal tooltip" data-placement="top" title="Rechecher dans le journal" (click)="initrech(i)"><span class="fa fa-search"></span></button>
               <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
               <!--Le bouton des options-->
               <div class="btn-group" dropdown>
@@ -93,6 +95,7 @@
                             <div class="form-group col-sm-6">
                               <label for="addConAut">Contrepartie auto</label>
                               <select class="form-control" id="addConAut" autocomplete="off" formControlName="addConAut">
+                                <option [value]=-1>Aucun</option>
                                 <option *ngFor="let item of comptes; let i=index" [value]="i">
                                   {{item.libCpte}}
                               </option>
@@ -101,6 +104,7 @@
                             <div class="form-group col-sm-6">
                               <label for="addNat">Nature du journal</label>
                               <select class="form-control" id="addNat" autocomplete="off" formControlName="addNat">
+                                <option [value]=-1>Sélection de la nature</option>
                                 <option *ngFor="let item of natures; let i=index" [value]="i">
                                   {{item.libNat}}
                               </option>
@@ -111,6 +115,7 @@
                             <div class="form-group col-sm-12">
                               <label for="addComAut">Comptes autorisés</label>
                               <ng-select class="form-control" formControlName="addComAut" multiple="true">
+                                
                                 <ng-option *ngFor="let item of comptes" [value]="item">{{item.libCpte}}</ng-option>
                               </ng-select>
                             </div>
@@ -160,9 +165,10 @@
                             <div class="form-group col-sm-6">
                               <label for="editConAut">Contrepartie auto</label>
                               <select class="form-control" id="editConAut" autocomplete="off" formControlName="editConAut">
+                                <option [value]=-1>Aucun</option>
                                 <option *ngFor="let item of comptes; let i=index" [value]="i">
                                   {{item.libCpte}}
-                              </option>
+                                </option>
                               </select>
                             </div>
                             <div class="form-group col-sm-6">
@@ -200,7 +206,7 @@
               <div class="modal-dialog modal-danger" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 class="modal-title">Suprimmer Une localissation</h4>
+                    <h4 class="modal-title">Suprimmer Un journal</h4>
                     <button type="button" class="close" (click)="del.hide()" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>

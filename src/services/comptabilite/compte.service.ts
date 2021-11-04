@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Compte } from '../../models/comptabilite/compte.model';
+import { Journal } from '../../models/comptabilite/journal.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
 
@@ -21,6 +22,14 @@ export class CompteService {
     
     getACompteById(code:String){
         return this.httpCli.get<Compte>(this.host+'/compta/compte/byCodCom/'+code);
+    }
+    
+    getACompteByTyp(typ:String){
+        return this.httpCli.get<Compte[]>(this.host+'/compta/compte/byTyp/'+typ);
+    }
+    
+    getCompteEligible(id: Number){
+        return this.httpCli.get<Compte[]>(this.host+'/compta/compte/jn/'+id);
     }
     
     addACompte(corps:Compte){

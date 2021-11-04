@@ -1,8 +1,10 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataTableDirective } from 'angular-datatables';
+import { error } from 'console';
 import { data } from 'jquery';
 import {ModalDirective} from 'ngx-bootstrap/modal';
+import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { Exercice } from '../../models/exercice.model';
 import { ExerciceService } from '../../services/administration/exercice.service';
@@ -32,7 +34,7 @@ export class ExerciceComponent implements OnInit {
   selectedExo :Exercice;//= new Exercice('', '', new Date(), new Date(), '',false);
 
 
-  constructor(private serviceExo:ExerciceService, private formBulder:FormBuilder) {
+  constructor(private serviceExo:ExerciceService, private formBulder:FormBuilder, public toastr: ToastrService) {
     this.dtOptions1 = {
       pagingType: 'full_numbers',
       pageLength: 5,
@@ -122,7 +124,7 @@ export class ExerciceComponent implements OnInit {
   onSubmitAddExoFormsGroup(){
     const newExo = new Exercice(this.addExoFormsGroup.value['addCodeExercice'], this.addExoFormsGroup.value['addLibExercice'],
     this.addExoFormsGroup.value['addDateDebut'], this.addExoFormsGroup.value['addDateFin'],
-    this.addExoFormsGroup.value['addEtatExo'], this.addExoFormsGroup.value['addExoSelectionner']);
+    'Exercice en attente', this.addExoFormsGroup.value['addExoSelectionner']);
     this.serviceExo.addAExo(newExo).subscribe(
       (data) => {
         this.primaryModal.hide();
@@ -139,6 +141,37 @@ export class ExerciceComponent implements OnInit {
       }
     );
 
+  }
+
+  select(e: Exercice){
+    console.log("Selection demandée pour l'exercice "+e.codeExercice);
+    this.serviceExo.exoSelectionner=e;
+  }
+
+  open(e:Exercice){
+    e.etatExo='Exercice Non Cloturé';
+    this.serviceExo.editAExo(e.codeExercice, e).subscribe(
+      dataE=>{
+        this.getAllExo();
+      },
+      error=>{
+        this.toastr.warning('Erreur à l\'ouverture de l\'exercice');
+        console.log(error);        
+      }
+    );
+  }
+
+  archive(e:Exercice){
+    e.etatExo='Exercice Cloturé';
+    this.serviceExo.editAExo(e.codeExercice, e).subscribe(
+      dataE=>{
+        this.getAllExo();
+      },
+      error=>{
+        this.toastr.warning('Erreur à l\'ouverture de l\'exercice');
+        console.log(error);        
+      }
+    );
   }
 
   onSubmitEditExoFormsGroup(){

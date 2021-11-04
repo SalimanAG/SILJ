@@ -121,7 +121,6 @@ export class OperationCaisseComponent implements OnInit {
   detailGroup: FormGroup;
   tabDetail: DataTables.Settings = {};
   // dtrigDetail:Subject<any>=new Subject<any>();
-  dtElt: DataTableDirective;
 
   /////// Location
   montantarepartir: number = 0;

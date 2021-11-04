@@ -83,7 +83,6 @@ import { JournalOperationComponent } from './rapport/stock/journal-operation/jou
 import { ListePointCaisseComponent } from './rapport/correspondants/liste-point-caisse/liste-point-caisse.component';
 import { ListeImputationComponent } from './rapport/correspondants/liste-imputation/liste-imputation.component';
 import { StatistiqueComponent } from './statistique/statistique.component';
-import { ComptabiliteComponent } from './comptabilite/comptabilite.component';
 import { AideComponent } from './aide/aide.component';
 import { ExerciceComponent } from './exercice/exercice.component';
 import { SiCaveauTresorComponent } from './si-caveau-tresor/si-caveau-tresor.component';
@@ -107,6 +106,7 @@ import { NatureBudgetComponent } from './comptabilite/definition/nature-budget/n
 import { ImmobComponent } from './comptabilite/definition/immob/immob.component';
 import { CompteComponent } from './comptabilite/definition/compte/compte.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { EcritureComponent } from './comptabilite/Saisie/ecriture/ecriture.component';
 
 @NgModule({
   imports: [
@@ -172,7 +172,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
     ListePointCaisseComponent,
     ListeImputationComponent,
     StatistiqueComponent,
-    ComptabiliteComponent,
     AideComponent,
     ExerciceComponent,
     SiCaveauTresorComponent,
@@ -193,6 +192,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     NatureBudgetComponent,
     ImmobComponent,
     CompteComponent,
+    EcritureComponent,
   ],
   providers: [{
     provide: LocationStrategy,

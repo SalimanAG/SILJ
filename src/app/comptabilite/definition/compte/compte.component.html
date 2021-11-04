@@ -1,1 +1,596 @@
-<p>compte works!</p>
+<tabset>
+    <!--Onglet 1-->
+    <tab>
+      <ng-template tabHeading><i class="icon-calculator"></i> Compte</ng-template>
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Liste des comptes
+        </div>
+        <div class="card-body">
+          <!--Les enfants s'amusent-->
+          <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+            <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+            <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+          </div>
+          <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions1"
+           [dtTrigger]="dtTrigger1" id="dataTable1">
+            <thead>
+              <tr>
+                <th>Numéro</th>
+                <th>Libellé</th>
+                <th>Collectif</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let compte of comptes; let i = index">
+                <td>{{ compte.numCpte }}</td>
+                <td>{{ compte.libCpte }}</td>
+                <td>{{ compte.collectif }}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditCompte(i)"><span class="fa fa-edit"></span></button>
+                  <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteCompte(i)"><span class="fa fa-trash"></span></button>
+  
+                </td>
+              </tr>
+  
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Numéro</th>
+                <th>Libellé</th>
+                <th>Collectif</th>
+                <th>Actions</th>
+              </tr>
+            </tfoot>
+          </table>
+  
+          <!-- Les modales-->
+                <!--Modale 1-->
+                <div bsModal #primaryModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-primary" role="document">
+                    <form [formGroup]="addCompteFormsGroup" (ngSubmit)="onSubmitAddCompteFormsGroup()">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Enrégistrer un Compte </h4>
+                          <button type="button" class="close" (click)="primaryModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <!-- Formulaire pour enrégistrer une association à un arrondissment-->
+                          <div class="card">
+                            <div class="card-header">
+                              <strong>Nouveau Compte</strong>
+                            </div>
+                            <div class="card-body">
+                              <div class="row">
+                                <div class="form-group col-sm-12">
+                                  <label for="addNumCpte">Numéro</label>
+                                  <input type="text" id="addNumCpte" name="addNumCpte" class="form-control"
+                                  formControlName="addNumCpte" autocomplete="off">
+  
+                                </div>
+                              </div><!--/.row-->
+                              <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label for="addLibCpte">Libellé</label>
+                                    <input type="text" id="addLibCpte" name="addLibCpte" class="form-control"
+                                    formControlName="addLibCpte" autocomplete="off">
+                                </div>
+                              </div><!--/.row-->
+                              <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label for="addCollectif">Collectif</label>
+                                    <input type="text" id="addCollectif" name="addCollectif" class="form-control"
+                                    formControlName="addCollectif" autocomplete="off">
+                                </div>
+  
+                              </div><!--/.row-->
+                            </div>
+                          </div>
+  
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="primaryModal.hide()">Annuler</button>
+                          <button type="submit" class="btn btn-primary" [disabled]="addCompteFormsGroup.invalid">Enrégistrer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </form>
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal 1 -->
+  
+                <!--Modale 2-->
+                <div bsModal #warningModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-warning" role="document">
+                    <form [formGroup]="editCompteFormsGroup" (ngSubmit)="onSubmitEditCompteFormsGroup()">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Modifier un Compte</h4>
+                          <button type="button" class="close" (click)="warningModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <!-- Formulaire pour modifier une association à un arrondissment-->
+                          <div class="card">
+                            <div class="card-header">
+                              <strong>Modifier Compte</strong>
+                            </div>
+                            <div class="card-body">
+                              <div class="row">
+                                <div class="form-group col-sm-12">
+                                  <label for="editNumCpte">Numéro</label>
+                                  <input type="text" id="editNumCpte" name="editNumCpte" class="form-control"
+                                  formControlName="editNumCpte" autocomplete="off">
+  
+                                </div>
+                              </div><!--/.row-->
+                              <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label for="editLibCpte">Libellé</label>
+                                    <input type="text" id="editLibCpte" name="editLibCpte" class="form-control"
+                                    formControlName="editLibCpte" autocomplete="off">
+                                </div>
+                              </div><!--/.row-->
+                              <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <label for="editCollectif">Collectif</label>
+                                    <input type="text" id="editCollectif" name="editCollectif" class="form-control"
+                                    formControlName="editCollectif" autocomplete="off">
+                                </div>
+  
+                              </div><!--/.row-->
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="warningModal.hide()">Annuler</button>
+                          <button type="submit" class="btn btn-warning" [disabled]="editCompteFormsGroup.invalid">Modifier</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </form>
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal 2 -->
+  
+                <!--Modale 3-->
+                <div bsModal #dangerModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-danger" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Suprimmer un Compte</h4>
+                        <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Vous êtes sur le point de supprimer le Compte numéro <mark style="color: red;">{{ suprCompte.numCpte }}</mark> </p>
+                        <p>Le confirmez-vous ?</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="dangerModal.hide()">Annuler</button>
+                        <button type="button" class="btn btn-danger" (click)="onConfirmDeleteCompte()">Supprimer</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal 3 -->
+        </div>
+      </div>
+    </tab>
+    <!--Onglet 2-->
+    <tab>
+      <ng-template tabHeading><i class="icon-basket-loaded"></i> Compte-Article</ng-template>
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Liste d'Association des Comptes aux Articles
+        </div>
+        <div class="card-body">
+          <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+            <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+            <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+          </div>
+          <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2"
+          [dtTrigger]="dtTrigger2" id="dataTable2">
+            <thead>
+              <tr>
+                <th>Compte</th>
+                <th>Article</th>
+                <th>Date de début</th>
+                <th>Date de Fin</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let asso of associers; let i = index">
+              <tr>
+                <td>{{ asso.compte.numCpte }} - {{ asso.compte.libCpte }}</td>
+                <td>{{ asso.article.codeArticle }} - {{ asso.article.libArticle }}</td>
+                <td>{{ asso.debComArt | date:"dd-MM-yyyy" }}</td>
+                <td>{{ asso.finComArt | date:"dd-MM-yyyy" }}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAssocier(i)"><span class="fa fa-edit"></span></button>
+                  <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAssocier(i)"><span class="fa fa-trash"></span></button>
+                  
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Compte</th>
+                <th>Article</th>
+                <th>Date de début</th>
+                <th>Date de Fin</th>
+                <th>Actions</th>
+              </tr>
+            </tfoot>
+          </table>
+  
+          <!-- Les modales-->
+                <!--Modale 1-->
+                <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-primary" role="document">
+                    <form [formGroup]="addAssocierFormsGroup" (ngSubmit)="onSubmitAddAssocierFormsGroup()">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Enrégistrer une Association</h4>
+                          <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <!-- Formulaire pour Enrégistrer une affectation à une caisse-->
+                          <div class="card">
+                            <div class="card-header">
+                              <strong>Nouvelle Association de compte à article</strong>
+  
+                            </div>
+                            <div class="card-body">
+                              <div class="row">
+                                <div class="form-group col-sm-12">
+                                  <label for="addCompte">Compte</label>
+                                    <select id="addCompte" name="addCompte" class="form-control"
+                                    formControlName="addCompte">
+                                      <option *ngFor="let compt of comptes; let i = index" [value]="i">{{ compt.numCpte }} - {{ compt.libCpte }}</option>
+  
+                                    </select>
+  
+                                </div>
+                              </div><!--/.row-->
+                              <div class="row">
+                                <div class="form-group col-sm-6">
+                                  <label for="addArticle">Article</label>
+                                    <select id="addArticle" name="addArticle" class="form-control"
+                                    formControlName="addArticle">
+                                      <option *ngFor="let article of articles; let i = index" [value]="i">
+                                        {{ article.codeArticle }} - {{ article.libArticle }}</option>
+  
+                                    </select>
+                                </div>
+                                
+                              </div><!--/.row-->
+                              <div class="row">
+                                <div class="form-group col-sm-6">
+                                  <label for="addDebComArt">Date d'Association</label>
+                                  <input type="date" class="form-control" name="addDebComArt" id="addDebComArt"
+                                  formControlName="addDebComArt">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                  <label for="addFinComArt">Date de Fin d'Association</label>
+                                  <input type="date" class="form-control" name="addFinComArt" id="addFinComArt"
+                                  formControlName="addFinComArt">
+                                </div>
+                              </div><!--/.row-->
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
+                          <button type="submit" class="btn btn-primary" [disabled]="addAssocierFormsGroup.invalid">Enrégistrer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </form>
+  
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal 1 -->
+  
+                <!--Modale 2-->
+                <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-warning modal-lg" role="document">
+                    <form [formGroup]="editAssocierFormsGroup" (ngSubmit)="onSubmitEditAssocierFormsGroup()">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Modifier une Association </h4>
+                          <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <!-- Formulaire pour Modifier une Association à une Caisse-->
+                          <div class="card">
+                            <div class="card-header">
+                              <strong>Modifier une Association d'article à une Caisse</strong>
+  
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCompte">Compte</label>
+                                      <select id="editCompte" name="editCompte" class="form-control"
+                                      formControlName="editCompte">
+                                        <option *ngFor="let compt of comptes; let i = index" [value]="i">{{ compt.numCpte }} - {{ compt.libCpte }}</option>
+    
+                                      </select>
+    
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="editArticle">Article</label>
+                                      <select id="editArticle" name="editArticle" class="form-control"
+                                      formControlName="editArticle">
+                                        <option *ngFor="let article of articles; let i = index" [value]="i">
+                                          {{ article.codeArticle }} - {{ article.libArticle }}</option>
+    
+                                      </select>
+                                  </div>
+                                  
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="editDebComArt">Date d'Association</label>
+                                    <input type="date" class="form-control" name="editDebComArt" id="editDebComArt"
+                                    formControlName="editDebComArt">
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="editFinComArt">Date de Fin d'Association</label>
+                                    <input type="date" class="form-control" name="editFinComArt" id="editFinComArt"
+                                    formControlName="editFinComArt">
+                                  </div>
+                                </div><!--/.row-->
+                            </div>
+                            
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
+                          <button type="submit" class="btn btn-warning" [disabled]="editAssocierFormsGroup.invalid">Modifier</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </form>
+  
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal 2 -->
+  
+                <!--Modale 3-->
+                <div bsModal #dangerModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-danger" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Suprimmer Une Association</h4>
+                        <button type="button" class="close" (click)="dangerModal2.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Vous êtes sur le point de supprimer l'Association du compte <mark style="color: green;">{{ suprAssocier.compte.numCpte }}</mark> à l'article <mark style="color: red;">{{ suprAssocier.article.codeArticle }}</mark></p>
+                        <p>Le confirmez-vous ?</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="dangerModal2.hide()">Annuler</button>
+                        <button type="button" class="btn btn-danger" (click)="onConfirmDeleteAssocier()">Supprimer</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal 3 -->
+  
+        </div>
+      </div>
+    </tab>
+    <!--Onglet 3-->
+    <tab>
+      <ng-template tabHeading><i class="icon-pie-chart"></i> Compte-Caisse</ng-template>
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Liste des Associations de Compte à Caisse
+        </div>
+        <div class="card-body">
+          <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+            <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal3.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+            <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+          </div>
+          <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions3"
+          [dtTrigger]="dtTrigger3" id="dataTable3">
+            <thead>
+              <tr>
+                <th>Compte</th>
+                <th>Caisse</th>
+                <th>Date de début</th>
+                <th>Date de Fin</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let affect of affectComptToCaisses; let i = index" >
+                <td>{{ affect.compte.numCpte }} - {{ affect.compte.libCpte }}</td>
+                <td>{{ affect.caisse.codeCaisse }} - {{ affect.caisse.libeCaisse }}</td>
+                <td>{{ affect.datDebAffComptCai | date:"dd-MM-yyyy" }}</td>
+                <td>{{ affect.datFinAffComptCai | date:"dd-MM-yyyy" }}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditAffectComptToCaisse(i)"><span class="fa fa-edit"></span></button>
+                  <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteAffectComptToCaisse(i)"><span class="fa fa-trash"></span></button>
+                  
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th>Compte</th>
+                <th>Caisse</th>
+                <th>Date de début</th>
+                <th>Date de Fin</th>
+                <th>Actions</th>
+              </tr>
+            </tfoot>
+          </table>
+  
+  
+          <!-- Les modales-->
+                <!--Modale 1-->
+                <div bsModal #primaryModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-primary" role="document">
+                    <form [formGroup]="addAffectComptToCaisseFormsGroup" (ngSubmit)="onSubmitAddAffectComptToCaisse()">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Enrégistrer une Association</h4>
+                          <button type="button" class="close" (click)="primaryModal3.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <!-- Formulaire pour Enrégistrer une Nouvelle Association à un Groupe-->
+                          <div class="card">
+                            <div class="card-header">
+                              <strong>Nouvelle Association d'un Compte à une Caisse</strong>
+  
+                            </div>
+                            <div class="card-body">
+                              <div class="row">
+                                <div class="form-group col-sm-12">
+                                  <label for="addCompte2">Compte</label>
+                                  <select id="addCompte2" name="addCompte2" class="form-control"
+                                  formControlName="addCompte2">
+                                    <option *ngFor="let compt of comptes; let i = index" [value]="i">{{ compt.numCpte }} - {{ compt.libCpte }}</option>
+  
+                                  </select>
+  
+                                </div>
+                              </div><!--/.row-->
+                              <div class="row">
+                                <div class="form-group col-sm-12">
+                                  <label for="addCaisse">Caisse</label>
+                                    <select id="addCaisse" name="addCaisse" class="form-control"
+                                    formControlName="addCaisse">
+                                      <option *ngFor="let caiss of caisses; let i = index" [value]="i">{{ caiss.codeCaisse }} - {{ caiss.libeCaisse }}</option>
+  
+                                    </select>
+                                </div>
+                              </div><!--/.row-->
+                              <div class="row">
+                                <div class="form-group col-sm-6">
+                                  <label for="addDatDebAffComptCai">Date d'Association</label>
+                                  <input type="date" class="form-control" name="addDatDebAffComptCai" id="addDatDebAffComptCai"
+                                  formControlName="addDatDebAffComptCai">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                  <label for="addDatFinAffComptCai">Date de Fin d'Association</label>
+                                  <input type="date" class="form-control" name="addDatFinAffComptCai" id="addDatFinAffComptCai"
+                                  formControlName="addDatFinAffComptCai">
+                                </div>
+                              </div><!--/.row-->
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
+                          <button type="submit" class="btn btn-primary">Enrégistrer</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </form>
+  
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal 1 -->
+  
+                <!--Modale 2-->
+                <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-warning" role="document">
+                    <form [formGroup]="editAffectComptToCaisseFormsGroup" (ngSubmit)="onSubmitEditAffectComptToCaisse()">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Modifier Une Association</h4>
+                          <button type="button" class="close" (click)="warningModal3.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <!-- Formulaire pour Enrégistrer une Unité de Comptage-->
+                          <div class="card">
+                            <div class="card-header">
+                              <strong>Modifier une Association de Compte à une Caisse</strong>
+  
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCompte2">Compte</label>
+                                    <select id="editCompte2" name="editCompte2" class="form-control"
+                                    formControlName="editCompte2">
+                                      <option *ngFor="let compt of comptes; let i = index" [value]="i">{{ compt.numCpte }} - {{ compt.libCpte }}</option>
+    
+                                    </select>
+    
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-12">
+                                    <label for="editCaisse">Caisse</label>
+                                      <select id="editCaisse" name="editCaisse" class="form-control"
+                                      formControlName="editCaisse">
+                                        <option *ngFor="let caiss of caisses; let i = index" [value]="i">{{ caiss.codeCaisse }} - {{ caiss.libeCaisse }}</option>
+    
+                                      </select>
+                                  </div>
+                                </div><!--/.row-->
+                                <div class="row">
+                                  <div class="form-group col-sm-6">
+                                    <label for="editDatDebAffComptCai">Date d'Association</label>
+                                    <input type="date" class="form-control" name="editDatDebAffComptCai" id="editDatDebAffComptCai"
+                                    formControlName="editDatDebAffComptCai">
+                                  </div>
+                                  <div class="form-group col-sm-6">
+                                    <label for="editDatFinAffComptCai">Date de Fin d'Association</label>
+                                    <input type="date" class="form-control" name="editDatFinAffComptCai" id="editDatFinAffComptCai"
+                                    formControlName="editDatFinAffComptCai">
+                                  </div>
+                                </div><!--/.row-->
+                            </div>
+
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
+                          <button type="submit" class="btn btn-warning">Modifier</button>
+                        </div>
+                      </div><!-- /.modal-content -->
+                    </form>
+  
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal 2 -->
+  
+                <!--Modale 3-->
+                <div bsModal #dangerModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-danger" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Suprimmer Une Association de Compte à une Caisse</h4>
+                        <button type="button" class="close" (click)="dangerModal3.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Vous êtes sur le point de supprimer l'Association du Compte <mark style="color: green;">{{ suprAffectComptToCaisse.compte.numCpte }}</mark> à la Caisse <mark style="color: red;">{{ suprAffectComptToCaisse.caisse.codeCaisse }}</mark></p>
+                        <p>Le confirmez-vous ?</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="dangerModal3.hide()">Annuler</button>
+                        <button type="button" class="btn btn-danger" (click)="onConfirmDeleteAffectComptToCaisse()">Supprimer</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </div><!-- /.modal-dialog -->
+                </div><!-- /.modal 3 -->
+  
+  
+        </div>
+      </div>
+    </tab>
+  </tabset>
+  

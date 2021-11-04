@@ -158,11 +158,11 @@
                                             <td>{{tmpLigne.article.codeArticle}}</td>
                                             <td>{{tmpLigne.article.libArticle}}</td>
                                             <td><input [(ngModel)]="tempLigneOpCais[[i]].commentaireLigneOperCaisse" type="text" class="form-control" [ngModelOptions]="{standalone: true} "></td>
-                                            <td><input type="number" class="form-control" placeholder="0" (change)="recalculerTotalvente()"
+                                            <td><input type="number" class="form-control" (change)="recalculerTotalvente()"
                                                 (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].prixLigneOperCaisse"
                                                 [ngModelOptions]="{standalone: true}"></td>
                                             <td>
-                                                <input type="number" class="form-control" placeholder="0" (change)="recalculerTotalvente()"
+                                                <input type="number" class="form-control" placeholder="" (change)="recalculerTotalvente()"
                                                 (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].qteLigneOperCaisse"
                                                 [ngModelOptions]="{standalone: true}">
                                             </td>

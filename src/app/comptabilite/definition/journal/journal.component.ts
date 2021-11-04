@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { DataTableDirective } from 'angular-datatables';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
@@ -9,6 +10,7 @@ import { NatureJournal } from '../../../../models/comptabilite/nature-journal.mo
 import { CompteService } from '../../../../services/comptabilite/compte.service';
 import { JournalService } from '../../../../services/comptabilite/journal.service';
 import { NatureJournalService } from '../../../../services/comptabilite/nature-journal.service';
+import { ToolsService } from '../../../../services/utilities/tools.service';
 
 @Component({
   selector: 'app-journal',
@@ -22,11 +24,14 @@ export class JournalComponent implements OnInit {
   @ViewChild('del') public del: ModalDirective;
   @ViewChild('dangerModal') public dangerModal: ModalDirective;
   @ViewChild('infoModal') public infoModal: ModalDirective;
+  @ViewChild('ecrit') public ecrit: ModalDirective;
 
+  //comptes:compt
   jrnTab: DataTables.Settings = {};
   jrnTrigger: Subject<Journal> = new Subject<any>();
   @ViewChild(DataTableDirective, {static: false})
   dtElement: DataTableDirective;
+  addEcritGroup: FormGroup
   addGroup: FormGroup;
   editGroup: FormGroup;
   journaux: Journal[];
@@ -37,7 +42,7 @@ export class JournalComponent implements OnInit {
   natures: NatureJournal[];
 
   constructor(private builder: FormBuilder,public comSer: CompteService,public nas: NatureJournalService,
-    private jouse:JournalService) {
+    private jouse:JournalService, public tool: ToolsService, public rout: Router) {
 
     this.jrnTab = {
       pagingType: 'full_numbers',
@@ -63,9 +68,9 @@ export class JournalComponent implements OnInit {
     this.addGroup = this.builder.group({
       addCod:['', Validators.required],
       addLib:['', Validators.required],
-      addComAut:[],
-      addConAut:[],
-      addNat:[]
+      addComAut:[-1],
+      addConAut:[null],
+      addNat:[-1, Validators.required]
     });
 
     this.editGroup = this.builder.group({
@@ -73,7 +78,7 @@ export class JournalComponent implements OnInit {
       editLib:['', Validators.required],
       editComAut:[],
       editConAut:[],
-      editNat:[]
+      editNat:[Validators.required]
     });
   }
 
@@ -118,6 +123,15 @@ export class JournalComponent implements OnInit {
     )
   }
 
+  initRech(j:Journal){
+    this.comSer.getAllCompte().subscribe(
+      data=>{
+        this.comptes=data;
+        this.add.show();
+      }
+    )
+  }
+
   initEdit(inde:number){        
     this.comSer.getAllCompte().subscribe(
       data=>{
@@ -128,10 +142,16 @@ export class JournalComponent implements OnInit {
           ca.push(this.comptes.map(c=>c.idCpte).indexOf(elt.idCpte));
         });
         console.log(ca);
+        let ind;
+        if(this.editing.autoContrepart!= null){
+          ind= this.comptes.map(c=>c.idCpte).indexOf(this.editing.autoContrepart.idCpte)
+        }
+        else{
+          ind=-1;
+        }
         this.editGroup.patchValue({
           editNat: this.natures.map(n=>n.idNat).indexOf(this.editing.natJrn.idNat), editComAut: ca,
-          editCod:this.editing.codJrn, editLib:this.editing.libJrn, 
-          editConAut:this.comptes.map(c=>c.idCpte).indexOf(this.editing.autoContrepart.idCpte)})
+          editCod:this.editing.codJrn, editLib:this.editing.libJrn, editConAut:ind});
         this.editing = this.journaux[inde];
         this.edit.show();
       }
@@ -144,20 +164,19 @@ export class JournalComponent implements OnInit {
   }
 
   onSubmitAdd(){
-    const obj = new Journal(0, this.addGroup.value['addCod'], this.addGroup.value['addLib'],
-    this.addGroup.value['addComAut'], this.comptes[this.addGroup.value['addConAut']], this.natures[this.addGroup.value['addNat']]);
-    console.log(obj);
-    this.jouse.addAJournal(obj).subscribe(
-      (data) => {
-        //this.primaryModal.hide();
-        this.addGroup.reset();
-        this.actualise();
-      },
-      (erreur) => {
-        console.log('Erreur lors de l\'enrégistrement', erreur);
-      }
-    );
-
+            const obj = new Journal(0, this.addGroup.value['addCod'], this.addGroup.value['addLib'],
+            this.addGroup.value['comAut'], this.comptes[this.addGroup.value['addConAut']], this.natures[this.addGroup.value['addNat']]);
+            console.log(obj);
+            this.jouse.addAJournal(obj).subscribe(
+              (data) => {
+                //this.primaryModal.hide();
+                this.addGroup.reset();
+                this.actualise();
+              },
+              (erreur) => {
+                console.log('Erreur lors de l\'enrégistrement', erreur);
+              }
+            );
   }
 
   onSubmitEdit(){
@@ -198,5 +217,11 @@ export class JournalComponent implements OnInit {
 
   }
 
+  initEcrit(n: number){
+    
+    this.rout.navigateByUrl('/ecriture')
+    this.tool.jrn=this.journaux[n]
+    
+  }
 
 }

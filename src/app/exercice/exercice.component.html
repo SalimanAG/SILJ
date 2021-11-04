@@ -33,9 +33,11 @@
             (click)="onSelectExoCliked(i)" [ngModel]="exercices[i].codeExercice==selectedExo.codeExercice">
           </td>
           <td>
-            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditExo(i)"><span class="fa fa-edit"></span></button>
-            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteExo(i)"><span class="fa fa-trash"></span></button>
-            <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal.show()"><span class="fa fa-eye"></span></button>-->
+            <button class="btn btn-warning btn-sm" data-toggle="modal tooltip" data-placement="top" title="Modifier l'exercice" (click)="initEditExo(i)"><span class="fa fa-edit"></span></button>
+            <button class="btn btn-danger btn-sm" data-toggle="modal tooltip" data-placement="top" title="Supprimer l'exercice" (click)="initDeleteExo(i)"><span class="fa fa-trash"></span></button>
+            <button class="btn btn-success btn-sm" data-toggle="modal tooltip" data-placement="top" title="Charger l'exercice" (click)="select(exo)"><span class="fa fa-arrow-down-circle"></span></button>
+            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Clôturer l'exercice" (click)="archive(exo)"><span class="fa fa-arrow-up-circle"></span></button>
+            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Lancer l'exercice" (click)="open(exo)"><span class="fa fa-arrow-rigth-circle"></span></button>
             <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
             <!--Le bouton des options-->
             <div class="btn-group" dropdown>
@@ -117,8 +119,9 @@
                             <label for="addEtatExo">Etat de l'Exercice</label>
                               <select id="addEtatExo" name="addEtatExo" class="form-control"
                               formControlName="addEtatExo">
-                                <option value="Exercice Non Cloturé">Exercice Non Cloturé</option>
-                                <option value="Exercice Cloturé">Exercice Cloturé</option>
+                                <option value="Exercice Non Cloturé">Exercice en cours</option>
+                                <option value="Exercice Cloturé">Exercice cloturé</option>
+                                <option value="Exercice En Attente">Exercice en attente</option>
 
                               </select>
 

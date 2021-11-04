@@ -43,7 +43,6 @@ import { JournalOperationComponent } from './rapport/stock/journal-operation/jou
 import { ListePointCaisseComponent } from './rapport/correspondants/liste-point-caisse/liste-point-caisse.component';
 import { ListeImputationComponent } from './rapport/correspondants/liste-imputation/liste-imputation.component';
 import { StatistiqueComponent } from './statistique/statistique.component';
-import { ComptabiliteComponent } from './comptabilite/comptabilite.component';
 import { AideComponent } from './aide/aide.component';
 import { ExerciceComponent } from './exercice/exercice.component';
 import { SiCaveauTresorComponent } from './si-caveau-tresor/si-caveau-tresor.component';
@@ -64,6 +63,7 @@ import { LocalisationComponent } from './comptabilite/definition/localisation/lo
 import { JournalComponent } from './comptabilite/definition/journal/journal.component';
 import { ImmobComponent } from './comptabilite/definition/immob/immob.component';
 import { CompteComponent } from './comptabilite/definition/compte/compte.component';
+import { EcritureComponent } from './comptabilite/Saisie/ecriture/ecriture.component';
 
 export const routes: Routes = [
   {
@@ -336,6 +336,11 @@ export const routes: Routes = [
       {
         path: 'aide',
         component: AideComponent
+      },
+
+      {
+        path: 'ecriture',
+        component: EcritureComponent
       },
 
       {

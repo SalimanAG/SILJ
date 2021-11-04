@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Ecriture } from '../../models/comptabilite/ecriture.model';
+import { EcritureBlock } from '../../models/comptabilite/ecritureblocck.model';
 import { LigneEcriture } from '../../models/comptabilite/ligne-ecriture.model';
+import { EcriJour } from '../../models/ecrijour.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 @Injectable({
     providedIn: 'root'
@@ -19,6 +21,10 @@ export class EcritureService {
     getAllEcriture(){
         return this.httpCli.get<Ecriture[]>(this.host+'/compta/ecriture/list');
     }
+
+    getDaily(ej: EcriJour){
+        return this.httpCli.post<Ecriture[]>(this.host+'/compta/ecriture/list/ojd', ej);
+    }
     
     getAEcritureById(code:String){
         return this.httpCli.get<Ecriture>(this.host+'/compta/ecriture/byCodEcri/'+code);
@@ -26,6 +32,10 @@ export class EcritureService {
     
     addAEcriture(corps:Ecriture){
         return this.httpCli.post<Ecriture>(this.host+'/compta/ecriture/list', corps);
+    }
+    
+    addBlock(corps:EcritureBlock){
+        return this.httpCli.post<Ecriture>(this.host+'/compta/ecriture/blk', corps);
     }
     
     editAEcriture(code:String, corps:Ecriture){
@@ -37,6 +47,10 @@ export class EcritureService {
     }
 
     //Partie réservée pour les lignes d'ecritures
+
+    getLinesOf(num: String){
+        return this.httpCli.get<LigneEcriture[]>(this.host+'/compta/ligneEcriture/list/ecriture/'+num);
+    }
 
     getAllLigneEcriture(){
         return this.httpCli.get<LigneEcriture[]>(this.host+'/compta/ligneEcriture/list');

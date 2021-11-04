@@ -19,6 +19,10 @@ export class JournalService {
         return this.httpCli.get<Journal[]>(this.host+'/compta/journal/list');
     }
     
+    getAutreJournaux(code:String){
+        return this.httpCli.get<Journal[]>(this.host+'/compta/journal/!cod/'+code);
+    }
+    
     getAJournalById(code:String){
         return this.httpCli.get<Journal>(this.host+'/compta/journal/byCodJour/'+code);
     }

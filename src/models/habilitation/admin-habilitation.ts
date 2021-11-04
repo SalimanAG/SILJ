@@ -193,6 +193,17 @@ static navIdata: INavData[] = [
             url: '/natBud'
           }
         ]
+      },
+      {
+        name: 'Saisie',
+        url: '/base',
+        icon: 'icon-edit',
+        children:[
+          {
+            name: 'Ecriture dans les journaux',
+            url: 'ecriture'
+          }
+        ]
       }
     ]
   },

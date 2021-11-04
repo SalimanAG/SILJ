@@ -127,19 +127,21 @@
                           <th>Quantité</th>
                           <th>Remise</th>
                           <th>TVA(en %)</th>
+                          <th>MontHT</th>
                           <th>Montant TTC(-Remise)</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr *ngFor="let addLignCom of tempAddLigneCommandes; let i = index">
-                          <td>{{ addLignCom.article.codeArticle }}</td>
-                          <td>{{ addLignCom.article.libArticle }}</td>
-                          <td><input [(ngModel)]="tempAddLigneCommandes[i].puligneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                          <td><input [(ngModel)]="tempAddLigneCommandes[i].qteLigneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                          <td><input [(ngModel)]="tempAddLigneCommandes[i].remise" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></td>
-                          <td><input [(ngModel)]="tempAddLigneCommandes[i].tva" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
-                          <td>{{ ((tempAddLigneCommandes[i].qteLigneCommande*tempAddLigneCommandes[i].puligneCommande-tempAddLigneCommandes[i].remise)*(1+(tempAddLigneCommandes[i].tva/100))) }}</td>
+                          <td style="width: 100px;">{{ addLignCom.article.codeArticle }}</td>
+                          <td style="width: 200px;">{{ addLignCom.article.libArticle }}</td>
+                          <td style="width: 150px;"><input [(ngModel)]="tempAddLigneCommandes[i].puligneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td style="width: 120px;"><input [(ngModel)]="tempAddLigneCommandes[i].qteLigneCommande" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td style="width: 120px;"><input [(ngModel)]="tempAddLigneCommandes[i].remise" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></td>
+                          <td style="width: 80px;"><input [(ngModel)]="tempAddLigneCommandes[i].tva" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td style="width: 150px;">{{ (tempAddLigneCommandes[i].puligneCommande-tempAddLigneCommandes[i].remise)*(1-tempAddLigneCommandes[i].tva/100) }}</td>
+                          <td style="width: 150px;">{{ tempAddLigneCommandes[i].qteLigneCommande*(tempAddLigneCommandes[i].puligneCommande-tempAddLigneCommandes[i].remise) }}</td>
                           <td>
                             <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfComm1(i)"><span class="fa fa-trash"></span></button>
                           </td>
