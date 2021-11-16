@@ -229,7 +229,7 @@ export class PointCaisseComponent implements OnInit {
           this.pcGroup.value['debPC'], this.pcGroup.value['finPC']  );
       if(this.tcaisse>0){
           doc.addPage();
-            doc.addImage(this.outils.entete,'jpeg',5,5,180,20);
+            doc.addImage(this.outils.ente,'jpeg',5,5,180,20);
             autoTable(doc, {
               theme: 'plain',
               margin: { top: 25, left: 30, right: 25,},
@@ -331,7 +331,7 @@ export class PointCaisseComponent implements OnInit {
             if (this.tcaisse > 0) {
               if(this.tArr == 0){
                 doc.addPage();
-                doc.addImage(this.outils.entete, 'jpeg', 10, 5, 190, 25);
+                doc.addImage(this.outils.ente, 'jpeg', 10, 5, 190, 25);
                 autoTable(doc, {
                 theme: 'plain',
                 margin: { top: 30, left: 0, right: 0,},

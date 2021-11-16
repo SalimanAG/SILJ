@@ -558,7 +558,7 @@ initPrintPdfOfReversement(inde:number){
   doc.setFillColor(255, 255, 255);
   //doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
   //doc.setFont("Times New Roman");
-  doc.addImage(this.outil.entete, 5, 5, 190, 25);
+  doc.addImage(this.outil.ente, 5, 5, 190, 25);
   autoTable(doc, {
     theme: 'plain',
     margin: { top: 35},

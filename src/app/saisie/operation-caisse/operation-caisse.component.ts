@@ -1347,7 +1347,7 @@ export class OperationCaisseComponent implements OnInit {
       }
     }
     const fact = new jsPDF();
-      fact.addImage(this.outil.entete, 5, 5, 190, 25);
+      fact.addImage(this.outil.ente, 5, 5, 190, 25);
       autoTable(fact, {
         theme: 'plain',
         margin: { left: 5, top: 30, right: 5, bottom: 1 },
@@ -1412,7 +1412,7 @@ export class OperationCaisseComponent implements OnInit {
                 lig.push(col)
               });
 
-              fact.addImage(this.outil.entete, 5, 5, 190, 25);
+              fact.addImage(this.outil.ente, 5, 5, 190, 25);
               autoTable(fact, {
                 theme: 'plain',
                 margin: { left: 5, top: 30, right: 5, bottom: 1 },
@@ -1488,7 +1488,7 @@ export class OperationCaisseComponent implements OnInit {
                 lig.push(col)
               });
 
-              fact.addImage(this.outil.entete, 5, 5, 190, 25);
+              fact.addImage(this.outil.ente, 5, 5, 190, 25);
               autoTable(fact, {
                 theme: 'plain',
                 margin: { left: 5, top: 30, right: 5, bottom: 1 },
@@ -1566,7 +1566,7 @@ export class OperationCaisseComponent implements OnInit {
                 lig.push(col)
               });
 
-              fact.addImage(this.outil.entete, 5, 5, 190, 25);
+              fact.addImage(this.outil.ente, 5, 5, 190, 25);
               autoTable(fact, {
                 theme: 'plain',
                 margin: { left: 5, top: 30, right: 5, bottom: 1 },
@@ -1660,7 +1660,7 @@ export class OperationCaisseComponent implements OnInit {
 
   imprimeFacture(opc: OpCaisse) {
 
-    const fact = new jsPDF();fact.addImage(this.outil.entete, 5, 5, 190, 25);
+    const fact = new jsPDF();fact.addImage(this.outil.ente, 5, 5, 190, 25);
     let titre: String;
     const ligne = [];
     let total = 0;
@@ -1768,7 +1768,7 @@ export class OperationCaisseComponent implements OnInit {
 
   imprimeTicket(opc: OpCaisse) {
     const fact = new jsPDF('p', 'mm', [80, 900]);
-    fact.addImage(this.outil.entete, 0, 0, 80, 13);
+    fact.addImage(this.outil.ente, 0, 0, 80, 13);
     autoTable(fact, {
       theme: 'plain',
       margin: { left: -0.1, top: 15, right: 0, bottom: 1 },

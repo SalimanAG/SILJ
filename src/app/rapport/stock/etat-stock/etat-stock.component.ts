@@ -47,7 +47,7 @@ export class EtatStockComponent implements OnInit {
   constructor(private formBulder:FormBuilder, private sanitizer:DomSanitizer, private serviceCorres:CorrespondantService,
     private serviceRegiss:RegisseurService, private serviceCommune:CommuneService,
     private serviceTresorier:TresorierCommunalService, private serviceAssocierUser:AssocierUtilisateurService,
-    private serviceUser:UtilisateurService) {
+    private serviceUser:UtilisateurService, public serviceTools: ToolsService) {
     moment.locale('fr');
 
       this.repport1FormsGroup = this.formBulder.group({
@@ -332,7 +332,7 @@ export class EtatStockComponent implements OnInit {
     doc.text('ETAT DE STOCK', 75, 30);
     doc.setFontSize(14);*/
 
-    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+    doc.addImage(this.serviceTools.ente,'jpeg',5,0,200,30);
 
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
@@ -415,7 +415,7 @@ export class EtatStockComponent implements OnInit {
     doc.text('ETAT DE STOCK', 75, 30);
     doc.setFontSize(14);*/
 
-    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+    doc.addImage(this.serviceTools.ente,'jpeg',5,0,200,30);
 
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
@@ -573,7 +573,7 @@ export class EtatStockComponent implements OnInit {
     doc.text('ETAT DE STOCK', 75, 30);
     doc.setFontSize(14);*/
 
-    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+    doc.addImage(this.serviceTools.ente,'jpeg',5,0,200,30);
 
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);

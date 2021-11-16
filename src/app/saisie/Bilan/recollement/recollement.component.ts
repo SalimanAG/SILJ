@@ -853,7 +853,7 @@ initPrintPdfOfRecollement(inde:number){
   doc.setFillColor(255, 255, 255);
   //doc.roundedRect(50, 20, 100, 15, 3, 3, 'FD');
   //doc.setFont("Times New Roman");
-  doc.addImage(this.outil.entete, 5, 5, 190, 20);autoTable(doc, {
+  doc.addImage(this.outil.ente, 5, 5, 190, 20);autoTable(doc, {
     theme: 'plain',
     margin: { top: 35},
 

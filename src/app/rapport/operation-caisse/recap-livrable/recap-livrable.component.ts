@@ -37,7 +37,7 @@ export class RecapLivrableComponent implements OnInit {
 
   constructor(private formBulder:FormBuilder, private sanitizer:DomSanitizer, private serviceOpCaisse:OperationCaisseService,
     private serviceUser:UtilisateurService, private serviceAssoUserToCaisse:AssocierUtilisateurService,
-    private serviceArticle:ArticleService, private serviceCaisse:CaisseService) {
+    private serviceArticle:ArticleService, private serviceCaisse:CaisseService, public serviceTools: ToolsService) {
     moment.locale('fr');
 
     this.repport1FormsGroup = this.formBulder.group({
@@ -167,7 +167,7 @@ export class RecapLivrableComponent implements OnInit {
     doc.setFontSize(25);
     doc.text('JOURNAL DE CAISSE', 59, 30);
     doc.setFontSize(14);*/
-    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+    doc.addImage(this.serviceTools.ente,'jpeg',5,0,200,30);
 
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
@@ -608,7 +608,7 @@ export class RecapLivrableComponent implements OnInit {
             doc.text('RAPPORT DE PRESTATION', 59, 30);
             doc.setFontSize(14);*/
 
-            doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+            doc.addImage(this.serviceTools.ente,'jpeg',5,0,200,30);
 
             doc.setDrawColor(0);
             doc.setFillColor(255, 255, 255);

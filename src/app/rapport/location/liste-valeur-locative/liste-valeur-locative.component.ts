@@ -165,7 +165,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 25);
+              //doc.addImage(this.outils.ente, 'jpeg', 5, 0, 200, 25);
+              doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
               autotable(doc, {
               theme: 'plain',
               margin: { top: 35, left: 0, right: 0,},
@@ -222,7 +223,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 25);
+              //doc.addImage(this.outils.ente, 'jpeg', 5, 5, 200, 25);
+              doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
               autotable(doc, {
               theme: 'plain',
               margin: { top: 35, left: 0, right: 0,},
@@ -283,7 +285,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 25);
+              //doc.addImage(this.outils.ente, 'jpeg', 5, 5, 200, 25);
+              doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
               autotable(doc, {
               theme: 'plain',
               margin: { top: 35, left: 30, right: 25,},
@@ -347,7 +350,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                     list.push(imm);
                   });
                 doc.addPage();
-                doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 20);
+                //doc.addImage(this.outils.ente, 'jpeg', 5, 5, 200, 20);
+                doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
                 autotable(doc, {
                 theme: 'plain',
                 margin: { top: 35, left: 0, right: 0,},
@@ -403,7 +407,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
                 });
                 doc.addPage();
-                doc.addImage(this.outils.entete, 'jpeg', 10, 5, 200, 25);
+                //doc.addImage(this.outils.ente, 'jpeg', 5, 5, 200, 25);
+                doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
                 autotable(doc, {
                   theme: 'plain',
                   margin: { top: 35, left: 0, right: 0,},
@@ -464,7 +469,7 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              doc.addImage(this.outils.ente, 5, 5, 200, 20);
               autotable(doc, {
                   theme: 'plain',
                   margin: { top: 35, left: 30, right: 25,},
@@ -516,7 +521,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                   list.push(imm);
                 });
                 doc.addPage();
-              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              //doc.addImage(this.outils.ente, 5, 5, 200, 20);
+              doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
               autotable(doc, {
                   theme: 'plain',
                   margin: { top: 35, left: 30, right: 25,},
@@ -570,7 +576,8 @@ export class ListeValeurLocativeComponent implements OnInit {
               list.push(imm);
             });
             doc.addPage();
-              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              //doc.addImage(this.outils.ente, 5, 5, 200, 20);
+              doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
               autotable(doc, {
                 theme: 'plain',
                 margin: { top: 35, left: 0, right: 0,},
@@ -629,7 +636,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                 list.push(imm);
               });
               doc.addPage();
-              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              //doc.addImage(this.outils.ente, 5, 5, 200, 20);
+              doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
               autotable(doc, {
                   theme: 'plain',
                   margin: { top: 35, left: 30, right: 25,},
@@ -685,7 +693,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                 });
               doc.addPage();
 
-              doc.addImage(this.outils.entete, 5, 5, 200, 20);
+              //doc.addImage(this.outils.ente, 5, 5, 200, 20);
+              doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
               autotable(doc, {
                   theme: 'plain',
                   margin: { top: 35, left: 0, right: 0,},

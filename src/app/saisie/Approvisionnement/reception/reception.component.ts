@@ -1044,7 +1044,7 @@ export class ReceptionComponent implements OnInit {
         doc.text('RECEPTION ACHAT', 60, 30);
         doc.setFontSize(14);*/
 
-        doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+        doc.addImage(this.serviceTools.ente,'jpeg',0,0,200,30);
 
         doc.setDrawColor(0);
         doc.setFillColor(255, 255, 255);

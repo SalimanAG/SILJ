@@ -124,7 +124,7 @@ export class PlacementComponent  implements OnInit {
     private servicePlageNumArticle:BonApproService, private serviceCorres:CorrespondantService,
     private serviceCommune:CommuneService, private serviceRegisseur:RegisseurService,
     private serviceUtilisateur: UtilisateurService, private sanitizer: DomSanitizer,
-  public pds: PlageNumDispoService, private serviceSignataire: SignataireService) {
+  public pds: PlageNumDispoService, private serviceSignataire: SignataireService, public serviceTools:ToolsService) {
 
       this.initDtOptions();
       this.initFormsGroup();
@@ -1678,7 +1678,7 @@ export class PlacementComponent  implements OnInit {
         doc.text('BON PLACEMENT', 75, 30);
         doc.setFontSize(14);*/
 
-        doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+        doc.addImage(this.serviceTools.ente,'jpeg',0,0,200,30);
 
         doc.setDrawColor(0);
         doc.setFillColor(255, 255, 255);

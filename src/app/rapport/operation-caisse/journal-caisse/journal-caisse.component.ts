@@ -46,7 +46,7 @@ export class JournalCaisseComponent implements OnInit {
 
   constructor(private serviceCaisse:CaisseService, private serviceOpCaisse:OperationCaisseService,
     private serviceUser:UtilisateurService, private serviceAssoUserToCaisse:AssocierUtilisateurService,
-    private serviceArticle:ArticleService, private formBulder:FormBuilder, private sanitizer:DomSanitizer) {
+    private serviceArticle:ArticleService, private formBulder:FormBuilder, private sanitizer:DomSanitizer, public outils: ToolsService) {
 
     moment.locale('fr');
     this.deb.setHours(0);
@@ -180,7 +180,7 @@ export class JournalCaisseComponent implements OnInit {
 
     const doc = new jsPDF();
 
-    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+    doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
 
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
@@ -584,7 +584,7 @@ export class JournalCaisseComponent implements OnInit {
 
     const doc = new jsPDF();
 
-    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+    doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
 
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);
@@ -990,7 +990,7 @@ export class JournalCaisseComponent implements OnInit {
     
     const doc = new jsPDF();
 
-    doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+    doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
 
     doc.setDrawColor(0);
     doc.setFillColor(255, 255, 255);

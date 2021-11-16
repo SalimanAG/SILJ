@@ -113,7 +113,7 @@ export class BonApprovisionnementComponent  implements OnInit {
 
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
     private formBulder:FormBuilder, private serviceBonAppro:BonApproService, private sanitizer:DomSanitizer,
-    private serviceCorres:CorrespondantService, private serviceRegiss:RegisseurService,
+    private serviceCorres:CorrespondantService, private serviceRegiss:RegisseurService, public serviceTools: ToolsService,
     private serviceTresorier: TresorierCommunalService, private pnd: PlageNumDispoService, private serviceSignataire: SignataireService) {
 
     this.pdfToShow=sanitizer.bypassSecurityTrustResourceUrl('/');
@@ -1445,7 +1445,7 @@ export class BonApprovisionnementComponent  implements OnInit {
             doc.text('BON APPROVISIONNEMENT', 57, 30);
             doc.setFontSize(14);*/
 
-            doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+            doc.addImage(this.serviceTools.ente,'jpeg',0,0,200,30);
 
             doc.setDrawColor(0);
             doc.setFillColor(255, 255, 255);

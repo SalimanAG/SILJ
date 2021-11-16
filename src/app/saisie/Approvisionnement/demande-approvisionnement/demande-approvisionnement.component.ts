@@ -73,7 +73,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
 
   constructor(public serviceExercice:ExerciceService, private serviceArticle:ArticleService, private serviceDemandeAppro:DemandeApproService,
     private formBulder:FormBuilder, private sanitizer: DomSanitizer, private serviceUser: UtilisateurService
-    , private serviceSignataire: SignataireService) {
+    , private serviceSignataire: SignataireService, public toolsService: ToolsService) {
 
     this.pdfToShow=sanitizer.bypassSecurityTrustResourceUrl('/');
       this.initDtOptions();
@@ -551,7 +551,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
         doc.text('DEMANDE APPROVISIONNEMENT', 53, 30);
         doc.setFontSize(14);*/
 
-        doc.addImage(ToolsService.ente,'jpeg',0,0,200,30);
+        doc.addImage(this.toolsService.ente,'jpeg',0,0,200,30);
 
         doc.setDrawColor(0);
         doc.setFillColor(255, 255, 255);

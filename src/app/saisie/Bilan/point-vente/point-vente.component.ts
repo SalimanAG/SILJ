@@ -768,7 +768,7 @@ export class PointVenteComponent implements OnInit {
     doc.setFillColor(255, 255, 255);
     //doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
     //doc.setFont("Times New Roman");
-    doc.addImage(this.outil.entete, 5, 5, 190, 20);
+    doc.addImage(this.outil.ente, 5, 5, 190, 20);
     autoTable(doc, {
     theme: 'plain',
     margin: { top: 35},
@@ -793,8 +793,8 @@ export class PointVenteComponent implements OnInit {
     doc.text('Régisseur : '+commande.regisseur.magasinier.nomMagasinier+' '+
     commande.regisseur.magasinier.prenomMagasinier, 15, 65);*/
   
-    if(commande.payerPoint==false){doc.text('Statut du paiement : '+'NON PAYER', 15, 60)}
-    if(commande.payerPoint==true){doc.text('Statut du paiement : '+' PAYER', 15, 60)}
+    if(commande.payerPoint==false){doc.text('Statut du paiement : '+'NON PAYER', 15, 67)}
+    if(commande.payerPoint==true){doc.text('Statut du paiement : '+' PAYER', 15, 67)}
 
     autoTable(doc, {
       theme: 'grid',

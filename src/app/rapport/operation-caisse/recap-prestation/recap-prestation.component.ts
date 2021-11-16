@@ -16,6 +16,7 @@ import { OperationCaisseService } from '../../../../services/saisie/operation-ca
 import { element } from 'protractor';
 import { exit } from 'process';
 import { CaisseService } from '../../../../services/administration/caisse.service';
+import { ToolsService } from '../../../../services/utilities/tools.service';
 
 @Component({
   selector: 'app-recap-prestation',
@@ -23,6 +24,7 @@ import { CaisseService } from '../../../../services/administration/caisse.servic
   styleUrls: ['./recap-prestation.component.css']
 })
 export class RecapPrestationComponent implements OnInit {
+  
 
   opened:number = 0;
   clicked:number = 0;
@@ -36,7 +38,7 @@ export class RecapPrestationComponent implements OnInit {
 
   constructor(private formBulder:FormBuilder, private sanitizer:DomSanitizer, private serviceOpCaisse:OperationCaisseService,
     private serviceUser:UtilisateurService, private serviceAssoUserToCaisse:AssocierUtilisateurService,
-    private serviceArticle:ArticleService, private serviceCaisse:CaisseService) {
+    private serviceArticle:ArticleService, private serviceCaisse:CaisseService, public outils:ToolsService) {
 
     moment.locale('fr');
 
@@ -151,6 +153,8 @@ export class RecapPrestationComponent implements OnInit {
 
     const doc = new jsPDF();
 
+    doc.addImage(this.outils.ente,'jpeg',5,0,200,30);
+
     this.serviceOpCaisse.getAllOp().subscribe(
       (data) => {
 
@@ -159,14 +163,14 @@ export class RecapPrestationComponent implements OnInit {
 
             doc.setDrawColor(0);
             doc.setFillColor(255, 255, 255);
-            doc.roundedRect(50, 20, 110, 15, 3, 3, 'FD');
+            doc.roundedRect(50, 35, 110, 9, 3, 3, 'FD');
             doc.setFontSize(20);
-            doc.text('RAPPORT DE PRESTATION', 59, 30);
+            doc.text('RAPPORT DE PRESTATION', 58, 42);
             doc.setFontSize(14);
-            doc.text('Etat : Cumul des Recettes par Prestations', 15, 45);
+            doc.text('Etat : Cumul des Recettes par Prestations', 15, 51);
             doc.setFontSize(12);
-            doc.text('  Période du \t\t'+moment(this.repport1FormsGroup.value['rep1DateDebut']).format('DD/MM/YYYY \t\tà\t\t HH:mm'), 15, 55);
-            doc.text('\t\tAu\t\t'+moment(this.repport1FormsGroup.value['rep1DateFin']).format('DD/MM/YYYY \t\tà\t\t HH:mm'), 15, 63);
+            doc.text('  Période du \t\t'+moment(this.repport1FormsGroup.value['rep1DateDebut']).format('DD/MM/YYYY \t\tà\t\t HH:mm'), 15, 58);
+            doc.text('\t\tAu\t\t'+moment(this.repport1FormsGroup.value['rep1DateFin']).format('DD/MM/YYYY \t\tà\t\t HH:mm'), 15, 66);
 
             if(this.repport1FormsGroup.value['rep1Caisse'] != -1){
               let concernedCaisse:Caisse = this.userAssociatedCaisse[this.repport1FormsGroup.value['rep1Caisse']];
