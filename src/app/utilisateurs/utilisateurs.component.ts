@@ -66,7 +66,7 @@ export class UtilisateursComponent implements OnInit {
       addMotDePass:'',
       addNomUtilisateur:['', Validators.required],
       addPrenomUtilisateur:['', Validators.required],
-      addFonctiontilisateur:'',
+      addFonctiontilisateur:-1,
       addActiveUtilisateur:false,
       addService:-1
     });
@@ -76,7 +76,7 @@ export class UtilisateursComponent implements OnInit {
       editMotDePass:'',
       editNomUtilisateur:['', Validators.required],
       editPrenomUtilisateur:['', Validators.required],
-      editFonctiontilisateur:'',
+      editFonctiontilisateur:-1,
       editActiveUtilisateur:false,
       editService:-1,
       editAskMdp:false
@@ -168,7 +168,7 @@ export class UtilisateursComponent implements OnInit {
 
     const newUser = new Utilisateur(this.addUserFormsGroup.value['addLogin'], null,
       this.addUserFormsGroup.value['addNomUtilisateur'], this.addUserFormsGroup.value['addPrenomUtilisateur'],
-      fonction, this.addUserFormsGroup.value['addActiveUtilisateur'], service, true);
+      this.fonctions[this.addUserFormsGroup.value['addFonctiontilisateur']], this.addUserFormsGroup.value['addActiveUtilisateur'], service, true);
     console.log(newUser);
 
 
