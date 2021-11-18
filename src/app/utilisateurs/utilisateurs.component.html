@@ -188,10 +188,10 @@
                           </div>
                           <div class="form-group col-sm-6">
                             <label for="editFonctionUtilisateur">Fonction</label>
-                            <select id="editService" name="editService" class="form-control" formControlName="editService">
+                            <select id="editFonctiontilisateur" name="editFonctiontilisateur" class="form-control" formControlName="editFonctiontilisateur">
                               <option value="-1"></option>
-                              <option *ngFor="let servi of fonctions; let i = index" [value]="i">
-                               {{ servi.libFonction }}
+                              <option *ngFor="let editfonction of fonctions; let i = index" [value]="i">
+                               {{ editfonction.libFonction }}
                               </option>
                             </select>
                             <!--label for="editMotDePass">Mot de Passe</label>

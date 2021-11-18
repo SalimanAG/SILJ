@@ -200,7 +200,7 @@ export class UtilisateursComponent implements OnInit {
     }
     const newUser = new Utilisateur(this.editUserFormsGroup.value['editLogin'], null,
     this.editUserFormsGroup.value['editNomUtilisateur'], this.editUserFormsGroup.value['editPrenomUtilisateur'],
-    this.editUserFormsGroup.value['editFonctiontilisateur'], this.editUserFormsGroup.value['editActiveUtilisateur'],
+    this.fonctions[this.editUserFormsGroup.value['editFonctiontilisateur']], this.editUserFormsGroup.value['editActiveUtilisateur'],
     service, this.editUserFormsGroup.value['editAskMdp']);//editAskMdp
 
     newUser.idUtilisateur = this.editUser.idUtilisateur;
