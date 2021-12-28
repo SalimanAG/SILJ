@@ -23,6 +23,7 @@ import { LocataireService } from '../../services/definition/locataire.service';
 import { Locataire } from '../../models/locataire.model';
 import { Contrat } from '../../models/contrat.model';
 import { ToastrService } from 'ngx-toastr';
+import { Tools2Service } from '../../services/utilities/tools2.service';
 
 @Component({
   selector: 'app-importation-exportation',
@@ -252,6 +253,7 @@ export class ImportationExportationComponent implements OnInit {
 
 
       }
+
     }
     else if(this.repport1FormsGroup.value['rep1Element'] == 1){
       //Il s'agit de famille
@@ -394,7 +396,6 @@ export class ImportationExportationComponent implements OnInit {
           this.toastr.error('Erreur lors de la récupération des familles'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation d\'Article');
         }
       );
-
 
     }
     else if(this.repport1FormsGroup.value['rep1Element'] == 3){
@@ -603,7 +604,7 @@ export class ImportationExportationComponent implements OnInit {
     }
     else if(this.repport1FormsGroup.value['rep1Element'] == 6){
       //Il s'agit des valeurs Locatives
-
+      let liste: Immeuble[] = [];
 
       this.serviceCommune.getAllQuartier().subscribe(
         (data1) => {
@@ -613,93 +614,119 @@ export class ImportationExportationComponent implements OnInit {
 
               this.serviceImmeuble.getAllTypeImmeuble().subscribe(
                 (data3) => {
-                  let inde:number = 0;
-                  for(const element of this.feuille){
-                    inde++;
-                    if(element[0] != undefined && element[1] != undefined && element[2] != undefined
-                      && typeof element[3] == 'number' && typeof element[4] == 'boolean'
-                      && element[7] != undefined && element[8] != undefined && element[9] != undefined){
-                      let quartier:Quartier = null;
-                      let site:SiteMarcher = null;
-                      let typImme:TypeImmeuble = null;
-                      let finded1:boolean = false;
-                      let finded2:boolean = false;
-                      let finded3:boolean = false;
+                  this.serviceCommune.getAllArrondissement().subscribe(
+                    (data4) => {
+                      let inde:number = 0;
+                      for(const element of this.feuille){
+                        inde++;
+                        if(element[0] != undefined && element[1] != undefined && element[2] != undefined
+                          && typeof element[3] == 'number' && element[9] != undefined
+                          && element[6] != undefined && element[7] != undefined 
+                          && (element[12] == undefined || (typeof element[12] == 'boolean'))
+                          && typeof element[13] == 'number' && typeof element[14] == 'number'){
+                          let quartier:Quartier = null;
+                          let arrondi:Arrondissement = null;
+                          let site:SiteMarcher = null;
+                          let typImme:TypeImmeuble = null;
+                          let finded1:boolean = false;
+                          let finded2:boolean = false;
+                          let finded3:boolean = false;
+                          let finded4:boolean = false;
 
-                      for(const element1 of data1){
-                        if(element1.codeQuartier == element[7]){
-                          quartier = element1;
-                          finded1 = true;
-                          break;
-                        }
-                      }
-
-                      if(!finded1){
-                        console.log('Le code de Quartier à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
-                        this.toastr.error('Le code de Quartier à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
-                        return;
-                      }
-
-                      for(const element2 of data2) {
-                        if(element2.codeSite == element[8]){
-                          site = element2;
-                          finded2 = true;
-                          break;
-                        }
-                      }
-
-                      if(!finded2){
-                        console.log('Le code de Site à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
-                        this.toastr.error('Le code de Site à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
-                        return;
-                      }
-
-                      for(const element3 of data3){
-                        if(element3.codeTypIm == element[9]){
-                          typImme = element3;
-                          finded3 = true;
-                          break;
-                        }
-                      }
-
-                      if(!finded3){
-                        console.log('Le code de Type Immeuble à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
-                        this.toastr.error('Le code de Type Valeur Locative à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
-                        return;
-                      }
-
-                      let valeurLoca:Immeuble = new Immeuble(element[0], element[1], element[2], false, element[3], element[4], element[5], element[6], quartier.arrondissement, quartier, typImme, site);
-
-                      (function(i, serviceImmeuble, toastr, nbrLigne){
-                        serviceImmeuble.addImmeuble(valeurLoca).subscribe(
-                          (data) => {
-                            if(data == null){
-                              console.log('le code de la ligne '+(i)+' existe déjà');
+                          for(const element1 of data1){
+                            if(element1.codeQuartier == element[6]){
+                              quartier = element1;
+                              finded1 = true;
+                              break;
                             }
-
-                            if(i == nbrLigne){
-                              console.log('Fin de lImportation, Importation réuissir');
-                              toastr.success('Importation éffectuée avec Succès', 'Importation de Valeur Locative');
-                            }
-
-                          },
-                          (erreur) => {
-                            console.log('Erreur lors de lAjout de la ligne '+(i), erreur);
-                            toastr.error('Erreur lors de l`\'Ajout de la ligne '+(i)+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Valeur Locative');
-                            return 1;
                           }
-                        );
 
-                      })(inde, this.serviceImmeuble, this.toastr, this.feuille.length);
+                          if(!finded1){
+                            console.log('Le code de Quartier à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+                            this.toastr.error('Le code de Quartier à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
+                            return;
+                          }
 
+                          if (element[8]) {
+                            for(const element2 of data2) {
+                              if(element2.codeSite == element[8]){
+                                site = element2;
+                                finded2 = true;
+                                break;
+                              }
+                            }
+  
+                            if(!finded2){
+                              console.log('Le code de Site à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+                              this.toastr.error('Le code de Site à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
+                              return;
+                            }
+                          }
+
+                          for(const element3 of data3){
+                            if(element3.codeTypIm == element[7]){
+                              typImme = element3;
+                              finded3 = true;
+                              break;
+                            }
+                          }
+
+                          if(!finded3){
+                            console.log('Le code de Type Immeuble à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+                            this.toastr.error('Le code de Type Valeur Locative à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
+                            return;
+                          }
+
+                          for(const element4 of data4){
+                            if(element4.codeArrondi== element[9]){
+                              arrondi = element4;
+                              finded4 = true;
+                              break;
+                            }
+                          }
+
+                          if(!finded4){
+                            console.log('Le code d\'arrondissement à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+                            this.toastr.error('Le code d\'arrondissement à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
+                            return;
+                          }
+
+                          let valeurLoca:Immeuble = new Immeuble(element[0], element[1], element[2], false, element[3], element[4], element[5], arrondi, quartier, typImme, site, element[10], element[11], element[12], element[13], element[14], element[15], element[16], element[17]);
+
+                          liste.push(valeurLoca);
+
+                        }
+                        else {
+                          console.log('Erreur à la ligne '+(inde+1)+'. Une Informationn de la Valeur Locative est invalide');
+                          this.toastr.error('Erreur à la ligne '+(inde)+'. Une Informationn de la Valeur Locative est invalide', 'Importation de Valeur Locative');
+                          exit;
+                        }
+
+                      }
+
+                      
+                      this.serviceImmeuble.addListImmeuble(liste).subscribe(
+                        (data) => {
+                          
+                            console.log('Fin de lImportation, Importation réuissir');
+                            this.toastr.success('Importation éffectuée avec Succès', 'Importation de Valeur Locative');
+                          
+                        },
+                        (erreur) => {
+                          console.log('Erreur lors de lAjout de la ligne ', erreur);
+                          this.toastr.error('Erreur lors de l`\'Ajout des Valeurs locatives \n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Valeur Locative');
+                          return 1;
+                        }
+                      );
+
+                      
+                    },
+                    (erreur) => {
+                      console.log('Erreur lors de la récupération des Arrondissements', erreur);
+                      this.toastr.error('Erreur lors de la récupération des Arrondissements'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Valeur Locative');
                     }
-                    else {
-                      console.log('Erreur à la ligne '+(inde+1)+'. Une Informationn de la Valeur Locative est invalide');
-                      this.toastr.error('Erreur à la ligne '+(inde)+'. Une Informationn de la Valeur Locative est invalide', 'Importation de Valeur Locative');
-                      exit;
-                    }
 
-                  }
+                  );
 
 
                 },
@@ -726,8 +753,9 @@ export class ImportationExportationComponent implements OnInit {
     }
     else if(this.repport1FormsGroup.value['rep1Element'] == 7){
       //Il s'agit des Prix de valeurs locative
+      let liste: PrixImmeuble[] = [];
 
-      this.serviceImmeuble.getAllImmeuble().subscribe(
+      this.serviceImmeuble.getAllTypeImmeuble().subscribe(
         (data1) => {
 
           let inde:number = 0;
@@ -735,13 +763,13 @@ export class ImportationExportationComponent implements OnInit {
             inde++;
             if(element[0] != undefined && typeof element[1] == 'number' && typeof element[2] == 'object'
               && typeof element[2].getDate() == 'number'){
-              let imme:Immeuble = null;
+              let typImme:TypeImmeuble = null;
 
               let finded1:boolean = false;
 
               for(const element1 of data1) {
-                if(element1.codeIm == element[0]){
-                  imme = element1;
+                if(element1.codeTypIm == element[0]){
+                  typImme = element1;
                   finded1 = true;
                   break;
                 }
@@ -753,32 +781,9 @@ export class ImportationExportationComponent implements OnInit {
                 return;
               }
 
-              let PrixValeurLoca:PrixImmeuble = new PrixImmeuble(-1, element[2], element[3], element[1], imme);
+              let PrixValeurLoca:PrixImmeuble = new PrixImmeuble(-1, element[2], element[3], element[1], typImme);
 
-              //valeurLoca = new Immeuble ()
-
-              (function(i, serviceImmeuble, toastr, nbrLigne){
-                serviceImmeuble.addPrixImmeuble(PrixValeurLoca).subscribe(
-                  (data) => {
-                    if(data == null){
-                      console.log('le code de la ligne '+(i)+' existe déjà');
-                    }
-
-                    if(i == nbrLigne){
-                      console.log('Fin de lImportation, Importation réuissir');
-                      toastr.success('Importation éffectuée avec Succès', 'Importation de Prix de Valeur Locative');
-                    }
-
-                  },
-                  (erreur) => {
-                    console.log('Erreur lors de lAjout de la ligne '+(i), erreur);
-                    toastr.error('Erreur lors de l`\'Ajout de la ligne '+(i)+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Prix de Valeur Locative');
-                    return 1;
-                  }
-                );
-
-              })(inde, this.serviceImmeuble, this.toastr, this.feuille.length);
-
+              liste.push(PrixValeurLoca);
 
             }
             else {
@@ -789,6 +794,21 @@ export class ImportationExportationComponent implements OnInit {
 
 
           }
+
+          
+            this.serviceImmeuble.addListPrixImmeuble(liste).subscribe(
+              (data) => {
+                
+                console.log('Fin de lImportation, Importation réuissir');
+                this.toastr.success('Importation éffectuée avec Succès', 'Importation de Prix de Valeur Locative');
+
+              },
+              (erreur) => {
+                console.log('Erreur lors de lAjout de la ligne ', erreur);
+                this.toastr.error('Erreur lors de l`\'Ajout des prix de Valeur Locative\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Prix de Valeur Locative');
+                return 1;
+              }
+            );
 
 
         },
@@ -802,34 +822,13 @@ export class ImportationExportationComponent implements OnInit {
     else if(this.repport1FormsGroup.value['rep1Element'] == 8){
       //Il s'agit des Locataires
       let inde:number = 0;
+      let liste: Locataire [] = [];
       for(const element of this.feuille){
         inde++;
-        if(element[0] != undefined && typeof element[1] != 'undefined'){
+        if(typeof element[1] != 'undefined'){
 
-          let locataire:Locataire = new Locataire (element[1], element[3], element[2], element[0], element[4]);
-
-          (function(i, serviceLocataire, toastr, nbrLigne){
-            serviceLocataire.addALocataire(locataire).subscribe(
-              (data) => {
-                if(data == null){
-                  console.log('le code de la ligne '+(i)+' existe déjà');
-                }
-
-                if(i == nbrLigne){
-                  console.log('Fin de lImportation, Importation réuissir');
-                  toastr.success('Importation éffectuée avec Succès', 'Importation de Locataire');
-                }
-
-              },
-              (erreur) => {
-                console.log('Erreur lors de lAjout de la ligne '+(i), erreur);
-                toastr.error('Erreur lors de l`\'Ajout de la ligne '+(i)+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Locataire');
-                return 1;
-              }
-            );
-
-          })(inde, this.serviceLocataire, this.toastr, this.feuille.length);
-
+          let locataire:Locataire = new Locataire (element[1], element[3], element[2], element[0], element[4], element[5]);
+          liste.push(locataire);
 
         }
         else {
@@ -838,134 +837,140 @@ export class ImportationExportationComponent implements OnInit {
           return;
         }
 
-
       }
+
+      this.serviceLocataire.addListALocataire(liste).subscribe(
+        (data) => {
+          
+          this.toastr.success('Importation éffectuée avec Succès', 'Importation de Prix de Valeur Locative');
+
+        },
+        (erreur) => {
+         
+          this.toastr.error('Erreur lors de l`\'Ajout des Locataires \n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Prix de Valeur Locative');
+          return 1;
+        }
+      );
 
 
     }
     else if(this.repport1FormsGroup.value['rep1Element'] == 9){
       //Il s'agit des Contrats de Location
-
+      let liste: Contrat[] = [];
       this.serviceLocataire.getAllLocataire().subscribe(
         (data2) => {
-          let inde:number = 0;
-          for(const element of this.feuille) {
-            inde++;
-            if(element[0] != undefined && element[1] != undefined && element[2] != undefined
-              && typeof element[3] == 'number' && typeof element[4] == 'number'
-              && typeof element[5] == 'object' && typeof element[6] == 'object'
-              && typeof element[5].getDate() == 'number' && typeof element[6].getDate() == 'number'
-              && (element[7] == undefined || typeof element[7] == 'object')){
+          this.serviceImmeuble.getAllImmeuble().subscribe(
+            (data1) => {
 
-              this.serviceImmeuble.getAllImmeuble().subscribe(
-                (data1) => {
+                let inde:number = 0;
+                for(const element of this.feuille) {
+                  inde++;
+                  if(element[0] != undefined && element[1] != undefined && element[2] != undefined
+                    && typeof element[3] == 'number' && typeof element[4] == 'number'
+                    && typeof element[5] == 'object' && typeof element[6] == 'object'
+                    && typeof element[5].getDate() == 'number' && typeof element[6].getDate() == 'number'
+                    && (element[7] == undefined || (typeof element[7] == 'object' && typeof element[7].getDate() == 'number'))){
 
-                  let locataire:Locataire = null;
-                  let immeuble:Immeuble = null;
-                  let finded1:boolean = false;
-                  let finded2:boolean = false;
+                    
 
-                  for(const element1 of data1) {
-                    if(element1.codeIm == element[2]){
-                      immeuble = element1;
-                      finded1 = true;
-                      break;
-                    }
-                  }
+                        let locataire:Locataire = null;
+                        let immeuble:Immeuble = null;
+                        let finded1:boolean = false;
+                        let finded2:boolean = false;
 
-                  if(!finded1 || immeuble.etatIm == true){
-                    console.log('Le code de Valeur Locative à la ligne '+(inde+1)+' nExiste pas Ou cette Valeur est en location. Importation interrompue.');
-                    this.toastr.error('Le code de Valeur Locative à la ligne '+(inde)+' n\'existe pas OU cette Valeur est en location', 'Importation de Contrat de Location');
-                    return;
-                  }
+                        for(const element1 of data1) {
+                          if(element1.codeIm == element[2]){
+                            immeuble = element1;
+                            finded1 = true;
+                            break;
+                          }
+                        }
 
-                  for(const element2 of data2) {
-                    if(element2.idLocataire == element[1]){
-                      locataire = element2;
-                      finded2 = true;
-                      break;
-                    }
-                  }
+                        if(!finded1 || immeuble.etatIm == true){
+                          console.log('Le code de Valeur Locative à la ligne '+(inde+1)+' nExiste pas Ou cette Valeur est en location selon une ligne déjà analyser. Importation interrompue.');
+                          this.toastr.error('Le code de Valeur Locative à la ligne '+(inde)+' n\'existe pas OU cette Valeur est en location selon une ligne déjà analysé', 'Importation de Contrat de Location');
+                          return;
+                        }
 
-                  if(!finded2){
-                    console.log('Le code de Locataire à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
-                    this.toastr.error('Le code de Locataire à la ligne '+(inde)+' n\'existe pas', 'Importation de Contrat de Location');
-                    return;
-                  }
+                        for(const element2 of data2) {
+                          if(element2.idLocataire == element[1] || element[1] == element2.numContibuable || element[1] == element2.ifuLocataire || element[1] == element2.telLocataire){
+                            locataire = element2;
+                            finded2 = true;
+                            break;
+                          }
+                        }
 
-                  let contrat:Contrat = new Contrat(element[0], element[5], element[6], element[3], element[4], immeuble, locataire);
+                        if(!finded2){
+                          console.log('Le code de Locataire à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+                          this.toastr.error('Le code de Locataire à la ligne '+(inde)+' n\'existe pas', 'Importation de Contrat de Location');
+                          return;
+                        }
 
+                        let contrat:Contrat = new Contrat(element[0], element[5], element[6], element[3], element[4], immeuble, locataire);
 
-                  (function(i, serviceImmeuble, toastr, nbrLigne, serviceContrat){
-                    serviceContrat.addAContrat(contrat).subscribe(
-                      (data) => {
-                        if(data == null){
-                          console.log('le code de la ligne '+(i)+' existe déjà');
+                        //Mise au fin du Contrat Effectif
+                        let dt:Date = new Date(Date.now());
+                        let dt2:Date = null;
+                        if(contrat.dateFinContrat != null) dt2 = new Date(contrat.dateFinContrat);
+
+                        if(dt2 != null && dt2.getFullYear() <= dt.getFullYear()
+                          && dt2.getMonth() <= dt.getMonth() && dt2.getDate() <= dt.getDate()){
+                          data1[data1.findIndex(l => l.codeIm == contrat.immeuble.codeIm)].etatIm = false;
+
                         }
                         else{
-                          //Mise au fin du Contrat Effectif
-                          let dt:Date = new Date(Date.now());
-                          let dt2:Date = null;
-                          if(data.dateFinContrat != null) dt2 = new Date(data.dateFinContrat);
+                          data1[data1.findIndex(l => l.codeIm == contrat.immeuble.codeIm)].etatIm = true;
+                        }
 
-                          if(dt2 != null && dt2.getFullYear() <= dt.getFullYear()
-                            && dt2.getMonth() <= dt.getMonth() && dt2.getDate() <= dt.getDate()){
-                            data.immeuble.etatIm = false;
+                        liste.push(contrat);
 
-                          }
-                          else{
-                            data.immeuble.etatIm = true;
-                          }
 
-                          serviceImmeuble.editImmeuble(data.immeuble.codeIm, data.immeuble).subscribe(
-                            (data22) => {
+                  }
+                  else {
+                    console.log('Erreur à la ligne '+(inde+1)+'. Une Informationn du Contrat de Location est invalide');
+                    this.toastr.error('Erreur à la ligne '+(inde)+'. Une Information Contrat de Location est invalide', 'Importation de Prix de Valeur Locative');
+                    return;
+                  }
 
+                }
+
+
+                  this.serviceContrat.addListAContrat(liste).subscribe(
+                    (data) => {
+                        data1.forEach(elementDat1 => {
+                          this.serviceImmeuble.editImmeuble(elementDat1.codeIm, elementDat1).subscribe(
+                            (data11) => {
+  
                             },
                             (erreur) => {
-                              console.log('Erreur lors de la modification de lEtat de lImmeuble', erreur);
-                              toastr.error('Erreur lors de la modification de l\'Etat de l\'Immeuble de la ligne '+(i)+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Contrat de Location');
-                              return 1;
+                              console.log('Erreur lors de la modification de lEtat de lImmeuble',elementDat1, erreur);
+                              this.toastr.error('Erreur lors de la modification de l\'Etat de l\'Immeuble de la ligne '+elementDat1.codeIm+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Contrat de Location');
+                              
                             }
                           );
 
+                        });
 
-                        }
-
-                        if(i == nbrLigne){
-                          console.log('Fin de lImportation, Importation réuissir');
-                          toastr.success('Importation éffectuée avec Succès', 'Importation de Contrat de Location');
-                        }
+                        this.toastr.success('Importation éffectuée avec Succès', 'Importation de Contrat de Location');
 
                       },
-                      (erreur) => {
-                        console.log('Erreur lors de lAjout de la ligne '+(i), erreur);
-                        toastr.error('Erreur lors de l`\'Ajout de la ligne '+(i)+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Contrat de Location');
-                        return 1;
-                      }
-                    );
+                    (erreur) => {
+                      console.log('Erreur lors de lAjout de la ligne ', erreur);
+                      this.toastr.error('Erreur lors de l`\'Ajout des contrats'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Contrat de Location');
+                      return 1;
+                    }
 
-                  })(inde, this.serviceImmeuble, this.toastr, this.feuille.length, this.serviceContrat);
+                    
+                  );
 
-
-
-                },
-                (erreur) => {
-                  console.log('Erreur lors de la récupération de la liste des valeurs locatives', erreur);
-                  this.toastr.error('Erreur lors de la récupération de la liste des Valeurs Locative'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Contrat de Location');
-                  return;
-                }
-              );
-
-
-            }
-            else {
-              console.log('Erreur à la ligne '+(inde+1)+'. Une Informationn du Contrat de Location est invalide');
-              this.toastr.error('Erreur à la ligne '+(inde)+'. Une Information Contrat de Location est invalide', 'Importation de Prix de Valeur Locative');
+                
+            },
+            (erreur) => {
+              console.log('Erreur lors de la récupération de la liste des valeurs locatives', erreur);
+              this.toastr.error('Erreur lors de la récupération de la liste des Valeurs Locative'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Contrat de Location');
               return;
             }
-
-          }
-
+          );
 
         },
         (erreur) => {
@@ -973,6 +978,55 @@ export class ImportationExportationComponent implements OnInit {
           this.toastr.error('Erreur lors de la récupération de la liste des Locataires'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Contrat de Location');
         }
       );
+
+
+    }
+    else if(this.repport1FormsGroup.value['rep1Element'] == 10){
+      //Il s'agit des Types de Valeur Locative
+      let liste: TypeImmeuble[] = [];
+      let inde:number = 0;
+      for(const element of this.feuille) {
+        inde++;
+        if(element[0] != undefined && element[1] != undefined
+          && typeof element[2] == 'boolean' && typeof element[3] == 'boolean'
+          && typeof element[4] == 'boolean' && typeof element[5] == 'boolean'
+          && typeof element[6] == 'number'){
+
+          if(!Tools2Service.typePeriodes.find(l => l.code == element[6])){
+            console.log('Le code de Périodicité à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+            this.toastr.error('Le code de Périodicité à la ligne '+(inde)+' n\'existe pas', 'Importation de Type de Valeur Locative');
+            return;
+          }
+
+          let typeImmeuble:TypeImmeuble = new TypeImmeuble(element[0], element[1], element[2], element[3], element[4], element[5], element[7], Tools2Service.typePeriodes.find(l => l.code == element[6]).name);
+
+          liste.push(typeImmeuble);
+
+
+        }
+        else {
+          console.log('Erreur à la ligne '+(inde+1)+'. Une Informationn du Type de VAleur Locative est invalide');
+          this.toastr.error('Erreur à la ligne '+(inde)+'. Une Information du Types de Valeur Locative est invalide', 'Importation de Prix de Valeur Locative');
+          return;
+        }
+
+      }
+
+
+        this.serviceImmeuble.addListTypeImmeuble(liste).subscribe(
+          (data) => {
+              
+            this.toastr.success('Importation éffectuée avec Succès', 'Importation de Type de Valeur Locative');
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de lAjout de la ligne ', erreur);
+            this.toastr.error('Erreur lors de l`\'Ajout des Types de Valeur Locative'+'\n Code : '+erreur.status+' | '+erreur.statusText, 'Importation de Type de Valeur Locative');
+            return 1;
+          }
+
+          
+        );
 
 
     }

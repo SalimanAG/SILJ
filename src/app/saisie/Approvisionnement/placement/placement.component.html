@@ -104,8 +104,8 @@
                       <label for="addCorrespondant">Correspondant</label>
                         <select id="addCorrespondant" name="addCorrespondant" class="form-control"
                         formControlName="addCorrespondant" (change)="getMagasinOfTheCorres1()">
-                          <option *ngFor="let corres of correspondantsByArrondi; let i = index" [value]="i">
-                            {{ corres.idCorrespondant }} - {{ corres.magasinier.nomMagasinier }} {{ corres.magasinier.prenomMagasinier }}
+                          <option *ngFor="let corress of correspondantsByArrondi; let i = index" [value]="i">
+                            {{ corress.idCorrespondant }} - {{ corress.magasinier.nomMagasinier }} {{ corress.magasinier.prenomMagasinier }}
                           </option>
                         </select>
                     </div>
@@ -136,7 +136,7 @@
                         <tr *ngFor="let addLignPlace of tempAddLignePlacement; let i = index">
                           <td>{{ addLignPlace.article.codeArticle }}</td>
                           <td>{{ addLignPlace.article.libArticle }}</td>
-                          <td><input [(ngModel)]="tempAddLignePlacement[i].pulignePlacement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td>{{tempAddLignePlacement[i].pulignePlacement}}</td>
                           <td><input [(ngModel)]="tempAddLignePlacement[i].quantiteLignePlacement" [ngModelOptions]="{standalone: true}"
                               class="form-control" type="number" (change)="nummerotation(i)"></td>
                           <td>{{ tempAddLignePlacement[i].quantiteLignePlacement*tempAddLignePlacement[i].pulignePlacement }}</td>
@@ -165,7 +165,6 @@
 
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" (click)="numero()">numéro</button>
                   <button type="button" class="btn btn-secondary" (click)="addComModal.hide()">Annuler</button>
                   <button type="submit" class="btn btn-primary"
                     [disabled]="addPlacementFormGroup.invalid || tempAddLignePlacement.length == 0">Valider</button>

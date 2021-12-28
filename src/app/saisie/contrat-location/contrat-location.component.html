@@ -112,7 +112,7 @@
                             <label for="addLocataire">Identité du Locataire</label>
                             <select id="addLocataire" name="addLocataire" class="form-control"
                             formControlName="addLocataire">
-                              <option *ngFor="let locataire of locataires; let i = index" [value]="i"
+                              <option *ngFor="let locataire of locataires; let i = index" [value]="locataire.idLocataire"
                               >{{ locataire.idLocataire }} - {{ locataire.identiteLocataire }}</option>
 
                             </select>
@@ -122,7 +122,7 @@
                           <div class="form-group col-sm-4">
                             <label for="addIndeTypeIm">Type de la Valeur Locative</label>
                             <select id="addIndeTypeIm" name="addIndeTypeIm" formControlName="addIndeTypeIm" class="form-control" (click)="onTypeImmeubleClicked1()">
-                              <option *ngFor="let typeIm of typeValeursLocatives; let i = index" [value]="i"
+                              <option *ngFor="let typeIm of typeValeursLocatives; let i = index" [value]="typeIm.codeTypIm"
                               >{{ typeIm.codeTypIm }} - {{ typeIm.libTypIm }}</option>
                             </select>
                           </div>
@@ -130,7 +130,7 @@
                             <label for="addImmeuble">Valeur Locative</label>
                             <select id="addImmeuble" name="addImmeuble" class="form-control"
                             formControlName="addImmeuble">
-                              <option *ngFor="let imm of valeurLocativesByType; let i = index" [value]="i"
+                              <option *ngFor="let imm of valeurLocativesByType; let i = index" [value]="imm.codeIm"
                               >{{ imm.codeIm }} - {{ imm.libIm }}</option>
                             </select>
                           </div>
@@ -209,7 +209,7 @@
                             <label for="editLocataire">Identité du Locataire</label>
                             <select id="editLocataire" name="editLocataire" class="form-control"
                             formControlName="editLocataire">
-                              <option *ngFor="let locataire of locataires; let i = index" [value]="i"
+                              <option *ngFor="let locataire of locataires; let i = index" [value]="locataire.idLocataire"
                               >{{ locataire.idLocataire }} - {{ locataire.identiteLocataire }}</option>
 
                             </select>
@@ -219,7 +219,7 @@
                           <div class="form-group col-sm-4">
                             <label for="typeValeurLocative2">Type de la Valeur Locative</label>
                             <select id="typeValeurLocative2" name="typeValeurLocative2" class="form-control" (click)="onTypeImmeubleClicked2()">
-                              <option *ngFor="let typeIm of typeValeursLocatives; let i = index" [value]="i"
+                              <option *ngFor="let typeIm of typeValeursLocatives; let i = index" [value]="typeIm.codeTypIm"
                               >{{ typeIm.codeTypIm }} - {{ typeIm.libTypIm }}</option>
                             </select>
                           </div>
@@ -227,7 +227,7 @@
                             <label for="editImmeuble">Valeur Locative</label>
                             <select id="editImmeuble" name="editImmeuble" class="form-control"
                             formControlName="editImmeuble">
-                              <option *ngFor="let imm of valeurLocativesByType2; let i = index" [value]="i"
+                              <option *ngFor="let imm of valeurLocativesByType2; let i = index" [value]="imm.codeIm"
                               >{{ imm.codeIm }} - {{ imm.libIm }}</option>
                             </select>
                           </div>
@@ -329,7 +329,7 @@
                       </tr>
                       <tr>
                         <th>Quartier de la Valeur</th>
-                        <td>{{ infosContrat.immeuble.quartier.nomQuartier }}</td>
+                        <td>{{ infosContrat.immeuble.quartier?.nomQuartier }}</td>
                       </tr>
                       <tr>
                         <th>Site de la Valaur Locative</th>

@@ -26,6 +26,10 @@ export class LocataireService {
     return this.httpCli.post<Locataire>(this.host+'/location/locataire/list', corps);
   }
 
+  addListALocataire(corps:Locataire[]){
+    return this.httpCli.post<Locataire[]>(this.host+'/location/locataire/list2', corps);
+  }
+
   editALocataire(code:string, corps:Locataire){
     return this.httpCli.put<Locataire>(this.host+'/location/locataire/byCodLoc/'+code, corps);
   }

@@ -4,7 +4,7 @@ import { Regisseur } from './regisseur.model';
 export class Reversement {
 
     constructor(public numReversement:String, public dateVersement:Date, public exercice:Exercice,
-        public regisseur:Regisseur){
+        public regisseur:Regisseur, public quittance: String){
   
     }
   }

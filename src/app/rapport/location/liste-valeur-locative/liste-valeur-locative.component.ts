@@ -160,8 +160,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                   imm.push("En contrat");
                 else
                   imm.push("Libre");
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                 list.push(imm);
               });
               doc.addPage();
@@ -218,8 +218,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                   imm.push("En contrat");
                 else
                   imm.push("Libre");
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                 list.push(imm);
               });
               doc.addPage();
@@ -280,8 +280,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                   imm.push("En contrat");
                 else
                   imm.push("Libre");
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                 list.push(imm);
               });
               doc.addPage();
@@ -343,9 +343,9 @@ export class ListeValeurLocativeComponent implements OnInit {
                     imm.push("En contrat");
                   else
                     imm.push("Libre");
-                    imm.push(elt.valUnit);
-                    if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                      imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                    imm.push(elt.typeImmeuble.valUnit);
+                    if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                      imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                   imm.push(elt.quartier.nomQuartier)
                     list.push(imm);
                   });
@@ -400,9 +400,9 @@ export class ListeValeurLocativeComponent implements OnInit {
                     imm.push("En contrat");
                   else
                     imm.push("Libre");
-                  imm.push(elt.valUnit);
-                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                  imm.push(elt.typeImmeuble.valUnit);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                 imm.push(elt.quartier.nomQuartier);
                 list.push(imm);
                 });
@@ -464,8 +464,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                 imm.push(elt.libIm);
                 imm.push(elt.stuctResp);
                 imm.push(elt.superficie);
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                 list.push(imm);
               });
               doc.addPage();
@@ -516,7 +516,7 @@ export class ListeValeurLocativeComponent implements OnInit {
                 imm.push(elt.stuctResp);
                 imm.push(elt.quartier.nomQuartier);
                 imm.push(elt.superficie);
-                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
                     imm.push(elt.codeIm);
                   list.push(imm);
                 });
@@ -571,8 +571,8 @@ export class ListeValeurLocativeComponent implements OnInit {
               imm.push(elt.stuctResp);
               imm.push(elt.quartier.nomQuartier);
               imm.push(elt.superficie);
-              if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+              if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
               list.push(imm);
             });
             doc.addPage();
@@ -630,8 +630,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                   imm.push("En contrat");
                 else
                   imm.push("Libre");
-                imm.push(elt.valUnit);
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                imm.push(elt.typeImmeuble.valUnit);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
                   imm.push(elt.codeIm);
                 list.push(imm);
               });
@@ -686,8 +686,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                     imm.push("En contrat");
                   else
                     imm.push("Libre");
-                  imm.push(elt.valUnit);
-                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
+                  imm.push(elt.typeImmeuble.valUnit);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
                     imm.push(elt.codeIm);
                   list.push(imm);
                 });
@@ -755,8 +755,8 @@ export class ListeValeurLocativeComponent implements OnInit {
               imm.push(elt.libIm);
               imm.push(elt.stuctResp);
               imm.push(elt.superficie);
-              if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+              if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
               list.push(imm);
             });
             doc.addPage();
@@ -796,8 +796,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                 imm.push(elt.stuctResp);
                 imm.push(elt.quartier.nomQuartier);
                 imm.push(elt.superficie);
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                 list.push(imm);
               });
               doc.addPage();
@@ -845,8 +845,8 @@ export class ListeValeurLocativeComponent implements OnInit {
                   imm.push("En contrat");
                 else
                   imm.push("Libre");
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                 list.push(imm);
               });
               doc.addPage();
@@ -891,9 +891,9 @@ export class ListeValeurLocativeComponent implements OnInit {
                   imm.push(elt.libIm);
                   imm.push(elt.stuctResp);
                   imm.push(elt.superficie);
-                  imm.push(elt.valUnit);
-                  if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                  imm.push(elt.typeImmeuble.valUnit);
+                  if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                    imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                   list.push(imm);
                 });
                 doc.addPage();
@@ -931,9 +931,9 @@ export class ListeValeurLocativeComponent implements OnInit {
                 imm.push(elt.libIm);
                 imm.push(elt.stuctResp);
                 imm.push(elt.superficie);
-                imm.push(elt.valUnit);
-                if (this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm) != null)
-                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.immeuble.codeIm == elt.codeIm).prixIm);
+                imm.push(elt.typeImmeuble.valUnit);
+                if (this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm) != null)
+                  imm.push(this.prix.find(p => p.dateFinPrixIm == null && p.typeImmeuble.codeTypIm == elt.typeImmeuble.codeTypIm).prixIm);
                 list.push(imm);
               });
               doc.addPage();

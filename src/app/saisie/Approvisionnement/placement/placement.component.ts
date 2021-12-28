@@ -503,6 +503,7 @@ export class PlacementComponent  implements OnInit {
 
         data.forEach(element => {
           if(element.arrondissement.codeArrondi == this.arrondissements[inde].codeArrondi){
+            if(!this.correspondantsByArrondi.find(l => l.idCorrespondant == element.corres.idCorrespondant))
             this.correspondantsByArrondi.push(element.corres);
           }
         });
@@ -591,7 +592,7 @@ export class PlacementComponent  implements OnInit {
   }
 
   onAddAPlageNumArticleClicked1(inde:number){
-    //this.tempAddPlageNumArticle.push(new PlageNumArticle(0, 0, null, this.tempAddLignePlacement[inde], null));
+    this.tempAddPlageNumArticle.push(new PlageNumArticle(0, 0, null, this.tempAddLignePlacement[inde], null));
   }
 
   onAddAPlageNumArticleClicked2(inde:number){

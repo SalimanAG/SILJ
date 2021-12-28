@@ -57,10 +57,10 @@ export class ReversementComponent implements OnInit {
     editReversementFormGroup:FormGroup;
 
     editReversement:Reversement = new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))));
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), '');
 
     suprReversement:Reversement = new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))));
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), '');
 
     tempAddLigneReversement:LigneReversement[] = [];
     tempEditLigneReversement:LigneReversement[] = [];
@@ -69,11 +69,11 @@ export class ReversementComponent implements OnInit {
     ligneReversement:LigneReversement[] = [];
 
     editLigneReversement :LigneReversement = new LigneReversement(0,0,'',new Date(),'','',new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('','')))),
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), ''),
     new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')) );
 
     suprLigneReversement :LigneReversement = new LigneReversement(0,0,'',new Date(),'','',new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('','')))),
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), ''),
     new Article('', '', false, false, false, false, 0, '', new Famille('', ''), new Uniter('', '')) );
 
     exercices:Exercice[] = [];
@@ -160,13 +160,15 @@ export class ReversementComponent implements OnInit {
     this.addReversementFormGroup = this.formBulder.group({
       addNumRevers:['RV-200000001', Validators.required],
       addDateRevers:[new Date().toISOString().substring(0, 10), Validators.required],
-      addReg:[0, Validators.required]
+      addReg:[0, Validators.required],
+      addQuittance:[''],
     });
 
     this.editReversementFormGroup = this.formBulder.group({
       editNumRevers:['', Validators.required],
       editDateRevers:[new Date(), Validators.required],
-      editReg:[0, Validators.required]
+      editReg:[0, Validators.required],
+      editQuittance:['']
     });
   }
 
@@ -329,7 +331,7 @@ addArticleForAddingOfReversement(inde:number){
   if(exist===false){
     this.tempAddLigneReversement.push(new LigneReversement(0, this.articles[inde].prixVenteArticle, '', new Date(), '','',
     new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('','')))),
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), ''),
       this.articles[inde]));
   }
 
@@ -348,7 +350,7 @@ addArticleForEditingOfReversement(inde:number){
   if(exist===false){
     this.tempEditLigneReversement.push(new LigneReversement(0, this.articles[inde].prixVenteArticle, '', new Date(),'','',
     new Reversement('', new Date(),new Exercice('', '', new Date(), new Date(), '', false),
-    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('','')))),
+    new Regisseur('',new Magasinier('','',''), new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), ''),
       this.articles[inde]));
   }
 
@@ -358,17 +360,16 @@ onSubmitAddReversementFormsGroup(){
 
   const newReversement= new Reversement(this.addReversementFormGroup.value['addNumRevers'],
   this.addReversementFormGroup.value['addDateRevers'],
-  this.serviceExercice.exoSelectionner, this.regisseur[this.addReversementFormGroup.value['addReg']]);
+  this.serviceExercice.exoSelectionner, this.regisseur[this.addReversementFormGroup.value['addReg']], 
+  this.addReversementFormGroup.value['quittance']);
   console.log(this.tempAddLigneReversement, newReversement);
   this.serviceReversement.addReversement(newReversement).subscribe(
     (data) => {
-      console.log('********',data);
-
-      this.tempAddLigneReversement.forEach(element => {
+      this.tempAddLigneReversement.forEach((element, inde) => {
         element.numReversement = data;
         this.serviceReversement.addLigneReversement(element).subscribe(
           (data2) => {
-            console.log('********',data2);
+            this.tempAddLigneReversement.splice(inde);
 
           },
           (erreur) => {
@@ -376,8 +377,6 @@ onSubmitAddReversementFormsGroup(){
           }
         );
       });
-      this.addReversementFormGroup.reset();
-      this.initFormsGroup();
       this.addComModal.hide();
       this.getAllReversement();
       this.getAllLigneReversement();
@@ -393,7 +392,7 @@ onSubmitEditReversementFormsGroup(){
   const newRevers= new Reversement(this.editReversementFormGroup.value['editNumRevers'],
   this.editReversementFormGroup.value['editDateRevers'],
   this.serviceExercice.exoSelectionner,
-  this.regisseur[this.editReversementFormGroup.value['editReg']]);
+  this.regisseur[this.editReversementFormGroup.value['editReg']], this.editReversementFormGroup.value['editQuittance']);
 
   let oldReversementLines:LigneReversement[] = [];
 
@@ -532,6 +531,10 @@ initPrintPdfOfReversement(inde:number){
   totalRemise = 0;
   totalTVA = 0;
   totalTTC = 0;
+
+  this.serviceReversement.getAllLigneReversement().subscribe(
+    (dataa) => {
+      this.ligneReversement = dataa;
   this.ligneReversement.forEach(element => {
     if(element.numReversement.numReversement == commande.numReversement){
       let lig = [];
@@ -580,7 +583,7 @@ initPrintPdfOfReversement(inde:number){
 
   autoTable(doc, {
     theme: 'grid',
-    head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant','Numéro Quittance','Date Quittance','Bénéficiaire','Observation']],
+    head: [['Article', 'Désignation', 'Quantité', 'PU', 'Montant']],
     headStyles: {
        fillColor: [41, 128, 185],
         textColor: 255,
@@ -609,6 +612,10 @@ initPrintPdfOfReversement(inde:number){
 
   this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'reversement.pdf'}));
   this.viewPdfModal.show();
+},
+(erreur) => {
+  console.log('Erreur lors de la récuparation de la liste des lignes de commande', erreur);
+});
 }
 
 }

@@ -1,6 +1,209 @@
 <tabset>
   <!--Onglet 1-->
   <tab>
+    <ng-template tabHeading><i class="icon-basket-loaded"></i> Famille</ng-template>
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-align-justify"></i> Liste des Familles d'Article
+      </div>
+      <div class="card-body">
+        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
+          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
+          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
+        </div>
+        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2"
+            [dtTrigger]="dtTrigger2" id="dataTable2">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let famille of familles; let i= index">
+              <td>{{ famille.codeFamille }}</td>
+              <td>{{ famille.libFamille }}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditFamille(i)" title="Modifier la famille"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteFamille(i)" title="Supprimer la famille"><span class="fa fa-trash"></span></button>
+                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal2.show()"><span class="fa fa-eye"></span></button>-->
+                <!--button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button-->
+                <!--Le bouton des options-->
+                <!--div class="btn-group" dropdown>
+                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
+                    </li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
+                      here</a></li>
+                    <li class="divider dropdown-divider"></li>
+                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
+                    </li>
+                  </ul>
+                </div-->
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Actions</th>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- Les modales-->
+              <!--Modale 1-->
+              <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-primary" role="document">
+                  <form [formGroup]="addFamilleFormsGroup" (ngSubmit)="onSubmitAddFamilleForm()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Enrégistrer une Famille</h4>
+                        <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour Enrégistrer une Famille d'article-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Nouvelle Famille</strong>
+
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addCodeFamille">Code</label>
+                                <input type="text" class="form-control" id="addCodeFamille" placeholder="Code de la Famille d'article"
+                                autocomplete="off" formControlName="addCodeFamille">
+                              </div>
+
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="addLibFamille">Libellé</label>
+                                <input type="texte" class="form-control" id="addLibFamille" placeholder="Libellé de la Famille d'article"
+                                autocomplete="off" formControlName="addLibFamille">
+                              </div>
+
+                            </div><!--/.row-->
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-primary" [disabled]="addFamilleFormsGroup.invalid">Enrégistrer</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 1 -->
+
+              <!--Modale 2-->
+              <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-warning" role="document">
+                  <form [formGroup]="editFamilleFormsGroup" (ngSubmit)="onSubmitEditFamilleForm()">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Modifier Une Famille</h4>
+                        <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Formulaire pour Modifier une Famille d'article-->
+                        <div class="card">
+                          <div class="card-header">
+                            <strong>Modifier Famille</strong>
+
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editCodeFamille">Code</label>
+                                <input type="text" class="form-control" id="editCodeFamille" readonly="true"
+                                formControlName="editCodeFamille" placeholder="Code de la Famille d'article"
+                                [ngModel]="editFamil.codeFamille">
+                              </div>
+
+                            </div><!--/.row-->
+                            <div class="row">
+                              <div class="form-group col-sm-12">
+                                <label for="editLibFamille">Libellé</label>
+                                <input type="texte" class="form-control" id="editLibFamille"
+                                autocomplete="off" formControlName="editLibFamille" placeholder="Libellé de la Famille d'article"
+                                [ngModel]="editFamil.libFamille">
+                              </div>
+
+                            </div><!--/.row-->
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
+                        <button type="submit" class="btn btn-warning" [disabled]="editFamilleFormsGroup.invalid">Modifier</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </form>
+
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 2 -->
+
+              <!--Modale 3-->
+              <div bsModal #dangerModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-danger" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Suprimmer Une Famille</h4>
+                      <button type="button" class="close" (click)="dangerModal2.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Vous êtes sur le point de supprimer la Famille d'Article <mark style="color: red;">{{ suprFamil.codeFamille }}</mark></p>
+                      <p>Le confirmez-vous ?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="dangerModal2.hide()">Annuler</button>
+                      <button type="button" class="btn btn-danger" (click)="onConfirmDeleteFamille()">Supprimer</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </div><!-- /.modal 3 -->
+
+              <!--Modale 4-->
+              <!--<div bsModal #infoModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-info modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Détail Sur Article</h4>
+                      <button type="button" class="close" (click)="infoModal2.hide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>One fine body&hellip;</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="infoModal2.hide()">Fermer</button>
+
+                    </div>-->
+                  <!--</div> /.modal-content -->
+                <!--</div> /.modal-dialog -->
+              <!--</div> /.modal 4 -->
+
+      </div>
+    </div>
+  </tab>
+  <!--Onglet 2-->
+  <tab>
     <ng-template tabHeading><i class="icon-calculator"></i> Articles</ng-template>
     <div class="card">
       <div class="card-header">
@@ -34,12 +237,12 @@
               <td>{{ article.famille.libFamille }}</td>
               <td>{{ article.unite.libUniter }}</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditArticle(i)"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteArticle(i)"><span class="fa fa-trash"></span></button>
-                <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosArticle(i)"><span class="fa fa-eye"></span></button>
-                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditArticle(i)" title="Modifier l'article"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteArticle(i)" title="Supprimer l'article"><span class="fa fa-trash"></span></button>
+                <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosArticle(i)" title="Détail sur l'article"><span class="fa fa-eye"></span></button>
+                <!--button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button-->
                 <!--Le bouton des options-->
-                <div class="btn-group" dropdown>
+                <!--div class="btn-group" dropdown>
                   <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                   <ul *dropdownMenu class="dropdown-menu" role="menu">
                     <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
@@ -51,7 +254,7 @@
                     <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
                     </li>
                   </ul>
-                </div>
+                </div-->
               </td>
             </tr>
 
@@ -363,209 +566,7 @@
       </div>
     </div>
   </tab>
-  <!--Onglet 2-->
-  <tab>
-    <ng-template tabHeading><i class="icon-basket-loaded"></i> Famille</ng-template>
-    <div class="card">
-      <div class="card-header">
-        <i class="fa fa-align-justify"></i> Liste des Familles d'Article
-      </div>
-      <div class="card-body">
-        <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
-          <div class="col align-self-start" style="padding: 0%;"><button class="btn btn-primary" data-toggle="modal" (click)="primaryModal2.show()">Nouveau <span class="fa fa-plus-circle"></span></button></div>
-          <div class="col-3 align-self-end"  style="padding: 0%; margin: 0%;" ></div>
-        </div>
-        <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="dtOptions2"
-            [dtTrigger]="dtTrigger2" id="dataTable2">
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Libellé</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let famille of familles; let i= index">
-              <td>{{ famille.codeFamille }}</td>
-              <td>{{ famille.libFamille }}</td>
-              <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditFamille(i)"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteFamille(i)"><span class="fa fa-trash"></span></button>
-                <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal2.show()"><span class="fa fa-eye"></span></button>-->
-                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
-                <!--Le bouton des options-->
-                <div class="btn-group" dropdown>
-                  <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
-                  <ul *dropdownMenu class="dropdown-menu" role="menu">
-                    <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
-                    </li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Something else
-                      here</a></li>
-                    <li class="divider dropdown-divider"></li>
-                    <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Code</th>
-              <th>Libellé</th>
-              <th>Actions</th>
-            </tr>
-          </tfoot>
-        </table>
-
-        <!-- Les modales-->
-              <!--Modale 1-->
-              <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-primary" role="document">
-                  <form [formGroup]="addFamilleFormsGroup" (ngSubmit)="onSubmitAddFamilleForm()">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h4 class="modal-title">Enrégistrer une Famille</h4>
-                        <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <!-- Formulaire pour Enrégistrer une Famille d'article-->
-                        <div class="card">
-                          <div class="card-header">
-                            <strong>Nouvelle Famille</strong>
-
-                          </div>
-                          <div class="card-body">
-                            <div class="row">
-                              <div class="form-group col-sm-12">
-                                <label for="addCodeFamille">Code</label>
-                                <input type="text" class="form-control" id="addCodeFamille" placeholder="Code de la Famille d'article"
-                                autocomplete="off" formControlName="addCodeFamille">
-                              </div>
-
-                            </div><!--/.row-->
-                            <div class="row">
-                              <div class="form-group col-sm-12">
-                                <label for="addLibFamille">Libellé</label>
-                                <input type="texte" class="form-control" id="addLibFamille" placeholder="Libellé de la Famille d'article"
-                                autocomplete="off" formControlName="addLibFamille">
-                              </div>
-
-                            </div><!--/.row-->
-
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="primaryModal2.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-primary" [disabled]="addFamilleFormsGroup.invalid">Enrégistrer</button>
-                      </div>
-                    </div><!-- /.modal-content -->
-                  </form>
-
-                </div><!-- /.modal-dialog -->
-              </div><!-- /.modal 1 -->
-
-              <!--Modale 2-->
-              <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-warning" role="document">
-                  <form [formGroup]="editFamilleFormsGroup" (ngSubmit)="onSubmitEditFamilleForm()">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h4 class="modal-title">Modifier Une Famille</h4>
-                        <button type="button" class="close" (click)="warningModal2.hide()" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <!-- Formulaire pour Modifier une Famille d'article-->
-                        <div class="card">
-                          <div class="card-header">
-                            <strong>Modifier Famille</strong>
-
-                          </div>
-                          <div class="card-body">
-                            <div class="row">
-                              <div class="form-group col-sm-12">
-                                <label for="editCodeFamille">Code</label>
-                                <input type="text" class="form-control" id="editCodeFamille" readonly="true"
-                                formControlName="editCodeFamille" placeholder="Code de la Famille d'article"
-                                [ngModel]="editFamil.codeFamille">
-                              </div>
-
-                            </div><!--/.row-->
-                            <div class="row">
-                              <div class="form-group col-sm-12">
-                                <label for="editLibFamille">Libellé</label>
-                                <input type="texte" class="form-control" id="editLibFamille"
-                                autocomplete="off" formControlName="editLibFamille" placeholder="Libellé de la Famille d'article"
-                                [ngModel]="editFamil.libFamille">
-                              </div>
-
-                            </div><!--/.row-->
-
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="warningModal2.hide()">Annuler</button>
-                        <button type="submit" class="btn btn-warning" [disabled]="editFamilleFormsGroup.invalid">Modifier</button>
-                      </div>
-                    </div><!-- /.modal-content -->
-                  </form>
-
-                </div><!-- /.modal-dialog -->
-              </div><!-- /.modal 2 -->
-
-              <!--Modale 3-->
-              <div bsModal #dangerModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-danger" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Suprimmer Une Famille</h4>
-                      <button type="button" class="close" (click)="dangerModal2.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <p>Vous êtes sur le point de supprimer la Famille d'Article <mark style="color: red;">{{ suprFamil.codeFamille }}</mark></p>
-                      <p>Le confirmez-vous ?</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="dangerModal2.hide()">Annuler</button>
-                      <button type="button" class="btn btn-danger" (click)="onConfirmDeleteFamille()">Supprimer</button>
-                    </div>
-                  </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-              </div><!-- /.modal 3 -->
-
-              <!--Modale 4-->
-              <!--<div bsModal #infoModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-info modal-lg" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h4 class="modal-title">Détail Sur Article</h4>
-                      <button type="button" class="close" (click)="infoModal2.hide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <p>One fine body&hellip;</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" (click)="infoModal2.hide()">Fermer</button>
-
-                    </div>-->
-                  <!--</div> /.modal-content -->
-                <!--</div> /.modal-dialog -->
-              <!--</div> /.modal 4 -->
-
-      </div>
-    </div>
-  </tab>
+  
   <!--Onglet 3-->
   <tab>
     <ng-template tabHeading><i class="icon-pie-chart"></i> Unité</ng-template>
@@ -592,12 +593,12 @@
               <td>{{ uniter.codeUniter }}</td>
               <td>{{ uniter.libUniter }}</td>
               <td>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditUniter(i)"><span class="fa fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteUniter(i)"><span class="fa fa-trash"></span></button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditUniter(i)" title="Modier Uniter"><span class="fa fa-edit"></span></button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteUniter(i)" title="Supprimer Unité"><span class="fa fa-trash"></span></button>
                 <!--<button class="btn btn-info btn-sm" data-toggle="modal" (click)="infoModal3.show()"><span class="fa fa-eye"></span></button>-->
-                <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
+                <!--button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button-->
                 <!--Le bouton des options-->
-                <div class="btn-group" dropdown>
+                <!--div class="btn-group" dropdown>
                   <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                   <ul *dropdownMenu class="dropdown-menu" role="menu">
                     <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
@@ -609,7 +610,7 @@
                     <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
                     </li>
                   </ul>
-                </div>
+                </div-->
               </td>
             </tr>
           </tbody>

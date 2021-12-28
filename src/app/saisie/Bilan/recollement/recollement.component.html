@@ -28,12 +28,12 @@
                     <td>{{ recoll.magasinsource.libMagasin }} </td>
                     <td>{{ recoll.magasinDestination.libMagasin }} </td>
                     <td>
-                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditRecollement(i)"><span class="fa fa-edit"></span></button>
-                        <button *ngIf="!recoll.valideRecol" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteRecollement(i)"><span class="fa fa-trash"></span></button>
-                        <button *ngIf="recoll.valideRecol" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerRecollement(i)"><span class="fa fa-undo"></span></button>
-                        <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfRecollement(i)"><span class="fa fa-file-o"></span></button>
+                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditRecollement(i)"><span class="fa fa-edit" title="Modifier le recollement"></span></button>
+                        <button *ngIf="!recoll.valideRecol" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteRecollement(i)" title="Supprimer le recolleùent"><span class="fa fa-trash"></span></button>
+                        <button *ngIf="recoll.valideRecol" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerRecollement(i)" title="Annuler le recollement"><span class="fa fa-undo"></span></button>
+                        <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfRecollement(i)"><span class="fa fa-file-o" title="Imprimer le recollement"></span></button>
                         <!--Le bouton des options-->
-                        <div class="btn-group" dropdown>
+                        <!--div class="btn-group" dropdown>
                           <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                           <ul *dropdownMenu class="dropdown-menu" role="menu">
                             <li role="menuitem"><a class="dropdown-item" >Action</a></li>
@@ -45,7 +45,7 @@
                             <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                             </li>
                           </ul>
-                        </div>
+                        </div-->
                     </td>
                 </tr>
             </tbody>
@@ -74,18 +74,18 @@
                   </div>
                   <div class="card-body">
                     <div class="row">
-                      <div class="form-group col-sm-4">
+                      <!--div class="form-group col-sm-4">
                         <label for="addNumRecoll">Numéro</label>
                         <input type="text" class="form-control" id="addNumRecoll" readonly="true"
                           formControlName="addNumRecoll" placeholder="Numéro du point" autocomplete="off">
-                      </div>
-                      <div class="form-group col-sm-4">
+                      </div-->
+                      <div class="form-group col-sm-6">
                         <label for="addDateRecoll">Date</label>
                         <input type="date" class="form-control" id="addDateRecoll"
                          formControlName="addDateRecoll">
                       </div>
 
-                      <div class="form-group col-sm-4">
+                      <div class="form-group col-sm-6">
                         <label for="addDesRecoll">Description</label>
                         <input type="text" class="form-control" id="addDesRecoll"
                          formControlName="addDesRecoll" autocomplete="off">
@@ -115,7 +115,7 @@
                         <select id="addMagasinDestination" name="addMagasinDestination" class="form-control"
                         formControlName="addMagasinDestination" disabled>
                           <option *ngFor="let regTre of magasinMairieTresor; let i = index" [value]="i">
-                            {{ regTre.codeMagasin }} - {{ regTre.libMagasin }}
+                            {{ regTre?.codeMagasin }} - {{ regTre?.libMagasin }}
                           </option>
                         </select>
                         <!--input type="text" class="form-control" id="addRegiConcerned" readonly
@@ -144,7 +144,7 @@
                             <tr *ngFor="let addLignRecoll of tempAddLigneRecollement; let i = index">
                               <td>{{ addLignRecoll.article.codeArticle  }}</td>
                               <td>{{ addLignRecoll.article.libArticle }}</td>
-                              <td><input [(ngModel)]="tempAddLigneRecollement[i].puligneRecollement" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                              <td>{{tempAddLigneRecollement[i].puligneRecollement}}</td>
                               <td><input [(ngModel)]="tempAddLigneRecollement[i].quantiteLigneRecollement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                               <td>{{ (tempAddLigneRecollement[i].quantiteLigneRecollement*tempAddLigneRecollement[i].puligneRecollement) }}</td>
                               <td><input [(ngModel)]="tempAddLigneRecollement[i].observationLigneRecollement" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
@@ -245,7 +245,7 @@
                           <tr *ngFor="let editLignRecoll of tempEditLigneRecollement; let i = index">
                             <td>{{ editLignRecoll.article.codeArticle  }}</td>
                             <td>{{ editLignRecoll.article.libArticle }}</td>
-                            <td><input [(ngModel)]="tempEditLigneRecollement[i].puligneRecollement" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                            <td>{{tempEditLigneRecollement[i].puligneRecollement}}</td>
                             <td><input [(ngModel)]="tempEditLigneRecollement[i].quantiteLigneRecollement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                             <td>{{ (tempEditLigneRecollement[i].quantiteLigneRecollement*tempEditLigneRecollement[i].puligneRecollement) }}</td>
                             <td><input [(ngModel)]="tempEditLigneRecollement[i].observationLigneRecollement" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>

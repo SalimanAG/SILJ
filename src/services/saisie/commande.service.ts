@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Commande } from '../../models/commande.model';
+import { EncapCommande } from '../../models/EncapCommande';
 import { LigneCommande } from '../../models/ligneCommande.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
@@ -26,8 +27,17 @@ export class CommandeService {
     return this.httpcli.post<Commande>(this.host+'/stock/commande/list', corps);
   }
 
+  //Léonel commande
+  addCommande(corps:EncapCommande){
+    return this.httpcli.post<EncapCommande>(this.host+'/stock/commande/list2', corps);
+  }
+
   editACommande(code:String, corps:Commande){
     return this.httpcli.put<Commande>(this.host+'/stock/commande/byCodCom/'+code, corps);
+  }
+  //Léo
+  editCommande(code:String, corps:EncapCommande){
+    return this.httpcli.put<EncapCommande>(this.host+'/stock/commande/byCodCom2/'+code, corps);
   }
 
   deleteACommande(code:String){

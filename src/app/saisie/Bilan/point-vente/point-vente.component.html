@@ -29,13 +29,13 @@
                   <td>{{ pv.correspondant.magasinier.nomMagasinier }}  {{ pv.correspondant.magasinier.prenomMagasinier }}</td>
                   <td>{{ pv.regisseur.magasinier.nomMagasinier }} {{ pv.regisseur.magasinier.prenomMagasinier }} </td>
                   <td>
-                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditPointVente(i)"><span class="fa fa-edit"></span></button>
-                      <button *ngIf="!pv.validePoint"class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeletePointVente(i)"><span class="fa fa-trash"></span></button>
-                      <button *ngIf="pv.validePoint" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerPointVente(i)"><span class="fa fa-undo"></span></button>
-                      <button class="btn btn-info btn-sm" data-toggle="modal"  ><span class="fa fa-eye"></span></button>
-                      <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfAnCommande(i)"><span class="fa fa-file-o"></span></button>
+                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditPointVente(i)" title="Modifier le point de vente"><span class="fa fa-edit"></span></button>
+                      <button *ngIf="!pv.validePoint"class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeletePointVente(i)" title="Supprimer le point de vente"><span class="fa fa-trash"></span></button>
+                      <button *ngIf="pv.validePoint" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerPointVente(i)" title="Annuler le point de vente"><span class="fa fa-undo"></span></button>
+                      <!--button class="btn btn-info btn-sm" data-toggle="modal"  ><span class="fa fa-eye"></span></button-->
+                      <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfAnCommande(i)" title="Imprimer le point de vente"><span class="fa fa-file-o"></span></button>
                       <!--Le bouton des options-->
-                      <div class="btn-group" dropdown>
+                      <!--div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                         <ul *dropdownMenu class="dropdown-menu" role="menu">
                           <li role="menuitem"><a class="dropdown-item" >Action</a></li>
@@ -47,7 +47,7 @@
                           <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                           </li>
                         </ul>
-                      </div>
+                      </div-->
                   </td>
               </tr>
           </tbody>
@@ -76,21 +76,13 @@
                 </div>
                 <div class="card-body">
                   <div class="row">
-                    <div class="form-group col-sm-6">
-                      <label for="addNumPv">Numéro</label>
-                      <input type="text" class="form-control" id="addNumPv" readonly="true"
-                        formControlName="addNumPv" placeholder="Numéro du point" autocomplete="off">
-                    </div>
-                    <div class="form-group col-sm-6">
+                    <div class="form-group col-sm-3">
                       <label for="addDatePv">Date</label>
                       <input type="datetime-local" class="form-control" id="addDatePv"
                        formControlName="addDatePv">
                     </div>
 
-                  </div><!--/.row-->
-
-                  <div class="row">
-                    <div class="form-group col-sm-6">
+                    <div class="form-group col-sm-4">
                       <label for="addCorres">Correspondant</label>
                         <select id="addCorres" name="addCorres" class="form-control"
                         formControlName="addCorres">
@@ -99,7 +91,8 @@
                           </option>
                         </select>
                     </div>
-                    <div class="form-group col-sm-6">
+
+                    <div class="form-group col-sm-5">
                       <label for="addReg">Régisseur</label>
                       <select id="addReg" name="addReg" readonly="true" class="form-control"
                       formControlName="addReg" disabled>
@@ -109,7 +102,10 @@
                       </select>
 
                     </div>
+
                   </div><!--/.row-->
+
+                 
                   <div class="row">
                     <button type="button" data-toggle="modal" (click)="onShowAddArticleModalAddingPointVente()" class="btn btn-success col-sm-12">Ajouter une ligne</button>
                   </div>
@@ -130,7 +126,7 @@
                           <tr *ngFor="let addLignPv of tempAddLignePointVente; let i = index">
                             <td>{{ addLignPv.article.codeArticle  }}</td>
                             <td>{{ addLignPv.article.libArticle }}</td>
-                            <td><input [(ngModel)]="tempAddLignePointVente[i].pulignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                            <td>{{tempAddLignePointVente[i].pulignePointVente}}</td>
                             <td><input [(ngModel)]="tempAddLignePointVente[i].quantiteLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                             <td>
                               <div><input [(ngModel)]="tempAddLignePointVente[i].numDebLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>
@@ -180,7 +176,7 @@
                   </div>
                   <div class="form-group col-sm-6">
                     <label for="editDatePv">Date</label>
-                    <input type="date" class="form-control" id="editDatePv"
+                    <input type="datetime-local" class="form-control" id="editDatePv"
                      formControlName="editDatePv" [ngModel]="editPointVente.datePointVente">
                   </div>
 
@@ -226,7 +222,7 @@
                         <tr *ngFor="let editLignPv of tempEditLignePointVente; let i = index">
                           <td>{{ editLignPv.article.codeArticle  }}</td>
                           <td>{{ editLignPv.article.libArticle }}</td>
-                          <td><input [(ngModel)]="tempEditLignePointVente[i].pulignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                          <td> {{tempEditLignePointVente[i].pulignePointVente}}</td>
                           <td><input [(ngModel)]="tempEditLignePointVente[i].quantiteLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                           <td>
                             <div><input [(ngModel)]="tempEditLignePointVente[i].numDebLignePointVente" [ngModelOptions]="{standalone: true}" class="form-control" type="number"></div>

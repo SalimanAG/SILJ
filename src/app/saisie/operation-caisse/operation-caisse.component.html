@@ -24,17 +24,17 @@
                                 <div class="form-group row">
                                   <div class="col-lg-3"></div>
                                   <div class="col-lg-3">
-                                    <button *ngIf="this.user.fonctionUtilisateur.codeFonction=='S1'" class="btn btn-success" data-toggle="modal"
+                                    <button *ngIf="this.user.fonctionUtilisateur.codeFonction.valueOf()=='S1'" class="btn btn-success" data-toggle="modal"
                                       (click)="initNewVente()" type="button">Nouvelle
                                       prestation</button>
                                   </div>
                                   <div class="col-lg-3">
-                                    <button *ngIf="this.user.fonctionUtilisateur.codeFonction=='S1'" class="btn btn-success" data-toggle="modal"
+                                    <button *ngIf="this.user.fonctionUtilisateur.codeFonction.valueOf()=='S1'" class="btn btn-success" data-toggle="modal"
                                       (click)="initNewImput()" type="button">Nouvelle
                                       imputation</button>
                                   </div>
                                   <div class="col-lg-3">
-                                    <button *ngIf="this.user.fonctionUtilisateur.codeFonction=='S1'" class="btn btn-success" data-toggle="modal"
+                                    <button *ngIf="this.user.fonctionUtilisateur.codeFonction.valueOf()=='S1'" class="btn btn-success" data-toggle="modal"
                                       (click)="initLoyer()" type="button">Nouvelle redevance</button>
                                   </div>
                                 </div>
@@ -237,17 +237,35 @@
                                   </select>
                                 </div>
                                 <div class="col-xl-1">
-                                    <label for="loyVL">Boutique</label>
+                                    <label for="loyVL">Valeur Locative</label>
                                 </div>
                                 <div class="col-xl-5">
-                                    <select formControlName="loyVL" class="form-control">
+                                    <select formControlName="loyVL" class="form-control" (ngModelChange)="onContratEcheanceChange(contratLocataire[addLoyerGroup.value['loyVL']])">
                                         <option *ngFor="let cont of contratLocataire; let i=index" [value]="i">{{cont.numContrat}}: {{cont.immeuble.libIm}}</option>
                                       </select>
                                 </div>
                                 <div class="col-xl-2">
-                                    <button type="button" class="btn btn-secondary" (click)="genererEcheancier(contratLocataire[addLoyerGroup.value['loyVL']])">
+                                    <button type="button" class="btn btn-secondary" (click)="genererLigneEcheancier(contratLocataire[addLoyerGroup.value['loyVL']])">
                                         Générer échéancier
                                     </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm">
+                                    <label for="datLimCalcEche">Date limite à considérer</label>
+                                    <input formControlName="datLimCalcEche" id="datLimCalcEche" type="date" class="form-control"
+                                    (ngModelChange)="onDateLimiteCalculEcheanceChange()">
+                                </div>
+                                <div class="col-sm" style="display: flex; flex-direction: row; align-items: center;">
+                                    <div style="margin: auto">
+                                        <input class="form-check-input" type="checkbox" id="takeAvance"
+                                        formControlName="takeAvance" (ngModelChange)="onTakeAvanceEcheanceChange()">
+                                        <label class="form-check-label" for="takeAvance" >Prendre en compte l'avance</label>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-sm" style="display: flex; flex-direction: row; align-items: center;">
+                                    <p style="margin: auto">Valeur du compte avance : <span [ngStyle]="{'color': addLoyerGroup.value['avance']<= 0 ? 'red': 'green', 'font-weight': 'bold'}" > {{addLoyerGroup.value['avance']}} </span></p>
                                 </div>
                             </div>
                         </div>
@@ -257,30 +275,35 @@
                                     <table class="table table-bordered" datatable [dtOptions]="tabEcheance" [dtTrigger]="dtTrigEche" id="dteche">
                                         <thead>
                                             <tr>
+                                                <th>N°</th>
                                                 <th>Année</th>
                                                 <th>Echéance</th>
-                                                <th>Mois</th>
+                                                <th>Période (Par {{contratLocataire[addLoyerGroup.value['loyVL']]?.immeuble.typeImmeuble.nomUnePeriode}})</th>
                                                 <th>Prix</th>
                                                 <th>Payé?</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let echetmp of echeanceAPayer; let i=index">
+                                            <tr *ngFor="let echetmp of lignesEcheancier; let i=index">
+                                                <td><strong>{{i+1}}</strong></td>
                                                 <td>{{echetmp.annee}}</td>
                                                 <td>{{echetmp.dateEcheance|date: "dd/MM/yyyy"}}</td>
-                                                <td>{{echetmp.moisEcheance}}
-                                                    <span style="font-weight: bold; color: rgb(11, 13, 146);text-align: right;" *ngIf="echetmp.dateEcheance <= today">Consommé</span>
+                                                <td>du {{ echetmp.datDebPeri|date: "dd/MM/yyyy" }} au {{ echetmp.datFinPeri|date: "dd/MM/yyyy" }}
+                                                    <span style="font-weight: bold; color: rgb(11, 13, 146);text-align: right;" *ngIf="echetmp.dateEcheance <= today2">Consommé</span>
                                                 </td>
                                                 <td>{{echetmp.prix}}</td>
                                                 <td>
-                                                    <p style="text-align: center;"><input type="checkbox" formControlName="coche" [(ngModel)]="echetmp.payeEcheance"
-                                                        (change)="considererEcheance(i)"></p>
+                                                    <p style="text-align: center;">
+                                                        <input type="checkbox" [(ngModel)]="echetmp.selectedPayer" [ngModelOptions]="{standalone: true}"
+                                                        (click)="onAEcheanceCheckedChange(i, $event)"> 
+                                                        <span style="color: coral;" *ngIf="echetmp.typPaiement?.valueOf() == 'avance'"> <span *ngIf="!echetmp.selectedPayer">A</span> Défalquée de l'Avance</span>
+                                                    </p>
                                                 </td>
                                             </tr>
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td style="text-align: center; font-weight: bold;" colspan="3">Total</td>
+                                                <td style="text-align: center; font-weight: bold;" colspan="4">Total</td>
                                                 <td style="text-align: center; font-weight: bold;" colspan="2">{{total}}</td>
                                             </tr>
                                         </tfoot>

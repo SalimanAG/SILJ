@@ -10,6 +10,13 @@ import { SignataireService } from '../administration/signataire-service.service'
 })
 export class Tools2Service {
 
+  public static typePeriodes = [
+    {code: '1', name: 'jour'},
+    {code: '2', name: 'semaine'},
+    {code: '3', name: 'mois'},
+    {code: '4', name: 'année'}
+  ];
+
   constructor() { }
 
   

@@ -195,7 +195,7 @@ export class PointVenteComponent implements OnInit {
 
     this.editPointVenteFormGroup = this.formBulder.group({
       editNumPv:['', Validators.required],
-      editDatePv:[new Date(), Validators.required],
+      editDatePv:[moment(new Date()).format('YYYY-MM-DDTHH:mm'), Validators.required],
      // editpayPoint:[0, Validators.required],
       editCorres:[0, Validators.required],
       editReg:[0, Validators.required]
@@ -746,6 +746,10 @@ export class PointVenteComponent implements OnInit {
     totalRemise = 0;
     totalTVA = 0;
     totalTTC = 0;
+
+    this.servicePointVente.getAllLignePointVente().subscribe(
+      (dataa) => {
+        this.lignePointVente = dataa;
     this.lignePointVente.forEach(element => {
       if(element.pointVente.numPointVente == commande.numPointVente){
         let lig = [];
@@ -831,6 +835,10 @@ export class PointVenteComponent implements OnInit {
 
     this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'pointVente.pdf'}));
     this.viewPdfModal.show();
+  },
+  (erreur) => {
+    console.log('Erreur lors de la récuparation de la liste des lignes de commande', erreur);
+  });
   }
 
 

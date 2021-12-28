@@ -16,9 +16,6 @@
                 <tr>
                   <th>Code</th>
                   <th classe="lib">Libellé</th>
-                  <!--th>Superficie</th-->
-                  <th>Valeur unitaire</th>
-                  <!--th>Structure Responsable</th-->
                   <th class="act">Actions</th>
                 </tr>
               </thead>
@@ -26,28 +23,11 @@
                 <tr *ngFor="let immeuble of immeuble; let i = index">
                   <td>{{ immeuble.codeIm }}</td>
                   <td>{{ immeuble.libIm }}</td>
-                  <!--td>{{ immeuble.superficie }}</td-->
-                  <td>{{ immeuble.valUnit }}</td>
-                  <!--td>{{ immeuble.stuctResp }}</td-->
                   <td>
                     <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initEditValLoc(i)"><span class="fa fa-edit"></span></button>
                     <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDeleteValLoc(i)"><span class="fa fa-trash"></span></button>
                     <button class="btn btn-info btn-sm" data-toggle="modal" (click)="initInfosValLoc(i)"><span class="fa fa-eye"></span></button>
-                    <button class="btn btn-dark btn-sm"><span class="fa fa-file-o"></span></button>
-                    <!--Le bouton des options-->
-                    <div class="btn-group" dropdown>
-                      <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
-                      <ul *dropdownMenu class="dropdown-menu" role="menu">
-                        <li role="menuitem"><a class="dropdown-item" href="#">Action</a></li>
-                        <li role="menuitem"><a class="dropdown-item" href="#">Another action</a>
-                        </li>
-                        <li role="menuitem"><a class="dropdown-item" href="#">Something else
-                          here</a></li>
-                        <li class="divider dropdown-divider"></li>
-                        <li role="menuitem"><a class="dropdown-item" href="#">Separated link</a>
-                        </li>
-                      </ul>
-                    </div>
+                    
                   </td>
                 </tr>
 
@@ -56,9 +36,6 @@
                     <tr>
                   <th>Code</th>
                   <th>Libellé</th>
-                  <!--th>Superficie</th-->
-                  <th>Valeur unitaire</th>
-                  <!--th>Structure Responsable</th-->
                   <th>Actions</th>
                 </tr>
               </tfoot>
@@ -96,41 +73,78 @@
                                       formControlName="addLibIm" autocomplete="off">
                                   </div>
                                 </div><!--/.row-->
+
                                 <div class="row">
-                                      <div class="form-group col-sm-12">
+                                  <div class="form-group col-sm">
+                                    <label for="addIlot">Ilot</label>
+                                    <input type="text" class="form-control" id="addIlot" placeholder="Ilot"
+                                      formControlName="addIlot" autocomplete="off">
+                                  </div>
+
+                                  <div class="form-group col-sm">
+                                    <label for="addParcelle">Parcelle</label>
+                                    <input type="text" class="form-control" id="addParcelle" placeholder="Parcelle"
+                                      formControlName="addParcelle" autocomplete="off">
+                                  </div>
+                                  
+                                  <div class="form-group col-sm">
+                                    <label for="addDimensions">Dimensions</label>
+                                    <input type="text" class="form-control" id="addDimensions" placeholder="Dimensions"
+                                      formControlName="addDimensions" autocomplete="off">
+                                  </div> 
+                                  <div class="form-check form-check-inline mr-3">
+                                    <input class="form-check-input" type="checkbox" id="addBatie"
+                                      formControlName="addBatie">
+                                    <label class="form-check-label" for="addBatie">Batie</label>
+                                  </div>                                 
+                                </div><!--/.row-->
+
+                                <div class="row">
+                                  <div class="form-group col-sm">
+                                    <label for="addForme">Forme</label>
+                                    <input type="text" class="form-control" id="addForme" placeholder="Forme"
+                                      formControlName="addForme" autocomplete="off">
+                                  </div>
+                                  
+                                  <div class="form-group col-sm">
+                                    <label for="addActiviter">Activité exercée</label>
+                                    <input type="text" class="form-control" id="addActiviter" placeholder="Activité exercée"
+                                      formControlName="addActiviter" autocomplete="off">
+                                  </div>                                  
+                                </div><!--/.row-->
+
+                                <div class="row">
+                                      <div class="form-group col-sm">
                                             <label for="addLocalisationIm">Localisation</label>
                                             <textarea class="form-control" id="addLocalisationIm" rows="1" placeholder="Localisation de la valeur locative"
                                               formControlName="addLocalisationIm" autocomplete="off"></textarea>
                                         </div>
 
-                                        <!--div class="form-group col-sm-6">
-                                                                            <label for="addEtataIm">Etat</label>
-                                            <select id="addEtataIm" name="addEtataIm" class="form-control"
-                                            formControlName = "addEtataIm">
-                                              <option value="true">true </option>
-                                            </select>
-                                          </div-->
+                                        <div class="form-group col-sm">
+                                          <label for="addStuctRespIm">Structure Responsable</label>
+                                          <input type="text" class="form-control" id="addStuctRespIm" placeholder="Structure Responsable"
+                                            formControlName="addStuctRespIm" autocomplete="off">
+                                        </div>
 
                                 </div>
                                 <div class="row">
-                                  <div class="form-group col-sm-4">
-                                    <label for="addSuperficieIm">Superficie</label>
-                                    <input type="text" class="form-control" id="addSuperficieIm" placeholder="Superficie"
+                                  <div class="form-group col-sm">
+                                    <label for="addSuperficieIm">Superficie en m²</label>
+                                    <input type="number" class="form-control" id="addSuperficieIm" placeholder="Superficie"
                                       formControlName="addSuperficieIm" autocomplete="off">
                                   </div>
-                                  <div class="form-group col-sm-4">
-                                    <label for="addValUnitIm">Type de tarification</label>
-                                    <select type="text" class="form-control" id="addValUnitIm" placeholder="Valeur unitaire "
-                                      formControlName="addValUnitIm" autocomplete="off">
-                                      <option value="true">Tarification à l'unité de mesure m²</option>
-                                      <option value="false">Tarification globale</option>
-                                      </select>
+                                  <div class="form-group col-sm">
+                                    <label for="addNbrFace">Nombre de Face</label>
+                                    <input type="number" class="form-control" id="addNbrFace" placeholder="Nombre de Face"
+                                      formControlName="addNbrFace" autocomplete="off">
                                   </div>
-                                  <div class="form-group col-sm-4">
-                                    <label for="addStuctRespIm">Structure Responsable</label>
-                                    <input type="text" class="form-control" id="addStuctRespIm" placeholder="Structure Responsable"
-                                      formControlName="addStuctRespIm" autocomplete="off">
+                                  <div class="form-group col-sm">
+                                    <label for="addNbrPlace">Nombre de Place</label>
+                                    <input type="number" class="form-control" id="addNbrPlace" placeholder="Nombre de Place"
+                                      formControlName="addNbrPlace" autocomplete="off">
                                   </div>
+                                  
+                                  
                                 </div><!--/.row-->
 
                                 <div class="row">
@@ -142,17 +156,18 @@
                                   <div class="form-group col-sm-4">
                                     <label for="addArr">Arrondissement</label>
                                       <select id="addArr" name="addArr" class="form-control"
-                                      formControlName = "addArr" required = "true" (click)="getAllQuartierByFormsArrondi1()">
+                                      formControlName = "addArr" required = "true" (change)="getAllQuartierByFormsArrondi1()">
                                         <option *ngFor="let arrondissement of arrondissement; let i = index"
-                                        [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
+                                        [value]="arrondissement.codeArrondi">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
                                       </select>
                                   </div>
                                   <div class="form-group col-sm-4">
                                     <label for="addQua">Quartier</label>
                                       <select id="addQua" name="addQua" class="form-control"
                                       formControlName = "addQua" required = "true">
+                                        <option value="-1">Selectionner le Quartier</option>
                                         <option *ngFor="let quartier of QuartierByArrondissement; let i = index"
-                                        [value]="i">{{ quartier.codeQuartier }} - {{ quartier.nomQuartier }}</option>
+                                        [value]="quartier.codeQuartier">{{ quartier.codeQuartier }} - {{ quartier.nomQuartier }}</option>
                                       </select>
                                   </div>
                                 </div><!--/.row-->
@@ -162,7 +177,7 @@
                                       <select id="addSite" name="addSite" class="form-control"
                                       formControlName = "addSite" required = "true">
                                         <option *ngFor="let site of site; let i = index"
-                                        [value]="i">{{ site.codeSite }} - {{ site.libSite }}</option>
+                                        [value]="site.codeSite">{{ site.codeSite }} - {{ site.libSite }}</option>
                                       </select>
                                   </div>
                                   <div class="form-group col-sm-6">
@@ -170,7 +185,7 @@
                                       <select id="addTypeValLoc" name="addTypeValLoc" class="form-control"
                                       formControlName = "addTypeValLoc" required = "true">
                                         <option *ngFor="let typeImmeuble of typeImmeuble; let i = index"
-                                        [value]="i">{{ typeImmeuble.codeTypIm }} - {{ typeImmeuble.libTypIm }}</option>
+                                        [value]="typeImmeuble.codeTypIm">{{ typeImmeuble.codeTypIm }} - {{ typeImmeuble.libTypIm }}</option>
                                       </select>
                                   </div>
                                 </div><!--/.row-->
@@ -213,77 +228,110 @@
                                   <div class="card-body">
                                         <div class="row">
                                           <div class="form-group col-sm-6">
-                                                                              <label for="editCodeIm">Code</label>
+                                            <label for="editCodeIm">Code</label>
                                             <input type="text" class="form-control" id="editCodeIm" placeholder="Code "
-                                              formControlName="editCodeIm" [ngModel]="editValLoc.codeIm" readonly="true" autocomplete="off">
+                                              formControlName="editCodeIm" readonly="true" autocomplete="off">
                                           </div>
                                           <div class="form-group col-sm-6">
                                             <label for="editLibIm">Libellé</label>
                                             <input type="text" class="form-control" id="editLibIm" placeholder="Libellé "
-                                              formControlName="editLibIm" [ngModel]="editValLoc.libIm" autocomplete="off">
+                                              formControlName="editLibIm" autocomplete="off">
                                           </div>
                                         </div><!--/.row-->
-                                          <div class="row">
-                                              <div class=" form-group col-sm-12">
-                                                  <label for="editLocalisationIm">Localisation</label>
-                                                  <textarea class="form-control" id="editLocalisationIm" rows="1" placeholder="Localisation"
-                                                    formControlName="editLocalisationIm" [ngModel]="editValLoc.localisationIm" autocomplete="off"></textarea>
-                                              </div>
-
-                                              <!--div class="form-group col-sm-6">
-                                                <label for="editEtatIm">Etat</label>
-                                                  <select id="editE                                        tatIm" name="addArr" class="form-control"
-                                                  formControlName = "editEtatIm">
-                                                    <option *ngFor="let arrondissement of arrondissement; let i = index"
-                                                    [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
-                                                  </select>
-                                              </div-->
-
+                                        <div class="row">
+                                          <div class="form-group col-sm">
+                                            <label for="editIlot">Ilot</label>
+                                            <input type="text" class="form-control" id="editIlot" placeholder="Ilot"
+                                              formControlName="editIlot" autocomplete="off">
                                           </div>
-                                    <div class="row">
-                                        <div class="form-group col-sm-6">
-                                          <label for="editSuperfici                                            eIm">Superficie</label>
-                                          <input type="text" class="form-control" id="editSuperficieIm" placeholder="Superficie"
-                                            formControlName="editSuperficieIm" [ngModel]="editValLoc.superficie" autocomplete="off">
+        
+                                          <div class="form-group col-sm">
+                                            <label for="editParcelle">Parcelle</label>
+                                            <input type="text" class="form-control" id="editParcelle" placeholder="Parcelle"
+                                              formControlName="editParcelle" autocomplete="off">
+                                          </div>
+                                          
+                                          <div class="form-group col-sm">
+                                            <label for="editDimensions">Dimensions</label>
+                                            <input type="text" class="form-control" id="editDimensions" placeholder="Dimensions"
+                                              formControlName="editDimensions" autocomplete="off">
+                                          </div> 
+                                          <div class="form-check form-check-inline mr-3">
+                                            <input class="form-check-input" type="checkbox" id="editBatie"
+                                              formControlName="editBatie">
+                                            <label class="form-check-label" for="editBatie">Batie</label>
+                                          </div>                                 
+                                        </div><!--/.row-->
+        
+                                        <div class="row">
+                                          <div class="form-group col-sm">
+                                            <label for="editForme">Forme</label>
+                                            <input type="text" class="form-control" id="editForme" placeholder="Forme"
+                                              formControlName="editForme" autocomplete="off">
+                                          </div>
+                                          
+                                          <div class="form-group col-sm">
+                                            <label for="editActiviter">Activité exercée</label>
+                                            <input type="text" class="form-control" id="editActiviter" placeholder="Activité exercée"
+                                              formControlName="editActiviter" autocomplete="off">
+                                          </div>                                  
+                                        </div><!--/.row-->
+        
+                                        <div class="row">
+                                              <div class="form-group col-sm">
+                                                    <label for="editLocalisationIm">Localisation</label>
+                                                    <textarea class="form-control" id="editLocalisationIm" rows="1" placeholder="Localisation de la valeur locative"
+                                                      formControlName="editLocalisationIm" autocomplete="off"></textarea>
+                                                </div>
+        
+                                                <div class="form-group col-sm">
+                                                  <label for="editStuctRespIm">Structure Responsable</label>
+                                                  <input type="text" class="form-control" id="editStuctRespIm" placeholder="Structure Responsable"
+                                                    formControlName="editStuctRespIm" autocomplete="off">
+                                                </div>
+        
                                         </div>
-                                        <div class="form-group col-sm-6">
-                                          <label for="editValUnitIm">Valeur Unitaire</label>
-                                          <select type="text" class="form-control" id="editValUnitIm" placeholder=" valeur unitaire "
-                                            formControlName="editValUnitIm" [ngModel]="editValLoc.valUnit" autocomplete="off">
-                                            <option value="true">Tarification à l'unité de mesure m²</option>
-                                            <option value="false">Tarification globale</option>
-                                            </select>
-                                        </div>
-                                    </div><!--/.row-->
+                                        <div class="row">
+                                          <div class="form-group col-sm">
+                                            <label for="editSuperficieIm">Superficie en m²</label>
+                                            <input type="number" class="form-control" id="editSuperficieIm" placeholder="Superficie"
+                                              formControlName="editSuperficieIm" autocomplete="off">
+                                          </div>
+                                          <div class="form-group col-sm">
+                                            <label for="editNbrFace">Nombre de Face</label>
+                                            <input type="number" class="form-control" id="editNbrFace" placeholder="Nombre de Face"
+                                              formControlName="editNbrFace" autocomplete="off">
+                                          </div>
+                                          <div class="form-group col-sm">
+                                            <label for="editNbrPlace">Nombre de Place</label>
+                                            <input type="number" class="form-control" id="editNbrPlace" placeholder="Nombre de Place"
+                                              formControlName="editNbrPlace" autocomplete="off">
+                                          </div>
+                                          
+                                          
+                                        </div><!--/.row-->
 
                                     <div class="row">
-                                      <div class="form-group col-sm-6">
-                                        <label for="editStuctRespIm">Structure Responsable</label>
-                                            <input type="text" class="form-control" id="editStuctRespIm" placeholder="Structure responsable "
-                                          formControlName="editStuctRespIm" [ngModel]="editValLoc.stuctResp" autocomplete="off">
-                                      </div>
-                                      <div class="form-group col-sm-6">
+                                      <div class="form-group col-sm">
                                         <label for="editAutreIm">Autres informations</label>
                                         <input type="text" class="form-control" id="editAutreIm" placeholder="Autres informations "
-                                          formControlName="editAutreIm"  [ngModel]="editValLoc.autre" autocomplete="off">
+                                          formControlName="editAutreIm" autocomplete="off">
                                       </div>
-                                    </div><!--/.row-->
-
-                                    <div class="row">
-                                      <div class="form-group col-sm-6">
+                                      <div class="form-group col-sm">
                                         <label for="editArr">Arrondissement</label>
-                                          <select id="editArr" n ame="editArr" class="form-control"
-                                          formControlName = "editArr" (click)="getAllQuartierByFormsArrondi2()">
+                                          <select id="editArr" name="editArr" class="form-control"
+                                          formControlName = "editArr" (change)="getAllQuartierByFormsArrondi2()">
                                             <option *ngFor="let arrondissement of arrondissement; let i = index"
-                                            [value]="i">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
+                                            [value]="arrondissement.codeArrondi">{{ arrondissement.codeArrondi }} - {{ arrondissement.nomArrondi }}</option>
                                           </select>
                                       </div>
-                                      <div class="form-group col-sm-6">
+                                      <div class="form-group col-sm">
                                         <label for="editQua">Quartier</label>
                                           <select id="editQua" name="editQua" class="form-control"
                                           formControlName = "editQua">
+                                            <option value="-1">Selectionner le Quartier</option>
                                             <option *ngFor="let quartier of QuartierByArrondissement; let i = index"
-                                            [value]="i">{{ quartier.codeQuartier }} - {{ quartier.nomQuartier }}</option>
+                                            [value]="quartier.codeQuartier">{{ quartier.codeQuartier }} - {{ quartier.nomQuartier }}</option>
                                           </select>
                                       </div>
                                     </div><!--/.row-->
@@ -293,7 +341,7 @@
                                           <select id="editSite" name="editSite" class="form-control"
                                           formControlName = "editSite">
                                             <option *ngFor="let site of site; let i = index"
-                                            [value]="i">{{ site.codeSite }} - {{ site.libSite }}</option>
+                                            [value]="site.codeSite">{{ site.codeSite }} - {{ site.libSite }}</option>
                                           </select>
                                       </div>
                                       <div class="form-group col-sm-6">
@@ -301,7 +349,7 @@
                                           <select id="editTypeValLoc" name="editTypeValLoc" class="form-control"
                                           formControlName = "editTypeValLoc">
                                             <option *ngFor="let typeImmeuble of typeImmeuble; let i = index"
-                                            [value]="i">{{ typeImmeuble.codeTypIm }} - {{ typeImmeuble.libTypIm }}</option>
+                                            [value]="typeImmeuble.codeTypIm">{{ typeImmeuble.codeTypIm }} - {{ typeImmeuble.libTypIm }}</option>
                                           </select>
                                       </div>
                                     </div><!--/.row-->
@@ -313,7 +361,7 @@
                           <!--/div-->
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" (click)="warningModal1.hide()">Annuler</button>
-                            <button type="submit" cla ss="btn btn-warning">Modifier</button>
+                            <button type="submit" class="btn btn-warning">Modifier</button>
                             </div>
                         </div> <!-- /.modal-content -->
                         </div> <!-- /.modal-content -->
@@ -325,7 +373,7 @@
 
                   <!--Modale 3-->
                   <div bsModal #dangerModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dia    log modal-danger" role="document">
+                    <div class="modal-dialog modal-danger" role="document">
                       <div class="modal-content">
                             <div class="modal-header">
                           <h4 class="modal-title">Suprimmer une valeur locative</h4>
@@ -349,7 +397,7 @@
                   <div bsModal #infoModal1="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-info modal-lg" role="document">
                       <div class="modal-content">
-                        <div cl ass="modal-header">
+                        <div class="modal-header">
                           <h4 class="modal-title">Détail Sur Valeur Locative</h4>
                           <button type="button" class="close" (click)="infoModal1.hide()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -381,10 +429,6 @@
                                 <td>{{ infoValLoc.superficie }} m2</td>
                               </tr>
                               <tr>
-                                <th>Valeur Unitaire</th>
-                                <td>{{ infoValLoc.valUnit }} F CFA</td>
-                              </tr>
-                              <tr>
                                 <th>Structure Responsable</th>
                                 <td>{{ infoValLoc.stuctResp }}</td>
                               </tr>
@@ -394,15 +438,15 @@
                               </tr>
                               <tr>
                                 <th>Arrondissement</th>
-                                <td>{{ infoValLoc.arrondissement.nomArrondi }}</td>
+                                <td>{{ infoValLoc.arrondissement?.nomArrondi }}</td>
                               </tr>
                               <tr>
                                 <th>Quartier</th>
-                                <td>{{ infoValLoc.quartier.nomQuartier }}</td>
+                                <td>{{ infoValLoc.quartier?.nomQuartier }}</td>
                               </tr>
                               <tr>
                                 <th>Type valeur locative</th>
-                                <td>{{ infoValLoc.typeImmeuble.libTypIm }}</td>
+                                <td>{{ infoValLoc.typeImmeuble?.libTypIm }}</td>
                               </tr>
                             </tbody>
                           </table>
@@ -462,7 +506,7 @@
                   <!--Modale 1-->
                   <div bsModal #primaryModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                     aria-hidden="true">
-                    <div class="modal-dialog modal-primary" role="document">
+                    <div class="modal-dialog modal-lg modal-primary" role="document">
                       <form [formGroup]="addTypeImFormsGroup" (ngSubmit)="onSubmitAddTypeImForm()">
                         <div class="modal-content">
                               <div class="modal-header">
@@ -480,21 +524,55 @@
                                 </div>
                                 <div class="card-body">
                                   <div class="row">
-                                    <div class="form-group col-sm-12">
+                                    <div class="form-group col-sm">
                                       <label for="addCodeTypIm">Code</label>
                                       <input type="text" class="form-control" id="addCodeTypIm" placeholder="Code "
-                                      formControlName="addCodeTypIm" a      utocomplete="off">
+                                      formControlName="addCodeTypIm" autocomplete="off">
+                                    </div>
+                                    <div class="form-group col-sm">
+                                      <label for="addLibTypIm">Libellé</label>
+                                      <input type="texte" class="form-control" id="addLibTypIm" placeholder="Libellé"
+                                      formControlName="addLibTypIm" autocomplete="off">
                                     </div>
 
                                   </div><!--/.row-->
                                   <div class="row">
-                                    <div class="form-group col-sm-12">
-                                      <label for="addLibTypIm">Libellé</label>
-                                      <input type="texte" class="form-control" id="addLibTypIm" placeholder="Libellé"
-                                      formControlName="addLibTypIm" autocomplete="off">
-                                          </div>
+                                      <div class="form-group col-sm">
+                                        <label for="addPeriode">Période des échéances</label>
+                                        <select id="addPeriode" name="addPeriode" class="form-control"
+                                        formControlName = "addPeriode">
+                                          <option *ngFor="let type of periodes; let i = index"
+                                          [value]="type.code">{{ type.code }} - {{ type.name }}      </option>
+                                        </select>
+                                      </div>
+                                      
+                                      <div class="form-check form-check-inline mr-4">
+                                        <input class="form-check-input" type="checkbox" id="addValUnit"
+                                          formControlName="addValUnit">
+                                        <label class="form-check-label" for="addValUnit">Montant Unitaire</label>
+                                      </div>
 
                                   </div><!--/.row-->
+                                  <div class="form-group row" *ngIf="addTypeImFormsGroup.value['addValUnit'] == true">
+                                    <div class="col-md-12 col-form-label">
+                                      
+                                      <div class="form-check form-check-inline mr-3">
+                                        <input class="form-check-input" type="checkbox" id="addValSuperfi"
+                                          formControlName="addValSuperfi">
+                                        <label class="form-check-label" for="addValSuperfi">Par superficie (m²)</label>
+                                      </div>
+                                      <div class="form-check form-check-inline mr-3">
+                                        <input class="form-check-input" type="checkbox" id="addValFace"
+                                          formControlName="addValFace">
+                                        <label class="form-check-label" for="addValFace">Par Nombre de Face</label>
+                                      </div>
+                                      <div class="form-check form-check-inline mr-3">
+                                        <input class="form-check-input" type="checkbox" id="addValPlace"
+                                          formControlName="addValPlace">
+                                        <label class="form-check-label" for="addValPlace">Par Nombre de Place</label>
+                                      </div>
+                                    </div>
+                                  </div>
 
 
                                 </div>
@@ -512,7 +590,7 @@
 
                   <!--Modale 2-->
                   <div bsModal #warningModal2="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-warning" role="document">
+                    <div class="modal-dialog modal-lg modal-warning" role="document">
                       <form [formGroup]="editTypeImFormsGroup" (ngSubmit)="onSubmitEditTypeImForm()">
                         <div class="modal-content    ">
                           <div class="modal-header">
@@ -530,23 +608,58 @@
                               </div>
                               <div class="card-body">
                                 <div class="row">
-                                  <div class="form-group col-sm-12">
+                                  <div class="form-group col-sm">
                                     <label for="editCodeTypIm">Code</label>
                                     <input type="text" class="form-control" id="editCodeTypIm" readonly="true"
                                     formControlName="editCodeTypIm" placeholder="Code"
-                                    [ngModel]="    editTypeIm.codeTypIm" autocomplete="off">
+                                     autocomplete="off">
                                   </div>
-
-                                </div><!--/.row-->
-                                <div class="row">
-                                  <div class="form-group col-sm-12">
+                                  <div class="form-group col-sm">
                                     <label for="editLibTypIm">Libellé</label>
                                     <input type="texte" class="form-control" id="editLibTypIm"
                                     formControlName="editLibTypIm" placeholder="Libellé "
-                                    [ngModel]="editTypeIm.libTypIm" autocomplete="off">
-                                      </div>
+                                    autocomplete="off">
+                                  </div>
+                                </div><!--/.row-->
+                                
+
+                                <div class="row">
+                                  <div class="form-group col-sm">
+                                    <label for="editPeriode">Période des échéances</label>
+                                    <select id="editPeriode" name="editPeriode" class="form-control"
+                                    formControlName = "editPeriode">
+                                      <option *ngFor="let type of periodes; let i = index"
+                                      [value]="type.code">{{ type.code }} - {{ type.name }}      </option>
+                                    </select>
+                                  </div>
+                                  
+                                  <div class="form-check form-check-inline mr-4">
+                                    <input class="form-check-input" type="checkbox" id="editValUnit"
+                                      formControlName="editValUnit">
+                                    <label class="form-check-label" for="editValUnit">Montant Unitaire</label>
+                                  </div>
 
                                 </div><!--/.row-->
+                                <div class="form-group row" *ngIf="editTypeImFormsGroup.value['editValUnit'] == true">
+                                  <div class="col-md-12 col-form-label">
+                                    
+                                    <div class="form-check form-check-inline mr-3">
+                                      <input class="form-check-input" type="checkbox" id="editValSuperfi"
+                                        formControlName="editValSuperfi">
+                                      <label class="form-check-label" for="editValSuperfi">Par superficie (m²)</label>
+                                    </div>
+                                    <div class="form-check form-check-inline mr-3">
+                                      <input class="form-check-input" type="checkbox" id="editValFace"
+                                        formControlName="editValFace">
+                                      <label class="form-check-label" for="editValFace">Par Nombre de Face</label>
+                                    </div>
+                                    <div class="form-check form-check-inline mr-3">
+                                      <input class="form-check-input" type="checkbox" id="editValPlace"
+                                        formControlName="editValPlace">
+                                      <label class="form-check-label" for="editValPlace">Par Nombre de Place</label>
+                                    </div>
+                                  </div>
+                                </div>
 
                               </div>
                             </div>
@@ -592,7 +705,7 @@
         <ng-template tabHeading><i class="icon-basket-loaded"></i> Prix des valeurs locatives</ng-template>
         <div class="card">
           <div class="card-header">
-            <i class="fa fa-align-justify"></i> Liste des prix des valeur locative
+            <i class="fa fa-align-justify"></i> Liste des prix des types de valeur locative
           </div>
           <div class="card-body">
             <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
@@ -605,7 +718,7 @@
               <thead>
                 <tr>
                   <th>Numéro</th>
-                  <th>Valeur locative</th>
+                  <th>Type de Valeur locative</th>
                   <th>Prix</th>
                   <th>Date Début</th>
                   <th>Date Fin</th>
@@ -615,7 +728,7 @@
               <tbody>
                 <tr *ngFor="let prixImmeuble of prixImmeuble; let i= index">
                   <td>{{ prixImmeuble.idPrixIm }}</td>
-                  <td>{{ prixImmeuble.immeuble.codeIm }}</td>
+                  <td>{{ prixImmeuble.typeImmeuble.codeTypIm }} - {{ prixImmeuble.typeImmeuble.libTypIm }}</td>
                   <td>{{ prixImmeuble.prixIm }}</td>
                   <td>{{ prixImmeuble.dateDebPrixIm | date :  "dd/MM/y" }}</td>
                   <td>{{ prixImmeuble.dateFinPrixIm | date :  "dd/MM/y" }}</td>
@@ -629,7 +742,7 @@
               <tfoot>
                 <tr>
                   <th>Numéro</th>
-                  <th>Valeur locative</th>
+                  <th>Type de Valeur locative</th>
                   <th>Prix</th>
                   <th>Date Début</th>
                   <th>Date Fin</th>
@@ -645,8 +758,8 @@
                       <form [formGroup]="addPrixImFormsGroup" (ngSubmit)="onSubmitAddPrixImForm()">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h4 class="modal-title">Enrégistrer un Prix de valeur locative</h4>
-                            <button type="b    utton" class="close" (click)="primaryModal2.hide()" aria-label="Close">
+                            <h4 class="modal-title">Enrégistrer un Prix d'un Type de valeur locative</h4>
+                            <button type="button" class="close" (click)="primaryModal2.hide()" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
                           </div>
@@ -654,17 +767,17 @@
                             <!-- Formulaire pour Enrégistrer une Famille d'article-->
                             <div class="card">
                                 <div class="card-header">
-                                  <strong>Nouveau prix de valeur locative</strong>
+                                  <strong>Nouveau prix d'un type de valeur locative</strong>
 
                                 </div>
                                 <div class="card-body">
                                   <div class="row">
                                     <div class="form-group col-sm-12">
-                                      <label for="addVal">Valeur locative</label>
-                                        <select id="addVal" name="addVal" class="form-control"
-                                        formControlName = "addVal">
-                                          <option *ngFor="let immeuble of immeuble; let i = index"
-                                          [value]="i">{{ immeuble.codeIm }} - {{ immeuble.libIm }}      </option>
+                                      <label for="addType">Type de Valeur locative</label>
+                                        <select id="addType" name="addType" class="form-control"
+                                        formControlName = "addType">
+                                          <option *ngFor="let type of typeImmeuble; let i = index"
+                                          [value]="type.codeTypIm">{{ type.codeTypIm }} - {{ type.libTypIm }}      </option>
                                         </select>
                                     </div>
                                   </div>
@@ -699,7 +812,7 @@
                           </div>
                                 <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" (click)="primaryModal3.hide()">Annuler</button>
-                            <button type="submit" class="btn btn-primary" [disabled]="addPrixImFormsGroup.invalid || immeuble?.length == 0 ">Sauvégarder</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addPrixImFormsGroup.invalid || typeImmeuble?.length == 0 ">Sauvégarder</button>
                           </div>
                         </div><!-- /.modal-content -->
                       </form>
@@ -709,13 +822,13 @@
                   <!-- /.modal 1 -->
 
                   <!--Modale 2-->
-                        <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                          aria-hidden="true">
+                  <div bsModal #warningModal3="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                    aria-hidden="true">
                     <div class="modal-dialog modal-warning" role="document">
                       <form [formGroup]="editPrixImFormsGroup" (ngSubmit)="onSubmitEditPrixImForm()">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h4 class="modal-title">Modifier un prix de valeur locative</h4>
+                            <h4 class="modal-title">Modifier un prix d'un de valeur locative</h4>
                             <button type="button    " class="close" (click)="warningModal3.hide()" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
@@ -724,7 +837,7 @@
                             <!-- Formulaire pour Modifier une Famille d'article-->
                             <div class="card">
                               <div class="card-header">
-                                <strong>Modifier un prix de valeur locative</strong>
+                                <strong>Modifier un prix d'un Type de valeur locative</strong>
 
                               </div>
                               <div class="card-body">
@@ -732,32 +845,32 @@
                                   <div class="form-group col-sm-12">
                                     <label for="editIdPrixIm">Code</label>
                                     <input type="text" class="form-control" id="editIdPrixIm" placeholder="Code de l'article"
-                                      formControlName="editIdPrixIm" readonly="true" [ngModel]="editPrixImmeuble.idPrixIm" autocomplete="off">
+                                      formControlName="editIdPrixIm" readonly="true" autocomplete="off">
                                   </div>
                                 </div>
                                 <div class="row">
                                   <div class="form-group col-sm-12">
-                                    <label for="editVal">Valeur locative</label>
-                                      <select id="editVal" name="editVal" class="form-control"
-                                      formControlName = "editVal">
-                                        <option *ngFor="let immeuble of immeuble; let i = index"
-                                        [value]="i">{{ immeuble.codeIm }} - {{ immeuble.libIm }}</option>
+                                    <label for="editType">Type de Valeur locative</label>
+                                      <select id="editType" name="editType" class="form-control"
+                                      formControlName = "editType">
+                                        <option *ngFor="let type of typeImmeuble; let i = index"
+                                        [value]="type.codeTypIm">{{ type.codeTypIm }} - {{ type.libTypIm }}</option>
                                       </select>
                                   </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="form-group col-sm-12">
-                                      <label for="editPrixIm">Prix valeur locative</label>
+                                      <label for="editPrixIm">Prix du Type de valeur locative</label>
                                       <input type="text" class="form-control" id="editPrixIm" placeholder="Prix"
-                                      formControlName="editPrixIm" [ngModel]="editPrixImmeuble.prixIm" autocomplete="off">
+                                      formControlName="editPrixIm" autocomplete="off">
                                     </div>
                                 </div><!--/.row-->
                                 <div class="row">
                                   <div class="form-group col-sm-12">
                                     <label for="editDateDebutPrixIm">Date Début</label>
-                                    <input type="d                             ate" class="form-control" id="editDateDebutPrixIm" placeholder="Date Début"
-                                    formControlName="editDateDebutPrixIm" [ngModel]="editPrixImmeuble.dateDebPrixIm">
+                                    <input type="date" class="form-control" id="editDateDebutPrixIm" placeholder="Date Début"
+                                    formControlName="editDateDebutPrixIm" >
                                   </div>
 
                                 </div><!--/.row-->
@@ -766,7 +879,7 @@
                                   <div class="form-group col-sm-12">
                                     <label for="editDateFinPrixIm">Date Fin</label>
                                     <input type="date" class="form-control" id="editDateFinPrixIm" placeholder="Date Fin"
-                                    formControlName="editDateFinPrixIm" [ngModel]="editPrixImmeuble.dateFinPrixIm">
+                                    formControlName="editDateFinPrixIm" >
                                   </div>
 
                                 </div><!--/.row-->
@@ -776,7 +889,7 @@
                           </div>
                           <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" (click)="warningModal3.hide()">Annuler</button>
-                            <button type="submit" class="btn btn-warning" [disabled]="editPrixImFormsGroup.invalid">Modifier</button>
+                            <button type="submit" class="btn btn-warning" [disabled]="editPrixImFormsGroup.invalid || typeImmeuble?.length == 0 ">Modifier</button>
                           </div>
                         </div><!-- /.modal-content -->
                       </form>
@@ -790,13 +903,13 @@
                     <div class="modal-dialog modal-danger" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h4 class="modal-title">Suprimmer un prix de valeur locative</h4>
+                          <h4 class="modal-title">Suprimmer un prix de Type de valeur locative</h4>
                           <button type="button" class="close" (click)="dangerModal3.hide()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                             </div>
                         <div class="modal-body">
-                          <p>Voul ez-vous supprimez le prix de valeur locative <mark style="color: red;">{{ suprPrixImmeuble.idPrixIm }}</mark>
+                          <p>Voulez-vous supprimez le prix du type valeur locative <mark style="color: red;">{{ suprPrixImmeuble.idPrixIm }}</mark>
                           </p>
                           <p>Le confirmez-vous ?</p>
                         </div>

@@ -227,6 +227,8 @@ export class RecollementComponent implements OnInit {
           if(element.codeMagasin == 'CM' || element.codeMagasin == 'CT'){
 
             this.magasinMairieTresor.push(element);
+            console.log('verifier ooh', this.magasinMairieTresor);
+            
 
           }
 
@@ -241,7 +243,7 @@ export class RecollementComponent implements OnInit {
     this.serviceRecollement.getAllRecollement().subscribe(
       (data) => {
         this.recollement = data;
-        this.dtTrigger1.next();
+        this.dtTrigger1.next(); 
       },
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des recollements', erreur);
@@ -271,6 +273,7 @@ export class RecollementComponent implements OnInit {
       this.serviceCorrespodant.getAMagasinById('CT').subscribe(
         (data) => {
           this.magasinMairieTresor.push(data);
+          
         },
         (erreur) => {
           console.log('Erreur lors de la récupération de la liste des magasins', erreur);
@@ -831,6 +834,10 @@ initPrintPdfOfRecollement(inde:number){
   totalRemise = 0;
   totalTVA = 0;
   totalTTC = 0;
+
+  this.serviceRecollement.getAllLigneRecollement().subscribe(
+    (dataa) => {
+      this.ligneRecollement = dataa;
   this.ligneRecollement.forEach(element => {
     if(element.recollement.numRecollement == commande.numRecollement){
       let lig = [];
@@ -907,6 +914,10 @@ initPrintPdfOfRecollement(inde:number){
 
   this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(doc.output('datauristring', {filename:'recollement.pdf'}));
   this.viewPdfModal.show();
+},
+(erreur) => {
+  console.log('Erreur lors de la récuparation de la liste des lignes de commande', erreur);
+});
 }
 
 

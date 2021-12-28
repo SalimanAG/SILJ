@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-      <i class="fa fa-align-justify"></i> Listes des Bons d'Approvisionnement
+      <i class="fa fa-align-justify"></i> Listes des Bons d'Approvisionnements
   </div>
   <div class="card-body">
     <div class="row" style="margin: 1%; margin-left: 0; margin-right: 0;">
@@ -24,10 +24,10 @@
                   <td>{{ appro.dateAppro | date:"dd-MM-yyyy" }}</td>
                   <td>{{ appro.descriptionAppro }}</td>
                   <td>
-                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
-                      <button class="btn btn-danger btn-sm" *ngIf="!appro.valideAppro"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
-                      <button class="btn btn-info btn-sm" *ngIf="appro.valideAppro" data-toggle="modal" (click)="initAnnulerAppro(i)"><span class="fa fa-undo"></span></button>
-                      <button class="btn btn-dark btn-sm" data-toggle="modal" (click)="initPrintToPdfOfAnAppro(i)"><span class="fa fa-file-o"></span></button>
+                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit" title="Modiffier le bon approvisionnement"></span></button>
+                      <button class="btn btn-danger btn-sm" *ngIf="!appro.valideAppro"  data-toggle="modal" (click)="initDeleteCommande(i)" title="Supprimer le bon approvisionnement"><span class="fa fa-trash"></span></button>
+                      <button class="btn btn-info btn-sm" *ngIf="appro.valideAppro" data-toggle="modal" (click)="initAnnulerAppro(i)" title="Annuler le bon approvisionnement"><span class="fa fa-undo"></span></button>
+                      <button class="btn btn-dark btn-sm" data-toggle="modal" (click)="initPrintToPdfOfAnAppro(i)" title="Imprimer le bon approvisionnement"><span class="fa fa-file-o"></span></button>
                       <!--Le bouton des options
                       <div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
@@ -61,7 +61,7 @@
             <form [formGroup]="addApproFormsGroup" (ngSubmit)="onSubmitAddCommandeFormsGroup()">
               <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Ajouter une Demande d'Approvisionnement</h4>
+                    <h4 class="modal-title">Ajouter un Bon d'Approvisionnement</h4>
                     <button type="button" class="close" (click)="addComModal.hide()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -103,8 +103,8 @@
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="addDateDemandeAppro">Date</label>
-                      <input type="date" class="form-control" id="addDateDemandeAppro" readonly
-                       [ngModel]="concernedDemandeAppro.dateDA" [ngModelOptions]="{standalone: true}">
+                      <input type="text"  class="form-control" id="addDateDemandeAppro" readonly
+                       [ngModel]="concernedDemandeAppro.dateDA|date:'dd/MM/yyyy'" [ngModelOptions]="{standalone: true}">
                     </div>
                     <div class="form-group col-sm-4">
                       <label for="addExercice">Exercice</label>
@@ -135,7 +135,7 @@
                         <tr *ngFor="let addLignAppro of tempAddLigneAppro; let i = index">
                           <td>{{ addLignAppro.ligneDA.article.codeArticle }}</td>
                           <td>{{ addLignAppro.ligneDA.article.libArticle }}</td>
-                          <td><input [(ngModel)]="tempAddLigneAppro[i].puligneAppro" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                          <td>{{tempAddLigneAppro[i].puligneAppro}}</td>
                           <td><input [(ngModel)]="tempAddLigneAppro[i].quantiteLigneAppro" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                           <td>{{ tempAddLigneAppro[i].quantiteLigneAppro*tempAddLigneAppro[i].puligneAppro }}</td>
                           <td>
@@ -147,13 +147,13 @@
                                 <div class="col-sm-5"><input [(ngModel)]="tempAddPlageNumArticle[i2].numDebPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
                                 <div class="col-sm-1"><p class="align-center" >à</p></div>
                                 <div class="col-sm-4"><input [(ngModel)]="tempAddPlageNumArticle[i2].numFinPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
-                                <div class="col-sm-1" ><button type="button" (click)="popALigneOfPlageNumArticle1(i2)" class="btn btn-danger btn-sm" data-toggle="modal"><span class="fa fa-minus-circle"></span></button></div>
+                                <div class="col-sm-1" ><button type="button" (click)="popALigneOfPlageNumArticle1(i2)" class="btn btn-danger btn-sm" data-toggle="modal" title="Rétirer"><span class="fa fa-minus-circle"></span></button></div>
                               </div>
                             </div>
 
                           </td>
                           <td>
-                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfComm1(i)"><span class="fa fa-trash"></span></button>
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfComm1(i)" title="Rétirer"><span class="fa fa-trash"></span></button>
                           </td>
                         </tr>
 
@@ -178,7 +178,7 @@
         <form [formGroup]="editApproFormsGroup" (ngSubmit)="onSubmitEditCommandeFormsGroup()">
           <div class="modal-content">
             <div class="modal-header">
-            <h4 class="modal-title">Modifer Commande</h4>
+            <h4 class="modal-title">Modifer un Bon d'Approvisionnement</h4>
             <button type="button" class="close" (click)="editComModal.hide()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -195,7 +195,7 @@
                   <div class="form-group col-sm-3">
                     <label for="editDateAppro">Date</label>
                     <input type="date" class="form-control" id="editDateAppro"
-                     formControlName="editDateAppro" [ngModel]="editAppro.dateAppro">
+                     formControlName="editDateAppro" [ngModel]="editAppro.dateAppro|date:'dd/MM/yyyy'">
                   </div>
                   <div class="form-group col-sm-3">
                     <label for="editDescriptionAppro">Description</label>
@@ -220,8 +220,8 @@
                   </div>
                   <div class="form-group col-sm-4">
                     <label for="editDateDemandeAppro">Date</label>
-                    <input type="date" class="form-control" id="editDateDemandeAppro" readonly
-                     [ngModel]="concernedDemandeAppro.dateDA" [ngModelOptions]="{standalone: true}">
+                    <input type="text" class="form-control" id="editDateDemandeAppro" readonly
+                     [ngModel]="concernedDemandeAppro.dateDA|date:'dd/MM/yyyy'" [ngModelOptions]="{standalone: true}">
                   </div>
                   <div class="form-group col-sm-4">
                     <label for="editExercice">Exercice</label>
@@ -252,7 +252,7 @@
                       <tr *ngFor="let editLignAppro of tempEditLigneAppro; let i = index">
                         <td>{{ editLignAppro.ligneDA.article.codeArticle }}</td>
                         <td>{{ editLignAppro.ligneDA.article.libArticle }}</td>
-                        <td><input [(ngModel)]="tempEditLigneAppro[i].puligneAppro" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
+                        <td>{{tempEditLigneAppro[i].puligneAppro}}</td>
                         <td><input [(ngModel)]="tempEditLigneAppro[i].quantiteLigneAppro" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                         <td>{{ tempEditLigneAppro[i].quantiteLigneAppro*tempEditLigneAppro[i].puligneAppro }}</td>
                         <td>
@@ -264,13 +264,13 @@
                               <div class="col-sm-5"><input [(ngModel)]="tempEditPlageNumArticle[i2].numDebPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
                               <div class="col-sm-1"><p class="align-center" >à</p></div>
                               <div class="col-sm-4"><input [(ngModel)]="tempEditPlageNumArticle[i2].numFinPlage" [ngModelOptions]="{standalone: true}" class="form-control " type="number"></div>
-                              <div class="col-sm-1" ><button type="button" (click)="popALigneOfPlageNumArticle2(i2)" class="btn btn-danger btn-sm" data-toggle="modal"><span class="fa fa-minus-circle"></span></button></div>
+                              <div class="col-sm-1" ><button type="button" (click)="popALigneOfPlageNumArticle2(i2)" class="btn btn-danger btn-sm" data-toggle="modal" title="Rétirer"><span class="fa fa-minus-circle"></span></button></div>
                             </div>
                           </div>
 
                         </td>
                         <td>
-                          <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfComm1(i)"><span class="fa fa-trash"></span></button>
+                          <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfComm1(i)" title="Rétirer"><span class="fa fa-trash"></span></button>
                         </td>
                       </tr>
 
@@ -296,7 +296,7 @@
     <div class="modal-dialog modal-danger" role="document">
       <div class="modal-content">
           <div class="modal-header">
-          <h4 class="modal-title text-center">Supprimer un Approvisionnement</h4>
+          <h4 class="modal-title text-center">Supprimer un Bon d'Approvisionnement</h4>
           <button type="button" class="close" (click)="deleteComModal.hide()" aria-label="Close">
               <span aria-hidden="true">&times;</span>
           </button>
@@ -319,13 +319,13 @@
     <div class="modal-dialog modal-secondary" role="document">
       <div class="modal-content">
           <div class="modal-header">
-          <h4 class="modal-title text-center">Annuler un Approvisionnement</h4>
+          <h4 class="modal-title text-center">Annuler un Bon Approvisionnement</h4>
           <button type="button" class="close" (click)="annulerApproModal.hide()" aria-label="Close">
               <span aria-hidden="true">&times;</span>
           </button>
           </div>
           <div class="modal-body">
-            <p>Vous êtes sur le point d'ANNULER le Placement <mark style="color: red;">{{ annulAppro.numAppro }}</mark></p>
+            <p>Vous êtes sur le point d'ANNULER le Bon d'Approvisionnement <mark style="color: red;">{{ annulAppro.numAppro }}</mark></p>
             <p>Le confirmez-vous ?</p>
           </div>
           <div class="modal-footer">

@@ -24,6 +24,10 @@ export class ContratLocationService {
     return this.httpCli.post<Contrat>(this.host+'/location/contrat/list', corps);
   }
 
+  addListAContrat(corps:Contrat[]){
+    return this.httpCli.post<Contrat[]>(this.host+'/location/contrat/list2', corps);
+  }
+
   editAContrat(code:String, corps:Contrat){
     return this.httpCli.put<Contrat>(this.host+'/location/contrat/byCodCon/'+code, corps);
   }

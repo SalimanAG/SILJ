@@ -24,6 +24,7 @@ import { Signer } from '../../../../models/signer.model';
 import { Occuper } from '../../../../models/occuper.model';
 import { SignataireService } from '../../../../services/administration/signataire-service.service';
 import { Tools2Service } from '../../../../services/utilities/tools2.service';
+import { EncapCommande } from '../../../../models/EncapCommande';
 
 @Component({
   selector: 'app-commande',
@@ -375,8 +376,25 @@ export class CommandeComponent implements OnInit {
     this.serviceExercice.exoSelectionner,
     this.addCommandeFormGroup.value['addDateRemiseCommande']);
 
+
     //console.log(this.tempAddLigneCommandes, newComm);
-    this.serviceCommande.addACommande(newComm).subscribe(
+    const newEncap = new EncapCommande(newComm, this.tempAddLigneCommandes);
+    this.serviceCommande.addCommande(newEncap).subscribe(
+      (data) => {
+   
+        console.log('Vérification', data);
+        
+        this.addComModal.hide();
+        this.getAllCommande();
+        this.getAllLigneCommande();
+      },
+      (erreur) => {
+        console.log('Erreur lors de la création de la commande', erreur);
+      }
+    );
+
+    //console.log(this.tempAddLigneCommandes, newComm);
+    /*this.serviceCommande.addACommande(newComm).subscribe(
       (data) => {
         this.tempAddLigneCommandes.forEach((element, inde) => {
           element.numCommande = data;
@@ -397,7 +415,7 @@ export class CommandeComponent implements OnInit {
       (erreur) => {
         console.log('Erreur lors de la création de la commande', erreur);
       }
-    );
+    );*/
 
 
 

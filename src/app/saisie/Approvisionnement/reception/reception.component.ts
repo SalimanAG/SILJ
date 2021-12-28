@@ -35,6 +35,7 @@ import { SignataireService } from '../../../../services/administration/signatair
 import { Signer } from '../../../../models/signer.model';
 import { Occuper } from '../../../../models/occuper.model';
 import { Tools2Service } from '../../../../services/utilities/tools2.service';
+import { EncapReception } from '../../../../models/EncapReception';
 
 @Component({
   selector: 'app-reception',
@@ -577,8 +578,37 @@ export class ReceptionComponent implements OnInit {
     const newRecept = new Reception(this.addReceptionFormGroup.value['addNumReception'],
     this.addReceptionFormGroup.value['addObservation'], this.addReceptionFormGroup.value['addDateReception'], this.serviceExercice.exoSelectionner);
 
-    this.serviceReception.addAReception(newRecept).subscribe(
+    const newEncap = new EncapReception(newRecept, this.tempAddLigneReception);
+    this.serviceReception.addReception(newEncap).subscribe(
       (data) => {
+        
+
+        console.log('Reception marche', data);
+        
+
+        this.addComModal.hide();
+        this.getAllLigneCommande();
+        this.serviceReception.getAllLigneReception().subscribe(
+          (data) => {
+            this.ligneReceptions = data;
+            //console.log(this.ligneReceptions);
+            this.getAllReception();
+          },
+          (erreur) => {
+            console.log('Erreur lors de la récupération de la liste des lignes de réception', erreur);
+          }
+        );
+
+
+
+      },
+      (erreur) => {
+        console.log('Erreur lors lEnrégistrement de la Réception', erreur);
+      }
+    );
+    /*this.serviceReception.addAReception(newRecept).subscribe(
+      (data) => {
+
 
         this.tempAddLigneReception.forEach((element, inde) => {
           element.reception = data;
@@ -664,7 +694,7 @@ export class ReceptionComponent implements OnInit {
       (erreur) => {
         console.log('Erreur lors lEnrégistrement de la Réception', erreur);
       }
-    );
+    );*/
 
 
 
@@ -675,10 +705,30 @@ export class ReceptionComponent implements OnInit {
 
     const newRecept = new Reception(this.editReceptionFormGroup.value['editNumReception'],
     this.editReceptionFormGroup.value['editObservation'], this.editReceptionFormGroup.value['editDateReception'], this.serviceExercice.exoSelectionner);
+   
+
+    const newEncap = new EncapReception(newRecept, this.tempEditLigneReception);
+    
+
+    this.serviceReception.editReception(this.editReception.numReception, newEncap).subscribe(
+      (data) => {
+
+      console.log('ouf soulagement', data);
+      
+
+        this.editComModal.hide();
+
+        this.getAllReception();
+        this.getAllLigneReception();
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de lEdition de la Reception', erreur);
+      }
+    );
 
 
-
-    this.serviceReception.editAReception(this.editReception.numReception, newRecept).subscribe(
+   /* this.serviceReception.editAReception(this.editReception.numReception, newRecept).subscribe(
       (data) => {
 
         //Pour ajout et ou modification des lignes
@@ -867,14 +917,30 @@ export class ReceptionComponent implements OnInit {
       (erreur) => {
         console.log('Erreur lors de lEdition de la Reception', erreur);
       }
-    );
+    );*/
 
 
 
   }
 
   onConfirmDeleteReception(){
-    this.serviceReception.getAllLigneReception().subscribe(
+   
+    this.serviceReception.deleteReception(this.suprReception.numReception).subscribe(
+      (data) => {
+        console.log('Suppression de Rception', data);
+        
+        this.getAllLigneReception();
+        this.deleteComModal.hide();
+        this.getAllReception();
+
+         },
+        (erreur) => {
+          console.log('Erreur lors de la suppression de la Réception', erreur);
+        }
+    );
+             
+
+    /*this.serviceReception.getAllLigneReception().subscribe(
       (data) => {
         this.ligneReceptions = data;
         //console.log(this.ligneReceptions);
@@ -922,7 +988,7 @@ export class ReceptionComponent implements OnInit {
       (erreur) => {
         console.log('Erreur lors de la récupération de la liste des lignes de réception', erreur);
       }
-    );
+    );*/
 
   }
 
@@ -930,7 +996,23 @@ export class ReceptionComponent implements OnInit {
     let recept:Reception = new Reception(this.annulReception.numReception, this.annulReception.observation, this.annulReception.dateReception, this.annulReception.exercice);
 
     recept.valideRecep = false;
-    this.serviceReception.getAllLigneReception().subscribe(
+
+
+        this.serviceReception.annuleReception(this.annulReception.numReception, recept).subscribe(
+          (data) => {
+            console.log("Annulation", data);
+            
+            this.annulerReceptModal.hide();
+            this.getAllReception();
+
+          },
+          (erreur) => {
+            console.log('Erreur lors de la modification de la réception', erreur);
+          }
+        );
+
+
+    /*this.serviceReception.getAllLigneReception().subscribe(
       (data) => {
 
         this.serviceReception.editAReception(this.annulReception.numReception, recept).subscribe(
@@ -993,7 +1075,7 @@ export class ReceptionComponent implements OnInit {
       (erreur) => {
         console.log('Erreur lors de la récupération des lignes de reception', erreur);
       }
-    );
+    );*/
 
 
   }

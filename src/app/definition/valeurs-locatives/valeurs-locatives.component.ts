@@ -17,6 +17,7 @@ import { Commune } from '../../../models/commune.model';
 import { Departement } from '../../../models/departement.model';
 import { Pays } from '../../../models/pays.model';
 import { SiteMarcher } from '../../../models/siteMarcher.model';
+import { Tools2Service } from '../../../services/utilities/tools2.service';
 
 @Component({
   selector: 'app-valeurs-locatives',
@@ -36,28 +37,29 @@ export class ValeursLocativesComponent implements OnInit {
 
   QuartierByArrondissement:Quartier[] = [];
   //typeImmeuble: TypeImmeuble[];
+  periodes = Tools2Service.typePeriodes;
   immeuble: Immeuble[];
   Imm: Immeuble;
   immeuble200: Immeuble[]=[];
-  suprValLoc: Immeuble = new Immeuble('', '', '', true, 0, false, '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))), new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), new TypeImmeuble('', ''), new SiteMarcher('', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))));
-  editValLoc: Immeuble = new Immeuble('', '', '', true, 0, false, '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))), new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), new TypeImmeuble('', ''), new SiteMarcher('', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))));
-  infoValLoc: Immeuble = new Immeuble('', '', '', true, 0, false, '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))), new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), new TypeImmeuble('', ''), new SiteMarcher('', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))));
+  suprValLoc: Immeuble = new Immeuble('', '', '', true, 0, '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))), new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), new TypeImmeuble('','', false, false, false, false, 1, 'Jour'), new SiteMarcher('', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), '', '', true, 0, 0, '', '', '');
+  editValLoc: Immeuble = new Immeuble('', '', '', true, 0, '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))), new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), new TypeImmeuble('','', false, false, false, false, 1, 'Jour'), new SiteMarcher('', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), '', '', true, 0, 0, '', '', '');
+  infoValLoc: Immeuble = new Immeuble('', '', '', true, 0, '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))), new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), new TypeImmeuble('','', false, false, false, false, 1, 'Jour'), new SiteMarcher('', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), '', '', true, 0, 0, '', '', '');
   editValLocFormsGroup: FormGroup;
   addValLocFormsGroup: FormGroup;
   dtTrigger1: Subject<any> = new Subject<any>();
 
   //formulaires de l'onglet Type de valeur locative
   typeImmeuble: TypeImmeuble[];
-   suprTypeIm: TypeImmeuble = new TypeImmeuble('','');
-   editTypeIm:TypeImmeuble = new TypeImmeuble('','');
+   suprTypeIm: TypeImmeuble = new TypeImmeuble('','', false, false, false, false, 1, 'Jour');
+   editTypeIm:TypeImmeuble = new TypeImmeuble('','', false, false, false, false, 1, 'Jour');
    editTypeImFormsGroup: FormGroup;
    addTypeImFormsGroup: FormGroup;
    dtTrigger2: Subject<any> = new Subject<any>();
 
   //formulaires de l'onglet Prix de valeur locative
    prixImmeuble: PrixImmeuble[];
-  suprPrixImmeuble: PrixImmeuble = new PrixImmeuble(10, new Date(Date.now()), new Date(Date.now()), 200, new Immeuble('', '', '', true, 0, false, '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))), new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), new TypeImmeuble('', ''), new SiteMarcher('', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))))));
-  editPrixImmeuble: PrixImmeuble = new PrixImmeuble(10, new Date(Date.now()), new Date(Date.now()), 200, new Immeuble('', '', '', true, 0, false, '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))), new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), new TypeImmeuble('', ''), new SiteMarcher('', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', '')))))));
+  suprPrixImmeuble: PrixImmeuble = new PrixImmeuble(10, new Date(Date.now()), new Date(Date.now()), 200, new TypeImmeuble('','', false, false, false, false, 1, 'Jour'));
+  editPrixImmeuble: PrixImmeuble = new PrixImmeuble(10, new Date(Date.now()), new Date(Date.now()), 200, new TypeImmeuble('','', false, false, false, false, 1, 'Jour'));
    editPrixImFormsGroup: FormGroup;
    addPrixImFormsGroup: FormGroup;
    dtTrigger3: Subject<any> = new Subject<any>();
@@ -161,14 +163,21 @@ export class ValeursLocativesComponent implements OnInit {
           addLocalisationIm: ['', Validators.required],
           addEtataIm: false,
           addSuperficieIm: '',
-          addValUnitIm: '',
           addStuctRespIm: '',
           addAutreIm: '',
           addArr: 0,
-          addQua: 0,
+          addQua: -1,
           addSite: 0,
           addTypeValLoc: 0,
-          addTarifIm: false
+          addIlot: '',
+          addParcelle: '',
+          addBatie: true,
+          addNbrFace: 0,
+          addNbrPlace: 0,
+          addActiviter: '',
+          addForme: '',
+          addDimensions: '',
+
         }
       );
 
@@ -179,23 +188,48 @@ export class ValeursLocativesComponent implements OnInit {
           editLocalisationIm: ['', Validators.required],
           editEtatIm: false,
           editSuperficieIm: '',
-          editValUnitIm: '',
           editStuctRespIm: '',
           editAutreIm: '',
           editArr: 0,
-          editQua: 0,
+          editQua: -1,
           editSite: 0,
-          editTypeValLoc: 0
+          editTypeValLoc: 0,
+          editIlot: '',
+          editParcelle: '',
+          editBatie: true,
+          editNbrFace: 0,
+          editNbrPlace: 0,
+          editActiviter: '',
+          editForme: '',
+          editDimensions: '',
+
         }
       );
 
       this.editTypeImFormsGroup = this.formBulder.group({
         editCodeTypIm:['', Validators.required],
-        editLibTypIm:['', Validators.required]
+        editLibTypIm:['', Validators.required],
+        editValUnit: false,
+        editValSuperfi: false,
+        editValFace: false,
+        editValPlace: false,
+        editPeriodiciterJrs: 1,
+        editNomUnePeriode: '',
+        editPeriode:1,
+
       });
+      
       this.addTypeImFormsGroup = this.formBulder.group({
         addCodeTypIm: ['', Validators.required],
-        addLibTypIm: ['', Validators.required]
+        addLibTypIm: ['', Validators.required],
+        addValUnit: false,
+        addValSuperfi: false,
+        addValFace: false,
+        addValPlace: false,
+        addPeriodiciterJrs: 1,
+        addNomUnePeriode: '',
+        addPeriode:1,
+
       });
 
       this.addPrixImFormsGroup = this.formBulder.group(
@@ -203,7 +237,7 @@ export class ValeursLocativesComponent implements OnInit {
           addDateDebutPrixIm: [new Date().toISOString().substring(0, 10), Validators.required],
           addDateFinPrixIm: '',
           addPrixIm: [0, Validators.required],
-          addVal: 0
+          addType: 0,
         }
       );
 
@@ -213,7 +247,7 @@ export class ValeursLocativesComponent implements OnInit {
           editDateDebutPrixIm: ['',Validators.required],
           editDateFinPrixIm: '',
           editPrixIm: [15000, Validators.required],
-          editVal: 0
+          editType: 0,
         }
       );
 
@@ -312,10 +346,10 @@ export class ValeursLocativesComponent implements OnInit {
   }
 
   getAllQuartierByFormsArrondi1(){
-    this.getAllQuartierByCodeArrondi(this.arrondissement[this.addValLocFormsGroup.value['addArr']].codeArrondi);
+    this.getAllQuartierByCodeArrondi(this.arrondissement.find(l => l.codeArrondi == this.addValLocFormsGroup.value['addArr']).codeArrondi);
   }
   getAllQuartierByFormsArrondi2(){
-    this.getAllQuartierByCodeArrondi(this.arrondissement[this.editValLocFormsGroup.value['editArr']].codeArrondi);
+    this.getAllQuartierByCodeArrondi(this.arrondissement.find(l => l.codeArrondi == this.editValLocFormsGroup.value['editArr']).codeArrondi);
   }
   // Gestion de valeur locative
   getAllImmeuble(){
@@ -335,6 +369,29 @@ export class ValeursLocativesComponent implements OnInit {
   initEditValLoc(ind: string)
   {
     this.editValLoc = this.immeuble[ind];
+    this.getAllQuartierByCodeArrondi(this.editValLoc.arrondissement.codeArrondi);
+    this.editValLocFormsGroup.patchValue({
+      editCodeIm: this.editValLoc.codeIm,
+      editLibIm: this.editValLoc.libIm,
+      editLocalisationIm: this.editValLoc.localisationIm,
+      editEtatIm: this.editValLoc.etatIm,
+      editSuperficieIm: this.editValLoc.superficie,
+      editStuctRespIm: this.editValLoc.stuctResp,
+      editAutreIm: this.editValLoc.autre,
+      editArr: this.editValLoc.arrondissement.codeArrondi,
+      editQua: this.editValLoc.quartier?.codeQuartier,
+      editSite: this.editValLoc.siteMarcher.codeSite,
+      editTypeValLoc: this.editValLoc.typeImmeuble.codeTypIm,
+      editIlot: this.editValLoc.ilot,
+      editParcelle: this.editValLoc.parcelle,
+      editBatie: this.editValLoc.batie,
+      editNbrFace: this.editValLoc.nbrFace,
+      editNbrPlace: this.editValLoc.nbrPlace,
+      editActiviter: this.editValLoc.activiter,
+      editForme: this.editValLoc.forme,
+      editDimensions: this.editValLoc.dimensions,
+      
+    });
     this.warningModal1.show();
   }
 
@@ -353,10 +410,15 @@ export class ValeursLocativesComponent implements OnInit {
 
   onSubmitAddValLocFormsGroup()
   {
+    
+
     const newValLoc = new Immeuble(this.addValLocFormsGroup.value['addCodeIm'], this.addValLocFormsGroup.value['addLibIm'],this.addValLocFormsGroup.value['addLocalisationIm'],
-    this.addValLocFormsGroup.value['addEtataIm'],this.addValLocFormsGroup.value['addSuperficieIm'],this.addValLocFormsGroup.value['addValUnitIm'], this.addValLocFormsGroup.value['addStuctRespIm'],
-    this.addValLocFormsGroup.value['addAutreIm'], this.arrondissement[this.addValLocFormsGroup.value['addArr']], this.quartier[this.addValLocFormsGroup.value['addQua']],
-    this.typeImmeuble[this.addValLocFormsGroup.value['addTypeValLoc']], this.site[this.addValLocFormsGroup.value['addSite']]);
+    this.addValLocFormsGroup.value['addEtataIm'],this.addValLocFormsGroup.value['addSuperficieIm'], this.addValLocFormsGroup.value['addStuctRespIm'],
+    this.addValLocFormsGroup.value['addAutreIm'], this.arrondissement.find( l => l.codeArrondi == this.addValLocFormsGroup.value['addArr']), this.quartier.find(l => l.codeQuartier == this.addValLocFormsGroup.value['addQua']),
+    this.typeImmeuble.find(l => l.codeTypIm == this.addValLocFormsGroup.value['addTypeValLoc']), this.site.find(l => l.codeSite == this.addValLocFormsGroup.value['addSite'])
+    , this.addValLocFormsGroup.value['addIlot'], this.addValLocFormsGroup.value['addParcelle'], this.addValLocFormsGroup.value['addBatie']
+    , this.addValLocFormsGroup.value['addNbrFace'], this.addValLocFormsGroup.value['addNbrPlace'], this.addValLocFormsGroup.value['addActiviter']
+    , this.addValLocFormsGroup.value['addForme'], this.addValLocFormsGroup.value['addDimensions']);
 
     this.valeurLocativeService.addImmeuble(newValLoc)
     .subscribe(
@@ -377,9 +439,12 @@ export class ValeursLocativesComponent implements OnInit {
   onSubmitEditValLocFormsGroup()
   {
     const newValLoc = new Immeuble(this.editValLocFormsGroup.value['editCodeIm'], this.editValLocFormsGroup.value['editLibIm'],this.editValLocFormsGroup.value['editLocalisationIm'],
-    false,this.editValLocFormsGroup.value['editSuperficieIm'],this.editValLocFormsGroup.value['editValUnitIm'], this.editValLocFormsGroup.value['editStuctRespIm'],
-    this.editValLocFormsGroup.value['editAutreIm'], this.arrondissement[this.editValLocFormsGroup.value['editArr']], this.quartier[this.editValLocFormsGroup.value['editQua']],
-    this.typeImmeuble[this.editValLocFormsGroup.value['editTypeValLoc']], this.site[this.editValLocFormsGroup.value['editSite']]);
+    false,this.editValLocFormsGroup.value['editSuperficieIm'], this.editValLocFormsGroup.value['editStuctRespIm'],
+    this.editValLocFormsGroup.value['editAutreIm'], this.arrondissement.find( l => l.codeArrondi == this.editValLocFormsGroup.value['editArr']), this.quartier.find(l => l.codeQuartier == this.editValLocFormsGroup.value['editQua']),
+    this.typeImmeuble.find(l => l.codeTypIm == this.editValLocFormsGroup.value['editTypeValLoc']), this.site.find(l => l.codeSite == this.editValLocFormsGroup.value['editSite'])
+    , this.editValLocFormsGroup.value['editIlot'], this.editValLocFormsGroup.value['editParcelle'], this.editValLocFormsGroup.value['editBatie']
+    , this.editValLocFormsGroup.value['editNbrFace'], this.editValLocFormsGroup.value['editNbrPlace'], this.editValLocFormsGroup.value['editActiviter']
+    , this.editValLocFormsGroup.value['editForme'], this.editValLocFormsGroup.value['editDimensions']);
 
     this.valeurLocativeService.editImmeuble(this.editValLoc.codeIm, newValLoc)
     .subscribe(
@@ -430,6 +495,17 @@ export class ValeursLocativesComponent implements OnInit {
   initEditTypeIm(ind: number)
   {
     this.editTypeIm = this.typeImmeuble[ind];
+    this.editTypeImFormsGroup.patchValue({
+      editCodeTypIm: this.editTypeIm.codeTypIm,
+      editLibTypIm: this.editTypeIm.libTypIm,
+      editValUnit: this.editTypeIm.valUnit,
+      editValSuperfi: this.editTypeIm.valSuperfi,
+      editValFace: this.editTypeIm.valFace,
+      editValPlace: this.editTypeIm.valPlace,
+      editPeriodiciterJrs: this.editTypeIm.periodiciterJrs,
+      editNomUnePeriode: this.editTypeIm.nomUnePeriode,
+      editPeriode: this.editTypeIm.periodiciterJrs,
+    })
     this.warningModal2.show();
   }
 
@@ -440,7 +516,10 @@ export class ValeursLocativesComponent implements OnInit {
   }
 
   onSubmitAddTypeImForm(){
-    const newTypeIm = new TypeImmeuble(this.addTypeImFormsGroup.value['addCodeTypIm'], this.addTypeImFormsGroup.value['addLibTypIm']);
+    
+    const newTypeIm = new TypeImmeuble(this.addTypeImFormsGroup.value['addCodeTypIm'], this.addTypeImFormsGroup.value['addLibTypIm']
+    , this.addTypeImFormsGroup.value['addValUnit'], this.addTypeImFormsGroup.value['addValSuperfi'], this.addTypeImFormsGroup.value['addValFace']
+    , this.addTypeImFormsGroup.value['addValPlace'], this.addTypeImFormsGroup.value['addPeriode'], this.periodes.find(l => l.code == this.addTypeImFormsGroup.value['addPeriode'])?.name);
     this.valeurLocativeService.addTypeImmeuble(newTypeIm)
     .subscribe(
       (data) => {
@@ -457,7 +536,9 @@ export class ValeursLocativesComponent implements OnInit {
   }
 
   onSubmitEditTypeImForm(){
-    const newTypeIm = new TypeImmeuble(this.editTypeImFormsGroup.value['editCodeTypIm'], this.editTypeImFormsGroup.value['editLibTypIm']);
+    const newTypeIm = new TypeImmeuble(this.editTypeImFormsGroup.value['editCodeTypIm'], this.editTypeImFormsGroup.value['editLibTypIm']
+    , this.editTypeImFormsGroup.value['editValUnit'], this.editTypeImFormsGroup.value['editValSuperfi'], this.editTypeImFormsGroup.value['editValFace']
+    , this.editTypeImFormsGroup.value['editValPlace'], this.editTypeImFormsGroup.value['editPeriode'], this.periodes.find(l => l.code == this.editTypeImFormsGroup.value['editPeriode'])?.name);
     this.valeurLocativeService.editTypeImmeuble(this.editTypeIm.codeTypIm, newTypeIm)
     .subscribe(
       (data) => {
@@ -503,6 +584,13 @@ export class ValeursLocativesComponent implements OnInit {
   initEditPrixIm(ind: number)
   {
     this.editPrixImmeuble = this.prixImmeuble[ind];
+    this.editPrixImFormsGroup.patchValue({
+      editIdPrixIm: this.editPrixImmeuble.idPrixIm,
+      editDateDebutPrixIm: this.editPrixImmeuble.dateDebPrixIm,
+      editDateFinPrixIm: this.editPrixImmeuble.dateFinPrixIm,
+      editPrixIm: this.editPrixImmeuble.prixIm,
+      editType: this.editPrixImmeuble.typeImmeuble.codeTypIm,
+    });
     this.warningModal3.show();
   }
 
@@ -515,17 +603,17 @@ export class ValeursLocativesComponent implements OnInit {
   onSubmitAddPrixImForm(){
     const newPrixIm = new PrixImmeuble(1, this.addPrixImFormsGroup.value['addDateDebutPrixIm'],
     this.addPrixImFormsGroup.value['addDateFinPrixIm'], this.addPrixImFormsGroup.value['addPrixIm'],
-    this.immeuble[this.addPrixImFormsGroup.value['addVal']]);
+    this.typeImmeuble.find(l => l.codeTypIm == this.addPrixImFormsGroup.value['addType']));
 
     let exist:boolean = false;
-    this.immeuble200.push(this.immeuble[this.addPrixImFormsGroup.value['addVal']]) ;
-    console.log('880',this.immeuble200);
+    //this.typeImmeuble.push(this.typeImmeuble.find( l => l.codeTypIm == this.addPrixImFormsGroup.value['addType'])) ;
+    console.log('880',this.typeImmeuble);
 
 
     this.valeurLocativeService.getAllPrixImmeuble().subscribe(
       (data)=>{
         data.forEach(element =>{
-          if(element.dateFinPrixIm == null && element.immeuble.codeIm == this.immeuble[this.addPrixImFormsGroup.value['addVal']].codeIm)
+          if(element.dateFinPrixIm == null && element.typeImmeuble.codeTypIm == this.typeImmeuble.find(l => l.codeTypIm == this.addPrixImFormsGroup.value['addType']).codeTypIm)
           {
            // console.log(new Date(this.addPrixImFormsGroup.value['addDateDebutPrixIm']).getDate() -1);
             element.dateFinPrixIm =  new Date(this.addPrixImFormsGroup.value['addDateDebutPrixIm']);
@@ -567,7 +655,7 @@ export class ValeursLocativesComponent implements OnInit {
   onSubmitEditPrixImForm(){
     const newPrixIm = new PrixImmeuble(this.editPrixImFormsGroup.value['editIdPrixIm'], this.editPrixImFormsGroup.value['editDateDebutPrixIm'],
     this.editPrixImFormsGroup.value['editDateFinPrixIm'], this.editPrixImFormsGroup.value['editPrixIm'],
-    this.immeuble[this.editPrixImFormsGroup.value['editVal']]);
+    this.typeImmeuble.find(l => l.codeTypIm == this.editPrixImFormsGroup.value['editType']));
     console.log('++++', newPrixIm);
 
     this.valeurLocativeService.editPrixImmeuble(this.editPrixImmeuble.idPrixIm, newPrixIm)

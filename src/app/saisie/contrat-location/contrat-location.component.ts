@@ -39,21 +39,24 @@ export class ContratLocationComponent implements OnInit {
   addContratFormsGroup: FormGroup;
   editContratFormsGroup: FormGroup;
   contrats:Contrat[];
-  editContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', false, 0, false, '', '',
-  new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))),
-  new Quartier('','','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
-  new TypeImmeuble('',''),new SiteMarcher('','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))))),
-  new Locataire('','','','',''));
-  suprContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', false, 0, false, '', '',
-  new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))),
-  new Quartier('','','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
-  new TypeImmeuble('',''),new SiteMarcher('','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))))),
-  new Locataire('','','','',''));;
-  infosContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', false, 0, false, '', '',
-  new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))),
-  new Quartier('','','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','',''))))),
-  new TypeImmeuble('',''),new SiteMarcher('','','',new Arrondissement('','','','',new Commune('','','','',new Departement('','',new Pays('','','')))))),
-  new Locataire('','','','',''));;
+  editContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', true, 0, '', ''
+  , new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))
+  , new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', ''
+  , new Pays('', '', ''))))), new TypeImmeuble('','', false, false, false, false, 1, 'Jour'), new SiteMarcher('', '', ''
+  , new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), ''
+  , '', true, 0, 0, '', '', ''), new Locataire('','','','',''));
+  suprContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', true, 0, '', ''
+  , new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))
+  , new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', ''
+  , new Pays('', '', ''))))), new TypeImmeuble('','', false, false, false, false, 1, 'Jour'), new SiteMarcher('', '', ''
+  , new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), ''
+  , '', true, 0, 0, '', '', ''), new Locataire('','','','',''));
+  infosContrat:Contrat = new Contrat('', new Date(), new Date(), 0, 0, new Immeuble('', '', '', true, 0, '', ''
+  , new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))
+  , new Quartier('', '', '', '', new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', ''
+  , new Pays('', '', ''))))), new TypeImmeuble('','', false, false, false, false, 1, 'Jour'), new SiteMarcher('', '', ''
+  , new Arrondissement('', '', '', '', new Commune('', '', '', '', new Departement('', '', new Pays('', '', ''))))), ''
+  , '', true, 0, 0, '', '', ''), new Locataire('','','','',''));
 
   //Quelques listes
   locataires: Locataire[] = [];
@@ -215,6 +218,7 @@ export class ContratLocationComponent implements OnInit {
 
   getImmeublesByCodeType2(code:String){
     this.valeurLocativesByType2 = [];
+    if(code == this.editContrat.immeuble.typeImmeuble.codeTypIm) this.valeurLocativesByType2.push({...this.editContrat.immeuble});
     this.valeurLocatives.forEach(valeurLoca => {
       if(valeurLoca.typeImmeuble.codeTypIm === code && valeurLoca.etatIm == false){
         this.valeurLocativesByType2.push(valeurLoca);
@@ -224,6 +228,18 @@ export class ContratLocationComponent implements OnInit {
 
   initEditContrat(inde:number){
     this.editContrat = this.contrats[inde];
+    this.getImmeublesByCodeType2(this.editContrat.immeuble.typeImmeuble.codeTypIm);
+    this.editContratFormsGroup.patchValue({
+      editNumContrat: this.editContrat.numContrat,
+      editDateSignatureContrat: this.editContrat.dateSignatureContrat,
+      editDateEffetContrat: this.editContrat.dateEffetContrat,
+      editAvanceContrat: this.editContrat.avanceContrat,
+      editCautionContrat: this.editContrat.cautionContrat,
+      editImmeuble: this.editContrat.immeuble.codeIm,
+      editLocataire: this.editContrat.locataire.idLocataire,
+      editIndeTypeIm: this.editContrat.immeuble.typeImmeuble.codeTypIm,
+      editDateFinContrat: this.editContrat.dateFinContrat
+    });
     this.warningModal.show();
   }
 
@@ -243,8 +259,8 @@ export class ContratLocationComponent implements OnInit {
     this.addContratFormsGroup.value['addDateEffetContrat'],
     this.addContratFormsGroup.value['addAvanceContrat'],
     this.addContratFormsGroup.value['addCautionContrat'],
-    this.valeurLocativesByType[this.addContratFormsGroup.value['addImmeuble']],
-    this.locataires[this.addContratFormsGroup.value['addLocataire']]);
+    this.valeurLocativesByType.find(l => l.codeIm == this.addContratFormsGroup.value['addImmeuble']),
+    this.locataires.find(l => l.idLocataire == this.addContratFormsGroup.value['addLocataire']));
 
     newContrat.dateFinContrat = this.addContratFormsGroup.value['addDateFinContrat'];
 
@@ -287,7 +303,7 @@ export class ContratLocationComponent implements OnInit {
 
                   this.valeurLocatives.forEach(valeurLoca => {
 
-                    if(valeurLoca.typeImmeuble.codeTypIm === this.typeValeursLocatives[this.addContratFormsGroup.value['addIndeTypeIm']].codeTypIm && valeurLoca.etatIm == false){
+                    if(valeurLoca.typeImmeuble.codeTypIm === this.typeValeursLocatives.find(l => l.codeTypIm == this.addContratFormsGroup.value['addIndeTypeIm'])?.codeTypIm && valeurLoca.etatIm == false){
                       this.valeurLocativesByType.push(valeurLoca);
                     }
                   });
@@ -317,13 +333,15 @@ export class ContratLocationComponent implements OnInit {
   }
 
   onSubmitEditContratFormsGroup(){
+    //console.log('sal', this.valeurLocativesByType[this.editContratFormsGroup.value['editImmeuble']], this.editContratFormsGroup.value['editImmeuble']);
+    
     const newContrat = new Contrat(this.editContratFormsGroup.value['editNumContrat'],
     this.editContratFormsGroup.value['editDateSignatureContrat'],
     this.editContratFormsGroup.value['editDateEffetContrat'],
     this.editContratFormsGroup.value['editAvanceContrat'],
     this.editContratFormsGroup.value['editCautionContrat'],
-    this.valeurLocativesByType[this.editContratFormsGroup.value['editImmeuble']],
-    this.locataires[this.editContratFormsGroup.value['editLocataire']]);
+    this.valeurLocativesByType2.find(l => l.codeIm == this.editContratFormsGroup.value['editImmeuble']),
+    this.locataires.find(l => l.idLocataire == this.editContratFormsGroup.value['editLocataire']));
 
     newContrat.dateFinContrat = this.editContratFormsGroup.value['editDateFinContrat'];
 
@@ -354,7 +372,7 @@ export class ContratLocationComponent implements OnInit {
 
                   this.valeurLocatives.forEach(valeurLoca => {
 
-                    if(valeurLoca.typeImmeuble.codeTypIm === this.typeValeursLocatives[this.editContratFormsGroup.value['editIndeTypeIm']].codeTypIm && valeurLoca.etatIm == false){
+                    if(valeurLoca.typeImmeuble.codeTypIm === this.typeValeursLocatives.find(l => l.codeTypIm == this.editContratFormsGroup.value['editIndeTypeIm'])?.codeTypIm && valeurLoca.etatIm == false){
                       this.valeurLocativesByType.push(valeurLoca);
                     }
                   });
@@ -405,7 +423,7 @@ export class ContratLocationComponent implements OnInit {
                       if(this.typeValeursLocatives.length != 0){
                         this.valeurLocativesByType = [];
                         this.valeurLocatives.forEach(valeurLoca => {
-                          if(valeurLoca.typeImmeuble.codeTypIm === data1[0].codeTypIm && valeurLoca.etatIm == false){
+                          if(valeurLoca.typeImmeuble.codeTypIm === data1[0]?.codeTypIm && valeurLoca.etatIm == false){
                             this.valeurLocativesByType.push(valeurLoca);
                             this.valeurLocativesByType2.push(valeurLoca);
                           }
@@ -446,16 +464,14 @@ export class ContratLocationComponent implements OnInit {
 
   onTypeImmeubleClicked1(){
     if(this.typeValeursLocatives.length != 0){
-      //console.log('AAA', this.addContratFormsGroup.value['addIndeTypeIm']);
-      //console.log('BBB', this.typeValeursLocatives);
-      this.getImmeublesByCodeType(this.typeValeursLocatives[this.addContratFormsGroup.value['addIndeTypeIm']].codeTypIm );
+      this.getImmeublesByCodeType(this.typeValeursLocatives.find(l => l.codeTypIm == this.addContratFormsGroup.value['addIndeTypeIm'])?.codeTypIm );
     }
 
   }
 
   onTypeImmeubleClicked2(){
     if(this.typeValeursLocatives.length != 0)
-    this.getImmeublesByCodeType2(this.typeValeursLocatives[this.editContratFormsGroup.value['editIndeTypeIm']].codeTypIm );
+    this.getImmeublesByCodeType2(this.typeValeursLocatives.find(l => l.codeTypIm == this.editContratFormsGroup.value['editIndeTypeIm'])?.codeTypIm );
   }
 
 }

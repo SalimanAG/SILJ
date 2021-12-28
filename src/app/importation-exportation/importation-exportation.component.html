@@ -29,6 +29,7 @@
                   <option value="7">Prix Valeurs Locatives</option>
                   <option value="8">Locataires</option>
                   <option value="9">Contrats de Location</option>
+                  <option value="10">Types de Valeur Locative</option>
                 </select>
 
             </div>
@@ -298,12 +299,20 @@
               <th>Libellé</th>
               <th>Localisation</th>
               <th>Superficie(en m²)</th>
-              <th>Prix Unitaire du m²</th>
               <th>Structure Responsable</th>
               <th>Autres Infos</th>
               <th>Code Quartier</th>
               <th>Code Type Immeuble</th>
               <th>Code Site</th>
+              <th>Code Arrondissement</th>
+              <th>Ilot</th>
+              <th>Parcelle</th>
+              <th>Batie (VRAI ou FAUX)</th>
+              <th>Nombre de Face</th>
+              <th>Nombre de Place</th>
+              <th>Activité Menée</th>
+              <th>Forme</th>
+              <th>Dimensions</th>
             </tr>
           </thead>
           <tbody>
@@ -318,6 +327,14 @@
               <td>{{ uniter[7] }}</td>
               <td>{{ uniter[8] }}</td>
               <td>{{ uniter[9] }}</td>
+              <td>{{ uniter[10] }}</td>
+              <td>{{ uniter[11] }}</td>
+              <td>{{ uniter[12] }}</td>
+              <td>{{ uniter[13] }}</td>
+              <td>{{ uniter[14] }}</td>
+              <td>{{ uniter[15] }}</td>
+              <td>{{ uniter[16] }}</td>
+              <td>{{ uniter[17] }}</td>
             </tr>
           </tbody>
           <tfoot>
@@ -326,12 +343,20 @@
               <th>Libellé</th>
               <th>Localisation</th>
               <th>Superficie(en m²)</th>
-              <th>Prix Unitaire du m²</th>
               <th>Structure Responsable</th>
               <th>Autres Infos</th>
               <th>Code Quartier</th>
               <th>Code Type Immeuble</th>
               <th>Code Site</th>
+              <th>Code Arrondissement</th>
+              <th>Ilot</th>
+              <th>Parcelle</th>
+              <th>Batie (VRAI ou FAUX)</th>
+              <th>Nombre de Face</th>
+              <th>Nombre de Place</th>
+              <th>Activité Menée</th>
+              <th>Forme</th>
+              <th>Dimensions</th>
             </tr>
           </tfoot>
         </table>
@@ -379,6 +404,7 @@
               <th>Téléphone</th>
               <th>Adresse</th>
               <th>Personne(s) à Contacter</th>
+              <th>Numéro Contribuable</th>
             </tr>
           </thead>
           <tbody>
@@ -388,6 +414,7 @@
               <td>{{ uniter[2] }}</td>
               <td>{{ uniter[3] }}</td>
               <td>{{ uniter[4] }}</td>
+              <td>{{ uniter[5] }}</td>
             </tr>
           </tbody>
           <tfoot>
@@ -397,6 +424,7 @@
               <th>Téléphone</th>
               <th>Adresse</th>
               <th>Personne(s) à Contacter</th>
+              <th>Numéro Contribuable</th>
             </tr>
           </tfoot>
         </table>
@@ -409,7 +437,7 @@
           <thead>
             <tr>
               <th>Numéro</th>
-              <th>Code Locataire</th>
+              <th>Code ou Numéro IFU ou Numéro de Téléphone ou Numéro de Contribuable du Locataire</th>
               <th>Code Valeur Locative</th>
               <th>Avance</th>
               <th>Caution</th>
@@ -433,13 +461,56 @@
           <tfoot>
             <tr>
               <th>Numéro</th>
-              <th>Code Locataire</th>
+              <th>Code ou Numéro IFU ou Numéro de Téléphone ou Numéro de Contribuable du Locataire</th>
               <th>Code Valeur Locative</th>
               <th>Avance</th>
               <th>Caution</th>
               <th>Date de Signature</th>
               <th>Date d'Effet</th>
               <th>Date de Fin</th>
+            </tr>
+          </tfoot>
+        </table>
+
+        </div>
+        <div class="modal-body" *ngIf="repport1FormsGroup.value['rep1Element'] == 10">
+          <h3 style="text-align: center;">Types de Valeur Locatives</h3>
+          <table class="table table-bordered table-striped table-sm"  id="dataTable1"><!--datatable [dtOptions]="dtOptions1"
+            [dtTrigger]="dtTrigger1"-->
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Valorisation par unité (VRAI ou FAUX)</th>
+              <th>Valorisation par Superficie (VRAI ou FAUX)</th>
+              <th>Valorisation par Nombre de Face (VRAI ou FAUX)</th>
+              <th>Valorisation par Nombre de Place (VRAI ou FAUX)</th>
+              <th>Code Périodicité</th>
+              <th>Nom Périodicité</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let uniter of feuille; let i = index">
+              <td>{{ uniter[0] }}</td>
+              <td>{{ uniter[1] }}</td>
+              <td>{{ uniter[2] }}</td>
+              <td>{{ uniter[3] }}</td>
+              <td>{{ uniter[4] }}</td>
+              <td>{{ uniter[5] }}</td>
+              <td>{{ uniter[6] }}</td>
+              <td>{{ uniter[7] }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Valorisation par unité (VRAI ou FAUX)</th>
+              <th>Valorisation par Superficie (VRAI ou FAUX)</th>
+              <th>Valorisation par Nombre de Face (VRAI ou FAUX)</th>
+              <th>Valorisation par Nombre de Place (VRAI ou FAUX)</th>
+              <th>Code Périodicité</th>
+              <th>Nom Périodicité</th>
             </tr>
           </tfoot>
         </table>

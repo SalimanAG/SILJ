@@ -29,10 +29,10 @@
                     getCommandeOfAReception(recept.numReception).dateCommande |date:'dd/MM/yyyy' }}</td>
                   <td>{{ getCommandeOfAReception(recept.numReception).frs.codeFrs }} - {{ getCommandeOfAReception(recept.numReception).frs.identiteFrs }}</td>
                   <td>
-                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditReception(i)"><span class="fa fa-edit"></span></button>
-                      <button *ngIf="!recept.valideRecep"class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReception(i)"><span class="fa fa-trash"></span></button>
-                      <button *ngIf="recept.valideRecep" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerPlacement(i)"><span class="fa fa-undo"></span></button>
-                      <button class="btn btn-dark btn-sm" data-toggle="modal" (click)="initPrintPdfOfAnReception(i)" ><span class="fa fa-file-o"></span></button>
+                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditReception(i)" title="Modifier la Réception"><span class="fa fa-edit"></span></button>
+                      <button *ngIf="!recept.valideRecep"class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReception(i)" title="Supprimer la Réception"><span class="fa fa-trash"></span></button>
+                      <button *ngIf="recept.valideRecep" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerPlacement(i)" title="Annuler la Réception"><span class="fa fa-undo"></span></button>
+                      <button class="btn btn-dark btn-sm" data-toggle="modal" (click)="initPrintPdfOfAnReception(i)" title="Imprimer la Réception"><span class="fa fa-file-o"></span></button>
                       <!--Le bouton des options
                       <div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>

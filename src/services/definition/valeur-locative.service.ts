@@ -12,6 +12,7 @@ import { AssocierUtilisateurService } from '../administration/associer-utilisate
 })
 export class ValeurLocativeService {
 
+
   private host:String = 'http://'+this.serviceIp.adresseIp+'/perfora-gpc/v1';
 
   constructor(private httpClient:HttpClient, private serviceIp:AssocierUtilisateurService) { }
@@ -29,6 +30,10 @@ export class ValeurLocativeService {
   addImmeuble(corps:Immeuble){
     return this.httpClient.post<Immeuble>(this.host+'/location/immeuble/list', corps);
   }
+
+  addListImmeuble(corps:Immeuble[]){
+    return this.httpClient.post<Immeuble[]>(this.host+'/location/immeuble/list2', corps);
+  }  
 
   editImmeuble(code:String, corps:Immeuble){
     return this.httpClient.put<Immeuble>(this.host+'/location/immeuble/byCodImm/'+code, corps);
@@ -55,6 +60,10 @@ export class ValeurLocativeService {
     return this.httpClient.post<TypeImmeuble>(this.host+'/location/typeimmeuble/list', corps);
   }
 
+  addListTypeImmeuble(corps:TypeImmeuble[]){
+    return this.httpClient.post<TypeImmeuble[]>(this.host+'/location/typeimmeuble/list2', corps);
+  }
+
   editTypeImmeuble(code:String, corps:TypeImmeuble){
     return this.httpClient.put<TypeImmeuble>(this.host+'/location/typeimmeuble/byCodImm/'+code, corps);
   }
@@ -78,6 +87,10 @@ export class ValeurLocativeService {
 
   addPrixImmeuble(corps:PrixImmeuble){
     return this.httpClient.post<PrixImmeuble>(this.host+'/location/priximmeuble/list', corps);
+  }
+
+  addListPrixImmeuble(corps:PrixImmeuble[]){
+    return this.httpClient.post<PrixImmeuble[]>(this.host+'/location/priximmeuble/list2', corps);
   }
 
   editPrixImmeuble(code:number, corps:PrixImmeuble){

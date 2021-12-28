@@ -1,11 +1,11 @@
 <div class="animated fadeIn">
     <div class="card">
         <div class="card-header">
-            <i class="fa fa-align-justify"></i> Liste des trésoriers communaux
+            <i class="fa fa-align-justify"></i> Liste des Trésoriers communaux
         </div>
         <div class="card-body">
-            <button type="button" class="btn btn-success mr-1" data-toggle="modal" (click)="initAddTres()">
-          Ajouter trésorier communal
+            <button type="button" class="btn btn-primary" data-toggle="modal" (click)="initAddTres()">
+         Nouveau <span class="fa fa-plus-circle"></span>
         </button>
             <br><br>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabTresCom" [dtTrigger]="dTriTres" id="dtTres">
@@ -25,10 +25,10 @@
                         <td>{{item.magasinier.prenomMagasinier}}</td>
                         <td>{{item.magasinier.telMagasinier}}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initmod(i)"><span class="fa fa-edit"></span></button>
-                            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDel(item)"><span class="fa fa-trash"></span></button>
+                            <button class="btn btn-warning btn-sm" data-toggle="modal" (click)="initmod(i)" title="Modifier le Trésorier "><span class="fa fa-edit"></span></button>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="initDel(item)" title="Supprimer le Trésorier"><span class="fa fa-trash"></span></button>
                             <!--Le bouton des options-->
-                            <div class="btn-group" dropdown>
+                            <!--div class="btn-group" dropdown>
                                 <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                                 <ul *dropdownMenu class="dropdown-menu" role="menu">
                                     <li role="menuitem"><a class="dropdown-item">Action</a></li>
@@ -40,7 +40,7 @@
                                     <li role="menuitem"><a class="dropdown-item">Separated link</a>
                                     </li>
                                 </ul>
-                            </div>
+                            </div-->
                         </td>
                     </tr>
                 </tbody>
@@ -61,12 +61,12 @@
 
 <!-------------Ajout------------>
 <div bsModal #addTresCom="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-primary modal-md" role="document">
+    <div class="modal-dialog modal-primary modal-md modal-lg " role="document">
         <!-----Début formulaire-->
         <form [formGroup]="addTresComGroup" (ngSubmit)="ajouteTresCom()" class="form-horizontal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Ajouter trésorier(ère) communal(e)</h4>
+                    <h4 class="modal-title">Ajouter Trésorier(ère) communal(e)</h4>
                     <button type="button" class="close" (click)="addTresCom.hide()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -76,17 +76,17 @@
                         <!-----Nom-->
                         <div class="col md-6">
                             <label class="col-md-2 col-form-label" for="addCodTres">Code</label>
-                            <input type="text" id="addCodTres" class="form-control" placeholder="Code du trésorier" formControlName="addCodTres">
+                            <input type="text" id="addCodTres" class="form-control" placeholder="Code " formControlName="addCodTres">
                         </div>
                         <div class="col md-6">
                             <label class="col-md-2 col-form-label" for="addNomTres">Nom</label>
-                            <input type="text" id="addNomTres" class="form-control" placeholder="Nom de famille" formControlName="addNomTres">
+                            <input type="text" id="addNomTres" class="form-control" placeholder="Nom " formControlName="addNomTres">
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col md-7">
                             <label for="addPreTres">Prénoms</label>
-                            <input type="text" id="addPreTres" class="form-control" placeholder="Prénoms du trésorier" formControlName="addPreTres">
+                            <input type="text" id="addPreTres" class="form-control" placeholder="Prénoms " formControlName="addPreTres">
                         </div>
                         <div class="col md-5">
                             <label for="addTelTres">Téléphone</label>
@@ -96,17 +96,17 @@
                     <div class="form-group row">
                         <!--User-->
                         <label class="col-md-3 col-form-label" for="addUseTres">Utilisateur</label>
-                        <div class="col-md-9">
+                        <div class="col-md-12">
                             <select type="text" id="addUseTres" class="form-control" placeholder="Numéro de Téléphone" formControlName="addUseTres">
                 <option *ngFor="let item of users; let i='index'" value="i">{{item.login}}-{{item.nomUtilisateur}}
-                  {{item.prenomUtilisateur}} ({{item.telMagasinier}})</option>
+                  {{item.prenomUtilisateur}}</option>
               </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="addTresCom.hide()">Abandonner</button>
-                    <button type="submit" class="btn btn-primary">Valider</button>
+                    <button type="button" class="btn btn-secondary" (click)="addTresCom.hide()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -119,7 +119,7 @@
 
 <!------------------------Modification------------->
 <div bsModal #modTresCom="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md modal-primary" role="document">
+    <div class="modal-dialog modal-md modal-warning modal-lg " role="document">
         <!-----Début formulaire-->
         <form [formGroup]="modTresComGroup" (ngSubmit)="modifieTresCom()" class="form-horizontal">
             <div class="modal-content">
@@ -154,17 +154,17 @@
                     <div class="form-group row">
                         <!--User-->
                         <label class="col-md-3 col-form-label" for="modUseTres">Utilisateur</label>
-                        <div class="col-md-9">
+                        <div class="col-md-12">
                             <select type="text" id="modUseTres" class="form-control" placeholder="Numéro de Téléphone" formControlName="modUseTres">
                 <option *ngFor="let item of users; let i='index'" value="i">{{item.login}}-{{item.nomUtilisateur}}
-                  {{item.prenomUtilisateur}} ({{item.telMagasinier}})</option>
+                  {{item.prenomUtilisateur}} </option>
               </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" (click)="fermeMod()">Abandonner</button>
-                    <button type="submit" class="btn btn-primary">Valider</button>
+                    <button type="button" class="btn btn-secondary" (click)="fermeMod()">Annuler</button>
+                    <button type="submit" class="btn btn-warning">Modifier</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -180,7 +180,7 @@
     <div class="modal-dialog modal-danger" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Suprimer un trésorier communal</h4>
+                <h4 class="modal-title">Suprimer un Trésorier communal</h4>
                 <button type="button" class="close" (click)="delTresCom.hide()" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

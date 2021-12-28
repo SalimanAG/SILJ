@@ -24,12 +24,12 @@
                     <td>{{ revers.dateVersement |date:'dd/MM/yyyy hh:mm' }}</td>
                     <td>{{ revers.regisseur.magasinier.nomMagasinier }}  {{ revers.regisseur.magasinier.prenomMagasinier }} </td>
                     <td>
-                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditReversement(i)"><span class="fa fa-edit"></span></button>
-                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReversement(i)"><span class="fa fa-trash"></span></button>
-                        <button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button>
-                        <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfReversement(i)" ><span class="fa fa-file-o"></span></button>
+                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditReversement(i)" title="Modifier le reversement"><span class="fa fa-edit"></span></button>
+                        <button class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteReversement(i)" title="Supprimer le reversement"><span class="fa fa-trash"></span></button>
+                        <!--button class="btn btn-info btn-sm" data-toggle="modal" ><span class="fa fa-eye"></span></button-->
+                        <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfReversement(i)" title="Imprimer le reversement" ><span class="fa fa-file-o"></span></button>
                         <!--Le bouton des options-->
-                        <div class="btn-group" dropdown>
+                        <!--div class="btn-group" dropdown>
                           <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>
                           <ul *dropdownMenu class="dropdown-menu" role="menu">
                             <li role="menuitem"><a class="dropdown-item" >Action</a></li>
@@ -41,7 +41,7 @@
                             <li role="menuitem"><a class="dropdown-item" >Separated link</a>
                             </li>
                           </ul>
-                        </div>
+                        </div-->
                     </td>
                 </tr>
             </tbody>
@@ -69,9 +69,9 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="form-group col-sm-4">
-                        <label for="addNumRevers">Numéro</label>
-                        <input type="text" class="form-control" id="addNumRevers"  readonly="true"
-                          formControlName="addNumRevers" placeholder="Numéro du reversement" autocomplete="off">
+                        <label for="addQuittance">Numéro Quittance</label>
+                        <input type="text" class="form-control" id="addQuittance" 
+                          formControlName="addQuittance" placeholder="Numéro de la quittance" autocomplete="off">
                       </div>
                       <div class="form-group col-sm-4">
                         <label for="addDateRevers">Date</label>
@@ -102,10 +102,10 @@
                               <th>Prix Unit.</th>
                               <th>Quantité</th>
                               <th>Montant</th>
-                              <th>N° Quittance</th>
+                              <!--th>N° Quittance</th>
                               <th>Date Quittance</th>
                               <th>Bénéficiaire</th>
-                              <th>Observation</th>
+                              <th>Observation</th-->
                               <th>Actions</th>
                             </tr>
                           </thead>
@@ -113,13 +113,13 @@
                             <tr *ngFor="let addLignRevers of tempAddLigneReversement; let i = index">
                               <td>{{ addLignRevers.article.codeArticle  }}</td>
                               <td>{{ addLignRevers.article.libArticle }}</td>
-                              <td><input [(ngModel)]="tempAddLigneReversement[i].puligneReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                              <td>{{tempAddLigneReversement[i].puligneReversement}}</td>
                               <td><input [(ngModel)]="tempAddLigneReversement[i].quantiteLigneReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                               <td>{{ (tempAddLigneReversement[i].quantiteLigneReversement*tempAddLigneReversement[i].puligneReversement) }}</td>
-                              <td><input [(ngModel)]="tempAddLigneReversement[i].quittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                              <!--td><input [(ngModel)]="tempAddLigneReversement[i].quittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
                               <td><input [(ngModel)]="tempAddLigneReversement[i].dateQuittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="date" ></td>
                               <td><input [(ngModel)]="tempAddLigneReversement[i].beneficiaire" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
-                              <td><input [(ngModel)]="tempAddLigneReversement[i].observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                              <td><input [(ngModel)]="tempAddLigneReversement[i].observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td-->
 
                               <td>
                                 <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleAddingOfReversement(i)"><span class="fa fa-trash"></span></button>
@@ -155,21 +155,27 @@
               <div class="modal-body">
                 <div class="card-body">
                   <div class="row">
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-3">
                       <label for="editNumRevers">Numéro</label>
                       <input type="text" class="form-control" id="editNumRevers"
                         formControlName="editNumRevers" placeholder="Numéro du point"
                         [ngModel]="editReversement.numReversement" readonly="true" autocomplete="off">
                     </div>
-                    <div class="form-group col-sm-4">
+
+                    <div class="form-group col-sm-3">
+                      <label for="editQuittance">Numéro Quittance</label>
+                      <input type="text" class="form-control" id="editQuittance"
+                       formControlName="editQuittance" [ngModel]="editReversement.quittance">
+                    </div>
+                    <div class="form-group col-sm-3">
                       <label for="editDateRevers">Date</label>
                       <input type="date" class="form-control" id="editDateRevers"
                        formControlName="editDateRevers" [ngModel]="editReversement.dateVersement">
                     </div>
-                    <div class="form-group col-sm-4">
+                    <div class="form-group col-sm-3">
                         <label for="editReg">Régisseur</label>
                         <select id="editReg" name="editReg" class="form-control"
-                        formControlName="editReg">
+                        formControlName="editReg" readonly>
                           <option *ngFor="let reg of regisseur; let i = index" [value]="i">
                             {{ reg.idRegisseur }} - {{ reg.magasinier.nomMagasinier }} {{ reg.magasinier.prenomMagasinier }}
                           </option>
@@ -190,10 +196,10 @@
                           <th>Prix Unit.</th>
                           <th>Quantité</th>
                           <th>Montant</th>
-                          <th>N° Quittance</th>
+                          <!--th>N° Quittance</th>
                           <th>Date Quittance</th>
                           <th>Bénéficiaire</th>
-                          <th>Observation</th>
+                          <th>Observation</th-->
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -201,13 +207,13 @@
                         <tr *ngFor="let editLignRevers of tempEditLigneReversement; let i = index">
                           <td>{{ editLignRevers.article.codeArticle  }}</td>
                           <td>{{ editLignRevers.article.libArticle }}</td>
-                          <td><input [(ngModel)]="tempEditLigneReversement[i].puligneReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="number"  ></td>
+                          <td>{{tempEditLigneReversement[i].puligneReversement}}</td>
                           <td><input [(ngModel)]="tempEditLigneReversement[i].quantiteLigneReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="number" ></td>
                           <td>{{ (tempEditLigneReversement[i].quantiteLigneReversement*tempEditLigneReversement[i].puligneReversement) }}</td>
-                          <td><input [(ngModel)]="tempEditLigneReversement[i].quittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                          <!--td><input [(ngModel)]="tempEditLigneReversement[i].quittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
                           <td><input [(ngModel)]="tempEditLigneReversement[i].dateQuittanceReversement" [ngModelOptions]="{standalone: true}" class="form-control" type="date" ></td>
                           <td><input [(ngModel)]="tempEditLigneReversement[i].beneficiaire" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
-                          <td><input [(ngModel)]="tempEditLigneReversement[i].observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td>
+                          <td><input [(ngModel)]="tempEditLigneReversement[i].observation" [ngModelOptions]="{standalone: true}" class="form-control" type="text" ></td-->
 
                           <td>
                             <button class="btn btn-danger btn-sm" data-toggle="modal" (click)="popArticleEditingOfReversement(i)"><span class="fa fa-trash"></span></button>

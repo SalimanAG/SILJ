@@ -251,6 +251,8 @@ export class BonApprovisionnementComponent  implements OnInit {
   onConcernedDemandeApproSelected(){
     if(this.demandeAppros.length!=0){
       this.concernedDemandeAppro = this.demandeAppros[this.addApproFormsGroup.value['addDemandeAppro']];
+      console.log('data', this.concernedDemandeAppro );
+      
     }
 
 

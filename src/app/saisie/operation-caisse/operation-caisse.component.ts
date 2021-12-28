@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, ElementRef } from '@angular/core';
+import { Component, ViewChild, OnInit, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -47,11 +47,29 @@ import { ToolsService } from '../../../services/utilities/tools.service';
 import { OpPrestBlock } from '../../../models/opprestlock.model';
 import { OpLocBlock } from '../../../models/oployerbloc.model';
 import { SearchOpCaisseDTO } from '../../../models/searchOpCaisseDTO.model';
+import { TypeImmeuble } from '../../../models/typeImmeuble.model';
+
+
+export interface LigneEcheancier {
+  contrat: Contrat;
+  annee: number;
+  dateEcheance: Date;
+  prix: number;
+  datDebPeri: Date;
+  datFinPeri: Date;
+  typPaiement?: String;
+  selectedPayer: boolean;
+  prixUnit:number;
+
+}
+
+
 @Component({
   selector: 'app-operation-caisse',
   templateUrl: './operation-caisse.component.html',
   styleUrls: ['./operation-caisse.component.css']
 })
+
 export class OperationCaisseComponent implements OnInit {
 
   // Les fenêtres
@@ -114,6 +132,7 @@ export class OperationCaisseComponent implements OnInit {
   serVal: ValeurLocativeService;
 
   today: Date = new Date();
+  today2: Date = new Date();
   //////// Détail opération de caise
   vnum: String; vdat: String; vcai: String; vcon: String; vtyp: String;
   vmod: String; vobs: String; vexo: String; vuse: String; dats: Date;
@@ -141,6 +160,7 @@ export class OperationCaisseComponent implements OnInit {
   prixIm: PrixImmeuble[];
   prixImm: PrixImmeuble[];
   totalLoyer: number;
+  lignesEcheancier: LigneEcheancier[];
 
   /////// Imputation
   addImputGroup: FormGroup;
@@ -169,6 +189,7 @@ export class OperationCaisseComponent implements OnInit {
   constructor(private serCor: CorrespondantService, private serU: UtilisateurService, public outil: ToolsService,
     private serExo:ExerciceService, private servPV: PointVenteService, private servOp: OperationCaisseService,
     private fbuilder: FormBuilder, private router: Router, private sanitizer: DomSanitizer, private tst: ToastrService,
+    private toastr: ToastrService,
   ) {
     this.pdfToShow=sanitizer.bypassSecurityTrustResourceUrl('/');
 
@@ -297,7 +318,11 @@ export class OperationCaisseComponent implements OnInit {
       loyDat: new FormControl(moment(new Date()).format('YYYY-MM-DDTHH:mm')),
       loyMtt: new FormControl(''),
       loyRel: new FormControl(''),
-      coche: new FormControl()
+      coche: new FormControl(),
+      datLimCalcEche: new FormControl(moment(new Date()).format('YYYY-MM-DD')),
+      takeAvance: new FormControl(true),
+      avance: new FormControl(0),
+
     });
 
     this.addImputGroup = new FormGroup({
@@ -981,9 +1006,10 @@ export class OperationCaisseComponent implements OnInit {
     this.chargerLocataire();
     this.chargerModes();
     this.chargerCaisse();
+    this.today = new Date();
         this.total = 0;
         this.addLoyer.show();
-        this.tmpOpC = new OpCaisse(new Date().getUTCFullYear() + '-000001', new Date(), 'Divers', true, '', new Date(),
+        this.tmpOpC = new OpCaisse(null, new Date(), 'Divers', true, '', new Date(),
           this.caissesValides[0], new TypeRecette('VD', 'Prestation'), this.modes[0], this.exo, this.user);
         this.totalLoyer = 0;
         this.addLoyerGroup.patchValue({
@@ -1004,12 +1030,19 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   ajoutePaiement() {
-    if (this.echeanceAPayer.some(ech => ech.payeEcheance)) {
-      const echeancepaye = this.echeanceAPayer.filter(e => e.payeEcheance === true);
-      let j = this.echeanceAPayer.filter(e => e.payeEcheance === true).length;
-      console.log(echeancepaye);
-
-
+    if (this.lignesEcheancier.some(ech => ech.selectedPayer)) {
+      let echeanceAPayer: Echeance[] = [];
+      this.lignesEcheancier.filter(l => l.selectedPayer == true).forEach(element => {
+        echeanceAPayer.push(
+          new Echeance('Paiement de la période du '+moment(element.datDebPeri).format('DD/MM/YYYY')+' au '+moment(element.datFinPeri).format('DD/MM/YYYY'),
+          element.dateEcheance.getFullYear(), element.dateEcheance, true, element.prixUnit, element.contrat, 
+          null, (element.contrat.immeuble.typeImmeuble.valUnit && element.contrat.immeuble.typeImmeuble.valSuperfi) ? element.contrat.immeuble.superficie : 1
+          ,(element.contrat.immeuble.typeImmeuble.valUnit && element.contrat.immeuble.typeImmeuble.valPlace) ? element.contrat.immeuble.nbrPlace : 1 
+          , (element.contrat.immeuble.typeImmeuble.valUnit && element.contrat.immeuble.typeImmeuble.valFace) ? element.contrat.immeuble.nbrFace : 1
+          , null, element.datDebPeri, element.datFinPeri, element.typPaiement)
+        );
+      });
+      
       if (this.addLoyerGroup.value['loyCai'] !== null && this.addLoyerGroup.value['loyMod'] !== null &&
         this.addLoyerGroup.value['loyDat'] !== null) {
         const dat: String = this.addLoyerGroup.value['loyDat'];
@@ -1024,9 +1057,12 @@ export class OperationCaisseComponent implements OnInit {
         newOC.mttRem= this.addLoyerGroup.value['loyMtt'];
         newOC.monnai= this.addLoyerGroup.value['loyMon'];
         console.log(newOC);
-        const bloc = new OpLocBlock(newOC, echeancepaye, this.addLoyerGroup.value['loyRel']);
+        const bloc = new OpLocBlock(newOC, echeanceAPayer, this.addLoyerGroup.value['loyRel']);
         this.servOp.addLoyer(bloc).subscribe(
           data => {
+            this.lignesEcheancier = [];
+            $('#dteche').dataTable().api().destroy();
+            this.dtTrigEche.next();
             this.afficheFacture(data);
           },
           err => {
@@ -1034,47 +1070,7 @@ export class OperationCaisseComponent implements OnInit {
 
           }
         )
-        /*this.servOp.addLoyer(new OpLoyerBlock(newOC, echeancepaye))
-          .subscribe(
-            (dataop) => {
-              echeancepaye.forEach(elt => {
-                if (elt.payeEcheance) {
-                  if (this.echeances.find(e => e.contrat.numContrat == elt.contrat.numContrat &&
-                    e.dateEcheance == elt.dateEcheance) == null) {
-                  elt.opCaisse = dataop;
-                  this.servOp.addEcheance(elt).subscribe(
-                    dataech => {
-                      j--;
-                      if (j == 0) {
-                        this.servOp.getAllOp().subscribe(
-                          (data2) => {
-                            this.listOp = data2;
-                            this.servOp.getAllEcheances().subscribe(
-                              datalisteop => {
-                                this.echeances = datalisteop;
-                                this.imprimeFacture(dataop);
-                                this.addLoyerGroup.patchValue({
-                                  loyDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
-                                  loyLoc: -1, loyVL: -1, loyCont: '', loyObs: ''
-                                });
-                                this.genererEcheancier(null);
-                                this.totalLoyer = 0;
-                                this.opDay = this.listOp.filter(op =>
-                                  op.utilisateur.idUtilisateur === this.serU.connectedUser.idUtilisateur &&
-                                  new Date(op.dateSaisie).toLocaleDateString().substr(0, 10) === new Date().toLocaleDateString().substr(0, 10)
-                                );
-                                $('#tablign').dataTable().api().destroy();
-                                this.dtLigne.next();
-                              });
-                          });
-                      }
-                    });
-                }}
-              });
-            },
-            (err) => {
-              console.log('Nouvelle opération ', err);
-            });*/
+       
       } else {
         console.log('Vérifier que la caisse, la date, le mode et numéro du paiement sont renseignés');
       }
@@ -1082,6 +1078,10 @@ export class OperationCaisseComponent implements OnInit {
       console.log('Veuillez cocher au moins une échéance à payer');
     }
     this.chargerDailyOp();
+  }
+
+  ajouterPayementEcheance(){
+    
   }
 
   chargerImmeubles(loc: Locataire) {
@@ -1092,8 +1092,8 @@ export class OperationCaisseComponent implements OnInit {
     }
   }
 
-  chargerPrixImmeubles(imm: Immeuble) {
-    this.prixImm = this.prixIm.filter(p => p.immeuble.codeIm === imm.codeIm);
+  chargerPrixImmeubles(typImm: TypeImmeuble) {
+    this.prixImm = this.prixIm.filter(p => p.typeImmeuble.codeTypIm === typImm.codeTypIm);
   }
 
   chargerEcheances() {
@@ -1113,7 +1113,7 @@ export class OperationCaisseComponent implements OnInit {
     if (con == null) {
       this.echeanceAPayer = [];
     } else {
-      this.chargerPrixImmeubles(con.immeuble);
+      this.chargerPrixImmeubles(con.immeuble.typeImmeuble);
       let fa : Date;
       if (con.dateFinContrat == null) {
         fa = new Date(new Date().getFullYear(), 11, 31);
@@ -1138,7 +1138,7 @@ export class OperationCaisseComponent implements OnInit {
             && eche.annee === dde.getFullYear();
         });
         if (exist.length === 0) {
-          const prix = this.prixImm.find(pri => pri.immeuble.codeIm === con.immeuble.codeIm &&
+          const prix = this.prixImm.find(pri => pri.typeImmeuble.codeTypIm === con.immeuble.typeImmeuble.codeTypIm &&
             // pri.dateFinPrixIm==null
             ((new Date(dde) >= new Date(pri.dateDebPrixIm)  &&  new Date(dde) < new Date(pri.dateFinPrixIm))
             || (new Date(dde) >= new Date(pri.dateDebPrixIm)  && pri.dateFinPrixIm === null ))
@@ -1146,13 +1146,22 @@ export class OperationCaisseComponent implements OnInit {
 
           if (prix != null) {
             let p = prix.prixIm;
-            if (con.immeuble.valUnit === true) {
-              p=p*con.immeuble.superficie
+            if (con.immeuble.typeImmeuble.valUnit === true) {
+              if(con.immeuble.typeImmeuble.valSuperfi === true){
+                p *= con.immeuble.superficie;
+              }
+              if(con.immeuble.typeImmeuble.valFace === true){
+                p *= con.immeuble.nbrFace;
+              }
+              if(con.immeuble.typeImmeuble.valPlace === true){
+                p *= con.immeuble.nbrPlace;
+              }
+              
             } else {
               p = prix.prixIm;
+
             }
-            const eche = new Echeance(mois[dde.getMonth()], dde.getFullYear(), new Date(des), false,
-            p, con, null);
+            const eche = null;
             this.echeanceAPayer.push(eche);
             n++;
           } else {
@@ -1170,6 +1179,175 @@ export class OperationCaisseComponent implements OnInit {
     $('#dteche').dataTable().api().destroy();
     this.dtTrigEche.next();
     this.totalLoyer = 0;
+  }
+
+  genererLigneEcheancier(con: Contrat){
+    this.today = new Date(this.addLoyerGroup.value['datLimCalcEche']);
+    this.today2 = new Date();
+   
+   let avanceCon = con.avanceContrat; 
+    if (con == null) {
+      this.lignesEcheancier = [];
+      $('#dteche').dataTable().api().destroy();
+      this.dtTrigEche.next();
+    } else {
+            
+      this.lignesEcheancier = [];
+      $('#dteche').dataTable().api().destroy();
+      this.dtTrigEche.next();
+
+      this.servOp.getAllEcheances()
+      .subscribe(
+        (data1) => {
+          this.servOp.getAllPrixImmeuble().subscribe(
+            (data2) =>{
+              this.echeances = data1;
+              this.prixImm = data2;
+
+              let echeancesOfContr = data1.filter(l => l.contrat.numContrat == con.numContrat).sort((a, b) => a.dateEcheance.valueOf() - b.dateEcheance.valueOf());
+              let lastDateEcheance = echeancesOfContr.length ? echeancesOfContr[echeancesOfContr.length - 1].dateEcheance : con.dateEffetContrat;
+              
+
+              while (this.addAPeriodeToADateByTypeImmeu(lastDateEcheance, con.immeuble.typeImmeuble).toDate().valueOf() <= this.today.valueOf()) {
+                
+                let dateEch = this.addAPeriodeToADateByTypeImmeu(lastDateEcheance, con.immeuble.typeImmeuble).toDate();
+                let byAvance = false;
+                let prixx = this.prixImm.find(pri => pri.typeImmeuble.codeTypIm === con.immeuble.typeImmeuble.codeTypIm &&
+                  // pri.dateFinPrixIm==null
+                  ((new Date(dateEch) >= new Date(pri.dateDebPrixIm)  &&  new Date(dateEch) < new Date(pri.dateFinPrixIm))
+                  || (new Date(dateEch) >= new Date(pri.dateDebPrixIm)  && pri.dateFinPrixIm === null ))
+                );
+                
+                let p = 0;
+
+                if (prixx) {
+                  p = prixx.prixIm;
+                  if (con.immeuble.typeImmeuble.valUnit === true) {
+                    if(con.immeuble.typeImmeuble.valSuperfi === true){
+                      p *= con.immeuble.superficie;
+                    }
+                    if(con.immeuble.typeImmeuble.valFace === true){
+                      p *= con.immeuble.nbrFace;
+                    }
+                    if(con.immeuble.typeImmeuble.valPlace === true){
+                      p *= con.immeuble.nbrPlace;
+                    }
+                    
+                  } 
+
+                } 
+
+                if(this.addLoyerGroup.value['takeAvance'] && dateEch <= new Date()){
+                  if(p <= avanceCon){
+                    byAvance = true;
+                    avanceCon -= p;
+                  }
+                }
+
+                this.lignesEcheancier.push({
+                  annee : dateEch.getFullYear(), 
+                  contrat : con,
+                  dateEcheance : dateEch,
+                  selectedPayer : byAvance,
+                  datDebPeri : lastDateEcheance,
+                  datFinPeri : moment(dateEch).add(-1, 'days').toDate(),
+                  prix : p,
+                  prixUnit: prixx.prixIm,
+                  typPaiement: byAvance ? 'avance': null
+
+                });
+                
+                lastDateEcheance = this.addAPeriodeToADateByTypeImmeu(lastDateEcheance, con.immeuble.typeImmeuble).toDate();
+
+              }
+
+              this.addLoyerGroup.patchValue({ 
+                avance: avanceCon,
+              });
+
+              $('#dteche').dataTable().api().destroy();
+              this.dtTrigEche.next();
+
+              this.calculTotaleEchePaye();
+
+            },
+            (err) => {
+              console.log(err);
+            }
+          );
+
+        },
+        err => {
+          console.log('Echéances: ', err);
+        }
+      );
+    }
+  }
+
+  addAPeriodeToADateByTypeImmeu(date: Date, type: TypeImmeuble): moment.Moment{
+    
+    if(type.periodiciterJrs == 1){
+      return moment(date).add(1, 'days');
+    } else if(type.periodiciterJrs == 2){
+      return moment(date).add(1, 'weeks');
+    } else if(type.periodiciterJrs == 3){
+      return moment(date).add(1, 'months');
+    } else if(type.periodiciterJrs == 4){
+      return moment(date).add(1, 'years');
+    }
+    return null;
+
+  }
+
+  calculTotaleEchePaye(){
+    let val = 0;
+    this.lignesEcheancier.forEach(element => {
+      if(element.selectedPayer) val += element.prix;
+    });
+    this.total = val;
+  }
+
+  onContratEcheanceChange(con : Contrat){
+    this.lignesEcheancier = [];
+    $('#dteche').dataTable().api().destroy();
+    this.dtTrigEche.next();
+    this.calculTotaleEchePaye();
+    this.addLoyerGroup.patchValue({ 
+      avance: con ? con.avanceContrat : 0,
+     });
+    
+  }
+
+  onDateLimiteCalculEcheanceChange(){
+
+  }
+
+  onTakeAvanceEcheanceChange(){
+    if(this.lignesEcheancier.length > 0){
+      this.genererLigneEcheancier(this.contratLocataire[this.addLoyerGroup.value['loyVL']]);
+    }
+  }
+
+  onAEcheanceCheckedChange(inde:number, e){
+    let finded = false;
+
+    for (let index = 0; index < inde; index++) {
+      if(this.lignesEcheancier[index].selectedPayer == false){
+        finded = true;
+        
+        this.lignesEcheancier[inde].selectedPayer = false;
+        this.toastr.error('Veillez d\'abord Sélectionner les echéances précédentes', 'Opération de Caisse');
+      
+        break;
+      }
+
+    }
+
+    this.lignesEcheancier[inde].selectedPayer = true;
+
+        
+    this.calculTotaleEchePaye();
+
   }
 
   chargerEcheancesContrat(con) {
@@ -1402,13 +1580,13 @@ export class OperationCaisseComponent implements OnInit {
         this.servOp.getEcheanceByOp(opc.numOpCaisse).subscribe(
           data => {
               if (data.length > 0) {
-              this.total = data.reduce((d, e) => d += e.prix.valueOf(), 0);
+              this.total = data.reduce((d, e) => d += e.prix.valueOf()*e.superficie*e.nbrPlace*e.nbrFace, 0);
               data.forEach(elt => {
                 const col = [];
                 col.push(elt.moisEcheance);
                 col.push(elt.annee);
                 col.push(moment(new Date(elt.dateEcheance)).format('DD/MM/YYYY'));
-                col.push(elt.prix);
+                col.push(elt.prix.valueOf()*elt.superficie*elt.nbrFace*elt.nbrPlace);
                 lig.push(col)
               });
 

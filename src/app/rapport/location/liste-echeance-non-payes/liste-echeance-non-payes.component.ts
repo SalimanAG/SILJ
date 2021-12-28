@@ -18,6 +18,7 @@ import { Arrondissement } from '../../../../models/arrondissement.model';
 import { SiteMarcher } from '../../../../models/siteMarcher.model';
 import { CommuneService } from '../../../../services/definition/commune.service';
 import { PagerComponent, PaginationConfig } from 'ngx-bootstrap/pagination';
+import { TypeImmeuble } from '../../../../models/typeImmeuble.model';
 @Component({
   selector: 'app-liste-echeance-non-payes',
   templateUrl: './liste-echeance-non-payes.component.html',
@@ -310,7 +311,7 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
         "Août", "Septembre", "Octobre", "Novembre", "Décembre");
       var i = 0, n = 0;
       //var fa = new Date();
-      var des = new Date(dde.getFullYear(), dde.getMonth() + 1, dde.getDate());
+      var des = new Date(this.addAPeriodeToADateByTypeImmeu(dde, con.immeuble.typeImmeuble).toDate());
       var n = 0;
       var echeanceContrat = this.echeances.filter(eche => eche.contrat.numContrat == con.numContrat);
 
@@ -320,14 +321,19 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
             && eche.annee == dde.getFullYear();
         });
         if (exist.length == 0) {
-          var prix = this.prix.find(pri => pri.immeuble.codeIm == con.immeuble.codeIm &&
+          var prix = this.prix.find(pri => pri.typeImmeuble.codeTypIm == con.immeuble.typeImmeuble.codeTypIm &&
             ((new Date(dde) >= new Date(pri.dateDebPrixIm) && new Date(dde) < new Date(pri.dateFinPrixIm)) ||
               (new Date(dde) >= new Date(pri.dateDebPrixIm) && pri.dateFinPrixIm == null))
           );
 
           if (prix != null) {
             const eche = new Echeance(mois[dde.getMonth()], dde.getFullYear(), new Date(des), false,
-              prix.prixIm, con, null);
+              prix.prixIm, con, null
+              , con.immeuble.typeImmeuble.valSuperfi ? con.immeuble.superficie : 1
+              , con.immeuble.typeImmeuble.valPlace ? con.immeuble.nbrPlace : 1
+              , con.immeuble.typeImmeuble.valFace ? con.immeuble.nbrFace : 1
+              , null, this.addAPeriodeToADateByTypeImmeu(new Date(des), con.immeuble.typeImmeuble, -1).toDate()
+              , moment(new Date(des)).add(-1, 'days').toDate(), null);
             this.totBout += eche.prix.valueOf();
             this.echeanceAPayer.push(eche);
             n++;
@@ -337,6 +343,21 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
         des.setMonth(des.getMonth() + 1);
       }
     }
+  }
+
+  addAPeriodeToADateByTypeImmeu(date: Date, type: TypeImmeuble, val: number = 1): moment.Moment{
+    
+    if(type.periodiciterJrs == 1){
+      return moment(date).add(val, 'days');
+    } else if(type.periodiciterJrs == 2){
+      return moment(date).add(val, 'weeks');
+    } else if(type.periodiciterJrs == 3){
+      return moment(date).add(val, 'months');
+    } else if(type.periodiciterJrs == 4){
+      return moment(date).add(val, 'years');
+    }
+    return null;
+
   }
 
   afficheImpayes() {
@@ -416,7 +437,7 @@ export class ListeEcheanceNonPayesComponent implements OnInit {
             col.push(element.annee);
             col.push(element.moisEcheance);
             col.push(moment(new Date(element.dateEcheance)).format("DD/MM/YYYY"));
-            col.push(element.prix);
+            col.push(element.prix.valueOf()*element.superficie*element.nbrFace*element.nbrPlace);
             list.push(col);
             totCont += element.prix.valueOf();
           });

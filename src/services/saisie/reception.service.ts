@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { EncapReception } from '../../models/EncapReception';
 import { LigneReception } from '../../models/ligneReception.model';
 import { Reception } from '../../models/reception.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
@@ -26,12 +27,33 @@ export class ReceptionService {
     return this.httpCli.post<Reception>(this.host+'/stock/reception/list', corps);
   }
 
+  addReception(corps:EncapReception){
+    return this.httpCli.post<EncapReception>(this.host+'/stock/reception/list2', corps);
+  }
+
   editAReception(code:String, corps:Reception){
     return this.httpCli.put<Reception>(this.host+'/stock/reception/byCodRec/'+code, corps);
   }
 
+  //Léo
+  editReception(code:String, corps:EncapReception){
+    return this.httpCli.put<Reception>(this.host+'/stock/reception/byCodRec2/'+code, corps);
+  }
+
+  //Léo Annulation d'une ReCeption
+
+  annuleReception(code:String, corps:Reception){
+    return this.httpCli.put<Reception>(this.host+'/stock/reception/annulation/'+code, corps);
+  }
+
+
   deleteAReception(code:String){
     return this.httpCli.delete<boolean>(this.host+'/stock/reception/byCodRec/'+code);
+  }
+
+  //Léo Delete Reception
+  deleteReception(code:String){
+    return this.httpCli.delete<boolean>(this.host+'/stock/reception/delete/'+code);
   }
 
 
