@@ -621,7 +621,7 @@ export class ImportationExportationComponent implements OnInit {
                         inde++;
                         if(element[0] != undefined && element[1] != undefined && element[2] != undefined
                           && typeof element[3] == 'number' && element[9] != undefined
-                          && element[6] != undefined && element[7] != undefined 
+                          && element[7] != undefined 
                           && (element[12] == undefined || (typeof element[12] == 'boolean'))
                           && typeof element[13] == 'number' && typeof element[14] == 'number'){
                           let quartier:Quartier = null;
@@ -632,21 +632,25 @@ export class ImportationExportationComponent implements OnInit {
                           let finded2:boolean = false;
                           let finded3:boolean = false;
                           let finded4:boolean = false;
+                          let nbrNull: number = 0;
 
-                          for(const element1 of data1){
-                            if(element1.codeQuartier == element[6]){
-                              quartier = element1;
-                              finded1 = true;
-                              break;
+                          if(element[6]){
+                            for(const element1 of data1){
+                              if(element1.codeQuartier == element[6]){
+                                quartier = element1;
+                                finded1 = true;
+                                break;
+                              }
                             }
+  
+                            if(!finded1){
+                              console.log('Le code de Quartier à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
+                              this.toastr.error('Le code de Quartier à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
+                              return;
+                            }
+                            nbrNull++;
                           }
-
-                          if(!finded1){
-                            console.log('Le code de Quartier à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
-                            this.toastr.error('Le code de Quartier à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
-                            return;
-                          }
-
+                          
                           if (element[8]) {
                             for(const element2 of data2) {
                               if(element2.codeSite == element[8]){
@@ -661,6 +665,13 @@ export class ImportationExportationComponent implements OnInit {
                               this.toastr.error('Le code de Site à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
                               return;
                             }
+                            nbrNull++;
+                          }
+
+                          if(nbrNull == 0){
+                            console.log('Le code de Site et du Quartier sont tous non-renseignés à la ligne '+(inde)+' \n Veuillez renseigner une au moins. Importation interrompue.');
+                            this.toastr.error('Le code de Site et du Quartier sont tous non-renseignés à la ligne '+(inde)+' \n Veuillez renseigner une au moins', 'Importation de Valeur Locative');
+                            return;
                           }
 
                           for(const element3 of data3){
@@ -677,7 +688,7 @@ export class ImportationExportationComponent implements OnInit {
                             return;
                           }
 
-                          for(const element4 of data4){
+                          /*for(const element4 of data4){
                             if(element4.codeArrondi== element[9]){
                               arrondi = element4;
                               finded4 = true;
@@ -689,9 +700,9 @@ export class ImportationExportationComponent implements OnInit {
                             console.log('Le code d\'arrondissement à la ligne '+(inde+1)+' nExiste pas. Importation interrompue.');
                             this.toastr.error('Le code d\'arrondissement à la ligne '+(inde)+' n\'existe pas', 'Importation de Valeur Locative');
                             return;
-                          }
+                          }*/
 
-                          let valeurLoca:Immeuble = new Immeuble(element[0], element[1], element[2], false, element[3], element[4], element[5], arrondi, quartier, typImme, site, element[10], element[11], element[12], element[13], element[14], element[15], element[16], element[17]);
+                          let valeurLoca:Immeuble = new Immeuble(element[0], element[1], element[2], false, element[3], element[4], element[5], quartier ? quartier.arrondissement : site.arrondissement, quartier, typImme, site, element[10], element[11], element[12], element[13], element[14], element[15], element[16], element[17]);
 
                           liste.push(valeurLoca);
 
@@ -699,7 +710,7 @@ export class ImportationExportationComponent implements OnInit {
                         else {
                           console.log('Erreur à la ligne '+(inde+1)+'. Une Informationn de la Valeur Locative est invalide');
                           this.toastr.error('Erreur à la ligne '+(inde)+'. Une Informationn de la Valeur Locative est invalide', 'Importation de Valeur Locative');
-                          exit;
+                          return;
                         }
 
                       }

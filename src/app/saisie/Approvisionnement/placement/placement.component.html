@@ -25,11 +25,12 @@
                   <td>{{ place.datePlacement | date:"dd-MM-yyyy" }}</td>
                   <td>{{ place.correspondant.idCorrespondant }} - {{ place.correspondant.magasinier.nomMagasinier }} {{ place.correspondant.magasinier.prenomMagasinier }}</td>
                   <td>{{ place.regisseur.idRegisseur }} - {{ place.regisseur.magasinier.nomMagasinier }} {{ place.regisseur.magasinier.prenomMagasinier }}</td>
+                  
                   <td>
-                      <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)"><span class="fa fa-edit"></span></button>
-                      <button *ngIf="!place.validepl" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)"><span class="fa fa-trash"></span></button>
-                      <button *ngIf="place.validepl" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerPlacement(i)"><span class="fa fa-undo"></span></button>
-                      <button class="btn btn-dark btn-sm" data-toggle="modal" (click)="initPrintToPdfOfAnPlacem(i)"><span class="fa fa-file-o"></span></button>
+                      <button  *ngIf="place.validepl" class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditCommande(i)" title="Modifier le Placement"><span class="fa fa-edit"></span></button>
+                      <button *ngIf="!place.validepl" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteCommande(i)" title="Supprimer le Placement"><span class="fa fa-trash"></span></button>
+                      <button *ngIf="place.validepl" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerPlacement(i)" title="Annuler le Placement"><span class="fa fa-undo"></span></button>
+                      <button class="btn btn-dark btn-sm" data-toggle="modal" (click)="initPrintToPdfOfAnPlacem(i)" title="Imprimer le Placement"><span class="fa fa-file-o"></span></button>
                       <!--Le bouton des options
                       <div class="btn-group" dropdown>
                         <button type="button" dropdownToggle class="btn btn-secondary btn-sm"><span class="icon-options"></span></button>

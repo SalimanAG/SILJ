@@ -43,6 +43,7 @@ import { Signer } from '../../../../models/signer.model';
 import { Occuper } from '../../../../models/occuper.model';
 import { SignataireService } from '../../../../services/administration/signataire-service.service';
 import { Tools2Service } from '../../../../services/utilities/tools2.service';
+import { EncapPlacement } from '../../../../models/EncapPlacement';
 
 @Component({
   selector: 'app-placement',
@@ -86,8 +87,9 @@ export class PlacementComponent  implements OnInit {
   editPlacement:Placement = new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
   new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
   new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
+
   suprPlacement:Placement = new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
-  new Utilisateur('','','','',new Fonction('',''),false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
+  new Utilisateur('','','','',new Fonction('',''), false, new Service('',''))), new Correspondant('', false, new Magasinier('', '', ''),
   new TypCorres('', ''), new Utilisateur('', '', '', '', new Fonction('',''), false, new Service('', ''))), new Exercice('', '', new Date(), new Date(), '', false));
 
   annulPlacement:Placement = new Placement('', new Date(), new Regisseur('',new Magasinier('','',''),
@@ -786,12 +788,15 @@ export class PlacementComponent  implements OnInit {
     this.correspondantsByArrondi[this.addPlacementFormGroup.value['addCorrespondant']],
     this.serviceExercice.exoSelectionner);
 
-    //console.log('6666', this.magOfSelectedCorres);
-    //return;
+    const newEncapPlacement = new EncapPlacement(newPlacement, this.tempAddLignePlacement);
 
-    this.servicePlacement.addAPlacement(newPlacement).subscribe(
+   
+    this.servicePlacement.addPlacement(newEncapPlacement).subscribe(
       (data) => {
-        this.tempAddLignePlacement.forEach((element, inde) => {
+
+        console.log("Saved Placement", data);
+        
+        /*this.tempAddLignePlacement.forEach((element, inde) => {
           element.placement = data;
           this.servicePlacement.addALignePlacement(element).subscribe(
             (data2) => {
@@ -886,7 +891,7 @@ export class PlacementComponent  implements OnInit {
               console.log('Erreur lors de lAjout dUne ligne de placement', erreur);
             }
           );
-        });
+        });*/
 
         this.getAllPlacement();
         this.getAllLignePlacement();
@@ -909,492 +914,13 @@ export class PlacementComponent  implements OnInit {
     this.editPlacement.correspondant,
     this.serviceExercice.exoSelectionner);
 
-    //console.log('le new ', newPlacement);
+    const newEncapPlacement = new EncapPlacement(newPlacement, this.tempEditLignePlacement);
 
-      this.servicePlacement.editAPlacement(this.editPlacement.numPlacement, newPlacement).subscribe(
+      this.servicePlacement.editPlacement(this.editPlacement.numPlacement, newEncapPlacement).subscribe(
         (data) => {
-          //console.log('le new accepter', newPlacement);
-          //Traitement des lignes de placement à ajouter et ou modifier
-          this.tempEditLignePlacement.forEach(element => {
-            //console.log('Traitement des lignes de placement à ajouter et ou modifier ');
-            let added:boolean = true;
 
-            this.oldPlacementLine.forEach(element2 => {
-              if(element.idLignePlacement == element2.idLignePlacement){
-                added = false;
-                //ce n'est pas une nouvelle ligne donc je passe à son édition
-                //console.log('ce n\'est pas une nouvelle ligne donc je passe à son édition', this.tempEditPlageNumArticle);
-                this.servicePlacement.editALignePlacement(element2.idLignePlacement.toString(), element).subscribe(
-                  (data2) => {
-
-                    //Réajustement des stocks
-                    let exist1:boolean = false;
-                    let exist2:boolean = false;
-                    let concernedStockCorres:Stocker = null;
-                    let concernedStockCarveauMairie:Stocker = null;
-                    this.serviceCorres.getAllStocker().subscribe(
-                      (data3) => {
-
-                        data3.forEach(element3 => {
-                          if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == data2.article.codeArticle){
-                            concernedStockCarveauMairie = element3;
-                            exist1 = true;
-                            exit;
-                          }
-
-                          if(element3.magasin.codeMagasin == this.magOfSelectedCorres.codeMagasin && element3.article.codeArticle == data2.article.codeArticle){
-                            concernedStockCorres = element3;
-                            exist2 = true;
-                            exit;
-                          }
-                        });
-
-                        if(exist1){
-                          concernedStockCarveauMairie.quantiterStocker = concernedStockCarveauMairie.quantiterStocker + element2.quantiteLignePlacement - data2.quantiteLignePlacement;
-                          this.serviceCorres.editAStocker(concernedStockCarveauMairie.idStocker.toString(), concernedStockCarveauMairie).subscribe(
-                            (data4) => {
-
-                            },
-                            (erreur) => {
-                              console.log('Erreur lors de la modification dUn stock', erreur);
-                            }
-                          );
-                        }
-                        else{
-                          this.serviceCorres.addAStocker(new Stocker(data2.quantiteLignePlacement*(-1), 0, 0, 0, data2.article, this.carveauxMairie)).subscribe(
-                            (data4) => {
-
-                            },
-                            (erreur) => {
-                              console.log('Erreur lors de lAjout dUn stocker', erreur);
-                            }
-                          );
-                        }
-
-                        if(exist2){
-                          concernedStockCorres.quantiterStocker = concernedStockCorres.quantiterStocker - element2.quantiteLignePlacement + data2.quantiteLignePlacement;
-                          this.serviceCorres.editAStocker(concernedStockCorres.idStocker.toString(), concernedStockCorres).subscribe(
-                            (data4) => {
-
-                            },
-                            (erreur) => {
-                              console.log('Erreur lors de la modification dUn stock', erreur);
-                            }
-                          );
-                        }
-                        else{
-                          this.serviceCorres.addAStocker(new Stocker(data2.quantiteLignePlacement, 0, 0, 0, data2.article, this.magOfSelectedCorres)).subscribe(
-                            (data4) => {
-
-                            },
-                            (erreur) => {
-                              console.log('Erreur lors de lAjout dUn stocker', erreur);
-                            }
-                          );
-                        }
-
-                      },
-                      (erreur) => {
-                        console.log('Erreur lors de la récupération des stockés', erreur);
-                      }
-                    );
-
-                    //la modification a marché don je passe à la suppression ou ajout ou modification de ces plages
-                    this.tempEditPlageNumArticle.forEach(element3 => {
-                      //filtrage important
-                      if(element3.lignePlacement.idLignePlacement === data2.idLignePlacement){
-                        let exis:boolean=false;
-
-                        this.oldPlageNumArtLines.forEach(element4 => {
-                          if(element3.idPlage === element4.idPlage){
-                            exis = true;
-                            this.servicePlageNumArticle.editAPlageNumArticle(element4.idPlage.toString(), element3).subscribe(
-                              (data3) => {
-
-                              },
-                              (erreur) => {
-                                console.log('Erreur lors de Ledition dUne plage', erreur);
-                              }
-                            );
-                            exit;
-                          }
-                        });
-
-                        if(exis == false){
-                          //console.log('Baddd');
-                          element3.lignePlacement = data2;
-                          this.servicePlageNumArticle.addAPlageNumArticle(element3).subscribe(
-                            (data3) => {
-
-                            },
-                            (erreur) => {
-                              console.log('Erreur lors de la création dUne plage de num', erreur);
-                            }
-                          );
-                        }
-
-                        //Suppression de ces lignes de plages qui ont été supprimées par l'User
-                        this.oldPlageNumArtLines.forEach(element4 => {
-                          if(element4.lignePlacement.idLignePlacement == data2.idLignePlacement){
-                            let maint:boolean = false;
-                            this.tempEditPlageNumArticle.forEach(element5 => {
-                              if(element4.idPlage === element5.idPlage){
-                                maint = true;
-                                exit;
-                              }
-                            });
-
-                            if(maint == false){
-                              this.servicePlageNumArticle.deleteAPlageNumArticle(element4.idPlage.toString()).subscribe(
-                                (data4) => {
-
-                                },
-                                (erreur) => {
-                                  console.log('Erreur lors de la suppression dUne plage', erreur);
-                                }
-                              );
-                            }
-                          }
-
-
-                        });
-
-                      }
-                    });
-
-                    //un deep clean des plages
-                    this.oldPlageNumArtLines.forEach(element12 => {
-                      let mainn:boolean = false;
-                      this.tempEditPlageNumArticle.forEach(element22 => {
-                        if(element12.idPlage == element22.idPlage){
-                          mainn = true;
-                          exit;
-                        }
-                      });
-
-                      if(mainn == false){
-                        this.servicePlageNumArticle.deleteAPlageNumArticle(element12.idPlage.toString()).subscribe(
-                          (data125) => {
-
-                          },
-                          (erreur) => {
-                            console.log('Erreur lors de la suppression dUne plage', erreur);
-                          }
-                        );
-                      }
-
-
-                    });
-
-
-                  },
-                  (erreur) => {
-                    console.log('Erreur lors de la modification dUne ligne de placement', erreur);
-                  }
-                );
-                exit;
-              }
-            });
-
-            if(added==true){
-              element.placement = data;
-              //console.log('+', element);
-              this.servicePlacement.addALignePlacement(element).subscribe(
-                (data9) => {
-                  //ajustement des stocks
-                  this.serviceCorres.getAllStocker().subscribe(
-                    (data3) => {
-                      let exist1:boolean = false;
-                      let exist2:boolean = false;
-                      let concernedStockerCarvMairie:Stocker = null;
-                      let concernedStockerMagCorres:Stocker = null;
-                      data3.forEach(element3 => {
-                        if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == data9.article.codeArticle){
-                          concernedStockerCarvMairie = element3;
-                          exist1 = true;
-                          exit;
-                        }
-                        if(element3.magasin.codeMagasin == this.magOfSelectedCorres.codeMagasin && element3.article.codeArticle == data9.article.codeArticle){
-                          concernedStockerMagCorres = element3;
-                          exist2 = true;
-                          exit;
-                        }
-
-                      });
-
-                      if(exist1){
-                        concernedStockerCarvMairie.quantiterStocker-=data9.quantiteLignePlacement;
-                        this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
-                          (data4) => {
-
-                          },
-                          (erreur) => {
-                            console.log('Erreur lors de lEdition dUn stock', erreur);
-                          }
-                        );
-                      }
-                      else{
-                        this.serviceCorres.addAStocker(new Stocker(data9.quantiteLignePlacement*(-1), 0, 0, 0, data9.article, this.carveauxMairie)).subscribe(
-                          (data4) => {
-
-                          },
-                          (erreur) => {
-                            console.log('Erreur lors de lAjout dUn Stocker', erreur);
-                          }
-                        );
-                      }
-
-                      if(exist2){
-                        concernedStockerMagCorres.quantiterStocker+=data9.quantiteLignePlacement;
-                        this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
-                          (data4) => {
-
-                          },
-                          (erreur) => {
-                            console.log('Erreur lors de lEdition dUn stock', erreur);
-                          }
-                        );
-                      }
-                      else{
-                        this.serviceCorres.addAStocker(new Stocker(data9.quantiteLignePlacement, 0, 0, 0, data9.article, this.magOfSelectedCorres)).subscribe(
-                          (data4) => {
-
-                          },
-                          (erreur) => {
-                            console.log('Erreur lors de lAjout dUn Stocker', erreur);
-                          }
-                        );
-                      }
-
-                    },
-                    (erreur) => {
-                      console.log('Erreur lors de la récupération de la liste des stockés', erreur);
-                    }
-                  );
-
-
-
-                  //console.log('liste', this.tempEditPlageNumArticle);
-                  this.tempEditPlageNumArticle.forEach(element3 => {
-                    if(element3.lignePlacement.article.codeArticle == data9.article.codeArticle){
-                      console.log('++', element3);
-                      element3.lignePlacement = data9;
-                      console.log('+++', element3);
-                      this.servicePlageNumArticle.addAPlageNumArticle(element3).subscribe(
-                        (data2) => {
-
-                        },
-                        (erreur) => {
-                          console.log('Erreur lors de lAjout dUne nouvelle plage', erreur);
-                        }
-                      );
-                    }
-                  });
-                },
-                (erreur) => {
-                  console.log('Erreur lors de la création dUne ligne dAppro', erreur);
-                }
-              );
-            }
-
-          });
-
-
-        //Traitement des lignes de placement à supprimer
-
-        //console.log('Placement line',this.oldPlacementLine);
-        //console.log('old plage line', this.oldPlageNumArtLines);
-
-        this.oldPlacementLine.forEach(element => {
-          console.log('Traitement des lignes de placement à supprimer');
-          let mainte:boolean = false;
-          this.tempEditLignePlacement.forEach(element2 => {
-            if(element.idLignePlacement === element2.idLignePlacement){
-              mainte = true;
-              exit;
-            }
-          });
-
-          if(mainte == false){
-            //console.log('Traitement des lignes de placement à supprimer');
-            this.oldPlageNumArtLines.forEach(element3 => {
-              if(element3.lignePlacement.idLignePlacement === element.idLignePlacement){
-                this.servicePlageNumArticle.deleteAPlageNumArticle(element3.idPlage.toString()).subscribe(
-                  (data7) => {
-                    this.servicePlacement.deleteALignePlacement(element.idLignePlacement.toString()).subscribe(
-                      (data8) => {
-                        //ajustement de stock si succès
-                        console.log('Delete Res 2', data8);
-                        if(!data8)
-                        this.serviceCorres.getAllStocker().subscribe(
-                          (data3) => {
-                            let exist1:boolean = false;
-                            let exist2:boolean = false;
-                            let concernedStockerCarvMairie:Stocker = null;
-                            let concernedStockerMagCorres:Stocker = null;
-                            data3.forEach(element3 => {
-                              if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == element.article.codeArticle){
-                                concernedStockerCarvMairie = element3;
-                                exist1 = true;
-                                exit;
-                              }
-                              if(element3.magasin.codeMagasin == this.magOfSelectedCorres.codeMagasin && element3.article.codeArticle == element.article.codeArticle){
-                                concernedStockerMagCorres = element3;
-                                exist2 = true;
-                                exit;
-                              }
-
-                            });
-
-                            if(exist1){
-                              concernedStockerCarvMairie.quantiterStocker+=element.quantiteLignePlacement;
-                              this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
-                                (data4) => {
-                                  console.log('pase pase 1');
-                                },
-                                (erreur) => {
-                                  console.log('Erreur lors de lEdition dUn stock', erreur);
-                                }
-                              );
-                            }
-                            else{
-                              this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePlacement, 0, 0, 0, element.article, this.carveauxMairie)).subscribe(
-                                (data4) => {
-
-                                },
-                                (erreur) => {
-                                  console.log('Erreur lors de lAjout dUn Stocker', erreur);
-                                }
-                              );
-                            }
-
-                            if(exist2){
-                              concernedStockerMagCorres.quantiterStocker-=element.quantiteLignePlacement;
-                              this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
-                                (data4) => {
-                                  console.log('pase pase 2');
-                                },
-                                (erreur) => {
-                                  console.log('Erreur lors de lEdition dUn stock', erreur);
-                                }
-                              );
-                            }
-                            else{
-                              this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePlacement*(-1), 0, 0, 0, element.article, this.magOfSelectedCorres)).subscribe(
-                                (data4) => {
-
-                                },
-                                (erreur) => {
-                                  console.log('Erreur lors de lAjout dUn Stocker', erreur);
-                                }
-                              );
-                            }
-
-                          },
-                          (erreur) => {
-                            console.log('Erreur lors de la récupération de la liste des stockés', erreur);
-                          }
-                        );
-
-                      },
-                      (erreur) => {
-                        console.log('Erreur lors de suppression dUne ligne de Placement', erreur);
-                      }
-                    );
-                  },
-                  (erreur) => {
-                    console.log('Erreur lors de la suppression dUne plage', erreur);
-                  }
-                );
-
-
-
-              }
-            });
-
-            this.servicePlacement.deleteALignePlacement(element.idLignePlacement.toString()).subscribe(
-              (data8) => {
-                //console.log('Delete Res ', data8);
-                if(!data8)
-                this.serviceCorres.getAllStocker().subscribe(
-                  (data3) => {
-                    let exist1:boolean = false;
-                    let exist2:boolean = false;
-                    let concernedStockerCarvMairie:Stocker = null;
-                    let concernedStockerMagCorres:Stocker = null;
-                    data3.forEach(element3 => {
-                      if(element3.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element3.article.codeArticle == element.article.codeArticle){
-                        concernedStockerCarvMairie = element3;
-                        exist1 = true;
-                        exit;
-                      }
-                      if(element3.magasin.codeMagasin == this.magOfSelectedCorres.codeMagasin && element3.article.codeArticle == element.article.codeArticle){
-                        concernedStockerMagCorres = element3;
-                        exist2 = true;
-                        exit;
-                      }
-
-                    });
-
-                    if(exist1){
-                      concernedStockerCarvMairie.quantiterStocker+=element.quantiteLignePlacement;
-                      this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
-                        (data4) => {
-                          console.log('pase pase 3');
-                        },
-                        (erreur) => {
-                          console.log('Erreur lors de lEdition dUn stock', erreur);
-                        }
-                      );
-                    }
-                    else{
-                      this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePlacement, 0, 0, 0, element.article, this.carveauxMairie)).subscribe(
-                        (data4) => {
-
-                        },
-                        (erreur) => {
-                          console.log('Erreur lors de lAjout dUn Stocker', erreur);
-                        }
-                      );
-                    }
-
-                    if(exist2){
-                      concernedStockerMagCorres.quantiterStocker-=element.quantiteLignePlacement;
-                      this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
-                        (data4) => {
-                          console.log('pase pase 4');
-                        },
-                        (erreur) => {
-                          console.log('Erreur lors de lEdition dUn stock', erreur);
-                        }
-                      );
-                    }
-                    else{
-                      this.serviceCorres.addAStocker(new Stocker(element.quantiteLignePlacement*(-1), 0, 0, 0, element.article, this.magOfSelectedCorres)).subscribe(
-                        (data4) => {
-
-                        },
-                        (erreur) => {
-                          console.log('Erreur lors de lAjout dUn Stocker', erreur);
-                        }
-                      );
-                    }
-
-                  },
-                  (erreur) => {
-                    console.log('Erreur lors de la récupération de la liste des stockés', erreur);
-                  }
-                );
-
-              },
-              (erreur) => {
-                console.log('Erreur lors de suppression dUne ligne de Placement', erreur);
-              }
-            );
-
-          }
-
-        });
+          console.log("Vérification Modification", data);
+          
 
         this.editComModal.hide();
         this.getAllPlacement();
@@ -1412,211 +938,42 @@ export class PlacementComponent  implements OnInit {
 
   onConfirmAnnulerPlacement(){
 
-    this.serviceCorres.getAllGerer().subscribe(
-      (data) => {
-        let finded:boolean = false;
-        let concernedMagOfCorresp:Magasin = null;
-        data.forEach(element => {
-          if(element.magasinier.numMAgasinier == this.annulPlacement.correspondant.magasinier.numMAgasinier){
-            concernedMagOfCorresp = element.magasin;
-            finded = true;
-            exit;
-          }
-        });
-
-        if(finded){
+    
           const pla = new Placement(this.annulPlacement.numPlacement, this.annulPlacement.datePlacement,
             this.annulPlacement.regisseur, this.annulPlacement.correspondant, this.annulPlacement.exercice);
-          pla.validepl = false;
-          //console.log('Element modifier',pla);
-          this.servicePlacement.editAPlacement(this.annulPlacement.numPlacement, pla).subscribe(
-            (data2) => {
+            pla.validepl = false;
 
-              this.servicePlacement.getAllLignePlacement().subscribe(
-                (data3) => {
+            console.log("Placement à annuler", pla);
+            
 
-                  data3.forEach(element3 => {
-                    if(element3.placement.numPlacement == data2.numPlacement){
-                      this.serviceCorres.getAllStocker().subscribe(
-                        (data4) => {
-                          let exist1:boolean = false;
-                          let exist2:boolean = false;
-                          let concernedStockerCarvMairie:Stocker = null;
-                          let concernedStockerMagCorres:Stocker = null;
-                          data4.forEach(element4 => {
-                            if(element4.magasin.codeMagasin == this.carveauxMairie.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
-                              concernedStockerCarvMairie = element4;
-                              exist1 = true;
-                              exit;
-                            }
-                            if(element4.magasin.codeMagasin == concernedMagOfCorresp.codeMagasin && element4.article.codeArticle == element3.article.codeArticle){
-                              concernedStockerMagCorres = element4;
-                              exist2 = true;
-                              exit;
-                            }
+          this.servicePlacement.annulePlacement(this.annulPlacement.numPlacement, pla).subscribe(
+            (data) => {
 
-                          });
-
-                          if(exist1){
-                            concernedStockerCarvMairie.quantiterStocker+=element3.quantiteLignePlacement;
-                            this.serviceCorres.editAStocker(concernedStockerCarvMairie.idStocker.toString(), concernedStockerCarvMairie).subscribe(
-                              (data5) => {
-
-                              },
-                              (erreur) => {
-                                console.log('Erreur lors de lEdition dUn stock', erreur);
-                              }
-                            );
-                          }
-                          else{
-                            this.serviceCorres.addAStocker(new Stocker(element3.quantiteLignePlacement, 0, 0, 0, element3.article, this.carveauxMairie)).subscribe(
-                              (data5) => {
-
-                              },
-                              (erreur) => {
-                                console.log('Erreur lors de lAjout dUn Stocker', erreur);
-                              }
-                            );
-                          }
-
-                          if(exist2){
-                            concernedStockerMagCorres.quantiterStocker-=element3.quantiteLignePlacement;
-                            this.serviceCorres.editAStocker(concernedStockerMagCorres.idStocker.toString(), concernedStockerMagCorres).subscribe(
-                              (data5) => {
-
-                              },
-                              (erreur) => {
-                                console.log('Erreur lors de lEdition dUn stock', erreur);
-                              }
-                            );
-                          }
-                          else{
-                            this.serviceCorres.addAStocker(new Stocker(element3.quantiteLignePlacement*(-1), 0, 0, 0, element3.article, this.magOfSelectedCorres)).subscribe(
-                              (data5) => {
-
-                              },
-                              (erreur) => {
-                                console.log('Erreur lors de lAjout dUn Stocker', erreur);
-                              }
-                            );
-                          }
-
-                        },
-                        (erreur) => {
-                          console.log('Erreur lors de la récupération des stockers', erreur);
-                        }
-                      );
-                    }
-                  });
-                },
-                (erreur) => {
-                  console.log('Erreur lors de la récupération de la liste des lignes de placement', erreur);
-                }
-              );
-
+              console.log("Annulation du Placement", data);
+              
               this.annulerPlaModal.hide();
               this.getAllPlacement();
+              this.getAllLignePlacement();
 
             },
             (erreur) => {
               console.log('Erreur lors de la modification du placement', erreur);
             }
           );
-        }
-        else{
-          console.log('Erreur !! Aucun magasin trouvé pour le correspondant concerné');
-        }
-
-      },
-      (erreur) => {
-        console.log('Erreur lors de la récupération de la liste des gérers', erreur);
-      }
-    );
-
+       
   }
 
   onConfirmDeleteCommande(){
-
-    this.servicePlageNumArticle.getAllPlageNumArticle().subscribe(
+    this.servicePlacement.deletePlacement(this.suprPlacement.numPlacement).subscribe(
       (data) => {
-        this.plageNumArticles = data;
-        this.servicePlacement.getAllLignePlacement().subscribe(
-          (data2) => {
-            this.lignePlacements = data2;
-            //suppression des lignes de placement ayant de plage de numérotation d'article
-            this.plageNumArticles.forEach(element => {
-              if(element.lignePlacement != null && element.lignePlacement.placement.numPlacement == this.suprPlacement.numPlacement){
-                this.servicePlageNumArticle.deleteAPlageNumArticle(element.idPlage.toString()).subscribe(
-                  (data3) => {
-                    this.servicePlacement.deleteALignePlacement(element.lignePlacement.idLignePlacement.toString()).subscribe(
-                      (data4) => {
-                        this.servicePlacement.deleteAPlacement(element.lignePlacement.placement.numPlacement).subscribe(
-                          (data5) => {
-                            this.getAllPlacement();
-                          },
-                          (erreur) => {
-                            console.log('Erreur lors de la supprission du placement', erreur);
-                          }
-                        );
-                      },
-                      (erreur) => {
-                        console.log('Erreur lors de la suppression dUne ligne de placcement', erreur);
-                      }
-                    );
-                  },
-                  (erreur) => {
-                    console.log('Erreur lors de la suppression dUne ligne de plage',erreur);
-                  }
-                );
-              }
 
-            });
-
-            //Suppression des lignes dAppro n'ayant pas de plage num
-            this.lignePlacements.forEach(element => {
-
-              if(element.placement.numPlacement == this.suprPlacement.numPlacement){
-                this.servicePlacement.deleteALignePlacement(element.idLignePlacement.toString()).subscribe(
-                  (data3) => {
-                    this.servicePlacement.deleteAPlacement(element.placement.numPlacement).subscribe(
-                      (data4) => {
-                        this.getAllPlacement();
-                      },
-                      (erreur) => {
-                        console.log('Erreur lors de la suppression du Placement', erreur);
-                      }
-                    );
-                  },
-                  (erreur) => {
-                    console.log('Erreur lors de la suprression dUne ligne de placement', erreur);
-                  }
-                );
-              }
-            });
-
-            //Sppression du placement
-            this.servicePlacement.deleteAPlacement(this.suprPlacement.numPlacement).subscribe(
-              (data3) => {
-                this.getAllPlacement();
-              },
-              (erreur) => {
-                console.log('Erreur lors de la suppressionn du placement', erreur);
-              }
-            );
-
-            this.deleteComModal.hide();
-            this.getAllPlacement();
-            this.getAllLignePlacement();
-            this.getAllPlageNumArticle();
-
-          },
-          (erreur) => {
-            console.log('Erreur lors de la récupération de la liste des ligne de placement', erreur);
-          }
-        );
+        console.log("Suppression Placement", data);
+        this.deleteComModal.hide();
+        this.getAllPlacement();
+        this.getAllLignePlacement();
       },
       (erreur) => {
-        console.log('Erreur lors de la récupération de la liste des plages', erreur);
+        console.log('Erreur lors de la suppressionn du placement', erreur);
       }
     );
 

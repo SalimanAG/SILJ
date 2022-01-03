@@ -148,6 +148,7 @@ export class OperationCaisseComponent implements OnInit {
   locataires: Locataire[];
   tabEcheance: DataTables.Settings = {};
   dtTrigEche: Subject<Echeance> = new Subject<Echeance>();
+  dtTrigger5: Subject<any> = new Subject<Echeance>();
   contrats: Contrat[];
   contratLocataire: Contrat[] = [];
   immeubles: Immeuble[];
@@ -280,6 +281,28 @@ export class OperationCaisseComponent implements OnInit {
         }
       }
     };
+
+    this.tabDetail = {
+      pagingType: 'full_numbers',
+      pageLength: 5,
+      lengthMenu: [5, 10, 25, 50, 100],
+      language: {
+        lengthMenu: 'Affichage de _MENU_ lignes par page',
+        zeroRecords: 'Aucune ligne trouvée - Desolé',
+        info: 'Affichage de la page _PAGE_ sur _PAGES_',
+        infoEmpty: 'Pas de ligne trouvée',
+        infoFiltered: '(Filtré à partie de _MAX_ lignes)',
+        search: 'Rechercher',
+        loadingRecords: 'Chargement en cours...',
+        paginate: {
+          first: 'Début',
+          last: 'Fin',
+          next: 'Suivant',
+          previous: 'Précédent'
+        }
+      }
+    };
+
 
   }
 
@@ -717,7 +740,7 @@ export class OperationCaisseComponent implements OnInit {
     this.servOp.getAllValideLines()
       .subscribe(
         (data) => {
-          $('#datatable_ligneop').dataTable().api().destroy();
+         // $('#datatable_ligneop').dataTable().api().destroy();
           this.lignesOp = data;
         },
         (err) => {
@@ -767,6 +790,7 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   initdetail(op: OpCaisse) {
+    this.dtTrigger5.next();
     this.chargerDétailOpCaisse(op);
     this.detailOp.show();
     this.vnum = op.numOpCaisse;
@@ -945,7 +969,8 @@ export class OperationCaisseComponent implements OnInit {
           this.tempLigneOpCais = [];
           this.addVentGroup.patchValue({
             nVentDat: moment(new Date()).format('YYYY-MM-DDTHH:mm'),
-            nVentCont: '', nVentObs: '',nVentCais: 0, nVentMod: 0
+            nVentCont: '', nVentObs: '',nVentCais: 0, nVentMod: 0,  depotVent: 0, monnaiVent:0, reliqVent:0
+           
           });
 
 
@@ -2012,27 +2037,42 @@ export class OperationCaisseComponent implements OnInit {
             },
           });
 
-         /* autoTable(fact, {
+          autoTable(fact, {
             theme: 'grid',
             margin: { top: 0, left: 5, right: 5 },
             columnStyles: {
-              //0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+             // 0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
             },
             body: [
-              ['Montant perçu: '+ opc.mttRem,'Monnaie rendue: '+ opc.monnai,'Reliquat restant: '+ opc.reliquat]
+              ['Montant perçu : '+ opc.mttRem,'Monnaie rendue : '+ opc.monnai,'Reliquat restant : '+ opc.reliquat]
             ],
             bodyStyles: {
               fontSize: 8,
               cellPadding: 1,
             },
-          });*/
+          });
 
           autoTable(fact, {
             theme: 'plain',
             margin: { left: -0.1, top: 5, right: 0 },
             body: [
-              ['Le(La) caissier(ère)' + '\n\n\n' + this.serU.connectedUser.nomUtilisateur + ' ' +
+              ['Le (La) caissier(ère)' + '\n\n\n' + this.serU.connectedUser.nomUtilisateur + ' ' +
                 this.serU.connectedUser.prenomUtilisateur]
+            ],
+            bodyStyles: {
+              fontSize: 10,
+              //cellPadding: ,
+              halign: 'center',
+              fontStyle: 'bold'
+            },
+
+          });
+
+          autoTable(fact, {
+            theme: 'plain',
+            margin: { left: -0.1, top: 5, right: 0 },
+            body: [
+              ['Bonne et Heureuse Année 2022']
             ],
             bodyStyles: {
               fontSize: 10,

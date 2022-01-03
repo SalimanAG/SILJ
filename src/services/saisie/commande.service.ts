@@ -37,11 +37,16 @@ export class CommandeService {
   }
   //Léo
   editCommande(code:String, corps:EncapCommande){
-    return this.httpcli.put<EncapCommande>(this.host+'/stock/commande/byCodCom2/'+code, corps);
+    return this.httpcli.put<EncapCommande>(this.host+'/stock/commande/update/'+code, corps);
   }
 
   deleteACommande(code:String){
     return this.httpcli.delete<boolean>(this.host+'/stock/commande/byCodCom/'+code);
+  }
+
+  //Léonel 
+  deleteCommande(code:String){
+    return this.httpcli.delete<boolean>(this.host+'/stock/commande/delete/'+code);
   }
 
 

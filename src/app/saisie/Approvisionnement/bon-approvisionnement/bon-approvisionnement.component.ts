@@ -34,6 +34,7 @@ import { Occuper } from '../../../../models/occuper.model';
 import { SignataireService } from '../../../../services/administration/signataire-service.service';
 import { Signer } from '../../../../models/signer.model';
 import { Tools2Service } from '../../../../services/utilities/tools2.service';
+import { EncapApprovisionnement } from '../../../../models/EncapApprovisionnement';
 
 @Component({
   selector: 'app-bon-approvisionnement',
@@ -656,7 +657,29 @@ export class BonApprovisionnementComponent  implements OnInit {
     this.addApproFormsGroup.value['addDescriptionAppro'], this.addApproFormsGroup.value['addDateAppro'],
     this.serviceExercice.exoSelectionner);
 
-    this.serviceBonAppro.addAAppro(newAppro).subscribe(
+    const newEncapAppro = new EncapApprovisionnement(newAppro, this.tempAddLigneAppro);
+
+    console.log(" object", newEncapAppro);
+    
+
+    this.serviceBonAppro.addAppro(newEncapAppro).subscribe(
+      (data) => {
+
+        console.log("Vérification et Approbation", data);
+        
+
+        this.addComModal.hide();
+        this.getAllLigneAppro();
+        this.getAllAppro();
+        this.getAllPlageNumArticle();
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de lAjout de lAppro', erreur);
+      }
+    );
+
+   /* this.serviceBonAppro.addAAppro(newAppro).subscribe(
       (data) => {
 
         this.tempAddLigneAppro.forEach((element, inde) => {
@@ -771,13 +794,43 @@ export class BonApprovisionnementComponent  implements OnInit {
       (erreur) => {
         console.log('Erreur lors de lAjout de lAppro', erreur);
       }
-    );
+    );*/
 
 
 
   }
 
   onSubmitEditCommandeFormsGroup(){
+
+    const newAppro = new Approvisionnement(this.editApproFormsGroup.value['editNumAppro'],
+    this.editApproFormsGroup.value['editDescriptionAppro'], this.editApproFormsGroup.value['editDateAppro'],
+    this.serviceExercice.exoSelectionner);
+
+    const newEncapAppro = new EncapApprovisionnement(newAppro, this.tempEditLigneAppro);
+
+    console.log(" object", newEncapAppro);
+    
+
+    this.serviceBonAppro.editAppro(this.editAppro.numAppro, newEncapAppro).subscribe(
+      (data) => {
+
+        console.log("Updated", data);
+        
+        this.editComModal.hide();
+        this.getAllAppro();
+        this.getAllLigneAppro(),
+        this.getAllPlageNumArticle();
+
+      },
+      (erreur) => {
+        console.log('Erreur lors de la Modification de lAppro', erreur);
+      }
+    );
+
+
+  }
+
+ /* onSubmitEditCommandeFormsGroup(){
 
     const newAppro = new Approvisionnement(this.editApproFormsGroup.value['editNumAppro'],
     this.editApproFormsGroup.value['editDescriptionAppro'], this.editApproFormsGroup.value['editDateAppro'],
@@ -1191,7 +1244,7 @@ export class BonApprovisionnementComponent  implements OnInit {
     );
 
 
-  }
+  }*/
 
   onConfirmDeleteCommande(){
 

@@ -41,7 +41,7 @@
               </div>
               <div class="row">
                 <div class="col-lg-4">
-                  <h5><i class="fa fa-align-justify">Liste des opérations du jours</i></h5>
+                  <h5><i class="fa fa-align-justify"></i> Liste des opérations du jours</h5>
                 </div> <br><br><br>
             </div>
             <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabDailyOp" [dtTrigger]="dtrigDailyOp"
@@ -65,8 +65,8 @@
                         <td>{{oc.contribuable}}</td>
                         <td>
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Détail de l'opération" (click)="initdetail(oc)"><span class="fa fa-align-justify"></span></button>
-                            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération" *ngIf="oc.valideOpCaisse" (click)="initAnnulOp(oc)"><span class="fa fa-undo"></span></button>
-                            <!--button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération"
+                            <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération" *ngIf="oc.valideOpCaisse && this.user.fonctionUtilisateur.codeFonction.valueOf()=='S4'" (click)="initAnnulOp(oc)"><span class="fa fa-undo"></span></button>
+                            <!--button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Annuler l'opération" 
                                                                                       *ngIf="!oc.valideOpCaisse" (click)="initAnnulOp(oc)"><span class="fa fa-done"></span></button-->
                             <!--button class="btn btn-danger btn-sm" data-toggle="modal tooltip" data-placement="top" title="Supprimer l'opération" *ngIf="!oc.valideOpCaisse" (click)="initSUpOP(oc)"><span class="fa fa-trash"></span></button-->
                             <button class="btn btn-info btn-sm" data-toggle="modal tooltip" data-placement="top" title="Apperçu du reçu"
@@ -115,7 +115,7 @@
                     </select>
                                 </div>
                                 <div class="col-sm-2.5">
-                                    <label for="addVentDat">Date de début</label>
+                                    <label for="addVentDat">Date et Heure</label>
                                     <input type="datetime-local" class="form-control" id="nVentDat" formControlName="nVentDat" placeholder="Date de fin">
                                 </div>
                                 <div class="col-xl-2">
@@ -126,11 +126,11 @@
                                 </div>
                                 <div class="col-xl-3">
                                     <label class="form-label" for="nVentCont">Contribuable</label>
-                                    <input type="text" id="nVentCont" formControlName="nVentCont" class="form-control" placeholder="Contribuable" autocomplete="false">
+                                    <input type="text" id="nVentCont" formControlName="nVentCont"  class="form-control" placeholder="Contribuable" autocomplete="off">
                                 </div>
                                 <div class="col-xl-2.5">
                                     <label class="form-label" for="nVentObs">Observation</label>
-                                    <input type="text" id="nVentObs" formControlName="nVentObs" class="form-control" placeholder="Observation" autocomplete="false">
+                                    <input type="text" id="nVentObs" formControlName="nVentObs" class="form-control" placeholder="Observation" autocomplete="off">
                                 </div>
                             </div>
                             <br>
@@ -146,7 +146,7 @@
                                         <tr>
                                             <th>Code</th>
                                             <th>Libellé</th>
-                                            <th>Commentaire</th>
+                                            <!--th>Commentaire</th-->
                                             <th>Prix unitaire</th>
                                             <th>Quantité</th>
                                             <th>Montant</th>
@@ -157,7 +157,7 @@
                                         <tr *ngFor="let tmpLigne of tempLigneOpCais; let i=index">
                                             <td>{{tmpLigne.article.codeArticle}}</td>
                                             <td>{{tmpLigne.article.libArticle}}</td>
-                                            <td><input [(ngModel)]="tempLigneOpCais[[i]].commentaireLigneOperCaisse" type="text" class="form-control" [ngModelOptions]="{standalone: true} "></td>
+                                            <!--td><input [(ngModel)]="tempLigneOpCais[[i]].commentaireLigneOperCaisse" type="text" class="form-control" [ngModelOptions]="{standalone: true} "></td-->
                                             <td><input type="number" class="form-control" placeholder="0" (change)="recalculerTotalvente()"
                                                 (keyup)="recalculerTotalvente()" [(ngModel)]="tempLigneOpCais[[i]].prixLigneOperCaisse"
                                                 [ngModelOptions]="{standalone: true}"></td>
@@ -202,7 +202,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="fermeVente()">Fermer</button>
-                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Valider</button>
+                    <button type="submit" class="btn btn-primary"> <i class="fa fa-dot-circle-o"></i> Valider</button>
                 </div>
                 <!--div class="modal-footer">
         </div-->
@@ -472,26 +472,36 @@
                         <div class="card-header"></div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <label class="form-label" for="vNum">Numéro</label>
                                     <input type="text" id="vNum" formControlName="vNum" class="form-control" [(value)]="vnum" readonly>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <label class="form-label" for="vDat">Date opération</label>
                                     <input type="text" id="vDat" formControlName="vDat" class="form-control" [(value)]="vdat" readonly>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
+                                
+                                <div class="col-lg-4">
                                     <label class="form-label" for="vCai">Caisse</label>
                                     <input type="text" id="vCai" formControlName="vCai" class="form-control" [(value)]="vcai" readonly>
                                 </div>
-                                <div class="col-lg-6">
-                                    <label class="form-label" for="vTyp">type operation</label>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <label class="form-label" for="vTyp">Type operation</label>
                                     <input type="text" id="vTyp" formControlName="vTyp" class="form-control" [(value)]="vtyp" readonly>
                                 </div>
+                                <div class="col-lg-4">
+                                    <label class="form-label" for="vNum">Mode de paiement</label>
+                                    <input type="text" id="vMod" formControlName="vMod" class="form-control" [(value)]="vmod" readonly>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label class="form-label" for="vCon">contribuable</label>
+                                    <input type="text" id="vCon" formControlName="vCon" class="form-control" [(value)]="vcon" readonly>
+                                </div>
                             </div>
-                            <div class="row">
+                            <!--div class="row">
                                 <div class="col-lg-6">
                                     <label class="form-label" for="vNum">Mode de paiement</label>
                                     <input type="text" id="vMod" formControlName="vMod" class="form-control" [(value)]="vmod" readonly>
@@ -500,9 +510,13 @@
                                     <label class="form-label" for="vCon">contribuable</label>
                                     <input type="text" id="vCon" formControlName="vCon" class="form-control" [(value)]="vcon" readonly>
                                 </div>
-                            </div>
+                            </div-->
+                            <br>
                             <div class="row">
-                                <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabDetail">
+                                <div class="col-lg-12">
+                                <table class="table table-bordered table-striped table-sm" datatable [dtOptions]="tabDetail" [dtTrigger]="dtTrigger5"
+                                id="dtOption5">
+                                    
                                     <thead>
                                         <tr>
                                             <th>code Art.</th>
@@ -529,6 +543,7 @@
                                         </tr>
                                     </tfoot>
                                 </table>
+                            </div>
                             </div>
                         </div>
                         <div class="card-footer"></div>

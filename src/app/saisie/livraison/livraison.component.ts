@@ -40,6 +40,7 @@ import { CorrespondantService } from '../../../services/definition/correspondant
 import { UtilisateurService } from '../../../services/administration/utilisateur.service';
 import { Fonction } from '../../../models/fonction.model';
 import { SearchLinesOpCaissDTO } from '../../../models/searchLinesOpCaissDTO.model';
+import { LivraisonService } from '../../../services/saisie/livraison.service';
 
 @Component({
   selector: 'app-livraison',
@@ -69,8 +70,8 @@ export class LivraisonComponent implements OnInit {
   correspondant1 : Correspondant [];
 
   //FormControl
-  debut = new FormControl(moment(new Date()).format("yyyy-MM-DDTHH:mm"));
-  fin = new FormControl(moment(new Date()).format("yyyy-MM-DDTHH:mm"));
+  debut = new FormControl(moment(new Date().setHours(8, 0)).format("yyyy-MM-DDTHH:mm"));
+  fin = new FormControl(moment(new Date().setHours(18, 0)).format("yyyy-MM-DDTHH:mm"));
   opCaisseLivre = new FormControl('');
 
    initialised:boolean = false;
@@ -79,7 +80,7 @@ export class LivraisonComponent implements OnInit {
 
 
   constructor(private servOp:OperationCaisseService, private serviceUser:UtilisateurService, private serviceCorres:
-    CorrespondantService, private fbuilder:FormBuilder) {
+    CorrespondantService, private livraisonService: LivraisonService, private fbuilder:FormBuilder) {
     this.initDtOptions();
     moment.locale('fr');
    }
@@ -121,10 +122,9 @@ export class LivraisonComponent implements OnInit {
    
     this.servOp.getAllLinesOpCaisseByPeriodeAndCaisse(searchLinesOpCaissDTO).subscribe(
       (data) => {
-        this.ligneopcaisse= data;
+        this.ligneopcaisse = data;
         console.log('data with payload search ==>');
         console.log( data);
-        
         
         this.dtTrigger1.next();
 
@@ -155,83 +155,20 @@ export class LivraisonComponent implements OnInit {
 
     // Recupération du magasin de l'utilisateur connecté
 
-    //var magasinMagasinierConnected: Magasin = null;
-    this.serviceCorres.getAllCorres().subscribe(
-      (data2) => {
+    this.livraisonService.magasinByUserId(this.serviceUser.connectedUser.idUtilisateur).subscribe(
+      (data) =>{
+        console.log("Magasin Livreur", data);
+        this.magasinMagasinierConnected = data
+        
 
-        data2.forEach(element2 => {
-          if (element2.utilisateur != null && element2.utilisateur.idUtilisateur == this.serviceUser.connectedUser.idUtilisateur)
-          {
-              console.log("111", this.serviceUser.connectedUser.idUtilisateur);
-              this.serviceCorres.getAllGerer().subscribe(
-                (data3) => {
-                  data3.forEach(element3 => {
-                    if ( element3.magasinier.numMAgasinier === element2.magasinier.numMAgasinier)
-                    {
-                       console.log("Mag",element3.magasinier.numMAgasinier);
-                       this.magasinMagasinierConnected = element3.magasin;
-                       console.log("++++", this.magasinMagasinierConnected);
-                       exit;
-
-                    }
-
-                  });
-                },
-                (erreur) => {
-                  console.log('Erreur lors de relation gerer', erreur);
-                }
-              );
-
-              exit;
-          }
-
-        });
-
-      },
+      }, 
       (erreur) => {
-        console.log('Erreur lors de la relation utilisateur connecté', erreur);
+        console.log('Erreur lors de relation gerer', erreur);
       }
-    );
-
+      
+      
+    )
   }
-
- /* chargerInformations(){
-
-    this.ligneopcaisse = [];
-    $('#actualise').dataTable().api().destroy();
-    this.dtTrigger1.next();
-
-
-
-    console.log('Chargement 1', this.ligneopcaisse.toString());
-
-    this.servOp.getAllOpLines().subscribe(
-      (data) => {
-        data.forEach((element,index) => {
-          if(element.livre===false && element.article.livrableArticle===true && element.opCaisse.typeRecette.codeTypRec==="P"
-          &&  element.opCaisse.caisse.codeCaisse===this.opCaisseLivre.value
-          && new Date(element.opCaisse.dateOpCaisse).valueOf()>= new Date(this.debut.value).valueOf() && new Date(element.opCaisse.dateOpCaisse).valueOf()<= new Date(this.fin.value).valueOf())
-          {
-            this.ligneopcaisse.push(element);
-
-            console.log('verifi',this.ligneopcaisse);
-
-
-          }
-
-        });
-
-
-
-
-
-      },
-      (erreur) => {
-        console.log('Erreur lors de la récupération de la liste des actes livrables non livré ', erreur);
-      }
-    );
-
-  }*/
 
   verifierRecuperation()
   {
@@ -244,38 +181,24 @@ export class LivraisonComponent implements OnInit {
     console.log('payload 2 ==>');
     console.log(searchLinesOpCaissDTO);
     this.getAllLinesOpCaisseNotLivreByPeriodeAndCaisse(searchLinesOpCaissDTO);
-    $('#actualise').dataTable().api().destroy();
-    this.dtTrigger1.next();
 
   }
 
   validerLivraison(inde:number)
   {
-    let exist:boolean = false;
-    var concernedStocker:Stocker = null
       this.editligneOpCaisse =  this.ligneopcaisse[inde];
       this.articleLigneOpcaisseLivre = this.editligneOpCaisse;
       this.editligneOpCaisse.livre=true;
-      console.log("magasin", this.magasinMagasinierConnected);
-
-      this.editligneOpCaisse.magasin = this.magasinMagasinierConnected;
-      this.servOp.editOpLine(this.editligneOpCaisse.idLigneOperCaisse,this.editligneOpCaisse).subscribe(
+      this.livraisonService.validerLivraison(this.editligneOpCaisse.idLigneOperCaisse, this.serviceUser.connectedUser.idUtilisateur).subscribe(
         (data) => {
           console.log(data);
 
-
-          //this.chargerInformations();
-
-          ///////////////////charge info
-           //this.chargerInformations();
     let searchLinesOpCaissDTO = new SearchLinesOpCaissDTO;
     searchLinesOpCaissDTO.startDateTime = this.debut.value;
     searchLinesOpCaissDTO.endDateTime = this.fin.value;
     searchLinesOpCaissDTO.codeCaisse = this.opCaisseLivre.value;
     console.log('payload 2 ==>');
     console.log(searchLinesOpCaissDTO);
-    $('#actualise').dataTable().api().destroy();
-    this.dtTrigger1.next();
     this.getAllLinesOpCaisseNotLivreByPeriodeAndCaisse(searchLinesOpCaissDTO);
     //end
 
@@ -283,63 +206,6 @@ export class LivraisonComponent implements OnInit {
         (erreur) => {
           console.log('Erreur lors de la récupération ', erreur);
         }
-
-      );
-
-      //essaie des vérification nécessaire
-      console.log("***",this.magasinMagasinierConnected);
-      console.log("+++",this.articleLigneOpcaisseLivre.article);
-
-     this.serviceCorres.getAllStocker().subscribe(
-        (data) => {
-          data.forEach(element => {
-
-            if ( element.magasin.codeMagasin == this.magasinMagasinierConnected.codeMagasin && element.article.codeArticle == this.articleLigneOpcaisseLivre.article.codeArticle)
-            {
-                concernedStocker = element;
-                concernedStocker.quantiterStocker = concernedStocker.quantiterStocker+(-this.articleLigneOpcaisseLivre.qteLigneOperCaisse);
-                this.serviceCorres.editAStocker(concernedStocker.idStocker.toString(), concernedStocker).subscribe(
-                  (data9) => {
-                    console.log("QA",data9);
-
-                    //modification de la ligne operation de caisse par le magasin livreur
-                    //this.articleLigneOpcaisseLivre.magasin = this.magasinMagasinierConnected;
-
-
-                  },
-                  (erreur) => {
-                    console.log('Erreur lors de la modification du Stocker pour réajustement du stock', erreur);
-                  }
-                );
-                exist = true;
-                exit;
-
-            }
-
-
-
-          });
-
-          if(exist == false)
-          {
-          this.serviceCorres.addAStocker(new Stocker(-this.articleLigneOpcaisseLivre.qteLigneOperCaisse, 0, 0, 0, this.articleLigneOpcaisseLivre.article, this.magasinMagasinierConnected)).subscribe(
-          (data) => {
-            console.log("990",data);
-
-            //Modiification de la ligne operation de caisse concerné par le magasin livreur
-
-
-          },
-          (erreur) => {
-            console.log('Erreur lors de lAjout du stocker', erreur);
-          }
-        );
-      }
-
-        },
-        (erreur) => {
-         console.log('Erreur lors de relation gerer', erreur);
-       }
 
       );
 
@@ -356,7 +222,7 @@ export class LivraisonComponent implements OnInit {
         console.log( data);
         
         $('#actualise').dataTable().api().destroy();
-        //this.dtTrigger1.next();
+        this.dtTrigger1.next();
 
       },
       (erreur) => {

@@ -21,6 +21,7 @@ import { ToolsService } from '../../../../services/utilities/tools.service';
 import { SignataireService } from '../../../../services/administration/signataire-service.service';
 import { Signer } from '../../../../models/signer.model';
 import { Occuper } from '../../../../models/occuper.model';
+import { EncapDemandeApprovisionnement } from '../../../../models/EncapDemandeApprovisionnement';
 
 @Component({
   selector: 'app-demande-approvisionnement',
@@ -352,19 +353,12 @@ export class DemandeApprovisionnementComponent  implements OnInit {
       this.addDemandeApproFormGroup.value['addDateDA'],
       this.serviceExercice.exoSelectionner);
 
-    this.serviceDemandeAppro.addADemandeAppro(newDemAppro).subscribe(
+      const newEncapDemAppro = new EncapDemandeApprovisionnement(newDemAppro, this.tempAddLigneDemandeAppro);
+
+    this.serviceDemandeAppro.addDemandeAppro(newEncapDemAppro).subscribe(
       (data) => {
-        this.tempAddLigneDemandeAppro.forEach((element, inde) => {
-          element.appro = data;
-          this.serviceDemandeAppro.addALigneDemandeAppro(element).subscribe(
-            (data2) => {
-              this.tempAddLigneDemandeAppro.splice(inde);
-            },
-            (erreur) => {
-              console.log('Erreur lors de lAjout dUne Ligne de Demande DAppro', erreur);
-            }
-          );
-        });
+        console.log("Saved", data);
+        
 
         this.addComModal.hide();
         this.getAllLigneDemandeAppro();
@@ -384,76 +378,12 @@ export class DemandeApprovisionnementComponent  implements OnInit {
       this.editDemandeApproFormGroup.value['editDateDA'],
       this.serviceExercice.exoSelectionner);
 
-      let oldDemandApproLines:LigneDemandeAppro[] = [];
+      const newEncapDemAppro = new EncapDemandeApprovisionnement(newDemAppro, this.tempEditLigneDemandeAppro);
 
-      this.ligneDemandeAppros.forEach(element => {
-        if(element.appro.numDA==this.editDemandeAppro.numDA){
-          oldDemandApproLines.push(element);
-        }
-      });
-
-    this.serviceDemandeAppro.editADemandeAppro(this.editDemandeAppro.numDA, newDemAppro).subscribe(
+    this.serviceDemandeAppro.editDemandeAppro(this.editDemandeAppro.numDA, newEncapDemAppro).subscribe(
       (data) => {
-
-        //Pour ajout et ou modification des lignes
-        this.tempEditLigneDemandeAppro.forEach(element => {
-          let added:boolean = true;
-          oldDemandApproLines.forEach(element2 => {
-            if(element.article.codeArticle==element2.article.codeArticle){
-              added = false;
-              element.appro = data;
-
-              this.serviceDemandeAppro.editALigneDemandeAppro(element2.idLigneDA.toString(), element).subscribe(
-                (data2) => {
-
-                },
-                (erreur) => {
-                  console.log('Erreur lors de la modification de ligne de Demande Appro', erreur);
-                }
-              );
-              exit;
-            }
-          });
-
-          if(added===true){
-            element.appro = data;
-            this.serviceDemandeAppro.addALigneDemandeAppro(element).subscribe(
-              (data3) => {
-
-              },
-              (erreur) => {
-                console.log('Erreur lors de la création dUne nouvelle ligne pour lEdition', erreur)
-              }
-            );
-          }
-
-        });
-
-
-        //Pour suppression des lignes suprimés
-        oldDemandApproLines.forEach(element => {
-          let deleted:boolean = true;
-          this.tempEditLigneDemandeAppro.forEach(element2 => {
-
-            if(element.article.codeArticle==element2.article.codeArticle){
-              deleted = false;
-              exit;
-            }
-
-          });
-
-          if(deleted===true){
-            this.serviceDemandeAppro.deleteALigneDemandeAppro(element.idLigneDA.toString()).subscribe(
-              (data) => {
-
-              },
-              (erreur) => {
-                console.log('Erreur lors de la suppression de la ligne', erreur);
-              }
-            );
-          }
-
-        });
+        console.log("verification", data);
+        
 
         this.editComModal.hide();
         this.getAllDemandeAppro();
@@ -469,7 +399,23 @@ export class DemandeApprovisionnementComponent  implements OnInit {
 
   onConfirmDeleteCommande(){
 
-    this.serviceDemandeAppro.getAllLigneDemandeAppro().subscribe(
+
+        this.serviceDemandeAppro.deleteDemandeAppro(this.suprDemandeAppro.numDA).subscribe(
+          (data) => {
+            console.log("Suppression", data);
+            
+            this.deleteComModal.hide();
+            this.getAllDemandeAppro();
+            this.getAllLigneDemandeAppro();
+          },
+          (erreur) => {
+            console.log('Erreur lors de la suppression de la Demande Appro', erreur);
+          }
+        );
+
+    
+
+    /*this.serviceDemandeAppro.getAllLigneDemandeAppro().subscribe(
       (data) => {
         this.ligneDemandeAppros = data;
         let faled2:boolean=false;
@@ -512,7 +458,7 @@ export class DemandeApprovisionnementComponent  implements OnInit {
       (erreur) => {
         console.log('Erreur lors de la récupération des lignes de demande dAppro', erreur)
       }
-    );
+    );*/
 
 
   }

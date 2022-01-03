@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Approvisionnement } from '../../models/approvisionnement.model';
+import { EncapApprovisionnement } from '../../models/EncapApprovisionnement';
 import { LigneAppro } from '../../models/ligneAppro.model';
 import { PlageNumArticle } from '../../models/plageNumArticle.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
@@ -27,8 +28,17 @@ export class BonApproService {
     return this.httpCli.post<Approvisionnement>(this.host+'/stock/approvisionnement/list', corps);
   }
 
+  //Léonel
+  addAppro(corps:EncapApprovisionnement){
+    return this.httpCli.post<EncapApprovisionnement>(this.host+'/stock/approvisionnement/list2', corps);
+  }
+
   editAAppro(code:String, corps:Approvisionnement){
     return this.httpCli.put<Approvisionnement>(this.host+'/stock/approvisionnement/byCodApp/'+code, corps);
+  }
+
+  editAppro(code:String, corps:EncapApprovisionnement){
+    return this.httpCli.put<EncapApprovisionnement>(this.host+'/stock/approvisionnement/byCodAppro2/'+code, corps);
   }
 
   deleteAAppro(code:String){

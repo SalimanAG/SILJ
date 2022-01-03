@@ -431,78 +431,13 @@ export class CommandeComponent implements OnInit {
     this.serviceExercice.exoSelectionner,
     this.editCommandeFormGroup.value['editDateRemiseCommande']);
 
-    let oldCommandeLines:LigneCommande[] = [];
+    const newEncapComm= new EncapCommande(newComm, this.tempEditLigneCommandes);
 
-    this.ligneCommandes.forEach(element => {
-      if(element.numCommande.numCommande==this.editCommande.numCommande){
-        oldCommandeLines.push(element);
-      }
-    });
-
-
-    this.serviceCommande.editACommande(this.editCommande.numCommande, newComm).subscribe(
+   
+    this.serviceCommande.editCommande(this.editCommande.numCommande, newEncapComm).subscribe(
       (data) => {
-
-        //Pour ajout et ou modification des lignes
-        this.tempEditLigneCommandes.forEach(element => {
-          let added:boolean = true;
-          oldCommandeLines.forEach(element2 => {
-            if(element.article.codeArticle==element2.article.codeArticle){
-              added = false;
-              element.numCommande = data;
-
-              this.serviceCommande.editALigneCommande(element2.idLigneCommande.toString(), element).subscribe(
-                (data2) => {
-
-                },
-                (erreur) => {
-                  console.log('Erreur lors de la modification de ligne de Commande', erreur);
-                }
-              );
-              exit;
-            }
-          });
-
-          if(added===true){
-            element.numCommande = data;
-            this.serviceCommande.addALigneCommande(element).subscribe(
-              (data3) => {
-
-              },
-              (erreur) => {
-                console.log('Erreur lors de la création dUne nouvelle ligne pour lEdition', erreur)
-              }
-            );
-          }
-
-        });
-
-
-        //Pour suppression des lignes suprimés
-        oldCommandeLines.forEach(element => {
-          let deleted:boolean = true;
-          this.tempEditLigneCommandes.forEach(element2 => {
-
-            if(element.article.codeArticle==element2.article.codeArticle){
-              deleted = false;
-              exit;
-            }
-
-          });
-
-          if(deleted===true){
-            this.serviceCommande.deleteALigneCommande(element.idLigneCommande.toString()).subscribe(
-              (data) => {
-
-              },
-              (erreur) => {
-                console.log('Erreur lors de la suppression de la ligne', erreur);
-              }
-            );
-          }
-
-        });
-
+        console.log("Modification Commande", data);
+        
         this.editComModal.hide();
 
         this.getAllCommande();
@@ -519,34 +454,12 @@ export class CommandeComponent implements OnInit {
   }
 
   onConfirmDeleteCommande(){
-    this.getAllLigneCommande();
-    let faled:boolean=false;
-    this.ligneCommandes.forEach(element => {
-      if(element.numCommande.numCommande==this.suprCommande.numCommande){
-        this.serviceCommande.deleteALigneCommande(element.idLigneCommande.toString()).subscribe(
-          (data) => {
-            this.serviceCommande.deleteACommande(this.suprCommande.numCommande).subscribe(
-              (data) => {
-                this.deleteComModal.hide();
-                this.getAllCommande();
-                this.getAllLigneCommande();
-              },
-              (erreur) => {
-                console.log('Erreur lors de la suppression de la commande', erreur);
-              }
-            );
-          },
-          (erreur) => {
-            console.log('Erreur lors de la suppression dUne ligne de Commande', erreur);
-            //faled=true;
-          }
-        );
-      }
-    });
+   
 
-    if(faled==false){
-      this.serviceCommande.deleteACommande(this.suprCommande.numCommande).subscribe(
+      this.serviceCommande.deleteCommande(this.suprCommande.numCommande).subscribe(
         (data) => {
+          console.log("Suppression de Commande", data);
+          
           this.deleteComModal.hide();
           this.getAllCommande();
           this.getAllLigneCommande();
@@ -555,8 +468,6 @@ export class CommandeComponent implements OnInit {
           console.log('Erreur lors de la suppression de la commande', erreur);
         }
       );
-    }
-
   }
 
   initPrintPdfOfAnCommande(inde:number){

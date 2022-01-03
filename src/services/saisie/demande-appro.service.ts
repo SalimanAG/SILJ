@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DemandeApprovisionnement } from '../../models/demandeApprovisionnement.model';
+import { EncapDemandeApprovisionnement } from '../../models/EncapDemandeApprovisionnement';
 import { LigneDemandeAppro } from '../../models/ligneDemandeAppro.model';
 import { AssocierUtilisateurService } from '../administration/associer-utilisateur.service';
 
@@ -26,12 +27,27 @@ export class DemandeApproService {
     return this.httpCli.post<DemandeApprovisionnement>(this.host+'/stock/demandeAppro/list', corps);
   }
 
+  //Léonel 
+  addDemandeAppro(corps:EncapDemandeApprovisionnement){
+    return this.httpCli.post<EncapDemandeApprovisionnement>(this.host+'/stock/demandeAppro/list2', corps);
+  }
+
   editADemandeAppro(code:String, corps:DemandeApprovisionnement){
     return this.httpCli.put<DemandeApprovisionnement>(this.host+'/stock/demandeAppro/byCodDemApp/'+code, corps);
   }
 
+  //Léonel 
+  editDemandeAppro(code:String, corps:EncapDemandeApprovisionnement){
+    return this.httpCli.put<EncapDemandeApprovisionnement>(this.host+'/stock/demandeAppro/update/'+code, corps);
+  }
+
+
   deleteADemandeAppro(code:String){
     return this.httpCli.delete<boolean>(this.host+'/stock/demandeAppro/byCodDemApp/'+code);
+  }
+//Léonel
+  deleteDemandeAppro(code:String){
+    return this.httpCli.delete<boolean>(this.host+'/stock/demandeAppro/delete/'+code);
   }
 
   //Partie réservée pour les lignes de demande d'Approvisionnement

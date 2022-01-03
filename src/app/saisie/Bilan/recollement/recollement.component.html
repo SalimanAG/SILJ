@@ -28,9 +28,9 @@
                     <td>{{ recoll.magasinsource.libMagasin }} </td>
                     <td>{{ recoll.magasinDestination.libMagasin }} </td>
                     <td>
-                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditRecollement(i)"><span class="fa fa-edit" title="Modifier le recollement"></span></button>
-                        <button *ngIf="!recoll.valideRecol" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteRecollement(i)" title="Supprimer le recolleùent"><span class="fa fa-trash"></span></button>
-                        <button *ngIf="recoll.valideRecol" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerRecollement(i)" title="Annuler le recollement"><span class="fa fa-undo"></span></button>
+                        <button class="btn btn-warning btn-sm"  data-toggle="modal" (click)="initEditRecollement(i)"><span class="fa fa-edit" title="Modifier le Recollement"></span></button>
+                        <button *ngIf="!recoll.valideRecol" class="btn btn-danger btn-sm"  data-toggle="modal" (click)="initDeleteRecollement(i)" title="Supprimer le Recolleùent"><span class="fa fa-trash"></span></button>
+                        <button *ngIf="recoll.valideRecol" class="btn btn-info btn-sm" data-toggle="modal" (click)="initAnnulerRecollement(i)" title="Annuler le Recollement"><span class="fa fa-undo"></span></button>
                         <button class="btn btn-dark btn-sm" (click)="initPrintPdfOfRecollement(i)"><span class="fa fa-file-o" title="Imprimer le recollement"></span></button>
                         <!--Le bouton des options-->
                         <!--div class="btn-group" dropdown>

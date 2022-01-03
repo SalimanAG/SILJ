@@ -105,7 +105,14 @@ export class LiveurHabilitation {
               ]
           },*/
 
-           // debut rapport
+         
+
+    
+    
+        ]
+      },
+
+        // debut rapport
   {
     name: 'Rapport',
     url: '/base',
@@ -206,10 +213,5 @@ export class LiveurHabilitation {
     ]
   },
   //fin rapport
-
-    
-    
-        ]
-      },
   ];
 }
