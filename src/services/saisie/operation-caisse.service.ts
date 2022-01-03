@@ -44,7 +44,7 @@ export class OperationCaisseService {
   }
 
   getUserCaisse(id: Number) {
-    return this.lien.get<Affecter[]>(this.host + 'facturation/affecter/uc/actu/usId=' + id);
+    return this.lien.get<Affecter[]>(this.host + 'facturation/affecter/uc/actu/' + id);
   }
 
   getAllOp() {

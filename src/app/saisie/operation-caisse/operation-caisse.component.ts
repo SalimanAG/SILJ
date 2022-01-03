@@ -92,7 +92,7 @@ export class OperationCaisseComponent implements OnInit {
   stk: Stocker[];
   annulop = new OpCaisse(null, null, null, null, '', null, null, null, null, null, null);
   tabDailyOp: DataTables.Settings = {};
-  dtrigDailyOp: Subject<OpCaisse> = new Subject<OpCaisse>();
+  dtrigDailyOp: Subject<any> = new Subject<any>();
   tabAllOp: DataTables.Settings = {};
   dtrigAllOp: Subject<any> = new Subject<any>();
   listOp: OpCaisse[];
@@ -111,6 +111,8 @@ export class OperationCaisseComponent implements OnInit {
   dtLigne: Subject<any> = new Subject<any>();
 
   annulations: OpCaisse[];
+   codeCaisseActuel = null;
+   affecterCaisse: Affecter[] = [];
 
   /////// Vente
   tabArtV: DataTables.Settings = {};
@@ -169,7 +171,7 @@ export class OperationCaisseComponent implements OnInit {
   coi: Correspondant[] = [];
   tabLignePoint: DataTables.Settings = {};
   // dtPV:Subject<any>=new Subject<any>()
-  caisses: Caisse[];
+  caisses: Caisse[] = [];
   ind: number = 0;
   pointV: PointVente[];
   pointVentOfCorrespondant: PointVente[];
@@ -196,25 +198,29 @@ export class OperationCaisseComponent implements OnInit {
 
     this.exo = serExo.exoSelectionner;
     moment.locale('fr');
+    this.initDtOptions();
 
 
+  }
+  initDtOptions(){
+    
     this.tabDailyOp = {
       pagingType: 'full_numbers',
       pageLength: 5,
       lengthMenu: [5, 10, 25, 50, 100],
       language: {
-        lengthMenu: 'Affichage de _MENU_ lignes par page',
-        zeroRecords: 'Aucune ligne trouvée - Desolé',
-        info: 'Affichage de la page _PAGE_ sur _PAGES_',
-        infoEmpty: 'Pas de ligne trouvée',
-        infoFiltered: '(Filtré à partie de _MAX_ lignes)',
-        search: 'Rechercher',
-        loadingRecords: 'Chargement en cours...',
-        paginate: {
-          first: 'Début',
-          last: 'Fin',
-          next: 'Suivant',
-          previous: 'Précédent'
+        lengthMenu: "Affichage de _MENU_ lignes par page",
+        zeroRecords: "Aucune ligne trouvée - Desolé",
+        info: "Affichage de la page _PAGE_ sur _PAGES_",
+        infoEmpty: "Pas de ligne trouvée",
+        infoFiltered: "(Filtré à partie de _MAX_ lignes)",
+        search: "Rechercher",
+        loadingRecords: "Chargement en cours...",
+        paginate:{
+          first:"Début",
+          last: "Fin",
+          next: "Suivant",
+          previous: "Précédent"
         }
       }
     };
@@ -303,7 +309,6 @@ export class OperationCaisseComponent implements OnInit {
       }
     };
 
-
   }
 
   initOpCaisse() {
@@ -375,17 +380,6 @@ export class OperationCaisseComponent implements OnInit {
   ngOnInit() {
     this.initOpCaisse();
     let typs: TypeRecette[];
-
-    /*this.servOp.getDailyOp(this.user.idUtilisateur)
-      .subscribe(
-        (data) => {
-          this.opDay = data;
-        this.dtrigDailyOp.next();
-        },
-        (erreur) => {
-          console.log('Opération : ' + erreur);
-        }
-    );*/
     this.serCor.getAllCorrespondantImputable().subscribe(
       (data : any )=> {
         this.magasinierImpList = data
@@ -393,40 +387,41 @@ export class OperationCaisseComponent implements OnInit {
       }
     );
 
-    let searchOpCaisseDTO = new SearchOpCaisseDTO;
-    searchOpCaisseDTO.startDate = moment(new Date()).format('YYYY-MM-DD');
-    searchOpCaisseDTO.endDate = moment(new Date()).format('YYYY-MM-DD');
- 
-     this.servOp.getAllOpCaisseOfDay(searchOpCaisseDTO).subscribe(
-         (data) => {
-           console.log('op caisse du jour ==>');
-           console.log(data);
-           this.listOp = data;
-           this.opDay = data;
+    this.servOp.getUserCaisse(this.user.idUtilisateur).subscribe(
+      data => {
+        this.caisses = data.map(d => d.caisse);
+        let  searchOpCaisseDTO = new SearchOpCaisseDTO;
+        searchOpCaisseDTO.startDate = moment(new Date()).format('YYYY-MM-DD');
+        searchOpCaisseDTO.endDate = moment(new Date()).format('YYYY-MM-DD');
+        searchOpCaisseDTO.codeCaisse = this.caisses[0].codeCaisse.toString();
+        console.log("DTO", searchOpCaisseDTO);
         
-           this.dtrigDailyOp.next();
-         },
-         (erreur) => {
-           console.log('Opération : ' + erreur);
-         }
-       );
+     
+         this.servOp.getAllOpCaisseOfDay(searchOpCaisseDTO).subscribe(
+             (data) => {
+               console.log('op caisse du jour ==>');
+               console.log(data);
+               this.listOp = data;
+               this.opDay = data;
+               this.dtrigDailyOp.next();
+             },
+             (erreur) => {
+               console.log('Opération : ' + erreur);
+             }
+           );
+
+      }
+    );
   }
 
   chargerDailyOp() {
-    /*this.servOp.getDailyOp(this.user.idUtilisateur)
-      .subscribe(
-        (data) => {
-        this.opDay=data;
-        $('#dtop').dataTable().api().destroy();
-        this.dtrigDailyOp.next();
-        },
-        (erreur) => {
-          console.log('Opération : ' + erreur);
-        }
-      );*/
-      let searchOpCaisseDTO = new SearchOpCaisseDTO;
+      let  searchOpCaisseDTO = new SearchOpCaisseDTO;
       searchOpCaisseDTO.startDate = moment(new Date()).format('YYYY-MM-DD');
       searchOpCaisseDTO.endDate = moment(new Date()).format('YYYY-MM-DD');
+      searchOpCaisseDTO.codeCaisse = this.caisses[0].codeCaisse.toString();
+      console.log("OPcaisse", searchOpCaisseDTO);
+      
+     
    
        this.servOp.getAllOpCaisseOfDay(searchOpCaisseDTO).subscribe(
            (data) => {
@@ -573,8 +568,8 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   fermerAnnulation() {
-    $('#dtop').dataTable().api().destroy();
-    this.dtrigDailyOp.next();
+   // $('#dtop').dataTable().api().destroy();
+   // this.dtrigDailyOp.next();
     this.opAnnul.hide();
   }
 
@@ -810,6 +805,7 @@ export class OperationCaisseComponent implements OnInit {
     this.servOp.getUserCaisse(this.user.idUtilisateur).subscribe(
       data => {
         this.caisses = data.map(d => d.caisse);
+        //this.chargerDailyOp();
 
       }
     );
@@ -871,6 +867,7 @@ export class OperationCaisseComponent implements OnInit {
     this.servOp.getUserCaisse(this.user.idUtilisateur).subscribe(
       data => {
         this.caisses = data.map(d => d.caisse);
+        this.affecterCaisse = data;
         this.total = 0;
         this.tempLigneOpCais = [];
         /*;*/
@@ -890,8 +887,8 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   fermeVente() {
-    $('#dtop').dataTable().api().destroy();
-    this.dtrigDailyOp.next();
+   // $('#dtop').dataTable().api().destroy();
+   // this.dtrigDailyOp.next();
     this.addVente.hide();
   }
 
@@ -1048,9 +1045,9 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   fermerLoyer() {
-    $('#dtop').dataTable().api().destroy();
+   // $('#dtop').dataTable().api().destroy();
     $('#dteche').dataTable().api().destroy();
-    this.dtrigDailyOp.next();
+   // this.dtrigDailyOp.next();
     this.addLoyer.hide();
   }
 
@@ -1426,7 +1423,7 @@ export class OperationCaisseComponent implements OnInit {
   }
 
   fermerImput() {
-    $('#dtop').dataTable().api().destroy();
+    //$('#dtop').dataTable().api().destroy();
    // this.dtrigDailyOp.next();
     this.addImput.hide();
   }
@@ -1480,9 +1477,10 @@ export class OperationCaisseComponent implements OnInit {
             }
           );
 
-          let searchOpCaisseDTO = new SearchOpCaisseDTO;
+          let  searchOpCaisseDTO = new SearchOpCaisseDTO;
           searchOpCaisseDTO.startDate = moment(new Date()).format('YYYY-MM-DD');
           searchOpCaisseDTO.endDate = moment(new Date()).format('YYYY-MM-DD');
+          searchOpCaisseDTO.codeCaisse = this.caisses[0].codeCaisse.toString();
        
            this.servOp.getAllOpCaisseOfDay(searchOpCaisseDTO).subscribe(
                (data) => {
@@ -1721,7 +1719,7 @@ export class OperationCaisseComponent implements OnInit {
                 theme: 'grid',
                 margin: { top: 0, left: 30, right: 5 },
                 columnStyles: {
-                  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+                //  0: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold', fontSize: 8 },
                 },
                 body: [
                   ['Montant perçu: \t'+ opc.mttRem,'Monnaie rendue: \t'+ opc.monnai,'\tReliquat restant: '+ opc.reliquat]
@@ -1734,11 +1732,11 @@ export class OperationCaisseComponent implements OnInit {
 
               autoTable(fact, {
                 theme: 'plain',
-                margin: { top: 30, left: 130 },
+                margin: { top: 30, left: 150 },
                 columnStyles: {
                   0: { textColor: 0, fontStyle: 'bold', fontSize: 12, halign:'justify' },
                 },
-                body: [['Le(La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
+                body: [['Le (La) caissier(ère)' + '\n \n \n' + this.serU.connectedUser.nomUtilisateur + ' ' +
                   this.serU.connectedUser.prenomUtilisateur]]
               });
                 this.pdfToShow = this.sanitizer.bypassSecurityTrustResourceUrl(fact.output('datauristring', { filename: 'facture.pdf' }));
